@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Kiosk RAMSERVICE</title>
+  <link rel="stylesheet" href="stile.css">
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="screen">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div id="date"></div>
+    </div>
+    <div class="header-center">
+      <img src="img/logoram.png" alt="RAMSERVICE Logo" class="logo">
+    </div>
+    <div class="header-right">
+      <div id="clock"></div>
+    </div>
+  </header>
+
+  <!-- PULSANTI TOUCH -->
+  <nav>
+    <button>
+      <div class="icon">📢</div>
+      <div class="title">Promozioni</div>
+      <div class="desc">Offerte del mese</div>
+    </button>
+    <button>
+      <div class="icon">💰</div>
+      <div class="title">Risparmio</div>
+      <div class="desc">Calcola quanto risparmi</div>
+    </button>
+    <button onclick="location.href='https://ramservice.altervista.org/Kiosk/valutazione/index.html'">
+      <div class="icon">📱</div>
+      <div class="title">Valutazione</div>
+      <div class="desc">Scopri il valore usato</div>
+    </button>
+  </nav>
+
+  <!-- IMMAGINE CENTRALE -->
+  <section id="center"></section>
+
+  <!-- SLIDESHOW -->
+  <section id="slideshow"></section>
+
+  <!-- 3 RIQUADRI -->
+  <section id="riquadri">
+    <div class="riquadro"><img src="img/riquadro1.png" alt="Box 1"></div>
+    <div class="riquadro"><img src="img/riquadro2.png" alt="Box 2"></div>
+    <div class="riquadro"><img src="https://ramservice.altervista.org/Kiosk/img/inpost.png" alt="InPost"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    RAMSERVICE
+  </footer>
+
+</div>
+
+<script>
+  // CLOCK (con secondi)
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000); updateClock();
+
+  // DATE
+  function updateDate() {
+    const now = new Date();
+    const options = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+    const dateStr = now.toLocaleDateString('it-IT', options);
+    const pretty = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    document.getElementById('date').innerHTML = pretty;
+  }
+  updateDate();
+
+  // IMAGES LOADER
+  async function loadImages(folder, containerId, slideshow=false) {
+    const res = await fetch(`img/${folder}/list.php`);
+    const files = await res.json();
+    const container = document.getElementById(containerId);
+
+    if(slideshow) {
+      files.forEach((file,i)=>{
+        const img = document.createElement("img");
+        img.src = `img/${folder}/${file}`;
+        if(i===0) img.classList.add("active");
+        container.appendChild(img);
+      });
+      let index = 0;
+      setInterval(()=>{
+        const slides = container.querySelectorAll("img");
+        slides[index].classList.remove("active");
+        index = (index+1)%slides.length;
+        slides[index].classList.add("active");
+      },4000);
+    } else {
+      if(files.length>0){
+        const img = document.createElement("img");
+        img.src = `img/${folder}/${files[0]}`;
+        container.appendChild(img);
+      }
+    }
+  }
+
+  loadImages("center","center",false);
+  loadImages("operatori","slideshow",true);
+</script>
+</body>
+</html>

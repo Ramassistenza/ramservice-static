@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Valutazione Smartphone - RAMSERVICE</title>
+  <link rel="stylesheet" href="stile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="screen">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-center">
+      <img src="https://ramservice.altervista.org/Kiosk/img/logoram.png" alt="RAMSERVICE" class="logo">
+    </div>
+    <div class="header-right">
+      <div id="clock"></div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <div class="container">
+
+      <!-- COLONNA SINISTRA: STEP -->
+      <section class="step-section" id="stepsCol">
+        <h2>Valutazione Smartphone</h2>
+
+        <!-- PROGRESS -->
+        <div class="progress-bar">
+          <div class="progress" id="progress"></div>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+
+        <!-- STEP DINAMICI -->
+        <div id="stepContainer"></div>
+
+        <!-- PULSANTI AZIONE -->
+        <div class="btn-group">
+          <button id="nextBtn">Avanti</button>
+          <button id="showPriceBtn" style="display:none;">Mostra Prezzo</button>
+          <button id="restartBtn" class="secondary">Ricomincia</button>
+        </div>
+
+        <!-- LOGO MARCA + FOTO PRODOTTO -->
+        <div class="grid-bottom">
+          <div class="logo-box"><img id="logoMarca" src="" alt=""></div>
+          <div class="foto-box"><img id="fotoProdotto" src="" alt=""></div>
+        </div>
+      </section>
+
+      <!-- COLONNA DESTRA: RIEPILOGO -->
+      <aside class="summary" id="summaryCol">
+        <h2>Riepilogo selezioni</h2>
+
+        <p id="sum_marca">Marca: -</p>
+        <p id="sum_modello">Modello: -</p>
+        <p id="sum_memoria">Memoria: -</p>
+
+        <p id="sum_batteria">Batteria: -</p>
+        <div class="battery-indicator">
+          <div id="batteryFill"></div>
+          <span id="batteryText">-</span>
+        </div>
+
+        <p id="sum_funzioni">Funzioni: -</p>
+        <p id="sum_display">Display: -</p>
+        <p id="sum_retro">Retro: -</p>
+        <p id="sum_account">Account Rimossi: -</p>
+      </aside>
+
+    </div>
+
+    <!-- PREZZO (SEZIONE LARGA) -->
+    <section class="price-section">
+      <div class="price-box" id="priceBox">Prezzo Valutazione</div>
+    </section>
+
+    <!-- POST PREZZO -->
+    <section id="postPrice" class="post-price hidden">
+      <div class="post-text">
+        <p><strong>Questa valutazione è valida per 7 giorni.</strong></p>
+        <p>Il valore potrebbe scendere nei prossimi mesi: ecco una proiezione.</p>
+      </div>
+
+      <!-- GRAFICO (SVG) -->
+      <div id="chart" class="chart"></div>
+
+      <!-- EMAIL -->
+      <div class="email-row">
+        <label for="emailVal">Inserisci qui la tua email e salvati la valutazione.</label>
+        <input type="email" id="emailVal" inputmode="email" placeholder="nome@email.com" autocomplete="email">
+        <button id="sendEmailBtn" type="button">Invia valutazione</button>
+        <small>Se sei interessato riceverai l’email con il codice di valutazione e potrai avviare la pratica di permuta.</small>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <button class="home-btn" onclick="location.href='../kiosk.html'" aria-label="Torna alla Home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="white" viewBox="0 0 24 24">
+          <path d="M12 3l9 8h-3v9h-12v-9h-3l9-8z"/>
+        </svg>
+      </button>
+    </div>
+    <span class="footer-text">RAMSERVICE</span>
+    <div class="footer-right"></div>
+  </footer>
+</div>
+
+<!-- POPUP -->
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>VALUTAZIONE EFFETTUATA</h3>
+    <p>Vuoi valutare un altro prodotto?</p>
+    <div class="modal-actions">
+      <button id="modalRestart" class="secondary">Ricomincia</button>
+      <button id="modalHome">Torna all'Home</button>
+    </div>
+  </div>
+</div>
+
+<script src="valutazione.js"></script>
+<script>
+  // Orologio HH:MM:SS
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RAMSERVICE – Vetrina Verticale</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --header-h: 90px;
+  --sections-h: 240px;
+  --footer-h: 100px;
+  --clock-w: 180px;
+  --fade-ms: 800;
+}
+
+/* BASE */
+* {box-sizing: border-box; margin: 0; padding: 0;}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  font-family: 'Outfit', sans-serif;
+  color: #000;
+}
+
+/* WRAPPER RUOTATO E CENTRATO */
+.rotate-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vh;
+  height: 100vw;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center center;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+header.app {
+  height: var(--header-h);
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: 2px;
+}
+
+/* SEZIONI (ora sotto l’header) */
+.top-sections {
+  height: var(--sections-h);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2%;
+  background: #fff;
+  padding: 12px 0;
+  border-bottom: 2px solid #eee;
+}
+.top-sections img {
+  width: 28%;
+  height: 100%;
+  border-radius: 18px;
+  object-fit: contain;
+  background: #fff;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.top-sections img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* PLAYER CENTRALE */
+.stage {
+  flex: 1;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+#player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#player img, #player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity var(--fade-ms)ms ease;
+  background: #fff;
+}
+
+/* FOOTER */
+footer.app {
+  height: var(--footer-h);
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  border-top: 2px solid #d00;
+  z-index: 10;
+}
+.clock {
+  width: var(--clock-w);
+  height: 100%;
+  background: #d00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(22px, 3.2vw, 36px);
+  color: #fff;
+}
+.ticker {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-content {
+  display: inline-block;
+  padding-left: 100%;
+  font-weight: 600;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: var(--footer-h);
+  color: #fff;
+  animation: scrollText 45s linear infinite;
+}
+@keyframes scrollText {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+</style>
+</head>
+
+<body>
+<div class="rotate-wrapper">
+  <header class="app">RAMSERVICE</header>
+
+  <!-- Sezioni spostate subito sotto l’header -->
+  <section class="top-sections">
+    <img id="sec1" src="https://ramservice.altervista.org/Monitor/TopSections/sezione1.jpg" alt="Sezione 1">
+    <img id="sec2" src="https://ramservice.altervista.org/Monitor/TopSections/sezione2.jpg" alt="Sezione 2">
+    <img id="sec3" src="https://ramservice.altervista.org/Monitor/TopSections/sezione3.jpg" alt="Sezione 3">
+  </section>
+
+  <main class="stage">
+    <div id="player"></div>
+  </main>
+
+  <footer class="app">
+    <div class="clock"><span id="clock">--:--</span></div>
+    <div class="ticker">
+      <div class="ticker-content" id="marquee">
+        RAMSERVICE – iPhone Ricondizionati • Notebook • Riparazioni • Attivazioni SIM
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const CONFIG = {
+  PLAYLIST_URL : "https://ramservice.altervista.org/Monitor/playlist.php",
+  SECTIONS_PATH: "https://ramservice.altervista.org/Monitor/TopSections/",
+  TICKER_TXT_URL: "https://ramservice.altervista.org/Monitor/ticker.txt",
+  IMAGE_MS: 5000,
+  REFRESH_SECONDS: 60
+};
+
+let playlist = [];
+let index = 0;
+let timer = null;
+
+/* CLOCK */
+setInterval(()=>{
+  const d = new Date();
+  document.getElementById('clock').textContent =
+    d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+},1000);
+
+/* TICKER */
+/* TICKER: ricarico forzato e log utile */
+function loadTicker(){
+  const url = CONFIG.TICKER_TXT_URL + '?t=' + Date.now(); // anti-cache
+  fetch(url, {cache:'no-store'})
+    .then(r=>{
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(txt=>{
+      const str = (txt || '').trim();
+      const el = document.getElementById('marquee');
+      if (str) {
+        if (el.textContent !== str) {
+          el.textContent = str;
+          console.log('✅ Ticker aggiornato');
+        } else {
+          console.log('ℹ️ Ticker invariato');
+        }
+      } else {
+        console.warn('⚠️ Ticker vuoto');
+      }
+    })
+    .catch(err=>{
+      console.error('❌ Errore ticker:', err);
+    });
+}
+
+
+/* SEZIONI */
+function loadSections(){
+  for(let i=1;i<=3;i++){
+    document.getElementById('sec'+i).src =
+      CONFIG.SECTIONS_PATH + 'sezione'+i+'.jpg?'+Date.now();
+  }
+}
+
+/* PLAYLIST */
+function loadPlaylist(){
+  fetch(CONFIG.PLAYLIST_URL + '?t=' + Date.now())
+    .then(r=>r.json())
+    .then(j=>{
+      console.log('🎬 Playlist:', j);
+      playlist = (j.items||[]).map(x=> j.baseUrl + x.src );
+      index = 0;
+      if(playlist.length>0) showMedia();
+    })
+    .catch(e=>console.error('Errore playlist:', e));
+}
+
+/* MOSTRA MEDIA */
+function showMedia(){
+  if(!playlist.length) return;
+  clearTimeout(timer);
+  const src = playlist[index];
+  const ext = src.split('.').pop().toLowerCase();
+  const player = document.getElementById('player');
+  player.innerHTML = '';
+  console.log('▶️ Mostro:', src);
+
+  if(ext==='mp4' || ext==='webm'){
+    const v = document.createElement('video');
+    v.src = src;
+    v.autoplay = true;
+    v.loop = false;
+    v.muted = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline','');
+    v.setAttribute('muted','');
+    v.setAttribute('autoplay','');
+    v.onloadeddata = ()=>{
+      fadeIn(v);
+      const dur = (v.duration && v.duration>0)? v.duration*1000 : CONFIG.IMAGE_MS;
+      timer = setTimeout(()=>{ index=(index+1)%playlist.length; showMedia(); }, dur);
+    };
+    player.appendChild(v);
+  } else {
+    const img = document.createElement('img');
+    img.src = src + '?t=' + Date.now();
+    img.onload = ()=>{
+      fadeIn(img);
+      timer = setTimeout(()=>{ index=(index+1)%playlist.length; showMedia(); }, CONFIG.IMAGE_MS);
+    };
+    player.appendChild(img);
+  }
+}
+
+/* FADE IN */
+function fadeIn(el){
+  setTimeout(()=>{ el.style.opacity = '1'; }, 50);
+}
+
+/* AVVIO */
+window.onload = ()=>{
+  loadSections();
+  loadTicker();
+  loadPlaylist();
+  setInterval(loadSections, CONFIG.REFRESH_SECONDS*1000);
+  setInterval(loadTicker, CONFIG.REFRESH_SECONDS*1000);
+  setInterval(loadPlaylist, CONFIG.REFRESH_SECONDS*1000);
+};
+</script>
+</body>
+</html>
