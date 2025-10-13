@@ -1,0 +1,1 @@
+# ramservice-static
