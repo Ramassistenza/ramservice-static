@@ -5,14 +5,17 @@
   <title>Kiosk RAMSERVICE</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    body, html {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
       background: #000;
       color: #fff;
       font-family: 'Poppins', sans-serif;
       overflow: hidden;
     }
+
     .screen {
       display: flex;
       flex-direction: column;
@@ -22,7 +25,7 @@
 
     /* HEADER */
     header {
-      height: 100px;
+      height: 90px;
       background: #fff;
       color: #000;
       display: flex;
@@ -30,8 +33,9 @@
       justify-content: space-between;
       padding: 0 40px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      flex-shrink: 0;
     }
-    header img.logo { height: 80px; }
+    header img.logo { height: 70px; }
     #date { font-size: 22px; font-weight: 600; }
     #clock { font-size: 32px; font-weight: 800; color: #2563eb; }
 
@@ -40,13 +44,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 60px;
-      margin: 30px 0;
+      gap: 40px;
+      padding: 15px 0;
+      background: #000;
+      flex-shrink: 0;
     }
     nav button {
-      width: 280px; height: 160px;
+      width: 220px; height: 130px;
       border: none;
-      border-radius: 20px;
+      border-radius: 18px;
       background: #fff;
       color: #000;
       display: flex;
@@ -58,62 +64,40 @@
       transition: transform 0.2s;
     }
     nav button:hover { transform: translateY(-4px); }
-    nav .icon { font-size: 40px; }
-    nav .title { font-size: 22px; font-weight: 700; color: #2563eb; }
+    nav .icon { font-size: 36px; }
+    nav .title { font-size: 20px; font-weight: 700; color: #2563eb; }
     nav .desc { font-size: 14px; color: #444; }
 
-    /* CENTER IMAGE */
-    #center {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 10px auto;
-      width: 92%;
-      max-height: 420px;
-      overflow: hidden;
-      border-radius: 16px;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.5);
-    }
-    #center img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 16px;
-      transition: opacity 1s ease;
-    }
-
-    /* SLIDESHOW */
+    /* SLIDESHOW FULL SCREEN CENTER */
     #slideshow {
+      flex: 1;
+      width: 100%;
       position: relative;
-      width: 92%;
-      height: 260px;
-      margin: 20px auto;
       overflow: hidden;
-      border-radius: 16px;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+      border-radius: 0;
     }
     #slideshow img {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       object-fit: cover;
-      border-radius: 16px;
       opacity: 0;
       transition: opacity 1s ease;
     }
     #slideshow img.active { opacity: 1; }
 
-    /* RIQUADRI */
+    /* RIQUADRI FISSI */
     #riquadri {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 30px;
-      margin: 20px 0;
+      gap: 60px;
+      background: #000;
+      padding: 20px 0 10px 0;
+      flex-shrink: 0;
     }
     #riquadri img {
-      width: 240px; height: 240px;
+      width: 260px; height: 260px;
       object-fit: contain;
       background: #fff;
       border-radius: 16px;
@@ -133,6 +117,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -165,13 +150,10 @@
     </button>
   </nav>
 
-  <!-- IMMAGINE CENTRALE -->
-  <section id="center"></section>
-
   <!-- SLIDESHOW -->
   <section id="slideshow"></section>
 
-  <!-- 3 RIQUADRI -->
+  <!-- RIQUADRI -->
   <section id="riquadri">
     <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
     <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2"></div>
@@ -201,11 +183,10 @@
   const dateStr = now.toLocaleDateString('it-IT', opt);
   dateEl.textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
-  // 📸 Immagini (.jpg, .jpeg, .png, .webp)
+  // 📸 Slideshow immagini (supporto .jpg, .jpeg, .png, .webp)
   const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img/";
   const imageLists = {
-    center: ["center/1","center/2","center/3"],
-    operatori: ["operatori/1","operatori/2","operatori/3","operatori/4"]
+    operatori: ["operatori/1","operatori/2","operatori/3","operatori/4","operatori/5"]
   };
   const exts = [".jpg",".jpeg",".png",".webp"];
 
@@ -223,39 +204,28 @@
     return urls;
   }
 
-  async function loadImages(folder, containerId, slideshow=false) {
-    const files = await resolveImages(folder);
-    const container = document.getElementById(containerId);
+  async function loadSlideshow() {
+    const files = await resolveImages("operatori");
+    const container = document.getElementById("slideshow");
     if (!files.length) return;
 
-    if (slideshow) {
-      files.forEach((url,i)=>{
-        const img = document.createElement("img");
-        img.src = url;
-        if(i===0) img.classList.add("active");
-        container.appendChild(img);
-      });
-      let index = 0;
-      setInterval(()=>{
-        const slides = container.querySelectorAll("img");
-        slides[index].classList.remove("active");
-        index = (index+1)%slides.length;
-        slides[index].classList.add("active");
-      },4000);
-    } else {
-      let i = 0;
+    files.forEach((url, i) => {
       const img = document.createElement("img");
-      img.src = files[0];
+      img.src = url;
+      if (i === 0) img.classList.add("active");
       container.appendChild(img);
-      setInterval(()=>{
-        i = (i+1)%files.length;
-        img.src = files[i];
-      }, 8000);
-    }
+    });
+
+    let index = 0;
+    setInterval(() => {
+      const slides = container.querySelectorAll("img");
+      slides[index].classList.remove("active");
+      index = (index + 1) % slides.length;
+      slides[index].classList.add("active");
+    }, 5000); // cambia slide ogni 5 secondi
   }
 
-  loadImages("center","center",false);
-  loadImages("operatori","slideshow",true);
+  loadSlideshow();
 </script>
 </body>
 </html>
