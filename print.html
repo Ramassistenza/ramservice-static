@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stampa Scontrino</title>
+  <script src="https://unpkg.com/qz-tray/qz-tray.js"></script>
+  <style>
+    body { font-family: monospace; background:#111; color:#0f0; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <pre id="log"></pre>
+
+<script>
+const log = msg => {
+  document.getElementById('log').innerText += msg + "\n";
+  console.log(msg);
+};
+
+const PRINTER_NAME = "Aclas Printer";
+const RAGIC_API_BASE = "https://eu2.ragic.com/ramservice/documenti2/22";
+const RAGIC_API_KEY  = "WWp0WURzZjBER25nZXBzY1planJQdCtiNmljOHFRL212OXRxQ0ZEU25TREc5NzBrSXM4Q0NIWVNmM3RoYVU1b0c3dzk3L1Mram5tRnhYaXdRR2RtNFE9PQ==";
+
+function getParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+async function getVendita(id) {
+  const url = `${RAGIC_API_BASE}/${id}?api&APIKey=${RAGIC_API_KEY}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Errore API Ragic " + res.status);
+  return res.json();
+}
+
+(async function(){
+  try {
+    await qz.websocket.connect();
+
+    const id = getParam("id");
+    if (!id) throw new Error("Parametro ?id mancante");
+
+    const venditaData = await getVendita(id);
+    const record = venditaData[id];
+    if (!record) throw new Error("Record non trovato in Ragic per ID " + id);
+
+    const idVendita   = record["ID-Vendita al Banco"] || id;
+    const dataVendita = record["Data Vendita"] || new Date().toLocaleString();
+    const totale      = parseFloat(record["TOTALE"] || "0") || 0;
+
+    let subTotale = 0;
+    let sconti = 0;
+    let body = "";
+
+    const subtableKey = "_subtable_1005074";
+    if (record[subtableKey]) {
+      Object.values(record[subtableKey]).forEach(r => {
+        const qty   = r["Quantità"] || "1";
+        const descr = (r["Nome Prodotto"] || "").substring(0,22);
+        const tot   = parseFloat(r["Subtotale"] || "0") || 0;
+        const sconto = parseFloat(r["Sconti"] || "0") || 0;
+        subTotale += tot;
+        sconti += sconto;
+        body += `${qty}x ${descr.padEnd(22)} € ${tot.toFixed(2)}\n`;
+      });
+    }
+
+    const config = qz.configs.create(PRINTER_NAME);
+
+    const lines = [
+      '\x1B\x40', // init
+      '\x1B\x61\x01', // center
+      '\x1B\x21\x30', // font grande + bold
+      'RAM SERVICE S.R.L.S.\n',
+      '\x1B\x21\x00', // reset stile normale
+      'Via di macchia saponara 104c\n',
+      '00125 Roma\n',
+      'P.IVA 15597371002\n',
+      '==========================================\n',
+      `ID Vendita: ${idVendita}\n`,
+      `Data: ${dataVendita}\n`,
+      '------------------------------------------\n',
+      'Q.tà   Descrizione                Totale\n',
+      '------------------------------------------\n',
+      body,
+      '------------------------------------------\n',
+      `Totale Parziale:                  € ${subTotale.toFixed(2)}\n`,
+      `Sconti:                           € ${sconti.toFixed(2)}\n`,
+      '------------------------------------------\n',
+      '\x1B\x61\x01',
+      '\x1B\x45\x01',
+      `TOTALE: € ${totale.toFixed(2)}\n`,
+      '\x1B\x45\x00',
+      '==========================================\n',
+      '\n',
+      'Grazie per l\'acquisto da RAMSERVICE!\n',
+      'WhatsApp: 3475941558\n',
+      'www.ramassistenza.it\n',
+      '\n\n',
+      'Seguici su Instagram:\n',
+      '\n',
+      // QR Instagram
+      '\x1D(k\x04\x00\x31\x41\x32\x00',
+      '\x1D(k\x03\x00\x31\x43\x08',
+      '\x1D(k\x03\x00\x31\x45\x30',
+      '\x1D(k' + String.fromCharCode(3 + 36) + '\x00\x31\x50\x30' + 'https://instagram.com/ramassistenza/',
+      '\x1D(k\x03\x00\x31\x51\x30',
+      '\n\n\n\n',
+      '\x1D\x56\x41',
+      '\x00'
+    ];
+
+    await qz.print(config, [{ type: 'raw', format: 'command', data: lines.join("") }]);
+    setTimeout(() => window.close(), 1500);
+
+  } catch (e) {
+    setTimeout(() => window.close(), 3000);
+  }
+})();
+</script>
+</body>
+</html>
