@@ -6,18 +6,46 @@
   <link rel="stylesheet" href="stile.css">
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+
   <style>
+    body, html { margin:0; padding:0; background:#f0f2f5; overflow:hidden; }
+    .screen { display:flex; flex-direction:column; height:100vh; }
+    header, footer { flex:0 0 auto; }
+    #center, #slideshow { flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    #slideshow { position:relative; height:60vh; }
+
     /* --- Quick fix per immagini --- */
     #center img, #slideshow img {
       width: 100%;
       height: auto;
+      max-height: 100%;
       object-fit: contain;
       border-radius: 12px;
       transition: opacity .8s ease;
     }
-    #slideshow img { position: absolute; top: 0; left: 0; opacity: 0; }
+
+    #slideshow img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+    }
     #slideshow img.active { opacity: 1; }
-    #slideshow { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+    /* 3 riquadri */
+    #riquadri {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+    }
+    #riquadri img {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
   </style>
 </head>
 <body>
@@ -96,24 +124,35 @@
   }
   updateDate();
 
-  // 📸 Elenchi statici immagini (GitHub non supporta PHP)
+  // 📸 Elenco immagini (supporta jpg/png/jpeg/webp)
+  const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img/";
   const imageLists = {
     center: [
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/1.png",
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/2.png",
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/3.png"
+      "center/1", "center/2", "center/3"
     ],
     operatori: [
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/1.png",
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/2.png",
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/3.png",
-      "https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/4.png"
+      "operatori/1", "operatori/2", "operatori/3", "operatori/4"
     ]
   };
+  const exts = [".png",".jpg",".jpeg",".webp"];
+
+  async function resolveImages(folder) {
+    const urls = [];
+    for (const name of imageLists[folder]) {
+      for (const ext of exts) {
+        const url = `${base}${name}${ext}`;
+        try {
+          const res = await fetch(url, { method:"HEAD" });
+          if (res.ok) { urls.push(url); break; }
+        } catch {}
+      }
+    }
+    return urls;
+  }
 
   // 🎞 Funzione per mostrare immagini o slideshow
-  function loadImages(folder, containerId, slideshow=false) {
-    const files = imageLists[folder] || [];
+  async function loadImages(folder, containerId, slideshow=false) {
+    const files = await resolveImages(folder);
     const container = document.getElementById(containerId);
     if (files.length === 0) return;
 
@@ -132,9 +171,14 @@
         slides[index].classList.add("active");
       },4000);
     } else {
+      let index = 0;
       const img = document.createElement("img");
       img.src = files[0];
       container.appendChild(img);
+      setInterval(()=>{
+        index = (index+1)%files.length;
+        img.src = files[index];
+      }, 8000); // cambia ogni 8 secondi
     }
   }
 
