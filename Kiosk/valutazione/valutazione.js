@@ -1,5 +1,10 @@
-/* valutazione.js */
+/* =====================================================
+   RAMSERVICE - Valutazione Smartphone (versione GitHub + Cloud Run)
+   ===================================================== */
+
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTALk9G-bdD_eitOcDhLV-z_kG0SrRwTeDjVoyBFwjlgjwisSk3h9gOAMur5pMOoxKDKV3cwQ9woxlr/pub?gid=2070797727&single=true&output=csv";
+const SEND_URL = "https://ramservice-sync-721276708443.europe-west1.run.app/send-valutazione";
+
 
 let data = [], step = 0, risposte = {};
 const steps = [];
@@ -177,8 +182,8 @@ function aggiornaProgress(){
 // ===== Immagini =====
 function aggiornaImmagini(){
   const logoMap = {
-    "Apple":"https://ramservice.altervista.org/ValutazioneUsato/Loghi/logoapple.png",
-    "Samsung":"https://ramservice.altervista.org/ValutazioneUsato/Loghi/logosamsung.png"
+    "Apple":"https://ramassistenza.github.io/ramservice-static/ValutazioneUsato/Loghi/logoapple.png",
+    "Samsung":"https://ramassistenza.github.io/ramservice-static/ValutazioneUsato/Loghi/logosamsung.png"
   };
   document.getElementById("logoMarca").src = risposte["marca"] ? (logoMap[risposte["marca"]] || "") : "";
   const riga = data.find(d=>d.Marca===risposte["marca"] && d.Modello===risposte["modello"]);
@@ -218,7 +223,7 @@ function calcolaPrezzo(){
 document.getElementById("showPriceBtn").addEventListener("click", calcolaPrezzo);
 document.getElementById("restartBtn").addEventListener("click", ricomincia);
 
-// ===== Chart SVG (1m -5%, 3m -15%, 6m -28%) =====
+// ===== Chart SVG =====
 function renderChart(prezzoBase){
   const p1 = Math.floor(prezzoBase * 0.95);
   const p3 = Math.floor(prezzoBase * 0.85);
@@ -249,22 +254,18 @@ function renderChart(prezzoBase){
   <style> text { font-family: Poppins, sans-serif; } </style>
   <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#cbd5e1"/>
   <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#cbd5e1"/>
-
   ${yTicks.map(t=>`
     <line x1="${padL}" y1="${yFromVal(t.v)}" x2="${w-padR}" y2="${yFromVal(t.v)}" stroke="#eef2f7"/>
     <text x="${padL-10}" y="${yFromVal(t.v)+4}" text-anchor="end" font-size="12" fill="#475569">${t.label}</text>
   `).join('')}
-
   <defs>
     <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#2563eb" stop-opacity="0.25"/>
       <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
     </linearGradient>
   </defs>
-
   <path d="${path} L ${pts[2].x} ${h-padB} L ${pts[0].x} ${h-padB} Z" fill="url(#gl)" />
   <path d="${path}" fill="none" stroke="#2563eb" stroke-width="3"/>
-
   ${pts.map(p=>`
     <circle cx="${p.x}" cy="${p.y}" r="5" fill="#2563eb"/>
     <text x="${p.x}" y="${p.y-10}" text-anchor="middle" font-size="12" fill="#111827">${p.label}</text>
@@ -289,7 +290,7 @@ function ricomincia(){
   equalizeColumns();
 }
 
-// ===== INVIO EMAIL (fetch verso PHP) =====
+// ===== INVIO EMAIL (verso Cloud Run) =====
 document.getElementById("sendEmailBtn").addEventListener("click", ()=>{
   const email = (document.getElementById("emailVal").value || "").trim();
   if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
@@ -320,22 +321,23 @@ Prezzo: ${prezzoTxt}
 Validità: 7 giorni.
 Foto Prodotto: ${foto}`;
 
-  fetch("https://ramservice.altervista.org/Kiosk/valutazione/sendmail.php", {
+  fetch(SEND_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `email=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, subject, body })
   })
-  .then(r=>r.text())
-  .then(t=>{
-    if(t.trim()==="OK"){
+  .then(r => r.text())
+  .then(t => {
+    if (t.trim() === "OK") {
       const sm = document.querySelector(".email-row small");
-      sm.style.color = "green"; sm.textContent = "Email inviata con successo ✅";
+      sm.style.color = "green";
+      sm.textContent = "Email inviata con successo ✅";
       setTimeout(openModal, 1200);
     } else {
-      alert("Errore nell'invio della mail: "+t);
+      alert("Errore nell'invio della mail: " + t);
     }
   })
-  .catch(err=> alert("Errore di connessione: "+err));
+  .catch(err => alert("Errore di connessione: " + err));
 });
 
 function generaCodiceVal(){
