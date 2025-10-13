@@ -36,65 +36,57 @@
     #date { font-size: 20px; font-weight: 600; }
     #clock { font-size: 30px; font-weight: 800; color: #2563eb; }
 
-    /* NAV */
+    /* PULSANTI PRINCIPALI */
     nav {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
+      justify-content: space-around;
+      gap: 20px;
+      padding: 10px 0;
       background: #fff;
-      padding: 15px 0;
       flex-shrink: 0;
     }
     nav button {
-      width: 220px; height: 120px;
-      border: none; border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: transform .2s;
-    }
-    nav button:hover { transform: translateY(-4px); }
-    nav .icon { font-size: 36px; }
-    nav .title { font-size: 20px; font-weight: 700; color: #2563eb; }
-    nav .desc { font-size: 14px; color: #555; }
-
-    /* CENTER IMAGE */
-    #center {
       flex: 1;
+      max-width: 30%;
+      height: 120px;
+      border: none;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      border-radius: 16px;
-      margin: 10px auto;
-      width: 90%;
-      background: #fff;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
     }
-    #center img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      position: absolute;
-      opacity: 0;
-      transition: opacity 1s ease;
+    nav button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
     }
-    #center img.active { opacity: 1; }
+    nav .icon { font-size: 36px; }
+    nav .title { font-size: 20px; font-weight: 700; color: #2563eb; }
+    nav .desc { font-size: 14px; color: #666; }
 
-    /* SLIDESHOW OPERATORI */
-    #slideshow {
-      width: 90%;
-      height: 280px;
-      margin: 10px auto;
+    /* SEZIONI SLIDES */
+    #center, #slideshow {
       position: relative;
+      width: 90%;
+      margin: 15px auto;
       overflow: hidden;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-      flex-shrink: 0;
+      border-radius: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     }
-    #slideshow img {
+    #center {
+      flex: 1;
+      max-height: 55vh;
+    }
+    #slideshow {
+      flex-shrink: 0;
+      height: 240px;
+    }
+    #center img, #slideshow img {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -102,13 +94,14 @@
       opacity: 0;
       transition: opacity 1s ease;
     }
-    #slideshow img.active { opacity: 1; }
+    #center img.active, #slideshow img.active { opacity: 1; }
 
     /* RIQUADRI */
     #riquadri {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      align-items: center;
+      gap: 40px;
       background: #f9fafb;
       padding: 20px 0;
       flex-shrink: 0;
@@ -117,20 +110,22 @@
       width: 180px; height: 180px;
       object-fit: contain;
       background: #fff;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 10px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     }
 
     /* FOOTER */
     footer {
-      height: 50px;
+      height: 60px;
       background: #fff;
       color: #000;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 30px;
       letter-spacing: 2px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 -3px 8px rgba(0,0,0,0.1);
       flex-shrink: 0;
     }
@@ -165,13 +160,11 @@
     </button>
   </nav>
 
-  <!-- IMMAGINE CENTRALE -->
+  <!-- SLIDES CENTRALI -->
   <section id="center"></section>
-
-  <!-- SLIDESHOW -->
   <section id="slideshow"></section>
 
-  <!-- 3 RIQUADRI -->
+  <!-- RIQUADRI IN BASSO -->
   <section id="riquadri">
     <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
     <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2"></div>
@@ -184,7 +177,7 @@
 </div>
 
 <script>
-  // CLOCK + DATE
+  // 🕒 Clock e Data
   function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
@@ -194,11 +187,11 @@
   }
   setInterval(updateClock, 1000);
   updateClock();
-
   document.getElementById('date').textContent = new Date().toLocaleDateString('it-IT', {
     weekday:'long', day:'2-digit', month:'long', year:'numeric'
   });
 
+  // 🔄 Slides Loader (no PHP)
   const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img/";
   const folders = {
     center: ["center/1","center/2","center/3"],
