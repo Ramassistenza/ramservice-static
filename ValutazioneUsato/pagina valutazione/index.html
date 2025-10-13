@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Valutazione Smartphone Step-by-Step</title>
+  <link rel="stylesheet" href="stile.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- COLONNA SINISTRA -->
+  <div class="step-section" id="stepsCol">
+    <h2>Valutazione Smartphone</h2>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+      <div class="progress-text" id="progressText">0%</div>
+    </div>
+
+    <!-- STEP -->
+    <div id="stepContainer"></div>
+
+    <!-- PULSANTI -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="nextBtn">Avanti</button>
+      <button id="showPriceBtn" style="display:none;">Mostra Prezzo</button>
+      <button id="restartBtn" class="secondary">Ricomincia</button>
+    </div>
+
+    <!-- LOGO + FOTO -->
+    <div class="grid-bottom">
+      <div class="logo-box"><img id="logoMarca" src="" alt="Logo Marca"></div>
+      <div class="foto-box"><img id="fotoProdotto" src="" alt="Foto Prodotto"></div>
+    </div>
+  </div>
+
+  <!-- COLONNA DESTRA -->
+  <div class="summary" id="summaryCol">
+    <h2>Riepilogo selezioni</h2>
+    <p id="sum_marca">Marca: -</p>
+    <p id="sum_modello">Modello: -</p>
+    <p id="sum_memoria">Memoria: -</p>
+    <p id="sum_batteria">Batteria: -</p>
+    <p id="sum_funzioni">Funzioni: -</p>
+    <p id="sum_display">Display: -</p>
+    <p id="sum_retro">Retro: -</p>
+    <p id="sum_account">Account: -</p>
+    <div class="price-box" id="priceBox">Prezzo Valutazione</div>
+  </div>
+
+</div>
+
+<!-- SCRIPT -->
+<script src="valutazione.js"></script>
+</body>
+</html>

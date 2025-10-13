@@ -1,0 +1,108 @@
+/* ================= BASE ================= */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* sinistra domande, destra riepilogo */
+  gap: 25px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  align-items: stretch; /* 🔥 colonne stessa altezza */
+}
+
+/* ================= SEZIONE STEP (sinistra) ================= */
+.step-section {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s;
+  min-height: 100%;
+}
+.step-section:hover {
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
+
+/* ================= SEZIONE RIEPILOGO (destra) ================= */
+.summary {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* titolo in alto, prezzo in basso */
+  gap: 15px;
+  min-height: 100%;
+}
+.summary h2 {
+  margin-top: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0077cc;
+}
+.price-box {
+  margin-top: auto;
+  padding: 16px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0077cc;
+  background: linear-gradient(145deg,#f0f7ff,#e6f1ff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* ================= LOGO + FOTO ================= */
+.grid-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.logo-box, .foto-box {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  transition: all 0.3s;
+}
+.logo-box:hover, .foto-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.logo-box img, .foto-box img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+/* ================= ANIMAZIONI ================= */
+.fade-enter { opacity:0; transform:translateY(20px); }
+.fade-enter-active { opacity:1; transform:translateY(0); transition:all 0.5s; }
+.fade-exit { opacity:1; transform:translateY(0); }
+.fade-exit-active { opacity:0; transform:translateY(-20px); transition:all 0.5s; }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .container { grid-template-columns: 1fr; }
+  .grid-bottom { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .grid-bottom { grid-template-columns: 1fr; }
+  .step-section, .summary { padding: 20px; }
+  .price-box { font-size: 20px; }
+}

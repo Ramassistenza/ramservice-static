@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Valutazione Smartphone Step-by-Step</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f5f5f5; margin:0; padding:0;}
+.container { display:flex; max-width:1200px; margin:auto; padding:20px; gap:20px; }
+.step-section { flex:2; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.15); position:relative; overflow:hidden;}
+.step-section h2{margin-top:0; color:#333; font-weight:bold;}
+label{display:block; margin-top:15px; font-weight:bold; color:#555;}
+.description{font-size:13px;color:#666;margin-top:5px;}
+select,input[type="number"]{width:100%; padding:8px; margin-top:5px; font-size:14px; border-radius:6px; border:1px solid #ccc;}
+button{background:#0077cc;color:#fff;border:none;font-weight:bold;padding:10px 15px;margin-top:20px;border-radius:6px;cursor:pointer;}
+button:hover{background:#005fa3;}
+button.secondary{background:#555;}
+button.secondary:hover{background:#333;}
+.summary { flex:1; background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.15); position:sticky; top:20px; height:fit-content;}
+.summary h2{margin-top:0; font-weight:bold; color:#333;}
+.summary p{margin:8px 0;}
+.price { font-size:22px; font-weight:bold; margin-top:15px; color:#0077cc; }
+.progress-bar { width:100%; background:#ddd; height:20px; border-radius:10px; margin-bottom:15px;}
+.progress { height:100%; background:#0077cc; width:0%; border-radius:10px; transition:width 0.3s;}
+.fade-enter{opacity:0; transform:translateY(20px);}
+.fade-enter-active{opacity:1; transform:translateY(0); transition:all 0.5s;}
+.fade-exit{opacity:1; transform:translateY(0);}
+.fade-exit-active{opacity:0; transform:translateY(-20px); transition:all 0.5s;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="step-section">
+    <h2>Valutazione Smartphone</h2>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+    <div id="stepContainer"></div>
+    <button id="nextBtn">Avanti</button>
+    <button id="showPriceBtn" style="display:none;" onclick="calcolaPrezzo()">Mostra Prezzo</button>
+    <button id="restartBtn" class="secondary" style="display:inline-block;margin-left:10px;" onclick="ricomincia()">Ricomincia</button>
+    <div class="price" id="prezzoFinale"></div>
+  </div>
+  <div class="summary">
+    <h2>Riepilogo selezioni</h2>
+    <p id="sum_marca">Marca: -</p>
+    <p id="sum_modello">Modello: -</p>
+    <p id="sum_memoria">Memoria: -</p>
+    <p id="sum_batteria">Batteria: -</p>
+    <p id="sum_funzioni">Funzioni: -</p>
+    <p id="sum_display">Display: -</p>
+    <p id="sum_retro">Retro: -</p>
+    <p id="sum_account">Account: -</p>
+  </div>
+</div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTALk9G-bdD_eitOcDhLV-z_kG0SrRwTeDjVoyBFwjlgjwisSk3h9gOAMur5pMOoxKDKV3cwQ9woxlr/pub?gid=2070797727&single=true&output=csv";
+let data = [], step = 0, risposte = {};
+const steps = [];
+
+const descriptions = {
+  "marca":"Inserisci la marca del tuo Smartphone;",
+  "modello":"Inserisci il modello;",
+  "memoria":"Inserisci la capacità della memoria del tuo dispositivo;",
+  "batteria":"Controlla la capacità massima della batteria. Si trova in Impostazioni -> Batteria -> Stato batteria",
+  "funzioni":"Il dispositivo si accende, si ricarica e si connette alla rete. Ha altoparlanti, microfoni e fotocamere funzionanti.",
+  "display":"Controlla la presenza di macchie luminose, pixel bruciati o linee/segni di burn in (scolorimento), o se sono presenti crepe e rotture dei cristalli.",
+  "retro":"Controlla il retro per graffi, crepe e segni di usura.",
+  "account":""
+};
+
+async function caricaCSV() {
+  const res = await fetch(CSV_URL);
+  const text = await res.text();
+  const righe = text.trim().split("\n").map(r => r.split(","));
+  righe.shift(); // intestazioni
+  data = righe.map(r => ({Marca:r[0], Modello:r[1], Memoria:r[2], PrezzoBase:parseFloat(r[3])}));
+  inizializzaSteps();
+  mostraStep();
+}
+
+function inizializzaSteps() {
+  steps.push({id:"marca", label:"Seleziona Marca", type:"select", options:[...new Set(data.map(d=>d.Marca))]});
+  steps.push({id:"modello", label:"Seleziona Modello", type:"select", options:[], depends:"marca"});
+  steps.push({id:"memoria", label:"Seleziona Memoria", type:"select", options:[], depends:"modello"});
+  steps.push({id:"batteria", label:"Salute batteria (%)", type:"number", min:1, max:100, default:100});
+  steps.push({id:"funzioni", label:"Il telefono funziona perfettamente o ha qualche problema?", type:"select", options:["Si, funziona perfettamente","No, funziona parzialmente"]});
+  steps.push({id:"display", label:"Condizioni Display", type:"select", options:["No, ha il display rotto","Si, ma presenta graffi ben visibili","Si, ma graffi impercettibili","Si, come nuovo"]});
+  steps.push({id:"retro", label:"Condizioni retro", type:"select", options:["Il vetro è crepato","Integro ma presenta graffi","Integro e perfetto"]});
+  steps.push({id:"account", label:"Account e blocchi utente rimossi?", type:"select", options:["Si","No"]});
+}
+
+function mostraStep() {
+  const container = document.getElementById("stepContainer");
+  container.innerHTML = "";
+
+  document.getElementById("restartBtn").style.display="inline-block";
+
+  if(step >= steps.length) { 
+    document.getElementById("nextBtn").style.display="none";
+    document.getElementById("showPriceBtn").style.display="inline-block";
+    aggiornaProgress();
+    return;
+  }
+
+  document.getElementById("nextBtn").style.display="inline-block";
+  document.getElementById("showPriceBtn").style.display="none";
+
+  const s = steps[step];
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("fade-enter");
+  setTimeout(()=>wrapper.classList.add("fade-enter-active"),10);
+
+  const label = document.createElement("label");
+  label.textContent = s.label;
+  wrapper.appendChild(label);
+
+  if(descriptions[s.id]){
+    const desc = document.createElement("div");
+    desc.className = "description";
+    desc.textContent = descriptions[s.id];
+    wrapper.appendChild(desc);
+  }
+
+  let input;
+  if(s.type==="select"){
+    input = document.createElement("select");
+    input.id=s.id;
+    let opts = s.options;
+    if(s.depends==="marca") opts = [...new Set(data.filter(d=>d.Marca===risposte["marca"]).map(d=>d.Modello))];
+    if(s.depends==="modello") opts = [...new Set(data.filter(d=>d.Marca===risposte["marca"] && d.Modello===risposte["modello"]).map(d=>d.Memoria))];
+    input.innerHTML = "<option value=''>-- Seleziona --</option>"+opts.map(o=>`<option value="${o}">${o}</option>`).join("");
+  } else if(s.type==="number"){
+    input = document.createElement("input");
+    input.type="number"; input.id=s.id; input.min=s.min; input.max=s.max; input.value=s.default;
+  }
+
+  input.addEventListener("change", ()=>{
+    risposte[s.id]=input.value;
+    aggiornaRiepilogo();
+  });
+
+  wrapper.appendChild(input);
+  container.appendChild(wrapper);
+  aggiornaProgress();
+}
+
+document.getElementById("nextBtn").addEventListener("click",()=>{
+  const s = steps[step];
+  const val = document.getElementById(s.id).value;
+  if(val===""){ alert("Seleziona un valore"); return; }
+  risposte[s.id]=val;
+  step++;
+  mostraStep();
+});
+
+function aggiornaRiepilogo(){
+  document.getElementById("sum_marca").textContent="Marca: "+(risposte["marca"]||"-");
+  document.getElementById("sum_modello").textContent="Modello: "+(risposte["modello"]||"-");
+  document.getElementById("sum_memoria").textContent="Memoria: "+(risposte["memoria"]||"-");
+  document.getElementById("sum_batteria").textContent="Batteria: "+(risposte["batteria"]||"-");
+  document.getElementById("sum_funzioni").textContent="Funzioni: "+(risposte["funzioni"]||"-");
+  document.getElementById("sum_display").textContent="Display: "+(risposte["display"]||"-");
+  document.getElementById("sum_retro").textContent="Retro: "+(risposte["retro"]||"-");
+  document.getElementById("sum_account").textContent="Account: "+(risposte["account"]||"-");
+}
+
+function aggiornaProgress(){
+  const perc = Math.round((step/steps.length)*100);
+  document.getElementById("progress").style.width=perc+"%";
+}
+
+function calcolaPrezzo(){
+  const riga = data.find(d=>d.Marca===risposte["marca"] && d.Modello===risposte["modello"] && d.Memoria===risposte["memoria"]);
+  if(!riga){ alert("Combinazione non trovata!"); return; }
+  let prezzo = riga.PrezzoBase;
+
+  const batteria = parseFloat(risposte["batteria"]);
+  if(batteria<85) prezzo *= 0.72;
+
+  if(risposte["funzioni"]==="No, funziona parzialmente") prezzo *= 0.5;
+
+  switch(risposte["display"]){
+    case "No, ha il display rotto": prezzo *=0.2; break;
+    case "Si, ma presenta graffi ben visibili": prezzo *=0.75; break;
+    case "Si, ma graffi impercettibili": prezzo *=0.93; break;
+  }
+
+  switch(risposte["retro"]){
+    case "Il vetro è crepato": prezzo *=0.5; break;
+    case "Integro ma presenta graffi": prezzo *=0.75; break;
+  }
+
+  if(risposte["account"]==="No") prezzo*=0.2;
+
+  document.getElementById("prezzoFinale").textContent="Prezzo Finale: € "+prezzo.toFixed(2);
+}
+
+function ricomincia(){
+  step=0;
+  risposte={};
+  document.getElementById("prezzoFinale").textContent="";
+  document.getElementById("nextBtn").style.display="inline-block";
+  document.getElementById("showPriceBtn").style.display="none";
+  aggiornaRiepilogo();
+  mostraStep();
+}
+
+caricaCSV();
+</script>
+</body>
+</html>
