@@ -8,117 +8,108 @@
     html, body {
       margin: 0; padding: 0;
       width: 100%; height: 100%;
-      background: #f5f6f8;
+      background: #f4f5f7;
       color: #333;
       font-family: 'Poppins', sans-serif;
       overflow: hidden;
     }
-    .screen { display: flex; flex-direction: column; height: 100vh; }
+
+    .screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
 
     /* HEADER */
     header {
-      height: 90px; background: #fff;
-      color: #000;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      height: 80px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      flex-shrink: 0;
     }
-    header img.logo { height: 70px; }
-    #date { font-size: 22px; font-weight: 600; }
-    #clock { font-size: 32px; font-weight: 800; color: #2563eb; }
+    header img.logo { height: 60px; }
+    #date { font-size: 18px; font-weight: 600; }
+    #clock { font-size: 26px; font-weight: 700; color: #2563eb; }
 
     /* PULSANTI */
     nav {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 50px;
-      margin: 20px 0;
+      gap: 30px;
+      padding: 12px 0;
+      background: #fff;
+      flex-shrink: 0;
     }
     nav button {
-      width: 260px; height: 140px;
-      border: none;
-      border-radius: 20px;
+      width: 200px; height: 110px;
+      border: none; border-radius: 16px;
       background: #fff;
-      color: #000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-      cursor: pointer;
-      transition: transform .2s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      cursor: pointer; transition: transform .2s;
     }
-    nav button:hover { transform: translateY(-4px); }
-    nav .icon { font-size: 38px; }
-    nav .title { font-size: 22px; font-weight: 700; color: #2563eb; }
-    nav .desc { font-size: 14px; color: #555; }
+    nav button:hover { transform: translateY(-3px); }
+    nav .icon { font-size: 30px; }
+    nav .title { font-size: 18px; font-weight: 700; color: #2563eb; }
+    nav .desc { font-size: 13px; color: #666; }
 
-    /* CENTER IMAGE */
+    /* CENTER SLIDES (VERTICAL MAIN IMAGE) */
     #center {
-      width: 100%;
-      max-width: 1200px;
-      height: 360px;
-      margin: 0 auto;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      background: #fff;
-    }
-    #center img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* SLIDESHOW */
-    #slideshow {
-      width: 100%;
-      max-width: 1200px;
-      height: 260px;
-      margin: 20px auto;
+      flex: 1;
       position: relative;
-      border-radius: 16px;
       overflow: hidden;
       background: #fff;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      border-radius: 14px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 900px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
-    #slideshow img {
+    #center img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       position: absolute;
       top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
       opacity: 0;
       transition: opacity 1s ease;
     }
-    #slideshow img.active { opacity: 1; }
+    #center img.active { opacity: 1; }
 
-    /* RIQUADRI */
+    /* RIQUADRI IN BASSO */
     #riquadri {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 40px;
-      margin: 10px 0 20px 0;
+      gap: 30px;
+      background: #f9fafb;
+      padding: 15px 0;
+      flex-shrink: 0;
     }
     #riquadri img {
-      width: 230px; height: 230px;
+      width: 180px; height: 180px;
       object-fit: contain;
       background: #fff;
-      border-radius: 16px;
-      padding: 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     }
 
     /* FOOTER */
     footer {
-      height: 60px;
+      height: 50px;
       background: #fff;
       color: #000;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px;
-      letter-spacing: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      font-size: 28px;
+      letter-spacing: 1px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 -3px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -128,11 +119,11 @@
   <!-- HEADER -->
   <header>
     <div id="date"></div>
-    <img src="img/logoram.png" alt="RAMSERVICE Logo" class="logo">
+    <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" class="logo" alt="RAMSERVICE">
     <div id="clock"></div>
   </header>
 
-  <!-- NAV BUTTONS -->
+  <!-- NAV -->
   <nav>
     <button>
       <div class="icon">📢</div>
@@ -151,17 +142,14 @@
     </button>
   </nav>
 
-  <!-- IMMAGINE CENTRALE -->
+  <!-- IMMAGINI CENTRALI (SLIDES) -->
   <section id="center"></section>
 
-  <!-- SLIDESHOW -->
-  <section id="slideshow"></section>
-
-  <!-- 3 RIQUADRI -->
+  <!-- RIQUADRI FISSI -->
   <section id="riquadri">
-    <div><img src="img/riquadro1.png" alt="Box 1"></div>
-    <div><img src="img/riquadro2.png" alt="Box 2"></div>
-    <div><img src="img/inpost.png" alt="InPost"></div>
+    <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
+    <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2"></div>
+    <div><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
   </section>
 
   <!-- FOOTER -->
@@ -170,7 +158,7 @@
 </div>
 
 <script>
-  // CLOCK
+  // CLOCK + DATE
   function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
@@ -179,72 +167,46 @@
     document.getElementById('clock').textContent = `${h}:${m}:${s}`;
   }
   setInterval(updateClock, 1000); updateClock();
+  document.getElementById('date').textContent = new Date().toLocaleDateString('it-IT', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
 
-  // DATE
-  function updateDate() {
-    const now = new Date();
-    const options = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
-    const dateStr = now.toLocaleDateString('it-IT', options);
-    document.getElementById('date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-  }
-  updateDate();
-
-  // IMAGES
-  const exts = [".jpg",".jpeg",".png",".webp"];
+  // SLIDES (CARICA IMG DA GITHUB)
   const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img/";
+  const folders = {
+    center: ["center/1","center/2","center/3","center/4"]
+  };
+  const exts = [".jpg",".jpeg",".png",".webp"];
 
-  async function findImagePath(folder, nameList) {
-    for (const n of nameList) {
+  async function loadSlides() {
+    const urls = [];
+    for (const name of folders.center) {
       for (const ext of exts) {
-        const url = `${base}${folder}/${n}${ext}`;
+        const url = `${base}${name}${ext}`;
         try {
           const res = await fetch(url, { method: "HEAD" });
-          if (res.ok) return url;
+          if (res.ok) { urls.push(url); break; }
         } catch {}
       }
     }
-    return "";
-  }
-
-  // CENTER STATIC IMAGE
-  async function loadCenter() {
-    const url = await findImagePath("center", ["1","2","3"]);
-    if (url) {
-      const img = document.createElement("img");
-      img.src = url;
-      document.getElementById("center").appendChild(img);
-    }
-  }
-
-  // SLIDESHOW
-  async function loadSlideshow() {
-    const names = ["1","2","3","4"];
-    const urls = [];
-    for (const n of names) {
-      const url = await findImagePath("operatori", [n]);
-      if (url) urls.push(url);
-    }
-
-    const container = document.getElementById("slideshow");
     if (!urls.length) return;
+
+    const container = document.getElementById("center");
     urls.forEach((u,i)=>{
-      const img=document.createElement("img");
-      img.src=u;
+      const img = document.createElement("img");
+      img.src = u;
       if(i===0) img.classList.add("active");
       container.appendChild(img);
     });
 
-    let index=0;
+    let index = 0;
     setInterval(()=>{
-      const slides=container.querySelectorAll("img");
+      const slides = container.querySelectorAll("img");
       slides[index].classList.remove("active");
-      index=(index+1)%slides.length;
+      index = (index+1)%slides.length;
       slides[index].classList.add("active");
-    },4000);
+    }, 5000);
   }
 
-  loadCenter();
-  loadSlideshow();
+  loadSlides();
 </script>
 </body>
 </html>
