@@ -35,7 +35,7 @@
       <div class="title">Risparmio</div>
       <div class="desc">Calcola quanto risparmi</div>
     </button>
-    <button onclick="location.href='https://ramassistenza.github.io/ramservice-static/Kiosk/valutazione/index.html'>
+    <button onclick="location.href='https://ramassistenza.github.io/ramservice-static/Kiosk/valutazione/index.html'">
       <div class="icon">📱</div>
       <div class="title">Valutazione</div>
       <div class="desc">Scopri il valore usato</div>
@@ -63,7 +63,7 @@
 </div>
 
 <script>
-  // CLOCK (con secondi)
+  /* 🕒 CLOCK */
   function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
@@ -71,9 +71,10 @@
     const s = String(now.getSeconds()).padStart(2,'0');
     document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
   }
-  setInterval(updateClock, 1000); updateClock();
+  setInterval(updateClock, 1000);
+  updateClock();
 
-  // DATE
+  /* 📅 DATE */
   function updateDate() {
     const now = new Date();
     const options = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
@@ -83,39 +84,57 @@
   }
   updateDate();
 
-  // IMAGES LOADER
+  /* 🖼️ IMAGE LOADER per GitHub (senza PHP) */
   async function loadImages(folder, containerId, slideshow=false) {
     const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img";
-    const res = await fetch(`${base}/${folder}/list.php`);
-    const files = await res.json();
     const container = document.getElementById(containerId);
 
-    if(slideshow) {
-      files.forEach((file,i)=>{
+    // Supporta numerazione sequenziale e formati misti
+    const extensions = ["jpg", "jpeg", "png"];
+    const images = [];
+
+    // tenta di caricare fino a 10 immagini
+    for (let i = 1; i <= 10; i++) {
+      for (const ext of extensions) {
+        const url = `${base}/${folder}/${i}.${ext}`;
+        try {
+          const response = await fetch(url, { method: "HEAD" });
+          if (response.ok) {
+            images.push(`${i}.${ext}`);
+            break;
+          }
+        } catch(e) { /* ignora errori 404 */ }
+      }
+    }
+
+    if (images.length === 0) return;
+
+    if (slideshow) {
+      images.forEach((file, i) => {
         const img = document.createElement("img");
         img.src = `${base}/${folder}/${file}`;
-        if(i===0) img.classList.add("active");
+        if (i === 0) img.classList.add("active");
         container.appendChild(img);
       });
+
       let index = 0;
-      setInterval(()=>{
+      setInterval(() => {
         const slides = container.querySelectorAll("img");
+        if (slides.length === 0) return;
         slides[index].classList.remove("active");
-        index = (index+1)%slides.length;
+        index = (index + 1) % slides.length;
         slides[index].classList.add("active");
-      },4000);
+      }, 4000);
     } else {
-      if(files.length>0){
-        const img = document.createElement("img");
-        img.src = `${base}/${folder}/${files[0]}`;
-        container.appendChild(img);
-      }
+      const img = document.createElement("img");
+      img.src = `${base}/${folder}/${images[0]}`;
+      container.appendChild(img);
     }
   }
 
-  // 🔹 Cartelle aggiornate per GitHub
-  loadImages("center","center",false);
-  loadImages("operatori","slideshow",true);
+  // 🔹 Caricamento immagini
+  loadImages("center", "center", false);
+  loadImages("operatori", "slideshow", true);
 </script>
 </body>
 </html>
