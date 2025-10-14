@@ -2,171 +2,120 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>RAMSERVICE Kiosk</title>
-  <link rel="stylesheet" href="stile.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* ✅ Layout originale + sezioni centrali full width */
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      background: #000;
-      font-family: 'Poppins', sans-serif;
-      overflow-x: hidden;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #000;
-      color: white;
-      padding: 8px 20px;
-      height: 60px;
-    }
-
-    .header-center img.logo {
-      height: 40px;
-    }
-
-    #clock {
-      font-size: 18px;
-      font-weight: 600;
-      color: #00aaff;
-    }
-
-    main {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    /* 🔹 Le sezioni slideshow centrali ora sono full-width */
-    section.slideshow {
-      width: 100vw;
-      max-width: 100vw;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    section.slideshow img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-    }
-
-    /* 🔹 Sezione bottoni */
-    .button-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 25px;
-      padding: 30px 0;
-      background: #000;
-    }
-
-    .button-section button {
-      background: #0071E3;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      padding: 14px 26px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: 600;
-    }
-
-    .button-section button:hover {
-      background: #005BBB;
-    }
-
-    footer {
-      text-align: center;
-      background: #000;
-      color: white;
-      font-weight: 600;
-      letter-spacing: 1px;
-      padding: 10px 0;
-    }
-  </style>
+  <title>Kiosk RAMSERVICE</title>
+  <link rel="stylesheet" href="https://ramassistenza.github.io/ramservice-static/Kiosk/stile.css">
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+<div class="screen">
 
-  <div class="screen">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div id="date"></div>
+    </div>
+    <div class="header-center">
+      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" alt="RAMSERVICE Logo" class="logo">
+    </div>
+    <div class="header-right">
+      <div id="clock"></div>
+    </div>
+  </header>
 
-    <!-- HEADER -->
-    <header>
-      <div class="header-left"></div>
-      <div class="header-center">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" alt="RAMSERVICE" class="logo">
-      </div>
-      <div class="header-right">
-        <div id="clock"></div>
-      </div>
-    </header>
+  <!-- PULSANTI TOUCH -->
+  <nav>
+    <button>
+      <div class="icon">📢</div>
+      <div class="title">Promozioni</div>
+      <div class="desc">Offerte del mese</div>
+    </button>
+    <button>
+      <div class="icon">💰</div>
+      <div class="title">Risparmio</div>
+      <div class="desc">Calcola quanto risparmi</div>
+    </button>
+    <button onclick="location.href='https://ramassistenza.github.io/ramservice-static/Kiosk/Valutazione/valutazione.html'">
+      <div class="icon">📱</div>
+      <div class="title">Valutazione</div>
+      <div class="desc">Scopri il valore usato</div>
+    </button>
+  </nav>
 
-    <!-- MAIN -->
-    <main>
+  <!-- IMMAGINE CENTRALE -->
+  <section id="center"></section>
 
-      <!-- SLIDE 1 -->
-      <section id="slide1" class="slideshow">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/1.jpg" alt="Slide 1">
-      </section>
+  <!-- SLIDESHOW -->
+  <section id="slideshow"></section>
 
-      <!-- SLIDE 2 -->
-      <section id="slide2" class="slideshow">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/2.jpg" alt="Slide 2">
-      </section>
+  <!-- 3 RIQUADRI -->
+  <section id="riquadri">
+    <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
+    <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2"></div>
+    <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
+  </section>
 
-      <!-- SLIDE 3 -->
-      <section id="slide3" class="slideshow">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/center/3.jpg" alt="Slide 3">
-      </section>
+  <!-- FOOTER -->
+  <footer>
+    RAMSERVICE
+  </footer>
 
-      <!-- SLIDE 4 -->
-      <section id="slide4" class="slideshow">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/1.png" alt="Operatori 1">
-      </section>
+</div>
 
-      <!-- SLIDE 5 -->
-      <section id="slide5" class="slideshow">
-        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/operatori/2.png" alt="Operatori 2">
-      </section>
+<script>
+  // CLOCK (con secondi)
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000); updateClock();
 
-      <!-- SEZIONE BOTTONI -->
-      <section class="button-section">
-        <button onclick="location.href='Valutazione/valutazione.html'">Valutazione Usato</button>
-        <button onclick="location.href='Offerte/offerte.html'">Offerte Smartphone</button>
-        <button onclick="location.href='Riparazioni/riparazioni.html'">Riparazioni</button>
-      </section>
+  // DATE
+  function updateDate() {
+    const now = new Date();
+    const options = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+    const dateStr = now.toLocaleDateString('it-IT', options);
+    const pretty = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    document.getElementById('date').innerHTML = pretty;
+  }
+  updateDate();
 
-    </main>
+  // IMAGES LOADER
+  async function loadImages(folder, containerId, slideshow=false) {
+    const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img";
+    const res = await fetch(`${base}/${folder}/list.php`);
+    const files = await res.json();
+    const container = document.getElementById(containerId);
 
-    <!-- FOOTER -->
-    <footer>
-      RAMSERVICE
-    </footer>
-
-  </div>
-
-  <script>
-    // 🕒 Orologio digitale
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+    if(slideshow) {
+      files.forEach((file,i)=>{
+        const img = document.createElement("img");
+        img.src = `${base}/${folder}/${file}`;
+        if(i===0) img.classList.add("active");
+        container.appendChild(img);
+      });
+      let index = 0;
+      setInterval(()=>{
+        const slides = container.querySelectorAll("img");
+        slides[index].classList.remove("active");
+        index = (index+1)%slides.length;
+        slides[index].classList.add("active");
+      },4000);
+    } else {
+      if(files.length>0){
+        const img = document.createElement("img");
+        img.src = `${base}/${folder}/${files[0]}`;
+        container.appendChild(img);
+      }
     }
-    setInterval(updateClock, 1000);
-    updateClock();
-  </script>
+  }
 
+  // 🔹 Cartelle aggiornate per GitHub
+  loadImages("center","center",false);
+  loadImages("operatori","slideshow",true);
+</script>
 </body>
 </html>
