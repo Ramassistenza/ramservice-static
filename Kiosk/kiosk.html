@@ -1,239 +1,102 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8" />
-<title>Kiosk RAMSERVICE</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-<style>
-  html, body {
-    margin: 0; padding: 0;
-    width: 100%; height: 100%;
-    background: #000;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-  }
+  <meta charset="UTF-8">
+  <title>RAMSERVICE Kiosk</title>
+  <link rel="stylesheet" href="stile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === SLIDESHOW UNIFORME (aggiornamento richiesto) === */
+    .slideshow, .slide, .slider {
+      position: relative;
+      width: 100%;
+      height: 100vh; /* tutte le sezioni slide a piena altezza */
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
 
-  .kiosk {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    background: #000;
-  }
+    .slideshow img,
+    .slide img,
+    .slider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* riempie interamente mantenendo proporzioni */
+      display: block;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
 
-  /* HEADER */
-  header {
-    height: 90px;
-    background: #fff;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-    flex-shrink: 0;
-  }
-  header img.logo { height: 65px; }
-  #date { font-size: 18px; font-weight: 600; }
-  #clock { font-size: 30px; font-weight: 800; color: #2563eb; }
-
-  /* MENU BUTTONS */
-  .menu {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    gap: 40px;
-    padding: 20px 50px;
-    background: #000;
-  }
-  .menu button {
-    flex: 1;
-    height: 230px;
-    border: none;
-    border-radius: 28px;
-    background: #fff;
-    color: #000;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 700;
-    box-shadow: 0 8px 25px rgba(255,255,255,0.15);
-    transition: transform .25s ease, box-shadow .25s ease;
-  }
-  .menu button:hover {
-    transform: scale(1.04);
-    box-shadow: 0 10px 40px rgba(255,255,255,0.3);
-  }
-  .menu .icon { font-size: 60px; margin-bottom: 12px; color: #2563eb; }
-  .menu .desc { font-size: 16px; color: #555; font-weight: 500; }
-
-  /* SLIDES (centrali) */
-  .slides-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    background: #000;
-  }
-  .slide {
-    width: 86%; /* centrato e un po’ più stretto */
-    border-radius: 0;
-    position: relative;
-    background: transparent;
-    overflow: hidden;
-    box-shadow: none;
-  }
-  #slide1 { height: 460px; }
-  #slide2 { height: 260px; }
-
-  .slide img {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 1s ease;
-  }
-  .slide img.active { opacity: 1; }
-
-  /* RIQUADRI IN BASSO */
-  .boxes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 50px;
-    padding: 25px 50px 35px;
-    background: #000;
-  }
-  .boxes img {
-    flex: 1;
-    max-width: 360px;
-    height: 250px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 24px;
-    box-shadow: 0 10px 25px rgba(255,255,255,0.15);
-    padding: 16px;
-  }
-
-  /* FOOTER */
-  footer {
-    height: 60px;
-    background: #fff;
-    color: #000;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    letter-spacing: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 -3px 10px rgba(255,255,255,0.2);
-    flex-shrink: 0;
-  }
-</style>
+    /* Opzionale: se vuoi leggero margine tra le slide */
+    section.slideshow + section.slideshow {
+      margin-top: 0;
+    }
+  </style>
 </head>
 <body>
-<div class="kiosk">
 
-  <!-- HEADER -->
-  <header>
-    <div id="date"></div>
-    <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" class="logo" alt="RAMSERVICE">
-    <div id="clock"></div>
-  </header>
+  <div class="screen">
 
-  <!-- MENU -->
-  <div class="menu">
-    <button>
-      <div class="icon">📢</div>
-      <div>Promozioni</div>
-      <div class="desc">Offerte del mese</div>
-    </button>
-    <button>
-      <div class="icon">💰</div>
-      <div>Risparmio</div>
-      <div class="desc">Calcola quanto risparmi</div>
-    </button>
-    <button onclick="location.href='https://ramassistenza.github.io/ramservice-static/Kiosk/valutazione/index.html'">
-      <div class="icon">📱</div>
-      <div>Valutazione</div>
-      <div class="desc">Scopri il valore usato</div>
-    </button>
+    <!-- HEADER -->
+    <header>
+      <div class="header-left"></div>
+      <div class="header-center">
+        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" alt="RAMSERVICE" class="logo">
+      </div>
+      <div class="header-right">
+        <div id="clock"></div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <!-- SEZIONE SLIDE 1 -->
+      <section id="slide1" class="slideshow">
+        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/slide1.jpg" alt="Promo RAMSERVICE">
+      </section>
+
+      <!-- SEZIONE SLIDE 2 (Operatori) -->
+      <section id="slide2" class="slideshow">
+        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/slide2.jpg" alt="Operatori RAMSERVICE">
+      </section>
+
+      <!-- SEZIONE SLIDE 3 -->
+      <section id="slide3" class="slideshow">
+        <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/slide3.jpg" alt="Offerte RAMSERVICE">
+      </section>
+
+      <!-- SEZIONE PULSANTI -->
+      <section class="button-section">
+        <div class="button-container">
+          <button onclick="location.href='Valutazione/valutazione.html'">Valutazione Usato</button>
+          <button onclick="location.href='Offerte/offerte.html'">Offerte Smartphone</button>
+          <button onclick="location.href='Riparazioni/riparazioni.html'">Riparazioni</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-left"></div>
+      <span class="footer-text">RAMSERVICE</span>
+      <div class="footer-right"></div>
+    </footer>
   </div>
 
-  <!-- SLIDES -->
-  <div class="slides-wrapper">
-    <section id="slide1" class="slide"></section>
-    <section id="slide2" class="slide"></section>
-  </div>
-
-  <!-- RIQUADRI -->
-  <section class="boxes">
-    <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1">
-    <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2">
-    <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="Box 3">
-  </section>
-
-  <!-- FOOTER -->
-  <footer>RAMSERVICE</footer>
-</div>
-
-<script>
-  // ⏰ OROLOGIO + DATA
-  function updateClock() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const s = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-  }
-  setInterval(updateClock,1000); updateClock();
-  document.getElementById('date').textContent =
-    new Date().toLocaleDateString('it-IT',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-
-  // 🎞️ SLIDES DA GITHUB
-  const BASE = "https://ramassistenza.github.io/ramservice-static/Kiosk/img/";
-  const FOLDERS = {
-    slide1: ["center/1","center/2","center/3"],
-    slide2: ["operatori/1","operatori/2","operatori/3","operatori/4"]
-  };
-  const EXTS = [".jpg",".jpeg",".png",".webp"];
-
-  async function loadSlides(folder, containerId, interval=5000){
-    const urls=[];
-    for(const name of FOLDERS[folder]){
-      for(const ext of EXTS){
-        const url = BASE + name + ext;
-        try{
-          const res = await fetch(url,{method:"HEAD"});
-          if(res.ok){ urls.push(url); break; }
-        }catch{}
-      }
+  <!-- SCRIPT -->
+  <script>
+    // Orologio digitale
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
     }
-    const cont=document.getElementById(containerId);
-    urls.forEach((u,i)=>{
-      const img=document.createElement("img");
-      img.src=u;
-      if(i===0) img.classList.add("active");
-      cont.appendChild(img);
-    });
-    let i=0;
-    setInterval(()=>{
-      const imgs=cont.querySelectorAll("img");
-      imgs[i].classList.remove("active");
-      i=(i+1)%imgs.length;
-      imgs[i].classList.add("active");
-    },interval);
-  }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
 
-  loadSlides("slide1","slide1",7000);
-  loadSlides("slide2","slide2",5000);
-</script>
 </body>
 </html>
