@@ -7,58 +7,174 @@
   <title>iPhone Ricondizionati Certificati – RAMSERVICE Roma</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; font-family:'Poppins',sans-serif; background-color:#000; color:#fff; line-height:1.6; }
-    header { text-align:center; padding:60px 20px; background:#111; }
-    header h1 { font-size:2.4em; font-weight:700; color:#fff; }
-    header p { font-size:1.1em; color:#ccc; max-width:600px; margin:15px auto; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #000;
+      color: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 70px 20px 50px;
+      background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+    }
+    header h1 {
+      font-size: 2.6em;
+      font-weight: 700;
+      color: #fff;
+    }
+    header p {
+      font-size: 1.15em;
+      color: #ccc;
+      max-width: 700px;
+      margin: 15px auto 25px;
+    }
     .cta-btn {
-      display:inline-block; background:#25D366; color:#fff; text-decoration:none;
-      padding:14px 26px; border-radius:8px; font-weight:600; margin-top:20px;
-      transition:transform .3s ease; font-size:1.1em;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1em;
+      transition: background 0.3s ease, transform 0.3s ease;
     }
-    .cta-btn:hover { transform:scale(1.05); }
-
-    .gallery {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:15px; padding:40px 20px; background:#0a0a0a;
+    .cta-btn:hover {
+      background: #1ebe5d;
+      transform: scale(1.05);
     }
-    .gallery img { width:100%; border-radius:12px; transition:transform .3s ease; }
-    .gallery img:hover { transform:scale(1.05); }
 
-    section { padding:60px 20px; max-width:1000px; margin:auto; text-align:center; }
-    section h2 { color:#25D366; font-size:2em; margin-bottom:20px; }
-    ul { text-align:left; display:inline-block; margin-top:15px; line-height:1.8; color:#ddd; }
-    li::before { content:"✔️ "; color:#25D366; }
+    /* SLIDER */
+    .slider-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+    .slider {
+      display: flex;
+      transition: transform 0.8s ease-in-out;
+    }
+    .slider img {
+      width: 100%;
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+    .slider-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+    .slider-buttons button {
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: white;
+      font-size: 1.5em;
+      padding: 10px 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .slider-buttons button:hover {
+      background: rgba(255,255,255,0.3);
+    }
 
-    .highlight { color:#25D366; font-weight:600; }
+    /* SEZIONE INFO */
+    section {
+      padding: 70px 20px;
+      max-width: 1000px;
+      margin: auto;
+      text-align: center;
+    }
+    section h2 {
+      font-size: 2em;
+      color: #25D366;
+      margin-bottom: 25px;
+    }
+    ul {
+      text-align: left;
+      display: inline-block;
+      margin-top: 15px;
+      line-height: 1.9;
+      color: #ddd;
+      font-size: 1.05em;
+    }
+    li::before {
+      content: "✔️ ";
+      color: #25D366;
+    }
+    .highlight {
+      color: #25D366;
+      font-weight: 600;
+    }
 
-    footer { background:#111; text-align:center; padding:30px; color:#888; font-size:.9em; }
+    /* CTA FISSA */
+    .fixed-whatsapp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25D366;
+      color: #fff;
+      border-radius: 50px;
+      padding: 14px 22px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    .fixed-whatsapp:hover {
+      transform: scale(1.08);
+      background: #1ebe5d;
+    }
+
+    footer {
+      background: #111;
+      text-align: center;
+      padding: 35px;
+      color: #888;
+      font-size: 0.9em;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2em; }
+      section h2 { font-size: 1.7em; }
+    }
   </style>
 </head>
 <body>
 
 <header>
   <h1>iPhone Ricondizionati Certificati</h1>
-  <p>Qualità garantita, risparmio reale, e assistenza diretta da RAMSERVICE Roma.</p>
+  <p>Scopri la gamma RAMSERVICE – dispositivi controllati, garantiti e pronti subito in negozio a Roma.</p>
   <a class="cta-btn" href="https://wa.me/393475941558?text=Ciao,+vorrei+info+sugli+iPhone+ricondizionati+RAMSERVICE">💬 Scrivici su WhatsApp</a>
 </header>
 
-<div class="gallery">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%208.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%209.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%202.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%203.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%207.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%206.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%204.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%205.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%2013.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%2012.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%2010.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%2011.jpg">
-  <img src="https://ramassistenza.github.io/ramservice-static//img-landing/PHOTO-2025-10-17-10-37-12%2014.jpg">
+<!-- SLIDER -->
+<div class="slider-container">
+  <div class="slider" id="slider">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%208.jpg" alt="iPhone Ricondizionati Roma">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%209.jpg">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%207.jpg">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%204.jpg">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%2011.jpg">
+    <img src="https://ramassistenza.github.io/ramservice-static/img-landing/PHOTO-2025-10-17-10-37-12%2013.jpg">
+  </div>
+  <div class="slider-buttons">
+    <button id="prev">❮</button>
+    <button id="next">❯</button>
+  </div>
 </div>
 
 <section>
@@ -68,15 +184,52 @@
     <li>Controllo tecnico completo di oltre 30 punti</li>
     <li>Risparmio fino al <span class="highlight">40%</span> rispetto al nuovo</li>
     <li><strong>Pellicola protettiva in omaggio</strong> con ogni acquisto</li>
-    <li>Pronta consegna diretta in negozio</li>
+    <li>Pronta consegna diretta in negozio a Roma</li>
     <li>Pagamenti sicuri e possibilità di finanziamento</li>
+    <li>Assistenza post-vendita dedicata</li>
   </ul>
-  <a class="cta-btn" href="https://wa.me/393475941558?text=Ciao,+vorrei+info+sugli+iPhone+ricondizionati+RAMSERVICE">📲 Richiedi ora info su WhatsApp</a>
+  <br><br>
+  <a class="cta-btn" href="https://wa.me/393475941558?text=Ciao,+vorrei+info+sugli+iPhone+ricondizionati+RAMSERVICE">📲 Richiedi info su WhatsApp</a>
 </section>
+
+<!-- CTA FISSA -->
+<a href="https://wa.me/393475941558?text=Ciao,+vorrei+info+sugli+iPhone+ricondizionati+RAMSERVICE" class="fixed-whatsapp">
+  💬 Chatta con RAMSERVICE
+</a>
 
 <footer>
   © 2025 RAMSERVICE Roma – iPhone Ricondizionati | Via di riferimento, Roma  
 </footer>
+
+<script>
+  const slider = document.getElementById('slider');
+  const next = document.getElementById('next');
+  const prev = document.getElementById('prev');
+  let index = 0;
+
+  function showSlide() {
+    const width = slider.clientWidth;
+    slider.style.transform = `translateX(-${index * width}px)`;
+  }
+
+  next.addEventListener('click', () => {
+    index = (index + 1) % slider.children.length;
+    showSlide();
+  });
+
+  prev.addEventListener('click', () => {
+    index = (index - 1 + slider.children.length) % slider.children.length;
+    showSlide();
+  });
+
+  // autoplay
+  setInterval(() => {
+    index = (index + 1) % slider.children.length;
+    showSlide();
+  }, 4000);
+
+  window.addEventListener('resize', showSlide);
+</script>
 
 </body>
 </html>
