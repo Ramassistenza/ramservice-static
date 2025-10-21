@@ -2,47 +2,28 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Slideshow UHD Ruotata 90°</title>
-  <meta name="color-scheme" content="dark light" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RAMONITOR — Slideshow</title>
   <style>
-    :root {
-      --bg: #000;
-      --transition-ms: 350;   /* durata dissolvenza */
-      --slide-seconds: 7;     /* tempo per slide */
-      --max-probe: 300;       /* max file da provare se non usi config.json */
-      --images-folder: "img"; /* cartella immagini */
-      --hide-cursor-ms: 2000; /* nascondi cursore dopo N ms */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #000;
     }
-
-    /* Reset & fullbleed */
-    * { box-sizing: border-box; margin:0; padding:0; }
-    html, body { height:100%; width:100%; overflow:hidden; background:var(--bg); }
-
-    /* Wrapper RUOTATO 90° VERSO DESTRA
-       - trucco: diamo al wrapper dimensioni "scambiate" (100vh x 100vw)
-       - ruotiamo di 90deg e trasliamo per mantenere l'origine in alto a sinistra
-    */
     .rotated {
       position: fixed;
-      top:0; left:0;
+      top: 0;
+      left: 0;
       width: 100vh;
       height: 100vw;
       transform: rotate(90deg) translateY(-100%);
       transform-origin: top left;
+      background: #000;
       overflow: hidden;
-      background: var(--bg);
     }
-
-    /* Stage per le immagini (cover, centrato) */
-    .stage {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      background: var(--bg);
-    }
-
-    /* Due layer per crossfade */
     .layer {
       position: absolute;
       inset: 0;
@@ -50,387 +31,63 @@
       background-size: cover;
       background-repeat: no-repeat;
       opacity: 0;
-      transition: opacity var(--transition-ms)ms linear;
-      will-change: opacity, background-image;
+      transition: opacity 0.5s linear;
+      will-change: opacity;
     }
     .layer.show { opacity: 1; }
-
-    /* Overlay info (debug facoltativo) */
-    .hud {
-      position:absolute; right:12px; bottom:12px;
-      font: 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      color: #fff9;
-      background: #0006;
-      padding: 6px 8px;
-      border-radius: 8px;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* Suggerimenti comandi (scompare dopo 6s) */
-    .tips {
-      position:absolute; left:12px; bottom:12px;
-      font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
-      color: #fff;
-      background: #0008;
-      padding: 8px 10px;
-      border-radius: 10px;
-      user-select: none;
-      opacity: 1;
-      transition: opacity .4s ease;
-    }
-    .tips.hide { opacity: 0; }
-
-    /* Nascondi il cursore dopo inattività */
-    body.hide-cursor { cursor: none; }
-
-    /* Fullscreen prompt (mostrato se non in fullscreen) */
-    .fs-badge {
-      position:absolute; top:12px; left:12px;
-      color:#fff; background:#0008;
-      padding:6px 10px; border-radius:10px; font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
-      user-select:none;
-    }
-
-    /* Messaggi errore */
-    .empty {
-      position:absolute; inset:0; display:grid; place-items:center;
-      color:#fff; font: 16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif;
-      text-align:center; padding: 24px;
-    }
-    .empty a { color:#9cf; text-decoration: underline; }
   </style>
 </head>
 <body>
-  <div class="rotated" id="app">
-    <div class="stage">
-      <div class="layer" id="layerA" aria-hidden="true"></div>
-      <div class="layer" id="layerB" aria-hidden="true"></div>
-    </div>
-
-    <div class="fs-badge" id="fsBadge">Premi <b>F</b> per schermo intero</div>
-    <div class="tips" id="tips">
-      ⏯︎ Spazio: Play/Pausa &nbsp; • &nbsp; ← / →: Precedente/Successiva &nbsp; • &nbsp; F: Fullscreen &nbsp; • &nbsp; R: Ruota
-    </div>
-    <div class="hud" id="hud" aria-live="polite"></div>
-    <div class="empty" id="empty" hidden>
-      Nessuna immagine trovata in <code>/img</code>.<br/>
-      Aggiungi file <b>JPG/PNG</b> (es. <code>01.jpg</code>, <code>02.png</code>)<br/>
-      oppure crea un <code>config.json</code> con la lista.<br/><br/>
-      <small>Vedi istruzioni nel README del progetto.</small>
-    </div>
+  <div class="rotated">
+    <div class="layer" id="A"></div>
+    <div class="layer" id="B"></div>
   </div>
 
   <script>
-    // ============================
-    // CONFIG
-    // ============================
-    const CONFIG = {
-      imagesFolder: 'img',         // cartella immagini
-      slideSeconds:  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slide-seconds')) || 7,
-      maxProbe:      parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-probe')) || 300,
-      shuffle:       false,        // true per ordine casuale (se non usi config.json)
-      loop:          true,         // riparte da capo
-      startPaused:   false,        // avvio in pausa
-      tryConfigJSON: true,         // prova a caricare /config.json
-      fadeMs:        parseInt(getComputedStyle(document.documentElement).getPropertyValue('--transition-ms')) || 350,
-    };
+    const IMAGES = [
+      "img/01.jpg",
+      "img/02.jpg",
+      "img/03.jpg"
+    ];
 
-    // ============================
-    // UTIL
-    // ============================
-    const qs = (s, el=document) => el.querySelector(s);
+    let index = 0;
+    let showingA = true;
+    const A = document.getElementById("A");
+    const B = document.getElementById("B");
 
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-    function shuffleInPlace(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+    function showNext() {
+      const next = IMAGES[index % IMAGES.length];
+      const front = showingA ? A : B;
+      const back  = showingA ? B : A;
+      back.style.backgroundImage = `url("${next}?t=${Date.now()}")`;
+      back.classList.add("show");
+      front.classList.remove("show");
+      showingA = !showingA;
+      index++;
     }
 
-    function isFullscreen() {
-      return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    function startSlideshow() {
+      showNext();
+      setInterval(showNext, 7000); // 7 secondi per slide
     }
 
-    function requestFullscreen(el) {
-      (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || el.mozRequestFullScreen).call(el);
-    }
+    startSlideshow();
 
-    function exitFullscreen() {
-      (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen).call(document);
-    }
-
-    // ============================
-    // CARICAMENTO LISTA IMMAGINI
-    // ============================
-    async function fetchConfigJSON() {
-      try {
-        const res = await fetch('config.json', { cache: 'no-store' });
-        if (!res.ok) return null;
-        const data = await res.json();
-        if (Array.isArray(data.images) && data.images.length) {
-          // normalizza percorsi
-          return data.images.map(p => {
-            if (/^https?:\/\//i.test(p)) return p; // url assoluto
-            return `${CONFIG.imagesFolder}/${p.replace(/^\.?\/*/,'')}`;
-          });
-        }
-      } catch(_e) { /* ignora */ }
-      return null;
-    }
-
-    async function probeImagesNumerical() {
-      const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.PNG'];
-      const found = [];
-
-      // Prova 01..NN (padding 2) poi 1..NN
-      const candidates = [];
-      for (let i=1; i<=CONFIG.maxProbe; i++) {
-        const n2 = String(i).padStart(2,'0');
-        for (const base of [n2, String(i)]) {
-          for (const ext of exts) {
-            candidates.push(`${CONFIG.imagesFolder}/${base}${ext}`);
-          }
-        }
-      }
-
-      // Verifica esistenza con Image() (evita problemi HEAD/CORS)
-      const testOne = (url) => new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve({ ok:true, url });
-        img.onerror = () => resolve({ ok:false, url });
-        img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-      });
-
-      for (const url of candidates) {
-        const r = await testOne(url);
-        if (r.ok) {
-          // Evita duplicati (es. 01.jpg e 01.JPG)
-          if (!found.includes(url)) found.push(url);
-        }
-        // ottimizzazione: se abbiamo superato 5 consecutivi senza match e
-        // abbiamo almeno 3 immagini, possiamo fermarci (euristica)
-        // (disattiva se preferisci completa scansione)
-        if (found.length >= 3 && r.ok === false) {
-          // no-op; lasciamo scorrere: la scansione completa garantisce copertura
-        }
-      }
-      return found;
-    }
-
-    async function loadImageList() {
-      // 1) Prova config.json (se presente)
-      if (CONFIG.tryConfigJSON) {
-        const list = await fetchConfigJSON();
-        if (list && list.length) return list;
-      }
-      // 2) Altrimenti nomi numerici
-      const list = await probeImagesNumerical();
-      if (CONFIG.shuffle) shuffleInPlace(list);
-      return list;
-    }
-
-    // ============================
-    // SLIDESHOW
-    // ============================
-    class Slideshow {
-      constructor(urls) {
-        this.urls = urls;
-        this.i = -1;
-        this.timer = null;
-        this.paused = !!CONFIG.startPaused;
-        this.layerA = qs('#layerA');
-        this.layerB = qs('#layerB');
-        this.showA = true;
-      }
-
-      currentURL() { return this.urls[this.i] || ''; }
-
-      async start() {
-        if (!this.urls.length) return;
-        this.next(true);
-        if (!this.paused) this._arm();
-      }
-
-      _arm() {
-        this._clear();
-        this.timer = setTimeout(() => this.next(), CONFIG.slideSeconds * 1000);
-      }
-
-      _clear() {
-        if (this.timer) { clearTimeout(this.timer); this.timer = null; }
-      }
-
-      pause() {
-        this.paused = true;
-        this._clear();
-        hud(`Pausa ▌▌ — ${this.i+1}/${this.urls.length}`);
-      }
-
-      play() {
-        if (!this.urls.length) return;
-        this.paused = false;
-        this._arm();
-        hud(`Play ▶ — ${this.i+1}/${this.urls.length}`);
-      }
-
-      toggle() { this.paused ? this.play() : this.pause(); }
-
-      prev() {
-        if (!this.urls.length) return;
-        this.i = (this.i - 1 + this.urls.length) % this.urls.length;
-        this._show();
-        if (!this.paused) this._arm();
-      }
-
-      next(first=false) {
-        if (!this.urls.length) return;
-        this.i = (this.i + 1) % this.urls.length;
-        this._show(first);
-        if (!this.paused) this._arm();
-      }
-
-      _show(first=false) {
-        const url = this.currentURL();
-        const front = this.showA ? this.layerA : this.layerB;
-        const back  = this.showA ? this.layerB : this.layerA;
-
-        // Imposta la nuova immagine sul layer "back", poi crossfade veloce
-        back.style.transition = 'none';
-        back.style.opacity = 0;
-        back.style.backgroundImage = `url("${url}")`;
-
-        // forza reflow per applicare la transizione
-        // eslint-disable-next-line no-unused-expressions
-        back.offsetHeight;
-
-        back.style.transition = `opacity ${CONFIG.fadeMs}ms linear`;
-        back.classList.add('show');
-
-        // nasconde il layer "front"
-        front.classList.remove('show');
-
-        // scambia i layer
-        this.showA = !this.showA;
-
-        hud(`${this.paused ? '⏸' : '▶'} ${this.i+1}/${this.urls.length}`);
-        if (first) tipsHideSoon();
-      }
-    }
-
-    // ============================
-    // HUD / UI Minima
-    // ============================
-    const hudEl = qs('#hud');
-    function hud(txt) { hudEl.textContent = txt; }
-
-    const tipsEl = qs('#tips');
-    let tipsHideTO = null;
-    function tipsHideSoon() {
-      clearTimeout(tipsHideTO);
-      tipsHideTO = setTimeout(() => tipsEl.classList.add('hide'), 6000);
-    }
-
-    // Nascondi cursore dopo inattività
-    let cursorTO = null;
-    function resetCursorTimer() {
-      document.body.classList.remove('hide-cursor');
-      clearTimeout(cursorTO);
-      cursorTO = setTimeout(() => document.body.classList.add('hide-cursor'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hide-cursor-ms')) || 2000);
-    }
-    ['mousemove','mousedown','keyup','touchstart'].forEach(ev => {
-      window.addEventListener(ev, resetCursorTimer, {passive:true});
-    });
-    resetCursorTimer();
-
-    // Badge fullscreen
-    const fsBadge = qs('#fsBadge');
-    function refreshFSBadge(){ fsBadge.style.display = isFullscreen() ? 'none' : 'block'; }
-    document.addEventListener('fullscreenchange', refreshFSBadge);
-    refreshFSBadge();
-
-    // ============================
-    // ROTAZIONE EXTRA (opzionale)
-    // ============================
-    // La pagina è già ruotata 90° verso destra.
-    // Tasto "R" permette di alternare tra:
-    //  - 90° (default)
-    //  - 0° (nessuna rotazione) — utile per debug o monitor non ruotati
-    let rotated = true;
-    function toggleRotation() {
-      const app = qs('#app');
-      if (rotated) {
-        // passa a 0°: occupa l'intero viewport classico
-        app.style.transform = 'none';
-        app.style.width = '100vw';
-        app.style.height = '100vh';
-        rotated = false;
-      } else {
-        // torna a 90° verso destra
-        app.style.width = '100vh';
-        app.style.height = '100vw';
-        app.style.transform = 'rotate(90deg) translateY(-100%)';
-        app.style.transformOrigin = 'top left';
-        rotated = true;
-      }
-    }
-
-    // ============================
-    // BOOT
-    // ============================
-    (async function main(){
-      const empty = qs('#empty');
-
-      const urls = await loadImageList();
-      if (!urls.length) {
-        empty.hidden = false;
-        hud('Nessuna immagine');
-        return;
-      }
-
-      hud(`Caricate ${urls.length} immagini`);
-      const show = new Slideshow(urls);
-      window.__show = show; // per debug da console
-      await show.start();
-
-      // Keybindings
-      window.addEventListener('keydown', (e) => {
-        switch (e.key.toLowerCase()) {
-          case ' ': e.preventDefault(); show.toggle(); break;
-          case 'arrowright': show.next(); break;
-          case 'arrowleft': show.prev(); break;
-          case 'f':
-            isFullscreen() ? exitFullscreen() : requestFullscreen(document.documentElement);
-            break;
-          case 'r': toggleRotation(); break;
-        }
-      });
-    })();
-
-    /* === MANTENIMENTO ATTIVO SMART TV === */
-
-    // 🔄 Ricarica automatica ogni 5 minuti
+    // 🔄 Ricarica ogni 5 minuti
     setInterval(() => location.reload(), 300000);
 
-    // 🖱️ Simula attività utente ogni 30 secondi
-    setInterval(() => {
-      const e = new Event("mousemove");
-      window.dispatchEvent(e);
-    }, 30000);
+    // ⚡ Mantieni attivo lo schermo (LG workaround)
+    setInterval(() => window.dispatchEvent(new Event("mousemove")), 30000);
 
-    // 🎬 Video invisibile per evitare standby video (fallback)
+    // 🎬 Video invisibile per evitare standby video
     const keepAlive = document.createElement("video");
-    keepAlive.src = "keepalive.mp4"; // o base64 inline
+    keepAlive.src = "keepalive.mp4";
     keepAlive.autoplay = true;
     keepAlive.loop = true;
     keepAlive.muted = true;
     keepAlive.playsInline = true;
     keepAlive.style = "position:fixed;width:1px;height:1px;opacity:0;";
     document.body.appendChild(keepAlive);
-    
   </script>
 </body>
 </html>
