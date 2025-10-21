@@ -5,36 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RAMONITOR — Slideshow</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      background: #000;
-    }
+    html, body { margin:0; padding:0; height:100%; width:100%; overflow:hidden; background:#000; }
     .rotated {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vh;
-      height: 100vw;
-      transform: rotate(90deg) translateY(-100%);
-      transform-origin: top left;
-      background: #000;
-      overflow: hidden;
+      position:fixed; top:0; left:0;
+      width:100vh; height:100vw;
+      transform:rotate(90deg) translateY(-100%);
+      transform-origin:top left;
+      background:#000; overflow:hidden;
     }
     .layer {
-      position: absolute;
-      inset: 0;
-      background-position: center center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      opacity: 0;
-      transition: opacity 0.5s linear;
-      will-change: opacity;
+      position:absolute; inset:0;
+      background-position:center center;
+      background-size:cover;
+      background-repeat:no-repeat;
+      opacity:0;
+      transition:opacity .5s linear;
     }
-    .layer.show { opacity: 1; }
+    .layer.show { opacity:1; }
   </style>
 </head>
 <body>
@@ -44,42 +31,92 @@
   </div>
 
   <script>
-    const IMAGES = [
-      "img/01.jpg",
-      "img/02.jpg",
-      "img/03.jpg"
-    ];
+    // =============================
+    // CONFIG
+    // =============================
+    const IMG_FOLDER = 'img';
+    const SLIDE_SECONDS = 7;
+    const REFRESH_MINUTES = 5;
 
+    let IMAGES = [];
     let index = 0;
     let showingA = true;
     const A = document.getElementById("A");
     const B = document.getElementById("B");
 
+    // =============================
+    // FUNZIONI
+    // =============================
+
+    async function probeImages() {
+      const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.PNG'];
+      const found = [];
+      const MAX = 300;
+
+      for (let i=1; i<=MAX; i++) {
+        const n2 = String(i).padStart(2,'0');
+        for (const base of [n2, String(i)]) {
+          for (const ext of exts) {
+            const url = `${IMG_FOLDER}/${base}${ext}?t=${Date.now()}`;
+            const ok = await checkExists(url);
+            if (ok) { found.push(url); break; }
+          }
+          if (found.length >= i) break;
+        }
+      }
+      return found;
+    }
+
+    function checkExists(url) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    }
+
     function showNext() {
+      if (!IMAGES.length) return;
       const next = IMAGES[index % IMAGES.length];
       const front = showingA ? A : B;
       const back  = showingA ? B : A;
-      back.style.backgroundImage = `url("${next}?t=${Date.now()}")`;
+      back.style.backgroundImage = `url("${next}")`;
       back.classList.add("show");
       front.classList.remove("show");
       showingA = !showingA;
       index++;
     }
 
-    function startSlideshow() {
+    async function refreshImageList() {
+      console.log("🔄 Ricerca nuove immagini...");
+      const newList = await probeImages();
+      if (newList.length) {
+        IMAGES = newList;
+        console.log(`✅ ${IMAGES.length} immagini trovate`);
+      } else {
+        console.warn("⚠️ Nessuna immagine trovata");
+      }
+    }
+
+    async function startSlideshow() {
+      await refreshImageList();
       showNext();
-      setInterval(showNext, 7000); // 7 secondi per slide
+      setInterval(showNext, SLIDE_SECONDS * 1000);
+      // ogni 5 minuti, ricontrolla la cartella
+      setInterval(refreshImageList, REFRESH_MINUTES * 60 * 1000);
     }
 
     startSlideshow();
 
-    // 🔄 Ricarica ogni 5 minuti
-    setInterval(() => location.reload(), 300000);
+    // =============================
+    // MANTENIMENTO ATTIVO
+    // =============================
 
-    // ⚡ Mantieni attivo lo schermo (LG workaround)
+    // Simula attività utente
     setInterval(() => window.dispatchEvent(new Event("mousemove")), 30000);
 
-    // 🎬 Video invisibile per evitare standby video
+    // Video invisibile anti-standby
     const keepAlive = document.createElement("video");
     keepAlive.src = "keepalive.mp4";
     keepAlive.autoplay = true;
