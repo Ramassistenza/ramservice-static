@@ -64,13 +64,14 @@ small{color:var(--muted)}
         <label>Mese</label>
         <select id="monthSel"></select>
       </div>
-      <div style="display:flex;align-items:end"><button class="btn secondary" onclick="copyPrev()">Copia dal mese precedente</button></div>
+      <div style="display:flex;align-items:end;gap:8px;flex-wrap:wrap">
+        <button class="btn secondary" onclick="copyPrev()">Copia dal mese precedente</button>
+        <button class="btn secondary" onclick="copyAll()">📆 Copia su tutti i 12 mesi</button>
+      </div>
     </div>
 
     <h4>Fatturato</h4>
     <div class="row">
-      <div><label>Target principale (main_thr)</label><input id="f_thr" type="number" min="0"></div>
-      <div><label>Risultato (result)</label><input id="f_res" type="number" min="0"></div>
       <div><label>Premio base (€)</label><input id="f_base" type="number" min="0"></div>
       <div></div>
       <div><label>Soglia Extra 1</label><input id="f_x1t" type="number" min="0"></div>
@@ -81,8 +82,6 @@ small{color:var(--muted)}
 
     <h4>WindTre</h4>
     <div class="row">
-      <div><label>Target principale</label><input id="w_thr" type="number" min="0"></div>
-      <div><label>Risultato</label><input id="w_res" type="number" min="0"></div>
       <div><label>Premio base (€)</label><input id="w_base" type="number" min="0"></div>
       <div></div>
       <div><label>Soglia Extra 1</label><input id="w_x1t" type="number" min="0"></div>
@@ -93,8 +92,6 @@ small{color:var(--muted)}
 
     <h4>ho. Mobile</h4>
     <div class="row">
-      <div><label>Target principale</label><input id="h_thr" type="number" min="0"></div>
-      <div><label>Risultato</label><input id="h_res" type="number" min="0"></div>
       <div><label>Premio base (€)</label><input id="h_base" type="number" min="0"></div>
       <div></div>
       <div><label>Soglia Extra 1</label><input id="h_x1t" type="number" min="0"></div>
@@ -138,6 +135,7 @@ function loadTemplate(){
     users:[{name:"Emanuele",user:"emanuele",pass:"Giorgia2016"}],
     config:{}
   };
+  MESI.forEach(m=> DATA.config[m] = {fatt:{},wind:{},ho:{}} );
   renderUsers();
   fillMonthUI({});
   $("loadMsg").textContent = "Template pronto.";
@@ -153,7 +151,6 @@ async function loadJson(){
     DATA = await r.json();
     $("loadMsg").textContent="✅ Caricato!";
     renderUsers();
-    // se esiste il mese selezionato, valorizza form
     const m = $("monthSel").value;
     fillMonthUI(DATA.config[m]||{});
   }catch(e){
@@ -183,22 +180,10 @@ function addUser(){
 function delUser(i){ DATA.users.splice(i,1); renderUsers(); }
 
 function fillMonthUI(cfg){
-  const norm = k => {
-    const o = (cfg[k]||{});
-    return {
-      main_thr: o.main_thr ?? o.x1_thr ?? 0,
-      result:   o.result   ?? 0,
-      base:     o.base_prize ?? o.base ?? 0,
-      x1t:      o.x1_thr ?? 0,
-      x1p:      o.x1_prize ?? 0,
-      x2t:      o.x2_thr ?? 0,
-      x2p:      o.x2_prize ?? 0
-    };
-  };
-  const F = norm("fatt"), W = norm("wind"), H = norm("ho");
-  $("f_thr").value=F.main_thr; $("f_res").value=F.result; $("f_base").value=F.base; $("f_x1t").value=F.x1t; $("f_x1p").value=F.x1p; $("f_x2t").value=F.x2t; $("f_x2p").value=F.x2p;
-  $("w_thr").value=W.main_thr; $("w_res").value=W.result; $("w_base").value=W.base; $("w_x1t").value=W.x1t; $("w_x1p").value=W.x1p; $("w_x2t").value=W.x2t; $("w_x2p").value=W.x2p;
-  $("h_thr").value=H.main_thr; $("h_res").value=H.result; $("h_base").value=H.base; $("h_x1t").value=H.x1t; $("h_x1p").value=H.x1p; $("h_x2t").value=H.x2t; $("h_x2p").value=H.x2p;
+  const F = cfg.fatt||{}, W = cfg.wind||{}, H = cfg.ho||{};
+  $("f_base").value=F.base_prize||0; $("f_x1t").value=F.x1_thr||0; $("f_x1p").value=F.x1_prize||0; $("f_x2t").value=F.x2_thr||0; $("f_x2p").value=F.x2_prize||0;
+  $("w_base").value=W.base_prize||0; $("w_x1t").value=W.x1_thr||0; $("w_x1p").value=W.x1_prize||0; $("w_x2t").value=W.x2_thr||0; $("w_x2p").value=W.x2_prize||0;
+  $("h_base").value=H.base_prize||0; $("h_x1t").value=H.x1_thr||0; $("h_x1p").value=H.x1_prize||0; $("h_x2t").value=H.x2_thr||0; $("h_x2p").value=H.x2_prize||0;
 }
 
 $("monthSel").onchange = ()=>{
@@ -208,22 +193,31 @@ $("monthSel").onchange = ()=>{
 
 function copyPrev(){
   const idx = MESI.indexOf($("monthSel").value);
-  if(idx<=0) return;
+  if(idx<=0) return alert("Nessun mese precedente.");
   const prev = DATA.config[MESI[idx-1]];
   if(!prev) return alert("Nessuna config del mese precedente.");
   DATA.config[MESI[idx]] = JSON.parse(JSON.stringify(prev));
   fillMonthUI(DATA.config[MESI[idx]]);
+  $("saveMsg").textContent="📋 Copiato da " + MESI[idx-1];
+  setTimeout(()=>$("saveMsg").textContent="",2000);
+}
+
+function copyAll(){
+  const current = $("monthSel").value;
+  const base = DATA.config[current];
+  MESI.forEach(m=>{
+    DATA.config[m] = JSON.parse(JSON.stringify(base));
+  });
+  $("saveMsg").textContent="📆 Copiato su tutti i 12 mesi.";
+  setTimeout(()=>$("saveMsg").textContent="",2500);
 }
 
 function saveMonth(){
   const m = $("monthSel").value;
   DATA.config[m] = {
-    fatt:{ main_thr:+$("f_thr").value, result:+$("f_res").value, base_prize:+$("f_base").value,
-           x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value },
-    wind:{ main_thr:+$("w_thr").value, result:+$("w_res").value, base_prize:+$("w_base").value,
-           x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value },
-    ho:{   main_thr:+$("h_thr").value, result:+$("h_res").value, base_prize:+$("h_base").value,
-           x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value }
+    fatt:{ base_prize:+$("f_base").value, x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value },
+    wind:{ base_prize:+$("w_base").value, x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value },
+    ho:{   base_prize:+$("h_base").value, x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value }
   };
   $("saveMsg").textContent="✅ Salvato per " + m;
   setTimeout(()=>$("saveMsg").textContent="",2000);
