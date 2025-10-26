@@ -216,8 +216,8 @@ function metricCard({name, target, result, key}){
   const over = pct >= 100;
   const prize = calcPrize(key, pct);
 
-  const prettyTarget = name==="Fatturato" ? euro(t) : t;
-  const prettyResult = name==="Fatturato" ? euro(r) : r;
+  const prettyTarget = name==="Fatturato" ? "" : t;
+  const prettyResult = name==="Fatturato" ? "" : r;
 
   const wrap = document.createElement("div");
   wrap.className = "metric";
