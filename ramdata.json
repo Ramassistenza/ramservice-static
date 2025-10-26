@@ -1,0 +1,18 @@
+{
+  "users": [
+    { "name": "Andrea", "user": "andrea", "pass": "1234" },
+    { "name": "Emanuele", "user": "emanuele", "pass": "abcd" }
+  ],
+  "config": {
+    "GENNAIO": {
+      "fatt": { "base": 200, "x1_thr": 28000, "x1_prize": 50, "x2_thr": 30000, "x2_prize": 100 },
+      "wind": { "base": 50, "x1_thr": 20, "x1_prize": 20, "x2_thr": 25, "x2_prize": 50 },
+      "ho":   { "base": 50, "x1_thr": 20, "x1_prize": 20, "x2_thr": 25, "x2_prize": 50 }
+    },
+    "FEBBRAIO": {
+      "fatt": { "base": 250, "x1_thr": 29000, "x1_prize": 50, "x2_thr": 31000, "x2_prize": 120 },
+      "wind": { "base": 60, "x1_thr": 21, "x1_prize": 25, "x2_thr": 26, "x2_prize": 60 },
+      "ho":   { "base": 55, "x1_thr": 18, "x1_prize": 20, "x2_thr": 22, "x2_prize": 45 }
+    }
+  }
+}
