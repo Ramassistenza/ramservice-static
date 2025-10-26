@@ -176,11 +176,24 @@ $("#lbtn").onclick = async () => {
 };
 
 async function loadAllMonths(){
-  // ritorna array: [{mese:"OTTOBRE", fatt: N, wind: N, ho: N}, ...]
-  const arr = await (await fetch(API_URL+"?v="+Date.now())).json();
-  LIVE = {};
-  (arr||[]).forEach(o => { if(o && o.mese) LIVE[String(o.mese).toUpperCase()] = { fatt:+(o.fatt||0), wind:+(o.wind||0), ho:+(o.ho||0) }; });
+  try {
+    const res = await fetch(API_URL+"?v="+Date.now());
+    const txt = await res.text();
+    console.log("LIVE RAW:", txt.slice(0,200));  // debug
+    const arr = JSON.parse(txt);
+    LIVE = {};
+    (arr || []).forEach(o => {
+      if(o && o.mese)
+        LIVE[o.mese.toUpperCase()] = {
+          fatt:+(o.fatt||0), wind:+(o.wind||0), ho:+(o.ho||0)
+        };
+    });
+    console.log("LIVE parsed:", LIVE);
+  } catch(e) {
+    console.error("Errore caricamento dati live:", e);
+  }
 }
+
 
 /* Utils */
 const euro = v => Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
