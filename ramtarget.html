@@ -45,7 +45,6 @@
   #loginScreen input{padding:10px;width:90%;max-width:280px;border-radius:8px;border:1px solid #ccc;margin:6px 0}
   #loginScreen button{background:var(--ram-blue);color:#fff;border:0;padding:10px 24px;border-radius:8px;margin-top:10px}
   .subbar-label{font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
-  .errorcard{background:#fff3f3;border:1px solid #fca5a5;color:#7f1d1d;border-radius:12px;padding:12px}
 </style>
 </head>
 <body>
@@ -59,223 +58,84 @@
   <div id="loginMsg" style="margin-top:10px;font-size:13px;color:#d00;"></div>
 </div>
 
-<!-- HEADER -->
 <header id="header">
   <div class="wrap">
     <div class="brand">
       <div class="logo"><div></div><h1>RAMSERVICE · Target</h1></div>
       <button class="logout" id="logoutBtn">Logout</button>
     </div>
-    <div class="toolbar">
-      <div class="selector">
-        <button id="prevBtn">◀</button>
-        <div class="label" id="monthLabel">—</div>
-        <button id="nextBtn">▶</button>
-      </div>
-      <button class="refresh" id="refreshBtn">Aggiorna</button>
-    </div>
   </div>
 </header>
 
-<!-- APP -->
 <main id="app"></main>
 <footer id="footer">© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-/* =========================
-   CONFIG
-========================= */
-const ENDPOINT="https://script.google.com/macros/s/AKfycbzDxWpKyBbR7muK-wkmE2lSp4zoc70juhvXf9teOZ9BdtrJnqtK8Q_kFK7XUvGLxeUn/exec";
-const COL={mese:"mese",fatturato_target:"fatturato_target",fatturato_risultato:"fatturato_risultato",wind3_target:"Wind3_target",wind3_result:"Wind3_Risultato",ho_target:"Ho_target",ho_result:"ho_risultato"};
-const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-function meseCorrenteKey(){return MESI[new Date().getMonth()];}
-
-/* =========================
-   UTILS
-========================= */
-function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");return Number(s)||0;}
+const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+function meseCorrente(){return MESI[new Date().getMonth()];}
 function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
-function pct(a,b){return b>0?(a/b)*100:0;}
-function bar(percent,cls=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${cls}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
-function rowPercent(pctVal,over){const d=document.createElement("div");d.className="percent-row";d.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div><div>${over?`<span class='badge-ok'>Target completato</span>`:""}</div>`;return d;}
-function cfgKey(m){return `ram_cfg_${m}`;}
-function getCfg(m){return JSON.parse(localStorage.getItem(cfgKey(m))||"null")||{
-  // default (puoi cambiarli nel configuratore)
-  fatt:{base:200,x1_thr:28000,x1_prize:50,x2_thr:30000,x2_prize:100},
-  wind:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50},
-  ho:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50}
-};}
 
-/* =========================
-   LOGIN (utenti dal foglio TARGET I:J:K)
-========================= */
-async function getUsers(){
-  const res = await fetch(ENDPOINT + "?table=users", { cache: "no-store" });
-  if(!res.ok) throw new Error("Impossibile leggere gli utenti");
-  return await res.json();
-}
+/* LOGIN */
+let DATA={};
 async function tryLogin(){
-  const u=document.getElementById("loginUser").value.trim().toLowerCase();
-  const p=document.getElementById("loginPass").value.trim();
   try{
-    const list=await getUsers();
-    const found=list.find(x=>String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
+    const res=await fetch(JSON_URL+"?v="+Date.now());
+    DATA=await res.json();
+    const users=DATA.users||[];
+    const u=document.getElementById("loginUser").value.trim().toLowerCase();
+    const p=document.getElementById("loginPass").value.trim();
+    const found=users.find(x=>x.user.toLowerCase()===u && x.pass===p);
     if(found){
-      localStorage.setItem("ram_logged_user",found.user);
-      localStorage.setItem("ram_logged_name",found.name);
+      localStorage.setItem("ram_user",found.user);
       showApp(found.name);
     }else{
       document.getElementById("loginMsg").textContent="❌ Credenziali errate";
     }
-  }catch(err){
-    document.getElementById("loginMsg").textContent="Errore accesso: " + err.message;
+  }catch(e){
+    document.getElementById("loginMsg").textContent="Errore: "+e.message;
   }
 }
 document.getElementById("loginBtn").onclick=tryLogin;
-document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_logged_user");localStorage.removeItem("ram_logged_name");location.reload();};
-const logged=localStorage.getItem("ram_logged_user");
-if(logged) showApp(localStorage.getItem("ram_logged_name"));
-function showApp(name=""){
+document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_user");location.reload();};
+const logged=localStorage.getItem("ram_user");
+if(logged) init();
+
+function showApp(name){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("header").style.display="";
-  document.getElementById("app").style.display="";
   document.getElementById("footer").style.display="";
-  loadData();
+  init();
 }
 
-/* =========================
-   DATA & RENDER
-========================= */
-let RAW=[],idx=0;
-async function loadData(){
-  const app=document.getElementById("app");
-  app.innerHTML="<div class='card'>Caricamento dati…</div>";
-  try{
-    const res=await fetch(ENDPOINT,{cache:"no-store"});
-    if(!res.ok) throw new Error("Endpoint non disponibile");
-    const data=await res.json();
+/* DASHBOARD */
+function pct(a,b){return b>0?(a/b)*100:0;}
+function bar(p,c){const x=document.createElement("div");x.className="bar "+(c||"");x.innerHTML=`<div class="fill" style="width:${Math.min(p,100)}%"></div>`;return x;}
 
-    // Mappo i dati per mese e prendo solo i 12 in ordine
-    const map=new Map(); data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
-    RAW=MESI.map(m=>map.get(m)).filter(Boolean);
-
-    if(!RAW.length){app.innerHTML="<div class='errorcard'><b>Attenzione:</b> nessun dato ricevuto dall'endpoint. Controlla il foglio e le intestazioni.</div>";return;}
-
-    idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
-    render();
-  }catch(e){
-    app.innerHTML=`<div class='errorcard'>Errore: ${e.message}</div>`;
-  }
+function init(){
+  const mese=meseCorrente();
+  const app=document.getElementById("app");app.style.display="block";
+  const cfg=(DATA.config||{})[mese];
+  if(!cfg){app.innerHTML="<div class='card'>Nessuna configurazione per "+mese+"</div>";return;}
+  app.innerHTML=`<div class='card'><div class='month-title'><h2>${mese}</h2></div>${metric("Fatturato",cfg.fatt,false)}${metric("WindTre",cfg.wind,true)}${metric("ho. Mobile",cfg.ho,true)}</div>`;
 }
-
-function metricCard({name,target,result,showNumbers,cfg}){
-  const t=toNumber(target), r=toNumber(result);
-  const basePct=pct(r,t), over=basePct>=100;
-
-  const wrap=document.createElement("div"); wrap.className="metric";
-  const numsHTML = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : "";
-  wrap.innerHTML=`<div class="head"><div>${name}</div>${numsHTML}</div>`;
-
-  // barra principale
-  wrap.appendChild(bar(basePct, over?"over":""));
-  wrap.appendChild(rowPercent(basePct, over));
-
-  // extra 1
-  if(cfg.x1_thr>0){
-    const p1=pct(r,cfg.x1_thr);
-    const label1=document.createElement("div");
-    label1.className="subbar-label";
-    label1.innerHTML = showNumbers
-      ? `<span>Extra 1 · soglia: <b>${cfg.x1_thr}</b></span><span>${Math.round(p1)}%</span>`
-      : `<span>Extra 1</span><span>${Math.round(p1)}%</span>`;
-    wrap.appendChild(label1);
-    wrap.appendChild(bar(p1,"x1"));
-    if(r>=cfg.x1_thr){
-      const rw=document.createElement("div");rw.className="rewards";
-      rw.innerHTML=`🎉 Premio Extra 1: <b>${euro(cfg.x1_prize)}</b>`;
-      wrap.appendChild(rw);
-    }
-  }
-
-  // extra 2
-  if(cfg.x2_thr>0){
-    const p2=pct(r,cfg.x2_thr);
-    const label2=document.createElement("div");
-    label2.className="subbar-label";
-    label2.innerHTML = showNumbers
-      ? `<span>Extra 2 · soglia: <b>${cfg.x2_thr}</b></span><span>${Math.round(p2)}%</span>`
-      : `<span>Extra 2</span><span>${Math.round(p2)}%</span>`;
-    wrap.appendChild(label2);
-    wrap.appendChild(bar(p2,"x2"));
-    if(r>=cfg.x2_thr){
-      const rw=document.createElement("div");rw.className="rewards";
-      rw.innerHTML=`🎉 Premio Extra 2: <b>${euro(cfg.x2_prize)}</b>`;
-      wrap.appendChild(rw);
-    }
-  }
-
-  // premio base (100%)
-  if(over && cfg.base>0){
-    const rb=document.createElement("div");rb.className="rewards";
-    rb.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;
-    wrap.appendChild(rb);
-  }
-
-  return wrap;
+function metric(nome,cfg,show){
+  const r=cfg.result||0,t=cfg.target||cfg.x1_thr; // se vuoi inserire i risultati nel JSON
+  const p=pct(r,t),over=p>=100;
+  let html=`<div class='metric'><div class='head'><div>${nome}</div>${show?`<div class='nums'>Target ${t}</div>`:""}</div>`;
+  html+=bar(p,over?"over":"").outerHTML;
+  html+=`<div class='percent-row'><div class='percent'>${Math.round(p)}%</div>${over?"<span class='badge-ok'>Target completato</span>":""}</div>`;
+  // extra1
+  html+=`<div class='subbar-label'><span>Extra 1 soglia ${cfg.x1_thr}</span></div>`;
+  html+=bar(pct(r,cfg.x1_thr),"x1").outerHTML;
+  if(r>=cfg.x1_thr)html+=`<div class='rewards'>🎉 Premio Extra 1: <b>${euro(cfg.x1_prize)}</b></div>`;
+  // extra2
+  html+=`<div class='subbar-label'><span>Extra 2 soglia ${cfg.x2_thr}</span></div>`;
+  html+=bar(pct(r,cfg.x2_thr),"x2").outerHTML;
+  if(r>=cfg.x2_thr)html+=`<div class='rewards'>🎉 Premio Extra 2: <b>${euro(cfg.x2_prize)}</b></div>`;
+  if(over && cfg.base)html+=`<div class='rewards'>🎉 Premio Base: <b>${euro(cfg.base)}</b></div>`;
+  return html+"</div>";
 }
-
-function render(){
-  const app=document.getElementById("app"); app.innerHTML="";
-  if(!RAW.length){app.innerHTML="<div class='errorcard'>Nessun dato</div>";return;}
-  const row=RAW[idx]; const mese=row[COL.mese];
-  const cfg=getCfg(mese);
-  document.getElementById("monthLabel").textContent=mese;
-
-  const card=document.createElement("section"); card.className="card";
-  card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;
-
-  // Fatturato (niente cifre)
-  card.appendChild(
-    metricCard({
-      name:"Fatturato",
-      target:row[COL.fatturato_target],
-      result:row[COL.fatturato_risultato],
-      showNumbers:false,
-      cfg:cfg.fatt
-    })
-  );
-
-  // WindTre (cifre visibili)
-  card.appendChild(
-    metricCard({
-      name:"WindTre",
-      target:row[COL.wind3_target],
-      result:row[COL.wind3_result],
-      showNumbers:true,
-      cfg:cfg.wind
-    })
-  );
-
-  // ho. Mobile (cifre visibili)
-  card.appendChild(
-    metricCard({
-      name:"ho. Mobile",
-      target:row[COL.ho_target],
-      result:row[COL.ho_result],
-      showNumbers:true,
-      cfg:cfg.ho
-    })
-  );
-
-  app.appendChild(card);
-}
-
-/* =========================
-   NAV & INIT
-========================= */
-document.getElementById("prevBtn").onclick=()=>{if(!RAW.length)return;idx=(idx-1+RAW.length)%RAW.length;render();}
-document.getElementById("nextBtn").onclick=()=>{if(!RAW.length)return;idx=(idx+1)%RAW.length;render();}
-document.getElementById("refreshBtn").onclick=()=>loadData();
 </script>
 </body>
 </html>
