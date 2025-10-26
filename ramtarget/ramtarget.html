@@ -146,7 +146,8 @@ footer{color:var(--muted); text-align:center; padding:22px}
 <script>
 /* ====== CONFIG ====== */
 const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json"; // utenti + premi/extra
-const API_URL  = "https://script.google.com/macros/s/AKfycbzNTCqnylfnQWO4c8VP2nwrP6L10b_uBv_edPZAL8xRMTMPm9sS_QxcLMN94jY7ZqHq/exec"; // target + risultati per tutti i mesi
+// 👇 aggiorno all'URL che mi hai dato nel messaggio
+const API_URL  = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLj0LliGnFCEDnKAFsWZoyHiJNhB7KF5sHAHQ_PoIZ9OKs7LN6WQJ_4KP70QLvsf_jDJ-HEfj-_EpAWjdbyXtIX-yHfo9RiFOg_kAD8Ga1ee5aEWOkSWUZclshCHm-rqZNzGsrn_HN9WabZZU-EnTiPw-Ans0c3NUBEC5uC4Z_ts1o908xqD7rM6c4cdHWOmNj2yEHXkxVMVPfgv3apIm0XNLsa48hH_gr4mvk5leg5Glh8LsXg7CAsISOpzDzHU_9-mqyu2xJcLwIx4joGaJjn1sF1uxQ&lib=M8-APS_ZkBERmj0T07chV0Gs80ntowcNA";
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
 /* ===================== */
 
@@ -182,7 +183,6 @@ function cfgFor(m){
   const N = k => {
     const o = raw[k]||{};
     return {
-      // il target base lo prendiamo dall’API (sheet). qui restano i premi/extra
       x1_thr   : Number(o.x1_thr || 0),
       x1_prize : Number(o.x1_prize || 0),
       x2_thr   : Number(o.x2_thr || 0),
@@ -194,11 +194,11 @@ function cfgFor(m){
 }
 
 function prizesFor({base_prize,x1_thr,x1_prize,x2_thr,x2_prize}, value, baseTarget){
-  let got=0, left=0, status={base:false,x1:false,x2:false};
-  if(baseTarget>0 && value>=baseTarget && base_prize>0){ got+=base_prize; status.base=true; } else { left+=base_prize; }
-  if(x1_thr>0){ if(value>=x1_thr){ got+=x1_prize; status.x1=true; } else { left+=x1_prize; } }
-  if(x2_thr>0){ if(value>=x2_thr){ got+=x2_prize; status.x2=true; } else { left+=x2_prize; } }
-  return {got,left,status};
+  let got=0, left=0;
+  if(baseTarget>0 && value>=baseTarget && base_prize>0){ got+=base_prize; } else { left+=base_prize; }
+  if(x1_thr>0){ if(value>=x1_thr){ got+=x1_prize; } else { left+=x1_prize; } }
+  if(x2_thr>0){ if(value>=x2_thr){ got+=x2_prize; } else { left+=x2_prize; } }
+  return {got,left};
 }
 
 function makeBar(p, cls){ const d=document.createElement("div"); d.className="bar "+cls; d.innerHTML=`<div class="fill" style="--w:${p}%"></div>`; return d; }
@@ -207,18 +207,15 @@ function metricCard({title,value,baseTarget,conf,showNumbers}){
   const wrap = document.createElement("section");
   wrap.className="card";
 
-  // Header
   const sub = showNumbers ? `Target: <b>${baseTarget}</b> · Risultato: <b>${value}</b>` : `Progresso percentuale`;
   wrap.innerHTML = `<h3>${title}</h3><div class="sub">${sub}</div>`;
 
-  // Base bar (percent su base target dallo Sheets)
   const pBase = pct(value, baseTarget);
   wrap.appendChild(makeBar(pBase, "base"+(pBase>=100?" over":"")));
   const row = document.createElement("div"); row.className="row";
   row.innerHTML = `<div></div><div><span class="badge">${Math.round(pBase)}%</span></div>`;
   wrap.appendChild(row);
 
-  // Extra 1
   if(conf.x1_thr>0){
     const p1 = pct(value, conf.x1_thr);
     wrap.appendChild(makeBar(p1,"x1"));
@@ -226,7 +223,6 @@ function metricCard({title,value,baseTarget,conf,showNumbers}){
     r1.innerHTML = `<div>Extra 1${showNumbers?` · soglia ${conf.x1_thr}`:""}</div><div>${Math.round(p1)}%</div>`;
     wrap.appendChild(r1);
   }
-  // Extra 2
   if(conf.x2_thr>0){
     const p2 = pct(value, conf.x2_thr);
     wrap.appendChild(makeBar(p2,"x2"));
@@ -235,7 +231,6 @@ function metricCard({title,value,baseTarget,conf,showNumbers}){
     wrap.appendChild(r2);
   }
 
-  // Premi raggiunti / potenziali
   const pv = prizesFor(conf, value, baseTarget);
   const totals = document.createElement("div");
   totals.className="totals";
@@ -263,7 +258,7 @@ function metricCard({title,value,baseTarget,conf,showNumbers}){
 }
 
 /* ---------- BOOTSTRAP ---------- */
-document.getElementById("lbtn").onclick = async ()=>{
+const doLogin = async ()=>{
   $("#lmsg").textContent = "";
   showLoader(true);
   try{
@@ -274,18 +269,18 @@ document.getElementById("lbtn").onclick = async ()=>{
 
     const u=$("#luser").value.trim(), p=$("#lpass").value.trim();
     const ok = (DATA.users||[]).find(x=>String(x.user).trim()===u && String(x.pass).trim()===p);
-    if(!ok){ $("#lmsg").textContent="❌ Credenziali errate"; showLoader(false); return; }
+    if(!ok){ $("#lmsg").textContent="❌ Credenziali errate"; return; }
 
     // 2) Live (tutti i mesi): targets+risultati
-    const liveR = await fetch(API_URL+"?v="+Date.now());
+    const liveR = await fetch(API_URL);
     if(!liveR.ok) throw new Error("API HTTP "+liveR.status);
     const arr = await liveR.json();
     LIVE = byMonthDict(arr);
 
-    // 3) show app
+    // 3) show app (FIX: forza display:block)
     $("#login").style.display="none";
-    $("#top").style.display="";
-    $("#app").style.display="";
+    $("#top").style.display="block";
+    $("#app").style.display="block";
     render();
   }catch(e){
     $("#lmsg").textContent = "Errore: "+e.message;
@@ -293,6 +288,10 @@ document.getElementById("lbtn").onclick = async ()=>{
     showLoader(false);
   }
 };
+
+document.getElementById("lbtn").onclick = doLogin;
+// Invio da tastiera
+document.getElementById("lpass").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
 
 /* Reload & logout & nav */
 document.getElementById("btnReload").onclick = async ()=>{
@@ -340,7 +339,7 @@ function render(){
   grid.className="grid";
   app.appendChild(grid);
 
-  // Fatturato: NIENTE cifre visibili → solo percentuali (usa target da API e extra da JSON)
+  // Fatturato: NIENTE cifre visibili → solo percentuali
   grid.appendChild( metricCard({
     title:"Fatturato",
     value: live.fatt,
