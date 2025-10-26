@@ -7,83 +7,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ram-blue:#0071E3;
-    --ink:#111;
-    --page:#F5F5F7;
-    --card:#fff;
-    --muted:#6b7280;
-    --ok:#16a34a;
-    --over:#0ea5e9;
-    --radius:16px;
-    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --ram-blue:#0071E3;--ink:#111;--page:#F5F5F7;--card:#fff;
+    --muted:#6b7280;--ok:#16a34a;--over:#0ea5e9;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--page);color:var(--ink);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  header{
-    position:sticky;top:0;z-index:5;
-    background:linear-gradient(180deg,#fff,rgba(255,255,255,.85));
-    backdrop-filter:saturate(140%) blur(8px);
-    border-bottom:1px solid rgba(0,0,0,.06);
-  }
-  .wrap{max-width:820px;margin:0 auto;padding:14px 16px;}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:30px;height:30px;border-radius:8px;background:var(--ram-blue);box-shadow:inset 0 -8px 18px rgba(0,0,0,.15)}
-  .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.2px}
-  .brand span{font-size:12px;color:var(--muted);font-weight:600}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,sans-serif}
+  header{display:none;position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:10}
+  .wrap{max-width:820px;margin:auto;padding:14px 16px;}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:30px;height:30px;border-radius:8px;background:var(--ram-blue)}
+  .brand h1{font-size:18px;margin:0}
   .toolbar{display:flex;gap:10px;margin-top:10px}
-  .selector{
-    flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid rgba(0,0,0,.06);
-    padding:8px 10px;border-radius:12px
-  }
-  .selector button{
-    appearance:none;border:0;background:#f0f2f5;border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700
-  }
+  .selector{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ddd;padding:8px;border-radius:10px}
+  .selector button{background:#f0f2f5;border:0;padding:6px 10px;border-radius:8px}
   .selector .label{flex:1;text-align:center;font-weight:700}
-  .refresh{
-    appearance:none;border:0;background:var(--ram-blue);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700
-  }
-
-  main{padding:18px 16px;max-width:820px;margin:0 auto}
-  .card{
-    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-    padding:16px 14px;margin:12px 0;border:1px solid rgba(0,0,0,.06)
-  }
-  .month-title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .month-title h2{font-size:18px;margin:0}
-  .month-title .chip{
-    padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3
-  }
-
+  .refresh{background:var(--ram-blue);color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:700}
+  main{display:none;max-width:820px;margin:auto;padding:16px}
+  .card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+  .month-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .month-title h2{margin:0;font-size:18px}
   .metric{margin-top:14px}
   .metric .head{display:flex;justify-content:space-between;align-items:end;margin-bottom:8px}
-  .metric .name{font-weight:700}
   .metric .nums{font-size:12px;color:var(--muted)}
-  .bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden;position:relative}
-  .bar > .fill{
-    height:100%; width:0%;
-    background:linear-gradient(90deg,var(--ram-blue),#33b1ff);
-    border-radius:999px; transition:width 900ms ease
-  }
-  .bar.over > .fill{background:linear-gradient(90deg,var(--over),#67e8f9)}
-  .percent-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+  .bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden}
+  .bar>.fill{height:100%;background:linear-gradient(90deg,var(--ram-blue),#33b1ff);width:0%;transition:width .9s ease}
+  .bar.over>.fill{background:linear-gradient(90deg,var(--over),#67e8f9)}
+  .percent-row{display:flex;justify-content:space-between;margin-top:6px}
   .percent{font-weight:700}
-  .badge-ok{font-size:11px;font-weight:800;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
-  .badge-over{font-size:11px;font-weight:800;color:#0ea5e9;background:#e0f2fe;padding:3px 8px;border-radius:999px}
-  .rewards{margin-top:8px;font-size:13px;color:var(--ink)}
-  .rewards b{font-weight:700}
-  .muted{color:var(--muted)}
-  footer{padding:24px 16px 60px;color:var(--muted);text-align:center;font-size:12px}
+  .badge-ok{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
+  .badge-over{font-size:11px;color:#0ea5e9;background:#e0f2fe;padding:3px 8px;border-radius:999px}
+  .rewards{margin-top:8px;font-size:13px}
+  footer{display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px}
+  #loginScreen{text-align:center;padding:60px 20px}
+  #loginScreen input{padding:10px;width:90%;max-width:280px;border-radius:8px;border:1px solid #ccc;margin:6px 0}
+  #loginScreen button{background:var(--ram-blue);color:#fff;border:0;padding:10px 24px;border-radius:8px;margin-top:10px}
 </style>
 </head>
 <body>
 
-<header>
+<div id="loginScreen">
+  <h2 style="color:#0071E3;">RAMSERVICE · Accesso</h2>
+  <input id="loginUser" placeholder="Username"><br>
+  <input id="loginPass" placeholder="Password" type="password"><br>
+  <button id="loginBtn">Accedi</button>
+  <div id="loginMsg" style="margin-top:10px;font-size:13px;color:#d00;"></div>
+</div>
+
+<header id="header">
   <div class="wrap">
     <div class="brand">
       <div class="logo"></div>
       <div>
         <h1>RAMSERVICE · Target</h1>
-        <span>Dashboard mensile</span>
       </div>
     </div>
     <div class="toolbar">
@@ -98,124 +73,30 @@
 </header>
 
 <main id="app"></main>
-<footer>© RAMSERVICE — dati aggiornati in tempo reale</footer>
+<footer id="footer">© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-/* =======================
-   CONFIGURAZIONE BASE
-======================= */
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbwxsVy7SINAGb3_LW-m3PUo7Db5nuVAU9SRtVoLO-SPy4fxaSZdyiBLyxmP6775WsrN/exec";
-
-const COL = {
-  mese:"mese",
-  fatturato_target:"fatturato_target",
-  fatturato_risultato:"fatturato_risultato",
-  wind3_target:"Wind3_target",
-  wind3_result:"Wind3_Risultato",
-  ho_target:"Ho_target",
-  ho_result:"ho_risultato"
-};
+const ENDPOINT="https://script.google.com/macros/s/AKfycbwxsVy7SINAGb3_LW-m3PUo7Db5nuVAU9SRtVoLO-SPy4fxaSZdyiBLyxmP6775WsrN/exec";
+const COL={mese:"mese",fatturato_target:"fatturato_target",fatturato_risultato:"fatturato_risultato",wind3_target:"Wind3_target",wind3_result:"Wind3_Risultato",ho_target:"Ho_target",ho_result:"ho_risultato"};
 const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-function meseCorrenteKey(){return MESI[new Date().getMonth()]}
-
-/* =======================
-   UTILS
-======================= */
-function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");const n=Number(s);return isNaN(n)?0:n}
-function euro(n){try{return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0})}catch{return "€"+Math.round(n)}}
-function getPrizeConfig(mese){
-  const conf=JSON.parse(localStorage.getItem(`ram_prizes_${mese}`)||"null");
-  return conf||{fattBase:200,fattExtra:25,windBase:50,windExtra:10,hoBase:50,hoExtra:10};
-}
-
-/* =======================
-   METRICHE E PREMI
-======================= */
-function calcPrize(key,percent,conf){
-  let base=0,extra=0;
-  if(key==="fatturato"&&percent>=100) base=conf.fattBase;
-  if(key==="wind3"&&percent>=100) base=conf.windBase;
-  if(key==="ho"&&percent>=100) base=conf.hoBase;
-  if(percent>100){
-    const steps=Math.floor((percent-100)/10);
-    if(key==="fatturato") extra=steps*conf.fattExtra;
-    if(key==="wind3") extra=steps*conf.windExtra;
-    if(key==="ho") extra=steps*conf.hoExtra;
-  }
-  return {base,extra};
-}
-
-function metricCard({name,target,result,key,hideValues,conf}){
-  const t=toNumber(target),r=toNumber(result);
-  const pct=t>0?(r/t)*100:0;
-  const capped=Math.min(pct,140);
-  const over=pct>=100;
-  const prize=calcPrize(key,pct,conf);
-  const wrap=document.createElement("div");
-  wrap.className="metric";
-  wrap.innerHTML=`
-    <div class="head">
-      <div class="name">${name}</div>
-      ${hideValues?"":`<div class="nums muted">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`}
-    </div>
-    <div class="bar ${over?"over":""}"><div class="fill" style="width:${capped}%"></div></div>
-    <div class="percent-row">
-      <div class="percent">${Math.round(pct)}%</div>
-      <div>
-        ${over?`<span class="badge-ok">Target completato</span>`:""}
-        ${pct>100?`<span class="badge-over">+${Math.round(pct-100)}% extra</span>`:""}
-      </div>
-    </div>
-    <div class="rewards">
-      ${pct<100
-        ? `<span class="muted">Premio al raggiungimento: <b>${euro(prize.base||conf[`${key}Base`]||0)}</b></span>`
-        : `<div>🎉 Premio: <b>${euro(prize.base)}</b>${prize.extra>0?` · Extra: <b>${euro(prize.extra)}</b>`:""}</div>`
-      }
-    </div>`;
-  return wrap;
-}
-
-/* =======================
-   RENDER
-======================= */
+function meseCorrenteKey(){return MESI[new Date().getMonth()];}
+function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");return Number(s)||0;}
+function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
+function getPrizeConfig(mese){return JSON.parse(localStorage.getItem(`ram_prizes_${mese}`)||"null")||{fattBase:200,fattExtra:25,windBase:50,windExtra:10,hoBase:50,hoExtra:10};}
+function calcPrize(key,percent,conf){let base=0,extra=0;if(key==="fatturato"&&percent>=100)base=conf.fattBase;if(key==="wind3"&&percent>=100)base=conf.windBase;if(key==="ho"&&percent>=100)base=conf.hoBase;if(percent>100){const steps=Math.floor((percent-100)/10);if(key==="fatturato")extra=steps*conf.fattExtra;if(key==="wind3")extra=steps*conf.windExtra;if(key==="ho")extra=steps*conf.hoExtra;}return{base,extra};}
+function metricCard({name,target,result,key,hideValues,conf}){const t=toNumber(target),r=toNumber(result),pct=t>0?(r/t)*100:0,capped=Math.min(pct,140),over=pct>=100,prize=calcPrize(key,pct,conf);const wrap=document.createElement("div");wrap.className="metric";wrap.innerHTML=`<div class="head"><div class="name">${name}</div>${hideValues?"":`<div class="nums muted">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`}</div><div class="bar ${over?"over":""}"><div class="fill" style="width:${capped}%"></div></div><div class="percent-row"><div class="percent">${Math.round(pct)}%</div><div>${over?`<span class="badge-ok">Target completato</span>`:""}${pct>100?`<span class="badge-over">+${Math.round(pct-100)}% extra</span>`:""}</div></div><div class="rewards">${pct<100?`<span class="muted">Premio: <b>${euro(conf[`${key}Base`])}</b></span>`:`🎉 Premio: <b>${euro(prize.base)}</b>${prize.extra>0?` · Extra: <b>${euro(prize.extra)}</b>`:""}`}</div>`;return wrap;}
 let RAW=[],idx=0;
-async function loadData(){
-  const res=await fetch(ENDPOINT,{cache:"no-store"});
-  const data=await res.json();
-  const map=new Map();
-  data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
-  RAW=MESI.map(m=>map.get(m)).filter(Boolean);
-  idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
-  render();
-}
-
-function render(){
-  const app=document.getElementById("app");
-  app.innerHTML="";
-  if(!RAW.length){app.innerHTML="<div class='card'><b>Nessun dato</b></div>";return;}
-  const row=RAW[idx];
-  const mese=row[COL.mese];
-  const conf=getPrizeConfig(mese);
-  document.getElementById("monthLabel").textContent=mese;
-
-  const card=document.createElement("section");
-  card.className="card";
-  card.innerHTML=`<div class="month-title"><h2>${mese}</h2><span class="chip">riepilogo mese</span></div>`;
-
-  card.appendChild(metricCard({name:"Fatturato",target:row[COL.fatturato_target],result:row[COL.fatturato_risultato],key:"fatturato",hideValues:true,conf}));
-  card.appendChild(metricCard({name:"WindTre",target:row[COL.wind3_target],result:row[COL.wind3_result],key:"wind3",hideValues:false,conf}));
-  card.appendChild(metricCard({name:"ho. Mobile",target:row[COL.ho_target],result:row[COL.ho_result],key:"ho",hideValues:false,conf}));
-
-  app.appendChild(card);
-}
-
+async function loadData(){const res=await fetch(ENDPOINT);const data=await res.json();const map=new Map();data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));RAW=MESI.map(m=>map.get(m)).filter(Boolean);idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));render();}
+function render(){const app=document.getElementById("app");app.innerHTML="";if(!RAW.length){app.innerHTML="<div class='card'>Nessun dato</div>";return;}const row=RAW[idx];const mese=row[COL.mese];const conf=getPrizeConfig(mese);document.getElementById("monthLabel").textContent=mese;const card=document.createElement("section");card.className="card";card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;card.appendChild(metricCard({name:"Fatturato",target:row[COL.fatturato_target],result:row[COL.fatturato_risultato],key:"fatturato",hideValues:true,conf}));card.appendChild(metricCard({name:"WindTre",target:row[COL.wind3_target],result:row[COL.wind3_result],key:"wind3",hideValues:false,conf}));card.appendChild(metricCard({name:"ho. Mobile",target:row[COL.ho_target],result:row[COL.ho_result],key:"ho",hideValues:false,conf}));app.appendChild(card);}
 document.getElementById("prevBtn").onclick=()=>{if(!RAW.length)return;idx=(idx-1+RAW.length)%RAW.length;render();}
 document.getElementById("nextBtn").onclick=()=>{if(!RAW.length)return;idx=(idx+1)%RAW.length;render();}
 document.getElementById("refreshBtn").onclick=()=>loadData();
 
-loadData().catch(err=>{
-  document.getElementById("app").innerHTML=`<div class='card'><b>Errore:</b> ${err}</div>`;
-});
+// ===== LOGIN =====
+function getUsers(){return JSON.parse(localStorage.getItem("ram_users")||"[]");}
+document.getElementById("loginBtn").onclick=()=>{const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value.trim();const found=getUsers().find(x=>x.user===u&&x.pass===p);if(found){localStorage.setItem("ram_logged_user",u);document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}else{document.getElementById("loginMsg").textContent="Credenziali errate";}};
+const logged=localStorage.getItem("ram_logged_user");
+if(logged){document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}
 </script>
 </body>
 </html>
