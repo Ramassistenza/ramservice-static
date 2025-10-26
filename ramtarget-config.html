@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RAMSERVICE Config JSON</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAMSERVICE Configuratore</title>
 <style>
-body{font-family:sans-serif;padding:20px;background:#f5f5f5;}
-textarea{width:100%;height:400px;font-family:monospace;padding:10px;}
-button{margin-top:10px;padding:10px 16px;background:#0071E3;color:#fff;border:0;border-radius:6px;cursor:pointer;}
-pre{background:#fff;padding:10px;border-radius:8px;}
+body{font-family:Poppins,sans-serif;background:#f5f5f5;padding:20px}
+h2{color:#0071E3}
+textarea{width:100%;height:420px;padding:10px;font-family:monospace;border-radius:8px;border:1px solid #ccc}
+button{background:#0071E3;color:#fff;padding:10px 20px;border:0;border-radius:8px;cursor:pointer;margin-top:10px}
+pre{background:#fff;padding:10px;border-radius:8px;overflow:auto}
 </style>
 </head>
 <body>
-<h2>⚙️ RAMSERVICE · Configuratore JSON</h2>
-<p>Modifica la configurazione e clicca “Genera JSON” per aggiornare il file <code>ramdata.json</code> nel tuo repository GitHub Pages.</p>
-<textarea id="jsonInput"></textarea>
+<h2>⚙️ RAMSERVICE — Generatore JSON</h2>
+<p>Compila qui sotto utenti e configurazioni, poi clicca <b>Genera JSON</b> e incolla il risultato su <code>ramdata.json</code> nel tuo repo GitHub.</p>
+
+<textarea id="input" placeholder="Inserisci qui il tuo JSON"></textarea>
 <button id="generate">Genera JSON</button>
 <pre id="output"></pre>
 
 <script>
-const tpl={
-  users:[{name:"Andrea",user:"andrea",pass:"1234"}],
+const template={
+  users:[
+    {name:"Andrea",user:"andrea",pass:"1234"},
+    {name:"Emanuele",user:"emanuele",pass:"abcd"}
+  ],
   config:{
     GENNAIO:{
       fatt:{base:200,x1_thr:28000,x1_prize:50,x2_thr:30000,x2_prize:100},
@@ -29,12 +34,13 @@ const tpl={
     }
   }
 };
-document.getElementById("jsonInput").value=JSON.stringify(tpl,null,2);
+document.getElementById("input").value=JSON.stringify(template,null,2);
+
 document.getElementById("generate").onclick=()=>{
   try{
-    const obj=JSON.parse(document.getElementById("jsonInput").value);
+    const obj=JSON.parse(document.getElementById("input").value);
     document.getElementById("output").textContent=JSON.stringify(obj,null,2);
-    alert("✅ JSON valido — copia questo testo e incollalo nel file ramdata.json su GitHub");
+    alert("✅ JSON valido! Copia e incolla nel file ramdata.json sul tuo GitHub.");
   }catch(e){
     alert("❌ Errore nel formato JSON: "+e.message);
   }
