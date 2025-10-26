@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RAMSERVICE · Target</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ram-blue:#0071E3;--ink:#111;--page:#F5F5F7;--card:#fff;--muted:#6b7280;
+  --ok:#16a34a;--x1:#f59e0b;--x2:#10b981;
+}
+body{margin:0;background:var(--page);font-family:Poppins,sans-serif;color:var(--ink)}
+main{display:none;max-width:820px;margin:auto;padding:16px}
+header{display:none;position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:10}
+.wrap{max-width:820px;margin:auto;padding:14px 16px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo div{width:30px;height:30px;border-radius:8px;background:var(--ram-blue)}
+.logo h1{font-size:18px;margin:0}
+.logout{background:#eee;border:0;padding:6px 12px;border-radius:8px;cursor:pointer}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.metric{margin-top:14px}
+.bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden}
+.bar>.fill{height:100%;width:0%;transition:width .8s ease;background:linear-gradient(90deg,var(--ram-blue),#33b1ff)}
+.bar.x1>.fill{background:linear-gradient(90deg,var(--x1),#fbbf24)}
+.bar.x2>.fill{background:linear-gradient(90deg,var(--x2),#6ee7b7)}
+.badge-ok{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
+.rewards{margin-top:6px;font-size:13px}
+.percent-row{display:flex;justify-content:space-between;margin-top:4px}
+#loginScreen{text-align:center;padding:60px 20px}
+#loginScreen input{padding:10px;width:90%;max-width:280px;border-radius:8px;border:1px solid #ccc;margin:6px 0}
+#loginScreen button{background:var(--ram-blue);color:#fff;border:0;padding:10px 24px;border-radius:8px;margin-top:10px;cursor:pointer}
+footer{text-align:center;padding:20px;font-size:12px;color:#777}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h2 style="color:#0071E3;">RAMSERVICE · Accesso</h2>
+  <input id="loginUser" placeholder="Username"><br>
+  <input id="loginPass" placeholder="Password" type="password"><br>
+  <button id="loginBtn">Accedi</button>
+  <div id="loginMsg" style="color:#d00;margin-top:10px;font-size:13px;"></div>
+</div>
+
+<header id="header">
+  <div class="wrap">
+    <div class="logo"><div></div><h1>RAMSERVICE · Target</h1></div>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<main id="app"></main>
+<footer id="footer">© RAMSERVICE — dati aggiornati</footer>
+
+<script>
+const JSON_URL="https://ramassistenza.github.io/ramservice-static/ramdata.json";
+const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+function meseCorrente(){return MESI[new Date().getMonth()];}
+function euro(v){return v.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
+function pct(a,b){return b>0?(a/b)*100:0;}
+function bar(p,cls){const el=document.createElement("div");el.className="bar "+(cls||"");el.innerHTML=`<div class="fill" style="width:${Math.min(100,p)}%"></div>`;return el;}
+function rowPercent(p,ok){return `<div class="percent-row"><div>${Math.round(p)}%</div>${ok?"<div class='badge-ok'>Target completato</div>":""}</div>`;}
+
+let DATA={};
+
+async function login(){
+  try{
+    const res=await fetch(JSON_URL+"?v="+Date.now());
+    DATA=await res.json();
+    const u=document.getElementById("loginUser").value.trim().toLowerCase();
+    const p=document.getElementById("loginPass").value.trim();
+    const found=(DATA.users||[]).find(x=>x.user.toLowerCase()===u && x.pass===p);
+    if(found){localStorage.setItem("ram_user",found.user);showApp();}
+    else document.getElementById("loginMsg").textContent="❌ Credenziali errate";
+  }catch(e){document.getElementById("loginMsg").textContent="Errore: "+e.message;}
+}
+document.getElementById("loginBtn").onclick=login;
+document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_user");location.reload();};
+
+if(localStorage.getItem("ram_user")) showApp();
+
+function showApp(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("header").style.display="";
+  document.getElementById("app").style.display="";
+  render();
+}
+
+function render(){
+  const mese=meseCorrente();
+  const app=document.getElementById("app");
+  app.innerHTML="";
+  const cfg=(DATA.config||{})[mese];
+  if(!cfg){app.innerHTML="<div class='card'>Nessuna configurazione per "+mese+"</div>";return;}
+  const card=document.createElement("div");
+  card.className="card";
+  card.innerHTML=`<h2>${mese}</h2>`;
+  card.appendChild(metric("Fatturato",cfg.fatt,false));
+  card.appendChild(metric("WindTre",cfg.wind,true));
+  card.appendChild(metric("ho. Mobile",cfg.ho,true));
+  app.appendChild(card);
+}
+
+function metric(nome,cfg,showNumbers){
+  const wrap=document.createElement("div");wrap.className="metric";
+  const r=cfg.result||0,t=cfg.target||cfg.x1_thr;
+  const p=pct(r,t),ok=p>=100;
+  wrap.innerHTML=`<div><b>${nome}</b></div>${bar(p,ok?"over":"").outerHTML}${rowPercent(p,ok)}`;
+  // extra1
+  wrap.appendChild(bar(pct(r,cfg.x1_thr),"x1"));
+  if(r>=cfg.x1_thr)wrap.innerHTML+=`<div class='rewards'>🎉 Extra 1: <b>${euro(cfg.x1_prize)}</b></div>`;
+  // extra2
+  wrap.appendChild(bar(pct(r,cfg.x2_thr),"x2"));
+  if(r>=cfg.x2_thr)wrap.innerHTML+=`<div class='rewards'>🎉 Extra 2: <b>${euro(cfg.x2_prize)}</b></div>`;
+  if(ok && cfg.base)wrap.innerHTML+=`<div class='rewards'>🏆 Premio base: <b>${euro(cfg.base)}</b></div>`;
+  return wrap;
+}
+</script>
+</body>
+</html>
