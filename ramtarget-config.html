@@ -6,184 +6,188 @@
 <title>RAMSERVICE · Configuratore Target</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ram-blue:#0071E3;
-    --bg:#f5f5f7;
-    --card:#fff;
-    --ink:#111;
-    --muted:#6b7280;
-  }
+  :root{ --ram-blue:#0071E3; --bg:#f5f5f7; --card:#fff; --ink:#111; --muted:#6b7280; }
   body{margin:0;background:var(--bg);font-family:Poppins,sans-serif;color:var(--ink)}
-  .container{max-width:850px;margin:30px auto;padding:20px;background:var(--card);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+  .container{max-width:960px;margin:30px auto;padding:20px;background:var(--card);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
   h1{font-size:22px;margin-bottom:20px;color:var(--ram-blue)}
   h2{font-size:16px;margin:20px 0 8px;color:var(--ram-blue)}
   label{display:block;margin:8px 0 4px;font-weight:600}
-  input,select{
-    width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px
-  }
-  button{
-    background:var(--ram-blue);color:#fff;border:0;padding:10px 16px;
-    border-radius:10px;font-weight:700;cursor:pointer;margin-top:14px
-  }
+  input,select{width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px}
+  button{background:var(--ram-blue);color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;margin-top:14px}
   .success{background:#e0f7e9;border-left:5px solid #16a34a;padding:10px;margin:10px 0;border-radius:8px;color:#065f46;font-size:13px}
   .error{background:#fee2e2;border-left:5px solid #dc2626;padding:10px;margin:10px 0;border-radius:8px;color:#7f1d1d;font-size:13px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-  .section{margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #eee}
+  .section{margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid #eee}
+  .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .row .box{background:#fafafa;border:1px solid #eee;border-radius:10px;padding:10px}
+  small{color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>⚙️ Configuratore RAMSERVICE Target</h1>
 
-  <!-- LOGIN ADMIN -->
-  <div class="section">
-    <h2>🔑 Accesso Amministratore</h2>
-    <label>Utente admin</label>
-    <input type="text" id="adminUser" value="admin">
-    <label>Password admin</label>
-    <input type="password" id="adminPass" value="ram2025">
-    <button onclick="saveLogin()">Salva login</button>
-    <div id="loginMsg"></div>
-  </div>
-
   <!-- UTENTI -->
   <div class="section">
     <h2>👥 Gestione Utenti</h2>
-    <p style="font-size:13px;color:var(--muted);margin-top:0">Crea utenti che potranno accedere alla dashboard <b>ramtarget.html</b>.</p>
-
-    <label>Nome</label>
-    <input type="text" id="userName" placeholder="Es: Emanuele">
-    <label>Username</label>
-    <input type="text" id="userUser" placeholder="Es: emanuele">
-    <label>Password</label>
-    <input type="password" id="userPass" placeholder="Password">
+    <p style="font-size:13px;color:var(--muted);margin-top:0">Gli utenti potranno accedere alla dashboard <b>ramtarget.html</b>.</p>
+    <label>Nome</label><input type="text" id="userName" placeholder="Es: Emanuele">
+    <label>Username</label><input type="text" id="userUser" placeholder="Es: emanuele">
+    <label>Password</label><input type="password" id="userPass" placeholder="Password">
     <button onclick="addUser()">Aggiungi utente</button>
-
-    <h3 style="margin-top:20px;font-size:14px;">Utenti registrati:</h3>
+    <div id="usersMsg"></div>
+    <h3 style="margin-top:18px;font-size:14px;">Utenti registrati</h3>
     <div id="userList" style="font-size:14px;margin-top:8px;"></div>
   </div>
 
-  <!-- PREMI -->
+  <!-- PREMI E SOGLIE PER MESE -->
   <div class="section">
-    <h2>💰 Premi per mese e target</h2>
-    <p style="font-size:13px;color:var(--muted);margin-top:0">Imposta premio base ed extra per ogni mese e categoria.</p>
-    
+    <h2>💰 Premi & Soglie extra per mese</h2>
     <label>Mese</label>
     <select id="monthSelect"></select>
+    <small>Le impostazioni valgono solo per il mese selezionato.</small>
 
-    <div class="grid">
-      <div>
-        <label>Premio base Fatturato (€)</label>
-        <input id="fattBase" type="number" value="200">
+    <!-- FATTURATO -->
+    <h3 style="margin-top:18px;">Fatturato</h3>
+    <div class="row">
+      <div class="box">
+        <label>Premio Base (€) al 100%</label>
+        <input id="fatt_base" type="number" value="200">
       </div>
-      <div>
-        <label>Extra ogni +10% (€)</label>
-        <input id="fattExtra" type="number" value="25">
+      <div class="box">
+        <label>Soglia Extra 1 (es. 28000)</label>
+        <input id="fatt_x1_thr" type="number" value="0">
+        <label>Premio Extra 1 (€)</label>
+        <input id="fatt_x1_prize" type="number" value="0">
       </div>
-      <div>
-        <label>Premio base WindTre (€)</label>
-        <input id="windBase" type="number" value="50">
+      <div class="box">
+        <label>Soglia Extra 2 (es. 30000)</label>
+        <input id="fatt_x2_thr" type="number" value="0">
+        <label>Premio Extra 2 (€)</label>
+        <input id="fatt_x2_prize" type="number" value="0">
       </div>
-      <div>
-        <label>Extra ogni +10% (€)</label>
-        <input id="windExtra" type="number" value="10">
+    </div>
+    <small>Nota: i valori (target/risultato) in € NON saranno mostrati in dashboard.</small>
+
+    <!-- WIND3 -->
+    <h3 style="margin-top:18px;">WindTre</h3>
+    <div class="row">
+      <div class="box">
+        <label>Premio Base (€) al 100%</label>
+        <input id="wind_base" type="number" value="50">
       </div>
-      <div>
-        <label>Premio base Ho. Mobile (€)</label>
-        <input id="hoBase" type="number" value="50">
+      <div class="box">
+        <label>Soglia Extra 1 (es. 20)</label>
+        <input id="wind_x1_thr" type="number" value="0">
+        <label>Premio Extra 1 (€)</label>
+        <input id="wind_x1_prize" type="number" value="0">
       </div>
-      <div>
-        <label>Extra ogni +10% (€)</label>
-        <input id="hoExtra" type="number" value="10">
+      <div class="box">
+        <label>Soglia Extra 2 (es. 25)</label>
+        <input id="wind_x2_thr" type="number" value="0">
+        <label>Premio Extra 2 (€)</label>
+        <input id="wind_x2_prize" type="number" value="0">
       </div>
     </div>
 
-    <button onclick="savePrizes()">Salva premi</button>
-    <div id="prizeMsg"></div>
+    <!-- HO -->
+    <h3 style="margin-top:18px;">ho. Mobile</h3>
+    <div class="row">
+      <div class="box">
+        <label>Premio Base (€) al 100%</label>
+        <input id="ho_base" type="number" value="50">
+      </div>
+      <div class="box">
+        <label>Soglia Extra 1 (es. 20)</label>
+        <input id="ho_x1_thr" type="number" value="0">
+        <label>Premio Extra 1 (€)</label>
+        <input id="ho_x1_prize" type="number" value="0">
+      </div>
+      <div class="box">
+        <label>Soglia Extra 2 (es. 25)</label>
+        <input id="ho_x2_thr" type="number" value="0">
+        <label>Premio Extra 2 (€)</label>
+        <input id="ho_x2_prize" type="number" value="0">
+      </div>
+    </div>
+
+    <button onclick="saveConfig()">Salva configurazione del mese</button>
+    <div id="cfgMsg"></div>
   </div>
 </div>
 
 <script>
-// ===========================
-// CONFIG BASE
-// ===========================
-const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-const sel = document.getElementById("monthSelect");
-MESI.forEach(m => {
-  const opt = document.createElement("option");
-  opt.value = m;
-  opt.textContent = m;
-  if (m === MESI[new Date().getMonth()]) opt.selected = true;
-  sel.appendChild(opt);
-});
+const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+const sel=document.getElementById("monthSelect");
+MESI.forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=m;if(m===MESI[new Date().getMonth()]) o.selected=true;sel.appendChild(o);});
+sel.addEventListener("change",loadConfig);
 
-// ===========================
-// ADMIN LOGIN
-// ===========================
-function saveLogin(){
-  const user = document.getElementById("adminUser").value.trim();
-  const pass = document.getElementById("adminPass").value.trim();
-  if(!user || !pass){ showMsg("loginMsg","error","Inserisci utente e password."); return; }
-  localStorage.setItem("ram_admin_user", user);
-  localStorage.setItem("ram_admin_pass", pass);
-  showMsg("loginMsg","success","Credenziali salvate (localStorage).");
-}
-
-// ===========================
-// PREMI
-// ===========================
-function savePrizes(){
-  const m = document.getElementById("monthSelect").value;
-  const data = {
-    fattBase:+document.getElementById("fattBase").value||0,
-    fattExtra:+document.getElementById("fattExtra").value||0,
-    windBase:+document.getElementById("windBase").value||0,
-    windExtra:+document.getElementById("windExtra").value||0,
-    hoBase:+document.getElementById("hoBase").value||0,
-    hoExtra:+document.getElementById("hoExtra").value||0
-  };
-  localStorage.setItem(`ram_prizes_${m}`, JSON.stringify(data));
-  showMsg("prizeMsg","success",`Premi salvati per ${m}.`);
-}
-
-// ===========================
-// UTENTI
-// ===========================
-function getUsers(){return JSON.parse(localStorage.getItem("ram_users") || "[]");}
-function saveUsers(list){localStorage.setItem("ram_users", JSON.stringify(list)); renderUsers();}
+// ======= USERS =======
+function getUsers(){return JSON.parse(localStorage.getItem("ram_users")||"[]");}
+function saveUsers(list){localStorage.setItem("ram_users",JSON.stringify(list));renderUsers();}
 function addUser(){
-  const name = document.getElementById("userName").value.trim();
-  const user = document.getElementById("userUser").value.trim();
-  const pass = document.getElementById("userPass").value.trim();
-  if(!name || !user || !pass){ showMsg("prizeMsg","error","Compila tutti i campi."); return; }
-  const list = getUsers();
-  if(list.some(u => u.user === user)){ showMsg("prizeMsg","error","Username esistente."); return; }
-  list.push({name,user,pass});
-  saveUsers(list);
-  document.getElementById("userName").value="";
-  document.getElementById("userUser").value="";
-  document.getElementById("userPass").value="";
-  showMsg("prizeMsg","success",`Utente ${name} creato.`);
+  const name=document.getElementById("userName").value.trim();
+  const user=document.getElementById("userUser").value.trim();
+  const pass=document.getElementById("userPass").value.trim();
+  const msg=document.getElementById("usersMsg");
+  if(!name||!user||!pass){msg.className="error";msg.textContent="Compila tutti i campi.";return;}
+  const list=getUsers();
+  if(list.some(u=>u.user===user)){msg.className="error";msg.textContent="Username esistente.";return;}
+  list.push({name,user,pass}); saveUsers(list);
+  document.getElementById("userName").value="";document.getElementById("userUser").value="";document.getElementById("userPass").value="";
+  msg.className="success";msg.textContent=`Utente ${name} creato.`;
 }
 function renderUsers(){
-  const list = getUsers();
-  const container = document.getElementById("userList");
-  if(list.length===0){container.innerHTML="<i>Nessun utente</i>";return;}
-  container.innerHTML = list.map((u,i)=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding:4px 0;">
+  const box=document.getElementById("userList"); const list=getUsers();
+  box.innerHTML=list.length?list.map((u,i)=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding:6px 0;">
       <div>${u.name} <span style="color:#999;">(${u.user})</span></div>
-      <button style="background:#dc2626;color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteUser(${i})">Rimuovi</button>
-    </div>
-  `).join("");
+      <button style="background:#dc2626;color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:12px" onclick="delUser(${i})">Rimuovi</button>
+    </div>`).join(""):"<i>Nessun utente</i>";
 }
-function deleteUser(i){const list=getUsers();if(confirm(`Eliminare ${list[i].name}?`)){list.splice(i,1);saveUsers(list);}}
+function delUser(i){const list=getUsers(); if(confirm(`Eliminare ${list[i].name}?`)){list.splice(i,1);saveUsers(list);}}
 renderUsers();
 
-// ===========================
-function showMsg(id,type,text){
-  const el=document.getElementById(id);
-  el.className=type;el.textContent=text;
+// ======= CONFIG PER MESE =======
+function key(m){return `ram_cfg_${m}`;}
+function defaultCfg(){return{
+  fatt:{base:200,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
+  wind:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
+  ho:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0}
+};}
+function loadConfig(){
+  const k=key(sel.value);
+  const cfg=JSON.parse(localStorage.getItem(k)||"null")||defaultCfg();
+  // fatt
+  document.getElementById("fatt_base").value=cfg.fatt.base;
+  document.getElementById("fatt_x1_thr").value=cfg.fatt.x1_thr;
+  document.getElementById("fatt_x1_prize").value=cfg.fatt.x1_prize;
+  document.getElementById("fatt_x2_thr").value=cfg.fatt.x2_thr;
+  document.getElementById("fatt_x2_prize").value=cfg.fatt.x2_prize;
+  // wind
+  document.getElementById("wind_base").value=cfg.wind.base;
+  document.getElementById("wind_x1_thr").value=cfg.wind.x1_thr;
+  document.getElementById("wind_x1_prize").value=cfg.wind.x1_prize;
+  document.getElementById("wind_x2_thr").value=cfg.wind.x2_thr;
+  document.getElementById("wind_x2_prize").value=cfg.wind.x2_prize;
+  // ho
+  document.getElementById("ho_base").value=cfg.ho.base;
+  document.getElementById("ho_x1_thr").value=cfg.ho.x1_thr;
+  document.getElementById("ho_x1_prize").value=cfg.ho.x1_prize;
+  document.getElementById("ho_x2_thr").value=cfg.ho.x2_thr;
+  document.getElementById("ho_x2_prize").value=cfg.ho.x2_prize;
 }
+function saveConfig(){
+  const cfg={
+    fatt:{ base:+v("fatt_base"), x1_thr:+v("fatt_x1_thr"), x1_prize:+v("fatt_x1_prize"), x2_thr:+v("fatt_x2_thr"), x2_prize:+v("fatt_x2_prize") },
+    wind:{ base:+v("wind_base"), x1_thr:+v("wind_x1_thr"), x1_prize:+v("wind_x1_prize"), x2_thr:+v("wind_x2_thr"), x2_prize:+v("wind_x2_prize") },
+    ho:{ base:+v("ho_base"), x1_thr:+v("ho_x1_thr"), x1_prize:+v("ho_x1_prize"), x2_thr:+v("ho_x2_thr"), x2_prize:+v("ho_x2_prize") }
+  };
+  localStorage.setItem(key(sel.value), JSON.stringify(cfg));
+  const m=document.getElementById("cfgMsg"); m.className="success"; m.textContent=`Configurazione salvata per ${sel.value}.`;
+}
+function v(id){return document.getElementById(id).value || 0;}
+loadConfig();
 </script>
 </body>
 </html>
