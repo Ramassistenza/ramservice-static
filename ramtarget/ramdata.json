@@ -13,7 +13,7 @@
         "x1_thr": 29000,
         "x1_prize": 50,
         "x2_thr": 30000,
-        "x2_prize": 100
+        "x2_prize": 50
       },
       "wind": {
         "base": 100,
