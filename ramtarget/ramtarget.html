@@ -123,4 +123,27 @@ function render(){
     app.innerHTML+="<div class='card'>⚠️ Nessuna configurazione trovata per questo mese.</div>";
     return;
   }
- 
+  const metrics=[
+    {nome:"Fatturato",dati:cfg.fatt,showNum:false},
+    {nome:"WindTre",dati:cfg.wind,showNum:true},
+    {nome:"ho. Mobile",dati:cfg.ho,showNum:true}
+  ];
+  metrics.forEach(m=>app.appendChild(buildMetric(m)));
+}
+
+function buildMetric(m){
+  const wrap=document.createElement("div");
+  wrap.className="card";
+  const r=m.dati.base||0;
+  const p=pct(r,m.dati.x1_thr);
+  wrap.innerHTML=`<h3>${m.nome}</h3>${bar(p).outerHTML}${rowPercent(p,p>=100)}`;
+  wrap.appendChild(bar(pct(r,m.dati.x1_thr),"x1"));
+  wrap.appendChild(bar(pct(r,m.dati.x2_thr),"x2"));
+  if(r>=m.dati.x1_thr)wrap.innerHTML+=`<div class='rewards'>🎉 Extra 1: <b>${euro(m.dati.x1_prize)}</b></div>`;
+  if(r>=m.dati.x2_thr)wrap.innerHTML+=`<div class='rewards'>🎉 Extra 2: <b>${euro(m.dati.x2_prize)}</b></div>`;
+  if(p>=100 && m.dati.base)wrap.innerHTML+=`<div class='rewards'>🏆 Premio base: <b>${euro(m.dati.base)}</b></div>`;
+  return wrap;
+}
+</script>
+</body>
+</html>
