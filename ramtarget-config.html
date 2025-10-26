@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>RAMSERVICE · Configuratore Target</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ram-blue:#0071E3;
+    --bg:#f5f5f7;
+    --card:#fff;
+    --ink:#111;
+    --muted:#6b7280;
+  }
+  body{margin:0;background:var(--bg);font-family:Poppins,sans-serif;color:var(--ink)}
+  .container{max-width:800px;margin:30px auto;padding:20px;background:var(--card);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+  h1{font-size:22px;margin-bottom:20px;color:var(--ram-blue)}
+  h2{font-size:16px;margin:20px 0 8px;color:var(--ram-blue)}
+  label{display:block;margin:8px 0 4px;font-weight:600}
+  input,select{
+    width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px
+  }
+  button{
+    background:var(--ram-blue);color:#fff;border:0;padding:10px 16px;
+    border-radius:10px;font-weight:700;cursor:pointer;margin-top:14px
+  }
+  .success{background:#e0f7e9;border-left:5px solid #16a34a;padding:10px;margin:10px 0;border-radius:8px;color:#065f46;font-size:13px}
+  .error{background:#fee2e2;border-left:5px solid #dc2626;padding:10px;margin:10px 0;border-radius:8px;color:#7f1d1d;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .section{margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>⚙️ Configuratore RAMSERVICE Target</h1>
+
+  <div class="section">
+    <h2>🔑 Accesso Amministratore</h2>
+    <label>Utente admin</label>
+    <input type="text" id="adminUser" value="admin">
+    <label>Password admin</label>
+    <input type="password" id="adminPass" value="ram2025">
+    <button onclick="saveLogin()">Salva login</button>
+    <div id="loginMsg"></div>
+  </div>
+
+  <div class="section">
+    <h2>💰 Premi per mese e target</h2>
+    <p style="font-size:13px;color:var(--muted);margin-top:0">Imposta premio base ed extra per ogni mese e categoria. L’app li leggerà automaticamente.</p>
+    
+    <label>Mese</label>
+    <select id="monthSelect"></select>
+
+    <div class="grid">
+      <div>
+        <label>Premio base Fatturato (€)</label>
+        <input id="fattBase" type="number" value="200">
+      </div>
+      <div>
+        <label>Extra ogni +10% (€)</label>
+        <input id="fattExtra" type="number" value="25">
+      </div>
+      <div>
+        <label>Premio base WindTre (€)</label>
+        <input id="windBase" type="number" value="50">
+      </div>
+      <div>
+        <label>Extra ogni +10% (€)</label>
+        <input id="windExtra" type="number" value="10">
+      </div>
+      <div>
+        <label>Premio base Ho. Mobile (€)</label>
+        <input id="hoBase" type="number" value="50">
+      </div>
+      <div>
+        <label>Extra ogni +10% (€)</label>
+        <input id="hoExtra" type="number" value="10">
+      </div>
+    </div>
+
+    <button onclick="savePrizes()">Salva premi</button>
+    <div id="prizeMsg"></div>
+  </div>
+</div>
+
+<script>
+// ===========================
+// CONFIG BASE (LOCALE)
+// ===========================
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+
+// Carica mesi nella select
+const sel = document.getElementById("monthSelect");
+MESI.forEach(m => {
+  const opt = document.createElement("option");
+  opt.value = m;
+  opt.textContent = m;
+  if (m === MESI[new Date().getMonth()]) opt.selected = true;
+  sel.appendChild(opt);
+});
+
+// Salvataggio credenziali admin (in locale)
+function saveLogin(){
+  const user = document.getElementById("adminUser").value.trim();
+  const pass = document.getElementById("adminPass").value.trim();
+  if(!user || !pass){ showMsg("loginMsg","error","Inserisci utente e password."); return; }
+  localStorage.setItem("ram_admin_user", user);
+  localStorage.setItem("ram_admin_pass", pass);
+  showMsg("loginMsg","success","Credenziali salvate (localStorage).");
+}
+
+// Salvataggio premi per mese (in locale)
+function savePrizes(){
+  const m = document.getElementById("monthSelect").value;
+  const data = {
+    fattBase:+document.getElementById("fattBase").value||0,
+    fattExtra:+document.getElementById("fattExtra").value||0,
+    windBase:+document.getElementById("windBase").value||0,
+    windExtra:+document.getElementById("windExtra").value||0,
+    hoBase:+document.getElementById("hoBase").value||0,
+    hoExtra:+document.getElementById("hoExtra").value||0
+  };
+  localStorage.setItem(`ram_prizes_${m}`, JSON.stringify(data));
+  showMsg("prizeMsg","success",`Premi salvati per ${m}.`);
+}
+
+// Messaggi helper
+function showMsg(id,type,text){
+  const el=document.getElementById(id);
+  el.className=type;el.textContent=text;
+}
+</script>
+</body>
+</html>
