@@ -1,210 +1,312 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>RAMSERVICE · Target</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ram:#0071E3; --ink:#0f172a; --muted:#64748b; --page:#f5f5f7; --card:#fff;
-  --ok:#16a34a; --x1:#f59e0b; --x2:#10b981;
+  --ram:#0071E3; --ink:#0f172a; --muted:#64748b; --page:#f5f5f7; --card:#ffffff;
+  --ok:#16a34a; --warn:#b45309; --err:#b91c1c;
+  --x1:#f59e0b; --x2:#10b981; --base:#0071E3;
 }
 *{box-sizing:border-box}
+html,body{height:100%}
 body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{display:none;max-width:880px;margin:auto;padding:16px}
-header{display:none;position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
-.wrap{max-width:880px;margin:auto;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+main{display:none;max-width:960px;margin:auto;padding:16px}
+header{display:none;position:sticky;top:0;background:var(--card);border-bottom:1px solid #e5e7eb;z-index:20}
+.wrap{max-width:960px;margin:auto;padding:14px 16px;display:flex;gap:12px;justify-content:space-between;align-items:center}
 .brand{display:flex;gap:10px;align-items:center}
 .brand .dot{width:30px;height:30px;border-radius:8px;background:var(--ram)}
 .brand h1{font-size:18px;margin:0}
-.logout{background:#eef2ff;border:0;color:#1e40af;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer}
-.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 6px 20px rgba(2,6,23,.05)}
+.actions{display:flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#eef2ff;color:#1e40af}
+.btn.ghost{background:#f1f5f9;color:#0f172a}
+.badge{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
+
+.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 8px 22px rgba(2,6,23,.06)}
 h2{margin:6px 0 2px 0}
 h3{margin:0 0 6px 0}
 .mini{font-size:12px;color:var(--muted)}
 .metric{margin-top:16px}
-.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:6px}
+.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}
 .nums{font-size:12px;color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
+.rew{margin-top:8px;font-size:13px}
+
+.bars{display:flex;flex-direction:column;gap:8px}
 .bar{height:14px;background:#e9eef6;border-radius:999px;overflow:hidden}
-.bar>.fill{height:100%;width:0%;transition:width .8s ease;background:linear-gradient(90deg,var(--ram),#33b1ff)}
-.bar.over>.fill{background:linear-gradient(90deg,#0ea5e9,#67e8f9)}
+.bar>.fill{height:100%;width:0%;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.bar.base>.fill{background:linear-gradient(90deg,var(--base),#33b1ff)}
+.bar.base.over>.fill{background:linear-gradient(90deg,#0ea5e9,#67e8f9)}
 .bar.x1>.fill{background:linear-gradient(90deg,var(--x1),#fbbf24)}
 .bar.x2>.fill{background:linear-gradient(90deg,var(--x2),#6ee7b7)}
-.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
-.badge{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
-.rew{margin-top:8px;font-size:13px}
+
 #login{max-width:440px;margin:64px auto;padding:0 16px;text-align:center}
-#login input{padding:10px;width:100%;border-radius:10px;border:1px solid #cbd5e1;margin:6px 0}
-#login button{background:var(--ram);color:#fff;border:0;padding:10px 20px;border-radius:10px;font-weight:700;margin-top:6px;cursor:pointer}
-.err{color:#b91c1c;font-size:13px;margin-top:6px;white-space:pre-wrap}
+#login h2{color:var(--ram)}
+#login input{padding:12px;width:100%;border-radius:12px;border:1px solid #cbd5e1;margin:6px 0;background:#fff}
+#login button{background:var(--ram);color:#fff;border:0;padding:12px 20px;border-radius:12px;font-weight:700;margin-top:6px;cursor:pointer;width:100%}
+.err{color:var(--err);font-size:13px;margin-top:6px;white-space:pre-wrap}
+.alert{padding:10px;border-radius:12px;font-size:13px;margin:10px 0}
+.alert.warn{background:#fff7ed;color:#92400e;border:1px solid #fed7aa}
+.alert.err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.center{display:flex;align-items:center;gap:8px}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
+
+@media (min-width:780px){
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<section id="login">
-  <h2 style="color:var(--ram);">RAMSERVICE · Accesso</h2>
-  <input id="luser" autocomplete="username" placeholder="Username">
-  <input id="lpass" autocomplete="current-password" type="password" placeholder="Password">
+<section id="login" aria-labelledby="tit-login">
+  <h2 id="tit-login">RAMSERVICE · Accesso</h2>
+  <input id="luser" autocomplete="username" placeholder="Username" />
+  <input id="lpass" autocomplete="current-password" type="password" placeholder="Password" />
   <button id="lbtn">Accedi</button>
   <div id="lmsg" class="err"></div>
+  <div id="netmsg" class="alert err" style="display:none"></div>
 </section>
 
 <!-- HEADER -->
-<header id="top">
+<header id="top" role="banner">
   <div class="wrap">
-    <div class="brand"><div class="dot"></div><h1>RAMSERVICE · Target</h1></div>
-    <button class="logout" id="logout">Logout</button>
+    <div class="brand"><div class="dot" aria-hidden="true"></div><h1>RAMSERVICE · Target</h1></div>
+    <div class="actions">
+      <button class="btn ghost" id="reloadBtn" title="Ricarica dati">Ricarica</button>
+      <button class="btn secondary" id="logout">Logout</button>
+    </div>
   </div>
 </header>
 
 <!-- APP -->
-<main id="app"></main>
-<footer class="mini" style="text-align:center;padding:18px">© RAMSERVICE — dati aggiornati</footer>
+<main id="app" role="main"></main>
+<footer>© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
+/* ========= CONFIG ========= */
+const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";  // utenti + target + premi
+const API_URL  = "https://script.google.com/macros/s/AKfycbzDxWpKyBbR7muK-wkmE2lSp4zoc70juhvXf9teOZ9BdtrJnqtK8Q_kFK7XUvGLxeUn/exec"; // risultati reali da Sheets
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-const M = ()=> MESI[new Date().getMonth()];
-const euro = n => n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
-const pct = (a,b)=> b>0? Math.max(0, Math.min(100, (a/b)*100 )) : 0;
-const bar = (p,cls="") => {
-  const el = document.createElement("div");
-  el.className = "bar "+cls;
-  el.innerHTML = `<div class="fill" style="width:${p}%"></div>`;
-  return el;
-};
+/* ========================== */
 
-let DATA={};
+const M_NOW = () => MESI[new Date().getMonth()];
+const euro = n => Number(n||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct  = (a,b)=> b>0? Math.max(0, Math.min(100, (a/b)*100 )) : 0;
+const qs   = (s)=>document.querySelector(s);
 
-// boot
-const cached = localStorage.getItem("ram_user");
-if(cached){ showApp(); } // se già loggato prova a mostrare subito
+let DATA={}, LIVE={}; // DATA: config/premi | LIVE: risultati dallo Sheet
 
-document.getElementById("lbtn").onclick = login;
-document.getElementById("logout").onclick = ()=>{ localStorage.removeItem("ram_user"); location.reload(); };
+// login memory
+const cachedUser = localStorage.getItem("ram_user");
+if(cachedUser){ showApp(); }
+
+qs("#lbtn").onclick = login;
+qs("#logout").onclick = ()=>{ localStorage.removeItem("ram_user"); location.reload(); };
+qs("#reloadBtn").onclick = ()=>{ loadLive().then(render).catch(showNetworkError); };
 
 async function login(){
+  hideNetworkError();
   try{
-    const res = await fetch(JSON_URL + "?v=" + Date.now());
-    if(!res.ok) throw new Error("HTTP "+res.status);
-    DATA = await res.json();
+    // carico config (utenti/target/premi)
+    const r = await fetch(JSON_URL+"?v="+Date.now());
+    if(!r.ok) throw new Error("Config HTTP "+r.status);
+    DATA = await r.json();
   }catch(e){
-    return showErr("Impossibile caricare le impostazioni.\n" + e.message);
+    return showLoginError("Impossibile caricare le impostazioni.\n"+e.message);
   }
 
-  const u = document.getElementById("luser").value.trim().toLowerCase();
-  const p = document.getElementById("lpass").value.trim();
+  const u = qs("#luser").value.trim().toLowerCase();
+  const p = qs("#lpass").value.trim();
   const found = (DATA.users||[]).find(x => String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
-  if(!found) return showErr("Credenziali errate");
+  if(!found) return showLoginError("Credenziali errate");
 
   localStorage.setItem("ram_user", found.user);
   showApp();
 }
 
-function showErr(msg){ document.getElementById("lmsg").textContent = "❌ " + msg; }
+function showLoginError(msg){ qs("#lmsg").textContent = "❌ "+msg; }
+function hideNetworkError(){ qs("#netmsg").style.display="none"; }
+function showNetworkError(e){ const box=qs("#netmsg"); box.textContent="Errore rete/API: "+(e?.message||e); box.style.display="block"; }
 
 async function showApp(){
+  // assicura DATA
   if(!Object.keys(DATA).length){
     try{
-      const r = await fetch(JSON_URL + "?v=" + Date.now());
+      const r = await fetch(JSON_URL+"?v="+Date.now());
       DATA = await r.json();
-    }catch(e){
-      document.getElementById("lmsg").textContent = "Errore dati: " + e.message;
-      return;
-    }
+    }catch(e){ qs("#lmsg").textContent="Errore dati: "+e.message; return; }
   }
-  document.getElementById("login").style.display="none";
-  document.getElementById("top").style.display="";
-  document.getElementById("app").style.display="";
+  // carica risultati live
+  try{
+    await loadLive();
+  }catch(e){ showNetworkError(e); } // mostro ma continuo con 0
+
+  qs("#login").style.display="none";
+  qs("#top").style.display="";
+  qs("#app").style.display="";
   render();
 }
 
-function getCfg(mese){
-  const cfg = (DATA.config||{})[mese];
-  if(!cfg) return null;
-  const norm = k => {
-    const o = {...(cfg[k]||{})};
-    o.main_thr = Number(o.main_thr || 0);
-    o.result = Number(o.result || 0);
-    o.base_prize = Number(o.base_prize || o.base || 0);
-    o.x1_thr = Number(o.x1_thr || 0);
-    o.x1_prize = Number(o.x1_prize || 0);
-    o.x2_thr = Number(o.x2_thr || 0);
-    o.x2_prize = Number(o.x2_prize || 0);
-    return o;
-  };
-  return { fatt: norm("fatt"), wind: norm("wind"), ho: norm("ho") };
+async function loadLive(){
+  const r = await fetch(API_URL+"?v="+Date.now());
+  if(!r.ok) throw new Error("API HTTP "+r.status);
+  // l'endpoint ora restituisce: {"mese":"OTTOBRE","fatt":26973.58,"wind":2,"ho":0}
+  LIVE = await r.json();
+  // fallback se qualcosa manca
+  if(!LIVE || typeof LIVE!=="object") LIVE = { mese:M_NOW(), fatt:0, wind:0, ho:0 };
 }
 
-function metricCard({title,conf,showNumbers}){
+/* ---------- NORMALIZZAZIONE CONFIG ---------- */
+function getCfg(mese){
+  const raw = (DATA.config||{})[mese];
+  if(!raw) return null;
+
+  const norm = (k) => {
+    const o = {...(raw[k]||{})};
+    // compat con vecchi nomi
+    o.main_thr   = Number(o.main_thr ?? o.x1_thr ?? 0);
+    o.result     = Number(o.result   ?? 0); // NON usato: i result veri arrivano da LIVE
+    o.base_prize = Number(o.base_prize ?? o.base ?? 0);
+    o.x1_thr     = Number(o.x1_thr ?? 0);
+    o.x1_prize   = Number(o.x1_prize ?? 0);
+    o.x2_thr     = Number(o.x2_thr ?? 0);
+    o.x2_prize   = Number(o.x2_prize ?? 0);
+    return o;
+  };
+  return { fatt:norm("fatt"), wind:norm("wind"), ho:norm("ho") };
+}
+
+/* ---------- UI ---------- */
+function metricCard({title,conf,liveValue,showNumbers}){
+  // liveValue = risultato reale da Google Sheet (fatt/wind/ho)
   const t = conf.main_thr;
-  const r = conf.result;
+  const r = Number(liveValue || 0);
   const p = pct(r,t);
   const over = p >= 100;
 
-  const wrap = document.createElement("section");
-  wrap.className="card metric";
-  const nums = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : `<div class="nums">Progresso: <b>${Math.round(p)}%</b></div>`;
-  wrap.innerHTML = `<div class="head"><h3>${title}</h3>${nums}</div>`;
-  wrap.appendChild(bar(p, over?"over":""));
-  const row = document.createElement("div");
-  row.className="row";
-  row.innerHTML = `<div>${Math.round(p)}%</div>${over?`<div class="badge">Target completato</div>`:"<div class='mini'>0% raggiunto</div>"}`;
-  wrap.appendChild(row);
+  const card = document.createElement("section");
+  card.className = "card metric";
 
-  // Extra 1
+  const nums = showNumbers
+    ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`
+    : `<div class="nums">Progresso: <b>${Math.round(p)}%</b></div>`;
+
+  card.innerHTML = `
+    <div class="head">
+      <h3>${title}</h3>
+      ${nums}
+    </div>
+    <div class="bars">
+      <div class="bar base ${over?"over":""}"><div class="fill" style="width:${p}%"></div></div>
+    </div>
+    <div class="row">
+      <div>${Math.round(p)}%</div>
+      ${over ? `<div class="badge">Target completato</div>` : `<div class="mini">In progresso</div>`}
+    </div>
+  `;
+
+  // EXTRA 1
   if(conf.x1_thr>0){
     const p1 = pct(r, conf.x1_thr);
-    const label1 = document.createElement("div");
-    label1.className="row";
-    label1.innerHTML = showNumbers ? `<div>Extra 1 — soglia ${conf.x1_thr}</div><div>${Math.round(p1)}%</div>` : `<div>Extra 1</div><div>${Math.round(p1)}%</div>`;
-    wrap.appendChild(label1);
-    wrap.appendChild(bar(p1,"x1"));
-    if(r>=conf.x1_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 1: <b>${euro(conf.x1_prize)}</b></div>`;
+    const line1 = document.createElement("div");
+    line1.className="row";
+    line1.innerHTML = showNumbers ? `<div>Extra 1 — soglia ${conf.x1_thr}</div><div>${Math.round(p1)}%</div>` : `<div>Extra 1</div><div>${Math.round(p1)}%</div>`;
+    card.querySelector(".bars").appendChild( Object.assign(document.createElement("div"),{className:"bar x1",innerHTML:`<div class="fill" style="width:${p1}%"></div>`}) );
+    card.appendChild(line1);
+    if(r>=conf.x1_thr){
+      card.insertAdjacentHTML("beforeend", `<div class="rew">🎉 Premio Extra 1: <b>${euro(conf.x1_prize)}</b></div>`);
+    }
   }
 
-  // Extra 2
+  // EXTRA 2
   if(conf.x2_thr>0){
     const p2 = pct(r, conf.x2_thr);
-    const label2 = document.createElement("div");
-    label2.className="row";
-    label2.innerHTML = showNumbers ? `<div>Extra 2 — soglia ${conf.x2_thr}</div><div>${Math.round(p2)}%</div>` : `<div>Extra 2</div><div>${Math.round(p2)}%</div>`;
-    wrap.appendChild(label2);
-    wrap.appendChild(bar(p2,"x2"));
-    if(r>=conf.x2_thr) wrap.innerHTML += `<div class="rew">🏆 Premio Extra 2: <b>${euro(conf.x2_prize)}</b></div>`;
+    const line2 = document.createElement("div");
+    line2.className="row";
+    line2.innerHTML = showNumbers ? `<div>Extra 2 — soglia ${conf.x2_thr}</div><div>${Math.round(p2)}%</div>` : `<div>Extra 2</div><div>${Math.round(p2)}%</div>`;
+    card.querySelector(".bars").appendChild( Object.assign(document.createElement("div"),{className:"bar x2",innerHTML:`<div class="fill" style="width:${p2}%"></div>`}) );
+    card.appendChild(line2);
+    if(r>=conf.x2_thr){
+      card.insertAdjacentHTML("beforeend", `<div class="rew">🏆 Premio Extra 2: <b>${euro(conf.x2_prize)}</b></div>`);
+    }
   }
 
+  // PREMIO BASE
   if(over && conf.base_prize>0){
-    wrap.innerHTML += `<div class="rew">🏆 Premio base: <b>${euro(conf.base_prize)}</b></div>`;
+    card.insertAdjacentHTML("beforeend", `<div class="rew">🏆 Premio base: <b>${euro(conf.base_prize)}</b></div>`);
   }
-  return wrap;
+
+  return card;
 }
 
 function render(){
-  const app = document.getElementById("app");
+  const app = qs("#app");
   app.innerHTML = "";
-  const mese = M();
+
+  const mese = M_NOW();
   const cfg = getCfg(mese);
 
   const head = document.createElement("section");
-  head.className="card";
-  head.innerHTML = `<h2>${mese}</h2><div class="mini">Premi & Target del mese</div>`;
+  head.className = "card";
+  head.innerHTML = `
+    <div class="center" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <h2 style="margin:0">${mese}</h2>
+        <div class="mini">Premi & Target del mese (risultati live da Google Sheet)</div>
+      </div>
+      <div class="mini">Ultimo fetch: ${new Date().toLocaleString("it-IT")}</div>
+    </div>
+  `;
   app.appendChild(head);
 
   if(!cfg){
     const warn = document.createElement("section");
-    warn.className="card";
-    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${mese}</b>.`;
+    warn.className="card alert warn";
+    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${mese}</b> nel file <code>ramdata.json</code>.`;
     app.appendChild(warn);
     return;
   }
 
-  // Mostra sempre tutte le sezioni (anche se 0)
-  app.appendChild( metricCard({title:"Fatturato", conf:cfg.fatt, showNumbers:false}) );
-  app.appendChild( metricCard({title:"WindTre", conf:cfg.wind, showNumbers:true}) );
-  app.appendChild( metricCard({title:"ho. Mobile", conf:cfg.ho, showNumbers:true}) );
+  const grid = document.createElement("div");
+  grid.className = "metric-grid";
+  app.appendChild(grid);
+
+  // FATTURATO (numeri nascosti → mostra solo %)
+  grid.appendChild( metricCard({
+    title:"Fatturato",
+    conf: cfg.fatt,
+    liveValue: LIVE?.fatt ?? 0,
+    showNumbers: false
+  }));
+
+  // WINDTRE
+  grid.appendChild( metricCard({
+    title:"WindTre",
+    conf: cfg.wind,
+    liveValue: LIVE?.wind ?? 0,
+    showNumbers: true
+  }));
+
+  // HO. MOBILE
+  grid.appendChild( metricCard({
+    title:"ho. Mobile",
+    conf: cfg.ho,
+    liveValue: LIVE?.ho ?? 0,
+    showNumbers: true
+  }));
+
+  // Avviso se l'API live ha dato un mese diverso (solo informativo)
+  if(LIVE?.mese && LIVE.mese !== mese){
+    const note = document.createElement("section");
+    note.className = "card alert warn";
+    note.innerHTML = `ℹ️ I risultati provengono da <b>${LIVE.mese}</b>, ma la pagina mostra <b>${mese</b>}. Controlla la data di sistema o il foglio.`;
+    app.appendChild(note);
+  }
 }
 </script>
 </body>
