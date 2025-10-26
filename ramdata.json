@@ -1,5 +1,11 @@
 {
-  "users": [],
+  "users": [
+    {
+      "name": "Emanuele",
+      "user": "Emanuele",
+      "pass": "Giorgia2016"
+    }
+  ],
   "config": {
     "OTTOBRE": {
       "fatt": {
