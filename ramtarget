@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>RAMSERVICE · Target</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ram-blue:#0071E3;
+    --ink:#111;
+    --page:#F5F5F7;
+    --card:#fff;
+    --muted:#6b7280;
+    --ok:#16a34a;
+    --over:#0ea5e9;
+    --radius:16px;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--page);color:var(--ink);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{
+    position:sticky;top:0;z-index:5;
+    background:linear-gradient(180deg,#fff,rgba(255,255,255,.85));
+    backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:14px 16px;}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:30px;height:30px;border-radius:8px;background:var(--ram-blue);box-shadow:inset 0 -8px 18px rgba(0,0,0,.15)}
+  .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.2px}
+  .brand span{font-size:12px;color:var(--muted);font-weight:600}
+
+  .toolbar{display:flex;gap:10px;margin-top:10px}
+  .selector{
+    flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid rgba(0,0,0,.06);
+    padding:8px 10px;border-radius:12px
+  }
+  .selector button{
+    appearance:none;border:0;background:#f0f2f5;border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700
+  }
+  .selector .label{flex:1;text-align:center;font-weight:700}
+  .refresh{
+    appearance:none;border:0;background:var(--ram-blue);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700
+  }
+
+  main{padding:18px 16px;max-width:820px;margin:0 auto}
+
+  .card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:16px 14px;margin:12px 0;border:1px solid rgba(0,0,0,.06)
+  }
+  .month-title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .month-title h2{font-size:18px;margin:0}
+  .month-title .chip{
+    padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#eef2ff;color:#3730a3
+  }
+
+  .metric{margin-top:14px}
+  .metric .head{display:flex;justify-content:space-between;align-items:end;margin-bottom:8px}
+  .metric .name{font-weight:700}
+  .metric .nums{font-size:12px;color:var(--muted)}
+
+  .bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden;position:relative}
+  .bar > .fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--ram-blue),#33b1ff);
+    border-radius:999px; transition:width 900ms ease
+  }
+  .bar.over > .fill{background:linear-gradient(90deg,var(--over),#67e8f9)}
+
+  .percent-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+  .percent{font-weight:700}
+  .badge-ok{font-size:11px;font-weight:800;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
+  .badge-over{font-size:11px;font-weight:800;color:#0ea5e9;background:#e0f2fe;padding:3px 8px;border-radius:999px}
+
+  .rewards{margin-top:8px;font-size:13px;color:var(--ink)}
+  .rewards b{font-weight:700}
+  .muted{color:var(--muted)}
+
+  /* small helper footer */
+  footer{padding:24px 16px 60px;color:var(--muted);text-align:center;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>RAMSERVICE · Target</h1>
+        <span>Dashboard mensile</span>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="selector">
+        <button id="prevBtn" aria-label="Mese precedente">◀</button>
+        <div class="label" id="monthLabel">—</div>
+        <button id="nextBtn" aria-label="Mese successivo">▶</button>
+      </div>
+      <button class="refresh" id="refreshBtn">Aggiorna</button>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+  <!-- cards generate here -->
+</main>
+
+<footer>© RAMSERVICE · progressi aggiornati dal foglio Google</footer>
+
+<script>
+/* =======================
+   CONFIGURAZIONE
+   ======================= */
+
+/* 1) URL dell'endpoint Apps Script che restituisce il JSON del foglio "API".
+      Sostituisci con il tuo:
+      Es.: https://script.google.com/macros/s/AKfycb.../exec
+*/
+const ENDPOINT = "https://script.google.com/macros/s/AKFYCB_YOUR_ENDPOINT_HERE/exec";
+
+/* 2) Impostazioni Premi:
+   - base: premio quando raggiungi il 100% (o lo superi)
+   - extra: premio addizionale quando superi il 100%
+     · modalità percentuale: per ogni X% oltre 100 aggiungi Y €
+     · puoi differenziare per metrica
+*/
+const PRIZES = {
+  fatturato: {
+    base: 200,                 // € al 100%
+    extraStepPercent: 10,      // ogni +10% oltre il 100%
+    extraPerStep: 25           // € per step extra
+  },
+  wind3: {
+    base: 50,
+    extraStepPercent: 10,
+    extraPerStep: 10
+  },
+  ho: {
+    base: 50,
+    extraStepPercent: 10,
+    extraPerStep: 10
+  }
+};
+
+/* 3) Mappatura colonne (come in API) */
+const COL = {
+  mese: "mese",
+  fatturato_target: "fatturato_target",
+  fatturato_risultato: "fatturato_risultato",
+  wind3_target: "Wind3_target",
+  wind3_result: "Wind3_Risultato",
+  ho_target: "Ho_target",
+  ho_result: "ho_risultato"
+};
+
+/* =======================
+   UTILS
+   ======================= */
+
+/* Parse numeri in formato italiano o con simboli valuta */
+function toNumber(v){
+  if (typeof v === "number") return v;
+  if (!v) return 0;
+  let s = String(v).trim();
+  s = s.replace(/[€\s]/g,"");   // togli € e spazi
+  // Se ci sono punti come separatori migliaia e virgola decimali:
+  if (s.includes(",") && s.includes(".")){
+    s = s.replace(/\./g,"").replace(",",".");
+  } else if (s.includes(",") && !s.includes(".")){
+    s = s.replace(",",".");
+  }
+  const n = Number(s);
+  return isNaN(n) ? 0 : n;
+}
+
+/* Format € */
+function euro(n){
+  try{
+    return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+  }catch{
+    return "€ " + Math.round(n);
+  }
+}
+
+/* Mesi IT */
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+function meseCorrenteKey(){
+  const d = new Date();
+  return MESI[d.getMonth()];
+}
+
+/* Calcolo premio extra: per ogni extraStepPercent oltre il 100% */
+function calcPrize(metaKey, percent){
+  const cfg = PRIZES[metaKey];
+  if (!cfg) return { base:0, extra:0, steps:0 };
+  let base = percent >= 100 ? cfg.base : 0;
+  let extra = 0;
+  let steps = 0;
+  if (percent > 100){
+    steps = Math.floor((percent - 100) / cfg.extraStepPercent);
+    extra = steps * cfg.extraPerStep;
+  }
+  return { base, extra, steps };
+}
+
+/* Crea una barra metrica */
+function metricCard({name, target, result, key}){
+  const t = toNumber(target);
+  const r = toNumber(result);
+  const pctRaw = t>0 ? (r/t)*100 : 0;
+  const pct = Math.max(0, pctRaw);
+  const capped = Math.min(pct, 140); // visual fino a 140%
+  const over = pct >= 100;
+  const prize = calcPrize(key, pct);
+
+  const prettyTarget = name==="Fatturato" ? euro(t) : t;
+  const prettyResult = name==="Fatturato" ? euro(r) : r;
+
+  const wrap = document.createElement("div");
+  wrap.className = "metric";
+  wrap.innerHTML = `
+    <div class="head">
+      <div class="name">${name}</div>
+      <div class="nums muted">Target: <b>${prettyTarget}</b> · Risultato: <b>${prettyResult}</b></div>
+    </div>
+    <div class="bar ${over?"over":""}">
+      <div class="fill" style="width:${capped}%"></div>
+    </div>
+    <div class="percent-row">
+      <div class="percent">${Math.round(pct)}%</div>
+      <div>
+        ${over ? `<span class="badge-ok">Target completato</span>` : ``}
+        ${pct>100 ? `<span class="badge-over">+${Math.round(pct-100)}% extra</span>` : ``}
+      </div>
+    </div>
+    <div class="rewards">
+      ${pct<100
+        ? `<span class="muted">Premio al raggiungimento: <b>${euro(PRIZES[key].base)}</b></span>`
+        : `<div>🎉 Premio: <b>${euro(prize.base)}</b>${prize.extra>0 ? ` · Extra: <b>${euro(prize.extra)}</b> (ogni ${PRIZES[key].extraStepPercent}%: +${euro(PRIZES[key].extraPerStep)})` : ``}</div>`
+      }
+    </div>
+  `;
+  return wrap;
+}
+
+/* Render della card del mese */
+function monthCard(row){
+  const card = document.createElement("section");
+  card.className = "card";
+
+  const title = document.createElement("div");
+  title.className = "month-title";
+  title.innerHTML = `<h2>${row[COL.mese]}</h2><span class="chip">riepilogo mese</span>`;
+  card.appendChild(title);
+
+  // Fatturato
+  card.appendChild(metricCard({
+    name:"Fatturato",
+    target: row[COL.fatturato_target],
+    result: row[COL.fatturato_risultato],
+    key: "fatturato"
+  }));
+
+  // WindTre
+  card.appendChild(metricCard({
+    name:"WindTre",
+    target: row[COL.wind3_target],
+    result: row[COL.wind3_result],
+    key: "wind3"
+  }));
+
+  // ho. Mobile
+  card.appendChild(metricCard({
+    name:"ho. Mobile",
+    target: row[COL.ho_target],
+    result: row[COL.ho_result],
+    key: "ho"
+  }));
+
+  return card;
+}
+
+/* =======================
+   APP
+   ======================= */
+let RAW = [];       // dati interi dall'API
+let idx = 0;        // indice mese selezionato (0..11 basato su MESI)
+
+function indexFromMonthName(name){
+  return MESI.indexOf(String(name||"").toUpperCase());
+}
+
+async function loadData(){
+  const res = await fetch(ENDPOINT, {cache:"no-store"});
+  const data = await res.json();
+  // Mantieni solo i mesi riconosciuti e in ordine MESI
+  const map = new Map();
+  data.forEach(row => map.set(String(row[COL.mese]).toUpperCase(), row));
+  RAW = MESI.map(m => map.get(m)).filter(Boolean);
+  // posiziona sul mese corrente
+  const nowK = meseCorrenteKey();
+  const i = RAW.findIndex(r => String(r[COL.mese]).toUpperCase() === nowK);
+  idx = Math.max(0, i);
+  render();
+}
+
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  if (!RAW.length){
+    app.innerHTML = `<div class="card"><b>Nessun dato</b><div class="muted" style="margin-top:6px">Controlla l'endpoint o il foglio API.</div></div>`;
+    return;
+  }
+  const row = RAW[idx];
+  document.getElementById("monthLabel").textContent = row[COL.mese];
+  app.appendChild(monthCard(row));
+}
+
+document.getElementById("prevBtn").addEventListener("click", ()=>{
+  if (!RAW.length) return;
+  idx = (idx - 1 + RAW.length) % RAW.length;
+  render();
+});
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  if (!RAW.length) return;
+  idx = (idx + 1) % RAW.length;
+  render();
+});
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+// avvio
+loadData().catch(err=>{
+  console.error(err);
+  document.getElementById("app").innerHTML =
+    `<div class="card"><b>Errore caricamento</b><div class="muted" style="margin-top:6px">${String(err)}</div></div>`;
+});
+</script>
+</body>
+</html>
