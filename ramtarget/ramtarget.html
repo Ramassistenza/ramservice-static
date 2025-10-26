@@ -86,7 +86,6 @@ document.getElementById("lbtn").onclick = login;
 document.getElementById("logout").onclick = ()=>{ localStorage.removeItem("ram_user"); location.reload(); };
 
 async function login(){
-  // carica JSON
   try{
     const res = await fetch(JSON_URL + "?v=" + Date.now());
     if(!res.ok) throw new Error("HTTP "+res.status);
@@ -107,7 +106,6 @@ async function login(){
 function showErr(msg){ document.getElementById("lmsg").textContent = "❌ " + msg; }
 
 async function showApp(){
-  // assicura DATA
   if(!Object.keys(DATA).length){
     try{
       const r = await fetch(JSON_URL + "?v=" + Date.now());
@@ -126,23 +124,25 @@ async function showApp(){
 function getCfg(mese){
   const cfg = (DATA.config||{})[mese];
   if(!cfg) return null;
-
-  // compat: supporta chiavi vecchie (base→base_prize; assenza main_thr/result)
   const norm = k => {
     const o = {...(cfg[k]||{})};
-    if(o.base_prize==null && o.base!=null) o.base_prize = o.base;
-    if(o.main_thr==null && o.x1_thr!=null) o.main_thr = o.x1_thr;
-    if(o.result==null) o.result = 0; // se non impostato, 0
+    o.main_thr = Number(o.main_thr || 0);
+    o.result = Number(o.result || 0);
+    o.base_prize = Number(o.base_prize || o.base || 0);
+    o.x1_thr = Number(o.x1_thr || 0);
+    o.x1_prize = Number(o.x1_prize || 0);
+    o.x2_thr = Number(o.x2_thr || 0);
+    o.x2_prize = Number(o.x2_prize || 0);
     return o;
   };
   return { fatt: norm("fatt"), wind: norm("wind"), ho: norm("ho") };
 }
 
 function metricCard({title,conf,showNumbers}){
-  const t = Number(conf.main_thr||0);
-  const r = Number(conf.result||0);
+  const t = conf.main_thr;
+  const r = conf.result;
   const p = pct(r,t);
-  const over = p>=100;
+  const over = p >= 100;
 
   const wrap = document.createElement("section");
   wrap.className="card metric";
@@ -151,32 +151,33 @@ function metricCard({title,conf,showNumbers}){
   wrap.appendChild(bar(p, over?"over":""));
   const row = document.createElement("div");
   row.className="row";
-  row.innerHTML = `<div>${Math.round(p)}%</div>${over?`<div class="badge">Target completato</div>`:""}`;
+  row.innerHTML = `<div>${Math.round(p)}%</div>${over?`<div class="badge">Target completato</div>`:"<div class='mini'>0% raggiunto</div>"}`;
   wrap.appendChild(row);
 
   // Extra 1
   if(conf.x1_thr>0){
-    const p1 = pct(r, Number(conf.x1_thr));
+    const p1 = pct(r, conf.x1_thr);
     const label1 = document.createElement("div");
     label1.className="row";
     label1.innerHTML = showNumbers ? `<div>Extra 1 — soglia ${conf.x1_thr}</div><div>${Math.round(p1)}%</div>` : `<div>Extra 1</div><div>${Math.round(p1)}%</div>`;
     wrap.appendChild(label1);
     wrap.appendChild(bar(p1,"x1"));
-    if(r>=conf.x1_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 1: <b>${euro(Number(conf.x1_prize||0))}</b></div>`;
+    if(r>=conf.x1_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 1: <b>${euro(conf.x1_prize)}</b></div>`;
   }
+
   // Extra 2
   if(conf.x2_thr>0){
-    const p2 = pct(r, Number(conf.x2_thr));
+    const p2 = pct(r, conf.x2_thr);
     const label2 = document.createElement("div");
     label2.className="row";
     label2.innerHTML = showNumbers ? `<div>Extra 2 — soglia ${conf.x2_thr}</div><div>${Math.round(p2)}%</div>` : `<div>Extra 2</div><div>${Math.round(p2)}%</div>`;
     wrap.appendChild(label2);
     wrap.appendChild(bar(p2,"x2"));
-    if(r>=conf.x2_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 2: <b>${euro(Number(conf.x2_prize||0))}</b></div>`;
+    if(r>=conf.x2_thr) wrap.innerHTML += `<div class="rew">🏆 Premio Extra 2: <b>${euro(conf.x2_prize)}</b></div>`;
   }
 
-  if(over && Number(conf.base_prize||0)>0){
-    wrap.innerHTML += `<div class="rew">🏆 Premio base: <b>${euro(Number(conf.base_prize))}</b></div>`;
+  if(over && conf.base_prize>0){
+    wrap.innerHTML += `<div class="rew">🏆 Premio base: <b>${euro(conf.base_prize)}</b></div>`;
   }
   return wrap;
 }
@@ -186,6 +187,7 @@ function render(){
   app.innerHTML = "";
   const mese = M();
   const cfg = getCfg(mese);
+
   const head = document.createElement("section");
   head.className="card";
   head.innerHTML = `<h2>${mese}</h2><div class="mini">Premi & Target del mese</div>`;
@@ -199,9 +201,8 @@ function render(){
     return;
   }
 
-  // Fatturato: nascondi cifre (mostra solo %)
+  // Mostra sempre tutte le sezioni (anche se 0)
   app.appendChild( metricCard({title:"Fatturato", conf:cfg.fatt, showNumbers:false}) );
-  // WindTre, ho. Mobile: mostra cifre
   app.appendChild( metricCard({title:"WindTre", conf:cfg.wind, showNumbers:true}) );
   app.appendChild( metricCard({title:"ho. Mobile", conf:cfg.ho, showNumbers:true}) );
 }
