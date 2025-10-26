@@ -133,24 +133,35 @@ function showLoginError(msg){ qs("#lmsg").textContent = "❌ "+msg; }
 function hideNetworkError(){ qs("#netmsg").style.display="none"; }
 function showNetworkError(e){ const box=qs("#netmsg"); box.textContent="Errore rete/API: "+(e?.message||e); box.style.display="block"; }
 
-async function showApp(){
-  // assicura DATA
-  if(!Object.keys(DATA).length){
-    try{
-      const r = await fetch(JSON_URL+"?v="+Date.now());
-      DATA = await r.json();
-    }catch(e){ qs("#lmsg").textContent="Errore dati: "+e.message; return; }
-  }
-  // carica risultati live
-  try{
-    await loadLive();
-  }catch(e){ showNetworkError(e); } // mostro ma continuo con 0
+async function showApp() {
+  hideNetworkError();
 
-  qs("#login").style.display="none";
-  qs("#top").style.display="";
-  qs("#app").style.display="";
-  render();
+  try {
+    // se DATA non è ancora disponibile, ricaricalo
+    if (!Object.keys(DATA).length) {
+      const conf = await fetch(JSON_URL + "?v=" + Date.now());
+      if (!conf.ok) throw new Error("Impossibile caricare impostazioni");
+      DATA = await conf.json();
+    }
+
+    // carica risultati live dal Google Sheet
+    const api = await fetch(API_URL + "?v=" + Date.now());
+    if (!api.ok) throw new Error("API HTTP " + api.status);
+    LIVE = await api.json();
+
+    if (!LIVE || typeof LIVE !== "object") LIVE = { mese: M_NOW(), fatt: 0, wind: 0, ho: 0 };
+
+    // mostra app
+    qs("#login").style.display = "none";
+    qs("#top").style.display = "";
+    qs("#app").style.display = "";
+
+    render();
+  } catch (err) {
+    showNetworkError(err);
+  }
 }
+
 
 async function loadLive(){
   const r = await fetch(API_URL+"?v="+Date.now());
