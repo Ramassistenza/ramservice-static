@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ram-blue:#0071E3;--ink:#111;--page:#F5F5F7;--card:#fff;
-    --muted:#6b7280;--ok:#16a34a;--over:#0ea5e9;
+    --ram-blue:#0071E3; --ink:#111; --page:#F5F5F7; --card:#fff; --muted:#6b7280;
+    --ok:#16a34a; --x1:#f59e0b; --x1b:#fbbf24; --x2:#10b981; --x2b:#34d399;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,sans-serif}
@@ -29,9 +29,11 @@
   .metric{margin-top:14px}
   .metric .head{display:flex;justify-content:space-between;align-items:end;margin-bottom:8px}
   .metric .nums{font-size:12px;color:var(--muted)}
-  .bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden}
+  .bar{height:14px;background:#eceff3;border-radius:999px;overflow:hidden;margin-top:4px}
   .bar>.fill{height:100%;background:linear-gradient(90deg,var(--ram-blue),#33b1ff);width:0%;transition:width .9s ease}
-  .bar.over>.fill{background:linear-gradient(90deg,var(--over),#67e8f9)}
+  .bar.over>.fill{background:linear-gradient(90deg,#0ea5e9,#67e8f9)}
+  .bar.x1>.fill{background:linear-gradient(90deg,var(--x1),var(--x1b))}
+  .bar.x2>.fill{background:linear-gradient(90deg,var(--x2),var(--x2b))}
   .percent-row{display:flex;justify-content:space-between;margin-top:6px}
   .percent{font-weight:700}
   .badge-ok{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
@@ -41,6 +43,7 @@
   #loginScreen{text-align:center;padding:60px 20px}
   #loginScreen input{padding:10px;width:90%;max-width:280px;border-radius:8px;border:1px solid #ccc;margin:6px 0}
   #loginScreen button{background:var(--ram-blue);color:#fff;border:0;padding:10px 24px;border-radius:8px;margin-top:10px}
+  .subbar-label{font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
 </style>
 </head>
 <body>
@@ -57,9 +60,7 @@
   <div class="wrap">
     <div class="brand">
       <div class="logo"></div>
-      <div>
-        <h1>RAMSERVICE · Target</h1>
-      </div>
+      <div><h1>RAMSERVICE · Target</h1></div>
     </div>
     <div class="toolbar">
       <div class="selector">
@@ -82,21 +83,136 @@ const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AG
 function meseCorrenteKey(){return MESI[new Date().getMonth()];}
 function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");return Number(s)||0;}
 function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
-function getPrizeConfig(mese){return JSON.parse(localStorage.getItem(`ram_prizes_${mese}`)||"null")||{fattBase:200,fattExtra:25,windBase:50,windExtra:10,hoBase:50,hoExtra:10};}
-function calcPrize(key,percent,conf){let base=0,extra=0;if(key==="fatturato"&&percent>=100)base=conf.fattBase;if(key==="wind3"&&percent>=100)base=conf.windBase;if(key==="ho"&&percent>=100)base=conf.hoBase;if(percent>100){const steps=Math.floor((percent-100)/10);if(key==="fatturato")extra=steps*conf.fattExtra;if(key==="wind3")extra=steps*conf.windExtra;if(key==="ho")extra=steps*conf.hoExtra;}return{base,extra};}
-function metricCard({name,target,result,key,hideValues,conf}){const t=toNumber(target),r=toNumber(result),pct=t>0?(r/t)*100:0,capped=Math.min(pct,140),over=pct>=100,prize=calcPrize(key,pct,conf);const wrap=document.createElement("div");wrap.className="metric";wrap.innerHTML=`<div class="head"><div class="name">${name}</div>${hideValues?"":`<div class="nums muted">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`}</div><div class="bar ${over?"over":""}"><div class="fill" style="width:${capped}%"></div></div><div class="percent-row"><div class="percent">${Math.round(pct)}%</div><div>${over?`<span class="badge-ok">Target completato</span>`:""}${pct>100?`<span class="badge-over">+${Math.round(pct-100)}% extra</span>`:""}</div></div><div class="rewards">${pct<100?`<span class="muted">Premio: <b>${euro(conf[`${key}Base`])}</b></span>`:`🎉 Premio: <b>${euro(prize.base)}</b>${prize.extra>0?` · Extra: <b>${euro(prize.extra)}</b>`:""}`}</div>`;return wrap;}
+function cfgKey(m){return `ram_cfg_${m}`;}
+function getCfg(m){return JSON.parse(localStorage.getItem(cfgKey(m))||"null")||{
+  fatt:{base:200,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
+  wind:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
+  ho:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0}
+};}
+
+// ===== Login =====
+function getUsers(){return JSON.parse(localStorage.getItem("ram_users")||"[]");}
+document.getElementById("loginBtn").onclick=()=>{const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value.trim();const ok=getUsers().find(x=>x.user===u&&x.pass===p);if(ok){localStorage.setItem("ram_logged_user",u);showApp();}else{document.getElementById("loginMsg").textContent="Credenziali errate";}};
+const logged=localStorage.getItem("ram_logged_user"); if(logged) showApp();
+function showApp(){document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}
+
+// ===== Data & Render =====
 let RAW=[],idx=0;
-async function loadData(){const res=await fetch(ENDPOINT);const data=await res.json();const map=new Map();data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));RAW=MESI.map(m=>map.get(m)).filter(Boolean);idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));render();}
-function render(){const app=document.getElementById("app");app.innerHTML="";if(!RAW.length){app.innerHTML="<div class='card'>Nessun dato</div>";return;}const row=RAW[idx];const mese=row[COL.mese];const conf=getPrizeConfig(mese);document.getElementById("monthLabel").textContent=mese;const card=document.createElement("section");card.className="card";card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;card.appendChild(metricCard({name:"Fatturato",target:row[COL.fatturato_target],result:row[COL.fatturato_risultato],key:"fatturato",hideValues:true,conf}));card.appendChild(metricCard({name:"WindTre",target:row[COL.wind3_target],result:row[COL.wind3_result],key:"wind3",hideValues:false,conf}));card.appendChild(metricCard({name:"ho. Mobile",target:row[COL.ho_target],result:row[COL.ho_result],key:"ho",hideValues:false,conf}));app.appendChild(card);}
+async function loadData(){
+  const res=await fetch(ENDPOINT,{cache:"no-store"}); const data=await res.json();
+  const map=new Map(); data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
+  RAW=MESI.map(m=>map.get(m)).filter(Boolean);
+  idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
+  render();
+}
+function pct(a,b){return b>0? (a/b)*100 : 0;}
+
+// crea barra (generica)
+function bar(percent,extraClass=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${extraClass}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
+
+// card metrica con extra1/extra2
+function metricCard({name,target,result,key,showNumbers,cfg}){
+  const t=toNumber(target), r=toNumber(result);
+  const basePct=pct(r,t);
+  const over=basePct>=100;
+
+  const wrap=document.createElement("div"); wrap.className="metric";
+  const numsHTML = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : "";
+  wrap.innerHTML=`<div class="head"><div class="name">${name}</div>${numsHTML}</div>`;
+
+  // barra principale
+  const baseBar = bar(basePct, over?"over":"");
+  wrap.appendChild(baseBar);
+  wrap.appendChild(rowPercent(basePct, over));
+
+  // sotto: barre extra se configurate (>0)
+  const extras = [];
+  if(cfg.x1_thr>0){
+    const p1=pct(r,cfg.x1_thr);
+    extras.push({label:"Extra 1", thr: cfg.x1_thr, prize: cfg.x1_prize, p:p1, class:"x1", achieved: r>=cfg.x1_thr});
+  }
+  if(cfg.x2_thr>0){
+    const p2=pct(r,cfg.x2_thr);
+    extras.push({label:"Extra 2", thr: cfg.x2_thr, prize: cfg.x2_prize, p:p2, class:"x2", achieved: r>=cfg.x2_thr});
+  }
+
+  extras.forEach(ex=>{
+    // etichetta soglia (per fatturato non mostriamo cifre)
+    const label=document.createElement("div");
+    label.className="subbar-label";
+    label.innerHTML = showNumbers ? `<span>${ex.label} — soglia: <b>${ex.thr}</b></span><span>${Math.round(ex.p)}%</span>` : `<span>${ex.label}</span><span>${Math.round(ex.p)}%</span>`;
+    wrap.appendChild(label);
+    wrap.appendChild(bar(ex.p, ex.class));
+    // premio extra (solo se raggiunto)
+    if(ex.achieved){
+      const rw=document.createElement("div"); rw.className="rewards";
+      rw.innerHTML=`🎉 Premio ${ex.label}: <b>${euro(ex.prize)}</b>`;
+      wrap.appendChild(rw);
+    }
+  });
+
+  // premio base (se 100%)
+  if(over && cfg.base>0){
+    const rw=document.createElement("div"); rw.className="rewards";
+    rw.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;
+    wrap.appendChild(rw);
+  }
+
+  return wrap;
+}
+
+function rowPercent(pctVal, over){
+  const div=document.createElement("div"); div.className="percent-row";
+  div.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div>
+                 <div>${over?`<span class="badge-ok">Target completato</span>`:""}</div>`;
+  return div;
+}
+
+function render(){
+  const app=document.getElementById("app"); app.innerHTML="";
+  if(!RAW.length){app.innerHTML="<div class='card'>Nessun dato</div>";return;}
+  const row=RAW[idx]; const mese=row[COL.mese]; const cfgAll=getCfg(mese);
+  document.getElementById("monthLabel").textContent=mese;
+
+  const card=document.createElement("section"); card.className="card";
+  card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;
+
+  // Fatturato (no cifre)
+  card.appendChild(metricCard({
+    name:"Fatturato",
+    target:row[COL.fatturato_target],
+    result:row[COL.fatturato_risultato],
+    key:"fatt",
+    showNumbers:false,
+    cfg:cfgAll.fatt
+  }));
+
+  // WindTre (mostra cifre)
+  card.appendChild(metricCard({
+    name:"WindTre",
+    target:row[COL.wind3_target],
+    result:row[COL.wind3_result],
+    key:"wind",
+    showNumbers:true,
+    cfg:cfgAll.wind
+  }));
+
+  // ho. Mobile (mostra cifre)
+  card.appendChild(metricCard({
+    name:"ho. Mobile",
+    target:row[COL.ho_target],
+    result:row[COL.ho_result],
+    key:"ho",
+    showNumbers:true,
+    cfg:cfgAll.ho
+  }));
+
+  app.appendChild(card);
+}
+
 document.getElementById("prevBtn").onclick=()=>{if(!RAW.length)return;idx=(idx-1+RAW.length)%RAW.length;render();}
 document.getElementById("nextBtn").onclick=()=>{if(!RAW.length)return;idx=(idx+1)%RAW.length;render();}
 document.getElementById("refreshBtn").onclick=()=>loadData();
-
-// ===== LOGIN =====
-function getUsers(){return JSON.parse(localStorage.getItem("ram_users")||"[]");}
-document.getElementById("loginBtn").onclick=()=>{const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value.trim();const found=getUsers().find(x=>x.user===u&&x.pass===p);if(found){localStorage.setItem("ram_logged_user",u);document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}else{document.getElementById("loginMsg").textContent="Credenziali errate";}};
-const logged=localStorage.getItem("ram_logged_user");
-if(logged){document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}
 </script>
 </body>
 </html>
