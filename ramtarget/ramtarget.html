@@ -7,108 +7,103 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f172a;            /* sfondo profondo */
-  --panel:#0b1220;         /* pannello app scuro */
-  --card:#0e1526;          /* card */
-  --ink:#e5e7eb;           /* testo principale */
-  --muted:#94a3b8;         /* testo secondario */
-  --line:#1e293b;
-  --brand:#4f9cff;         /* blu brand */
-  --accent:#a78bfa;        /* viola accent */
-  --ok:#22c55e;
-  --warn:#f59e0b;
-  --alert:#ef4444;
-  --barBase1:#3b82f6; --barBase2:#60a5fa;
-  --barX1a:#f59e0b; --barX1b:#fbbf24;
-  --barX2a:#22c55e; --barX2b:#86efac;
-  --glow:0 20px 60px rgba(79,156,255,.25);
+  --bg:#0b1020; --ink:#e6edf7; --muted:#9fb0c8; --line:#19223a;
+  --panel:#0e162a; --card:#101a33;
+  --brand:#4f9cff; --accent:#a78bfa; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+  --x1a:#f59e0b; --x1b:#fbbf24; --x2a:#22c55e; --x2b:#86efac; --baseA:#3b82f6; --baseB:#60a5fa;
+  --glow:0 18px 60px rgba(79,156,255,.25);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+*{box-sizing:border-box} html,body{height:100%}
 body{
   margin:0; background:
-  radial-gradient(1200px 800px at 10% -10%, #14213e 0%, transparent 60%),
-  radial-gradient(1400px 1000px at 120% 10%, #1b2a4a 0%, transparent 60%),
+  radial-gradient(1200px 700px at -10% -10%, #122041 0%, transparent 60%),
+  radial-gradient(1200px 900px at 110% 0%, #18264b 0%, transparent 60%),
   var(--bg);
   color:var(--ink); font-family:Poppins,system-ui,Segoe UI,Roboto,sans-serif;
 }
 
+/* LOADER */
+.loader-backdrop{position:fixed; inset:0; background:rgba(5,10,20,.55); display:none; align-items:center; justify-content:center; z-index:90; backdrop-filter: blur(2px)}
+.loader{width:56px;height:56px;border-radius:50%;border:5px solid #203055;border-top-color:var(--brand); animation:spin 1s linear infinite; box-shadow:0 0 0 4px rgba(79,156,255,.08) inset}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOGIN */
+#login{max-width:420px; margin:80px auto; padding:0 18px; text-align:center}
+#login h2{margin:0 0 12px; color:#cfe6ff}
+.login-card{background:linear-gradient(180deg,#0f172a,#0c1426); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
+#login input{width:100%; margin:8px 0; padding:12px; border-radius:12px; border:1px solid var(--line); background:#0a1326; color:#e6edf7}
+#login button{width:100%; padding:12px; border-radius:12px; border:1px solid #1d4ed8; background:linear-gradient(90deg,#1d4ed8,#60a5fa); color:#fff; font-weight:800; box-shadow:0 10px 30px rgba(37,99,235,.35)}
+.err{color:#fb7185; font-size:13px; margin-top:8px}
+
 /* HEADER */
-header{
-  display:none; position:sticky; top:0; z-index:30;
-  background:linear-gradient(180deg, rgba(14,21,38,.85), rgba(14,21,38,.65));
-  backdrop-filter: blur(10px); border-bottom:1px solid var(--line);
-}
-.wrap{max-width:1100px; margin:auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+header{display:none; position:sticky; top:0; z-index:30; background:linear-gradient(180deg, rgba(16,26,51,.9), rgba(16,26,51,.65)); border-bottom:1px solid var(--line); backdrop-filter: blur(10px)}
+.wrap{max-width:1080px; margin:auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px}
 .brand{display:flex; align-items:center; gap:10px}
 .brand .dot{width:26px;height:26px;border-radius:10px; background:linear-gradient(135deg,var(--brand),#7dd3fc); box-shadow:0 6px 18px rgba(79,156,255,.5)}
 .brand h1{font-size:18px; margin:0}
 .controls{display:flex; gap:8px; align-items:center}
-.chip{border:1px solid var(--line); background:#0a1220; color:var(--ink); padding:8px 10px; border-radius:12px; font-weight:600; cursor:pointer}
-.chip.alt{background:#0d1a2f}
+.chip{border:1px solid var(--line); background:#0a1220; color:var(--ink); padding:8px 10px; border-radius:12px; font-weight:700; cursor:pointer}
 .monthnav{display:flex; align-items:center; gap:6px}
 .monthnav button{border:1px solid var(--line); background:#0a1220; color:var(--ink); padding:8px 10px; border-radius:12px; cursor:pointer}
-.monthname{font-weight:700; letter-spacing:.3px}
+.monthname{font-weight:800; letter-spacing:.3px}
 
 /* LAYOUT */
-main{display:none; max-width:1100px; margin:auto; padding:18px; }
+main{display:none; max-width:1080px; margin:auto; padding:16px}
 .section{background:linear-gradient(180deg,#0f172a 0%, #0b1220 120%); border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0; box-shadow:var(--glow)}
 .hrow{display:flex; align-items:center; justify-content:space-between}
 .hrow .meta{font-size:12px; color:var(--muted)}
 .grid{display:grid; grid-template-columns:1fr; gap:16px}
 @media(min-width:840px){ .grid{grid-template-columns:1fr 1fr} }
 
-/* CARD / METRIC */
-.card{background:linear-gradient(180deg,#0f172a 0%, #0c1222 120%); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 10px 40px rgba(2,6,23,.35)}
-.card h3{margin:0 0 4px}
+.card{background:linear-gradient(180deg,#0f172a 0%, #0c1222 120%); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 10px 40px rgba(2,6,23,.3)}
+.card h3{margin:0 0 6px}
 .sub{font-size:12px; color:var(--muted)}
 .row{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:13px; color:var(--muted)}
-.badge{font-size:11px; padding:4px 10px; border-radius:999px; font-weight:700; background:#0a1220; border:1px solid var(--line)}
+.badge{font-size:11px; padding:4px 10px; border-radius:999px; font-weight:800; background:#0a1220; border:1px solid var(--line)}
 .badge.ok{color:#16f195; border-color:#16f19533; background:linear-gradient(135deg,#042516,#053a23)}
 .rew{margin-top:10px; font-size:13px}
 
-/* PROGRESS BARS */
-.bar{height:14px; background:#0a1427; border:1px solid #0f213f; border-radius:999px; overflow:hidden; box-shadow:inset 0 6px 12px rgba(0,0,0,.35)}
-.fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--barBase1),var(--barBase2)); animation:load .9s cubic-bezier(.22,1,.36,1)}
-.bar.x1 .fill{background:linear-gradient(90deg,var(--barX1a),var(--barX1b))}
-.bar.x2 .fill{background:linear-gradient(90deg,var(--barX2a),var(--barX2b))}
+/* PROGRESS */
+.bar{height:14px; background:#0a1427; border:1px solid #0f213f; border-radius:999px; overflow:hidden; box-shadow:inset 0 6px 12px rgba(0,0,0,.35); margin-top:8px}
+.fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--baseA),var(--baseB)); animation:fill .9s cubic-bezier(.22,1,.36,1) forwards}
+.bar.x1 .fill{background:linear-gradient(90deg,var(--x1a),var(--x1b))}
+.bar.x2 .fill{background:linear-gradient(90deg,var(--x2a),var(--x2b))}
+@keyframes fill{from{width:0%}to{width:var(--w)}}
 .bar.over .fill{filter:saturate(1.2)}
-@keyframes load{from{width:0%}to{width:var(--w)}}
 
-/* TOTALS STRIP */
+/* TOTAL STRIP per metrica */
 .totals{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px}
 @media(min-width:620px){ .totals{grid-template-columns:1fr 1fr 1fr} }
 .totalbox{background:#0a1220; border:1px solid var(--line); border-radius:14px; padding:12px}
 .totalbox h4{margin:0 0 4px; font-size:13px; color:#cbd5e1}
-.totalbox .val{font-weight:800; font-size:18px}
-
-/* LOGIN */
-#login{max-width:420px; margin:80px auto; padding:0 16px; text-align:center}
-#login h2{color:#cfe6ff}
-#login input{width:100%; margin:8px 0; padding:12px; border-radius:12px; border:1px solid var(--line); background:#0a1220; color:#e6edf7}
-#login button{width:100%; padding:12px; border-radius:12px; border:1px solid #1d4ed8; background:linear-gradient(90deg,#1d4ed8,#60a5fa); color:#fff; font-weight:800; box-shadow:0 10px 30px rgba(37,99,235,.35)}
-.err{color:#fb7185; font-size:13px; margin-top:8px}
+.totalbox .val{font-weight:900; font-size:18px}
 
 /* POPUP */
 #popup{position:fixed; inset:0; background:rgba(2,6,23,.55); display:none; align-items:center; justify-content:center; z-index:50}
-.popupBox{width:min(96%,880px); max-height:86vh; overflow:auto; background:#0c1426; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
+.popupBox{width:min(96%,920px); max-height:86vh; overflow:auto; background:#0c1426; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
 table{width:100%; border-collapse:collapse; font-size:14px}
 th,td{border-bottom:1px solid var(--line); padding:10px; text-align:center}
 th{color:#cbd5e1; background:#0a1220; position:sticky; top:0}
 .tag{font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:#dbeafe}
 .tag.ok{border-color:#16f19533; color:#86efac; background:linear-gradient(135deg,#062318,#0a2e23)}
-footer{color:var(--muted); text-align:center; padding:24px}
+
+footer{color:var(--muted); text-align:center; padding:22px}
 </style>
 </head>
 <body>
 
+<!-- LOADER GLOBALE -->
+<div class="loader-backdrop" id="loader"><div class="loader" aria-label="Caricamento"></div></div>
+
 <!-- LOGIN -->
 <section id="login">
   <h2>RAMSERVICE · Accesso</h2>
-  <input id="luser" placeholder="Username" autocomplete="username">
-  <input id="lpass" type="password" placeholder="Password" autocomplete="current-password">
-  <button id="lbtn">Accedi</button>
-  <div id="lmsg" class="err"></div>
+  <div class="login-card">
+    <input id="luser" placeholder="Username" autocomplete="username">
+    <input id="lpass" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="lbtn">Accedi</button>
+    <div id="lmsg" class="err"></div>
+  </div>
 </section>
 
 <!-- HEADER -->
@@ -117,12 +112,13 @@ footer{color:var(--muted); text-align:center; padding:24px}
     <div class="brand"><div class="dot"></div><h1>Target Premium</h1></div>
     <div class="controls">
       <div class="monthnav">
-        <button id="prevM">◀︎</button>
+        <button id="prevM" title="Mese precedente">◀︎</button>
         <span class="monthname" id="mname">OTTOBRE</span>
-        <button id="nextM">▶︎</button>
+        <button id="nextM" title="Mese successivo">▶︎</button>
       </div>
       <button class="chip" id="btnSummary">📊 Riepilogo</button>
-      <button class="chip alt" id="btnLogout">Logout</button>
+      <button class="chip" id="btnReload" title="Ricarica">Ricarica</button>
+      <button class="chip" id="btnLogout">Logout</button>
     </div>
   </div>
 </header>
@@ -131,7 +127,7 @@ footer{color:var(--muted); text-align:center; padding:24px}
 <main id="app"></main>
 <footer>© RAMSERVICE — dati aggiornati</footer>
 
-<!-- POPUP riepilogo -->
+<!-- POPUP RIEPILOGO -->
 <div id="popup">
   <div class="popupBox">
     <div class="hrow" style="margin-bottom:10px">
@@ -148,181 +144,194 @@ footer{color:var(--muted); text-align:center; padding:24px}
 </div>
 
 <script>
-/* === CONFIG === */
-const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
-const API_URL  = "https://script.google.com/macros/s/AKfycbzlUCO_Ffp4TH6NFgFxy7Nt9_YI44q3DeBjiM4u6TB3vcqCgvRnG1xkl-BnaVbNR5Tm/exec";
+/* ====== CONFIG ====== */
+const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json"; // utenti + premi/extra
+const API_URL  = "https://script.google.com/macros/s/AKfycbzNTCqnylfnQWO4c8VP2nwrP6L10b_uBv_edPZAL8xRMTMPm9sS_QxcLMN94jY7ZqHq/exec"; // target + risultati per tutti i mesi
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-/* ============ */
+/* ===================== */
 
 const $ = s => document.querySelector(s);
 let DATA={}, LIVE={}, MESE_INDEX = new Date().getMonth();
+localStorage.clear(); // login SEMPRE pulito
 
-/* login sempre pulito */
-localStorage.clear();
-
-$("#lbtn").onclick = async () => {
-  $("#lmsg").textContent="";
-  try{
-    DATA = await (await fetch(JSON_URL+"?v="+Date.now())).json();
-    const u=$("#luser").value.trim(), p=$("#lpass").value.trim();
-    const ok = (DATA.users||[]).find(x=>x.user===u && x.pass===p);
-    if(!ok){ $("#lmsg").textContent="Credenziali errate"; return; }
-    await loadAllMonths();
-    $("#login").style.display="none";
-    $("#top").style.display="";
-    $("#app").style.display="";
-    render();
-  }catch(e){ $("#lmsg").textContent="Errore: "+e.message; }
-};
-
-async function loadAllMonths(){
-  try {
-    const res = await fetch(API_URL+"?v="+Date.now());
-    const txt = await res.text();
-    console.log("LIVE RAW:", txt.slice(0,200));  // debug
-    const arr = JSON.parse(txt);
-    LIVE = {};
-    (arr || []).forEach(o => {
-      if(o && o.mese)
-        LIVE[o.mese.toUpperCase()] = {
-          fatt:+(o.fatt||0), wind:+(o.wind||0), ho:+(o.ho||0)
-        };
-    });
-    console.log("LIVE parsed:", LIVE);
-  } catch(e) {
-    console.error("Errore caricamento dati live:", e);
-  }
-}
-
-
-/* Utils */
+/* Helpers */
 const euro = v => Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
 const pct  = (v,t)=> t>0? Math.max(0, Math.min(100, (v/t)*100 )) : 0;
-
+function showLoader(s=true){ $("#loader").style.display = s?"flex":"none"; }
 function monthName(){ return MESI[MESE_INDEX]; }
+function byMonthDict(arr){
+  const out={};
+  (arr||[]).forEach(o=>{
+    if(!o || !o.mese) return;
+    const k=String(o.mese).toUpperCase();
+    out[k] = {
+      fatt: Number(o.fatt||0),
+      wind: Number(o.wind||0),
+      ho:   Number(o.ho||0),
+      fatt_target: Number(o.fatt_target||0),
+      wind_target: Number(o.wind_target||0),
+      ho_target:   Number(o.ho_target||0),
+    };
+  });
+  return out;
+}
+
 function cfgFor(m){
   const raw = (DATA.config||{})[m];
   if(!raw) return null;
   const N = k => {
     const o = raw[k]||{};
     return {
-      main_thr : Number(o.main_thr || 0),
-      base_prize: Number(o.base_prize || o.base || 0),
+      // il target base lo prendiamo dall’API (sheet). qui restano i premi/extra
       x1_thr   : Number(o.x1_thr || 0),
       x1_prize : Number(o.x1_prize || 0),
       x2_thr   : Number(o.x2_thr || 0),
       x2_prize : Number(o.x2_prize || 0),
+      base_prize: Number(o.base_prize || o.base || 0),
     };
   };
   return {fatt:N("fatt"), wind:N("wind"), ho:N("ho")};
 }
 
-function bar(p, cls){ const div=document.createElement("div"); div.className="bar "+cls; div.style.setProperty("--w", p+"%"); div.innerHTML=`<div class="fill" style="--w:${p}%"></div>`; return div; }
-
-/* Premi: calcolo quanto raggiunto e quanto manca */
-function prizesFor(catCfg, value){
-  let got=0, left=0;
-  const status = { base:false, x1:false, x2:false };
-  if(value >= catCfg.main_thr && catCfg.base_prize>0){ got += catCfg.base_prize; status.base=true; }
-  else { left += catCfg.base_prize; }
-  if(catCfg.x1_thr>0){
-    if(value >= catCfg.x1_thr){ got += catCfg.x1_prize; status.x1=true; }
-    else { left += catCfg.x1_prize; }
-  }
-  if(catCfg.x2_thr>0){
-    if(value >= catCfg.x2_thr){ got += catCfg.x2_prize; status.x2=true; }
-    else { left += catCfg.x2_prize; }
-  }
+function prizesFor({base_prize,x1_thr,x1_prize,x2_thr,x2_prize}, value, baseTarget){
+  let got=0, left=0, status={base:false,x1:false,x2:false};
+  if(baseTarget>0 && value>=baseTarget && base_prize>0){ got+=base_prize; status.base=true; } else { left+=base_prize; }
+  if(x1_thr>0){ if(value>=x1_thr){ got+=x1_prize; status.x1=true; } else { left+=x1_prize; } }
+  if(x2_thr>0){ if(value>=x2_thr){ got+=x2_prize; status.x2=true; } else { left+=x2_prize; } }
   return {got,left,status};
 }
 
-function metricCard({title,conf,value,showNumbers}){
+function makeBar(p, cls){ const d=document.createElement("div"); d.className="bar "+cls; d.innerHTML=`<div class="fill" style="--w:${p}%"></div>`; return d; }
+
+function metricCard({title,value,baseTarget,conf,showNumbers}){
   const wrap = document.createElement("section");
   wrap.className="card";
 
-  // blocco header + sub
-  const sub = showNumbers ? `Target: <b>${conf.main_thr}</b> · Risultato: <b>${value}</b>`
-                          : `Progresso percentuale`;
-
+  // Header
+  const sub = showNumbers ? `Target: <b>${baseTarget}</b> · Risultato: <b>${value}</b>` : `Progresso percentuale`;
   wrap.innerHTML = `<h3>${title}</h3><div class="sub">${sub}</div>`;
 
-  // base
-  const pBase = pct(value, conf.main_thr);
+  // Base bar (percent su base target dallo Sheets)
+  const pBase = pct(value, baseTarget);
+  wrap.appendChild(makeBar(pBase, "base"+(pBase>=100?" over":"")));
   const row = document.createElement("div"); row.className="row";
-  row.innerHTML = `<div>${showNumbers? "" : ""}</div><div><span class="badge">${Math.round(pBase)}%</span></div>`;
-  wrap.appendChild(bar(pBase, "base"+(pBase>=100?" over":"")));
+  row.innerHTML = `<div></div><div><span class="badge">${Math.round(pBase)}%</span></div>`;
   wrap.appendChild(row);
 
-  // extra1
+  // Extra 1
   if(conf.x1_thr>0){
     const p1 = pct(value, conf.x1_thr);
-    wrap.appendChild(bar(p1,"x1"));
+    wrap.appendChild(makeBar(p1,"x1"));
     const r1 = document.createElement("div"); r1.className="row";
-    r1.innerHTML = `<div>Extra 1 ${showNumbers?`· soglia ${conf.x1_thr}`:""}</div><div>${Math.round(p1)}%</div>`;
+    r1.innerHTML = `<div>Extra 1${showNumbers?` · soglia ${conf.x1_thr}`:""}</div><div>${Math.round(p1)}%</div>`;
     wrap.appendChild(r1);
   }
-  // extra2
+  // Extra 2
   if(conf.x2_thr>0){
     const p2 = pct(value, conf.x2_thr);
-    wrap.appendChild(bar(p2,"x2"));
+    wrap.appendChild(makeBar(p2,"x2"));
     const r2 = document.createElement("div"); r2.className="row";
-    r2.innerHTML = `<div>Extra 2 ${showNumbers?`· soglia ${conf.x2_thr}`:""}</div><div>${Math.round(p2)}%</div>`;
+    r2.innerHTML = `<div>Extra 2${showNumbers?` · soglia ${conf.x2_thr}`:""}</div><div>${Math.round(p2)}%</div>`;
     wrap.appendChild(r2);
   }
 
-  // premi raggiunti/mancanti
-  const pv = prizesFor(conf, value);
+  // Premi raggiunti / potenziali
+  const pv = prizesFor(conf, value, baseTarget);
   const totals = document.createElement("div");
   totals.className="totals";
   totals.innerHTML = `
-    <div class="totalbox">
-      <h4>Questo mese hai raggiunto</h4>
-      <div class="val">+ ${euro(pv.got)}</div>
-    </div>
-    <div class="totalbox">
-      <h4>Puoi ancora raggiungere</h4>
-      <div class="val">${euro(pv.left)}</div>
-    </div>
-    <div class="totalbox">
-      <h4>Totale (raggiunto / potenziale)</h4>
-      <div class="val">${euro(pv.got)} / ${euro(pv.got+pv.left)}</div>
-    </div>
+    <div class="totalbox"><h4>Questo mese hai raggiunto</h4><div class="val">+ ${euro(pv.got)}</div></div>
+    <div class="totalbox"><h4>Puoi ancora raggiungere</h4><div class="val">${euro(pv.left)}</div></div>
+    <div class="totalbox"><h4>Totale (raggiunto / potenziale)</h4><div class="val">${euro(pv.got)} / ${euro(pv.got+pv.left)}</div></div>
   `;
   wrap.appendChild(totals);
 
-  // badge “target completato”
-  if(pBase>=100){
+  if(pBase>=100 && conf.base_prize>0){
     const done = document.createElement("div");
     done.className="rew";
-    done.innerHTML = `<span class="badge ok">Target completato</span>`;
+    done.innerHTML = `<span class="badge ok">Target completato · Premio base ${euro(conf.base_prize)}</span>`;
     wrap.appendChild(done);
   }
+  if(conf.x1_thr>0 && value>=conf.x1_thr){
+    const b=document.createElement("div"); b.className="rew"; b.innerHTML=`<span class="badge ok">🎉 Extra 1 sbloccato: ${euro(conf.x1_prize)}</span>`; wrap.appendChild(b);
+  }
+  if(conf.x2_thr>0 && value>=conf.x2_thr){
+    const b=document.createElement("div"); b.className="rew"; b.innerHTML=`<span class="badge ok">🏆 Extra 2 sbloccato: ${euro(conf.x2_prize)}</span>`; wrap.appendChild(b);
+  }
+
   return wrap;
 }
 
+/* ---------- BOOTSTRAP ---------- */
+document.getElementById("lbtn").onclick = async ()=>{
+  $("#lmsg").textContent = "";
+  showLoader(true);
+  try{
+    // 1) Config user + premi
+    const conf = await fetch(JSON_URL+"?v="+Date.now());
+    if(!conf.ok) throw new Error("Config HTTP "+conf.status);
+    DATA = await conf.json();
+
+    const u=$("#luser").value.trim(), p=$("#lpass").value.trim();
+    const ok = (DATA.users||[]).find(x=>String(x.user).trim()===u && String(x.pass).trim()===p);
+    if(!ok){ $("#lmsg").textContent="❌ Credenziali errate"; showLoader(false); return; }
+
+    // 2) Live (tutti i mesi): targets+risultati
+    const liveR = await fetch(API_URL+"?v="+Date.now());
+    if(!liveR.ok) throw new Error("API HTTP "+liveR.status);
+    const arr = await liveR.json();
+    LIVE = byMonthDict(arr);
+
+    // 3) show app
+    $("#login").style.display="none";
+    $("#top").style.display="";
+    $("#app").style.display="";
+    render();
+  }catch(e){
+    $("#lmsg").textContent = "Errore: "+e.message;
+  }finally{
+    showLoader(false);
+  }
+};
+
+/* Reload & logout & nav */
+document.getElementById("btnReload").onclick = async ()=>{
+  showLoader(true);
+  try{
+    const liveR = await fetch(API_URL+"?v="+Date.now());
+    const arr = await liveR.json();
+    LIVE = byMonthDict(arr);
+    render();
+  }catch(e){ alert("Errore ricaricando i dati live: "+e.message); }
+  finally{ showLoader(false); }
+};
+document.getElementById("btnLogout").onclick = ()=> location.reload();
+document.getElementById("prevM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+11)%12; render(); };
+document.getElementById("nextM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+1)%12; render(); };
+
+/* ---------- RENDER ---------- */
 function render(){
   const m = monthName();
-  $("#mname").textContent = m;
+  document.getElementById("mname").textContent = m;
 
-  const cfg = cfgFor(m);
-  const live = LIVE[m] || {fatt:0, wind:0, ho:0};
-
-  const app = $("#app");
+  const app = document.getElementById("app");
   app.innerHTML = "";
 
   const head = document.createElement("section");
-  head.className = "section";
+  head.className="section";
   head.innerHTML = `
     <div class="hrow">
-      <div><h2>📅 ${m}</h2><div class="meta">Premi da file · Risultati live da Google Sheet</div></div>
+      <div><h2>📅 ${m}</h2><div class="meta">Premi dal file · Target/Risultati dal foglio Google</div></div>
       <div class="meta">${new Date().toLocaleString("it-IT")}</div>
     </div>`;
   app.appendChild(head);
 
-  if(!cfg){
+  const cfg = cfgFor(m);
+  const live = LIVE[m];
+  if(!cfg || !live){
     const warn = document.createElement("section");
     warn.className="section";
-    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${m}</b> in <code>ramdata.json</code>.`;
+    warn.innerHTML = `⚠️ Dati mancanti per <b>${m}</b>: ${!cfg? "configurazione premi":"target/risultati"} non disponibile.`;
     app.appendChild(warn);
     return;
   }
@@ -331,30 +340,69 @@ function render(){
   grid.className="grid";
   app.appendChild(grid);
 
-  // Fatturato: cifre nascoste → solo percentuali
-  grid.appendChild( metricCard({ title:"Fatturato", conf:cfg.fatt, value:live.fatt, showNumbers:false }) );
+  // Fatturato: NIENTE cifre visibili → solo percentuali (usa target da API e extra da JSON)
+  grid.appendChild( metricCard({
+    title:"Fatturato",
+    value: live.fatt,
+    baseTarget: live.fatt_target,
+    conf: cfg.fatt,
+    showNumbers: false
+  }));
 
-  // WindTre e ho: mostra numeri
-  grid.appendChild( metricCard({ title:"WindTre",   conf:cfg.wind, value:live.wind, showNumbers:true }) );
-  grid.appendChild( metricCard({ title:"ho. Mobile", conf:cfg.ho,   value:live.ho,   showNumbers:true }) );
+  // WindTre: mostra numeri
+  grid.appendChild( metricCard({
+    title:"WindTre",
+    value: live.wind,
+    baseTarget: live.wind_target,
+    conf: cfg.wind,
+    showNumbers: true
+  }));
+
+  // ho. Mobile: mostra numeri
+  grid.appendChild( metricCard({
+    title:"ho. Mobile",
+    value: live.ho,
+    baseTarget: live.ho_target,
+    conf: cfg.ho,
+    showNumbers: true
+  }));
+
+  // Riepilogo mese (somma premi delle 3 metriche)
+  const pf = prizesFor(cfg.fatt, live.fatt, live.fatt_target);
+  const pw = prizesFor(cfg.wind, live.wind, live.wind_target);
+  const ph = prizesFor(cfg.ho,   live.ho,   live.ho_target);
+  const got  = pf.got + pw.got + ph.got;
+  const left = pf.left + pw.left + ph.left;
+
+  const monthTotals = document.createElement("section");
+  monthTotals.className="section";
+  monthTotals.innerHTML = `
+    <h3 style="margin:0 0 8px 0">💶 Riepilogo premi del mese</h3>
+    <div class="totals">
+      <div class="totalbox"><h4>Questo mese hai raggiunto</h4><div class="val">+ ${euro(got)}</div></div>
+      <div class="totalbox"><h4>Puoi ancora raggiungere</h4><div class="val">${euro(left)}</div></div>
+      <div class="totalbox"><h4>Totale (raggiunto / potenziale)</h4><div class="val">${euro(got)} / ${euro(got+left)}</div></div>
+    </div>
+  `;
+  app.appendChild(monthTotals);
 }
 
-/* NAV mesi */
-$("#prevM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+11)%12; render(); };
-$("#nextM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+1)%12; render(); };
-$("#btnLogout").onclick = ()=> location.reload();
-
-/* RIEPILOGO POPUP */
-$("#btnSummary").onclick = ()=>{
-  const tb = $("#sumBody");
-  tb.innerHTML="";
+/* ---------- POPUP RIEPILOGO ---------- */
+document.getElementById("btnSummary").onclick = ()=>{
+  const tb = document.getElementById("sumBody");
+  tb.innerHTML = "";
   MESI.forEach(m=>{
-    const c = cfgFor(m); if(!c) return;
-    const v = LIVE[m] || {fatt:0,wind:0,ho:0};
-    const pF = pct(v.fatt, c.fatt.main_thr);
-    const pW = pct(v.wind, c.wind.main_thr||c.wind.x1_thr||0);
-    const pH = pct(v.ho,   c.ho.main_thr||c.ho.x1_thr||0);
-    const got = prizesFor(c.fatt,v.fatt).got + prizesFor(c.wind,v.wind).got + prizesFor(c.ho,v.ho).got;
+    const c = cfgFor(m);
+    const l = LIVE[m];
+    if(!c || !l) return;
+    const pF = pct(l.fatt, l.fatt_target);
+    const pW = pct(l.wind, l.wind_target);
+    const pH = pct(l.ho,   l.ho_target);
+    const got = (
+      prizesFor(c.fatt,l.fatt,l.fatt_target).got +
+      prizesFor(c.wind,l.wind,l.wind_target).got +
+      prizesFor(c.ho,  l.ho,  l.ho_target).got
+    );
     tb.innerHTML += `
       <tr>
         <td>${m}</td>
@@ -362,9 +410,10 @@ $("#btnSummary").onclick = ()=>{
         <td><span class="tag ${pW>=100?'ok':''}">${Math.round(pW)}%</span></td>
         <td><span class="tag ${pH>=100?'ok':''}">${Math.round(pH)}%</span></td>
         <td>${euro(got)}</td>
-      </tr>`;
+      </tr>
+    `;
   });
-  $("#popup").style.display="flex";
+  document.getElementById("popup").style.display="flex";
 };
 </script>
 </body>
