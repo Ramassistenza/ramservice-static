@@ -7,60 +7,66 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ram:#0071E3; --ink:#0f172a; --muted:#64748b; --page:#f5f5f7; --card:#ffffff;
+  --ink:#0f172a; --muted:#64748b; --page:#f5f5f7; --card:#ffffff;
+  --brand:#0071E3; --base:#0071E3; --x1:#f59e0b; --x2:#10b981;
   --ok:#16a34a; --warn:#b45309; --err:#b91c1c;
-  --x1:#f59e0b; --x2:#10b981; --base:#0071E3;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{display:none;max-width:960px;margin:auto;padding:16px}
-header{display:none;position:sticky;top:0;background:var(--card);border-bottom:1px solid #e5e7eb;z-index:20}
-.wrap{max-width:960px;margin:auto;padding:14px 16px;display:flex;gap:12px;justify-content:space-between;align-items:center}
-.brand{display:flex;gap:10px;align-items:center}
-.brand .dot{width:30px;height:30px;border-radius:8px;background:var(--ram)}
-.brand h1{font-size:18px;margin:0}
-.actions{display:flex;gap:8px;align-items:center}
-.btn{border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#eef2ff;color:#1e40af}
-.btn.ghost{background:#f1f5f9;color:#0f172a}
-.badge{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
 
-.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 8px 22px rgba(2,6,23,.06)}
+header{display:none;position:sticky;top:0;background:var(--card);border-bottom:1px solid #e5e7eb;z-index:20}
+.wrap{max-width:980px;margin:auto;padding:14px 16px;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:10px;align-items:center}
+.brand .dot{width:30px;height:30px;border-radius:8px;background:var(--brand)}
+.brand h1{font-size:18px;margin:0}
+.actions{display:flex;gap:8px}
+.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.ghost{background:#eef2ff;color:#1e40af}
+.btn.light{background:#f1f5f9;color:#0f172a}
+
+main{display:none;max-width:980px;margin:auto;padding:16px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 10px 26px rgba(2,6,23,.06)}
 h2{margin:6px 0 2px 0}
 h3{margin:0 0 6px 0}
 .mini{font-size:12px;color:var(--muted)}
-.metric{margin-top:16px}
-.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}
+.metric{margin-top:12px}
+.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:8px}
 .nums{font-size:12px;color:var(--muted)}
-.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px}
+.badge{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
 .rew{margin-top:8px;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:820px){ .grid{grid-template-columns:1fr 1fr} }
 
-.bars{display:flex;flex-direction:column;gap:8px}
 .bar{height:14px;background:#e9eef6;border-radius:999px;overflow:hidden}
 .bar>.fill{height:100%;width:0%;transition:width .9s cubic-bezier(.22,1,.36,1)}
-.bar.base>.fill{background:linear-gradient(90deg,var(--base),#33b1ff)}
+.bar.base   >.fill{background:linear-gradient(90deg,var(--base),#33b1ff)}
 .bar.base.over>.fill{background:linear-gradient(90deg,#0ea5e9,#67e8f9)}
-.bar.x1>.fill{background:linear-gradient(90deg,var(--x1),#fbbf24)}
-.bar.x2>.fill{background:linear-gradient(90deg,var(--x2),#6ee7b7)}
+.bar.x1     >.fill{background:linear-gradient(90deg,var(--x1),#fbbf24)}
+.bar.x2     >.fill{background:linear-gradient(90deg,var(--x2),#6ee7b7)}
 
 #login{max-width:440px;margin:64px auto;padding:0 16px;text-align:center}
-#login h2{color:var(--ram)}
+#login h2{color:var(--brand)}
 #login input{padding:12px;width:100%;border-radius:12px;border:1px solid #cbd5e1;margin:6px 0;background:#fff}
-#login button{background:var(--ram);color:#fff;border:0;padding:12px 20px;border-radius:12px;font-weight:700;margin-top:6px;cursor:pointer;width:100%}
+#login button{background:var(--brand);color:#fff;border:0;padding:12px 20px;border-radius:12px;font-weight:700;margin-top:6px;cursor:pointer;width:100%}
 .err{color:var(--err);font-size:13px;margin-top:6px;white-space:pre-wrap}
 .alert{padding:10px;border-radius:12px;font-size:13px;margin:10px 0}
 .alert.warn{background:#fff7ed;color:#92400e;border:1px solid #fed7aa}
 .alert.err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
-.center{display:flex;align-items:center;gap:8px}
-footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
 
-@media (min-width:780px){
-  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-}
+.loader{position:fixed;inset:0;background:rgba(255,255,255,.7);display:none;align-items:center;justify-content:center;z-index:99}
+.spinner{width:40px;height:40px;border:4px solid #dbeafe;border-top-color:var(--brand);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
 </style>
 </head>
 <body>
+
+<!-- LOADER -->
+<div class="loader" id="loader"><div class="spinner" aria-label="Caricamento"></div></div>
 
 <!-- LOGIN -->
 <section id="login" aria-labelledby="tit-login">
@@ -69,7 +75,6 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
   <input id="lpass" autocomplete="current-password" type="password" placeholder="Password" />
   <button id="lbtn">Accedi</button>
   <div id="lmsg" class="err"></div>
-  <div id="netmsg" class="alert err" style="display:none"></div>
 </section>
 
 <!-- HEADER -->
@@ -77,8 +82,8 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
   <div class="wrap">
     <div class="brand"><div class="dot" aria-hidden="true"></div><h1>RAMSERVICE · Target</h1></div>
     <div class="actions">
-      <button class="btn ghost" id="reloadBtn" title="Ricarica dati">Ricarica</button>
-      <button class="btn secondary" id="logout">Logout</button>
+      <button class="btn light" id="reloadBtn" title="Ricarica dati">Ricarica</button>
+      <button class="btn ghost" id="logout">Logout</button>
     </div>
   </div>
 </header>
@@ -88,125 +93,206 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:18px}
 <footer>© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
-const API_URL  = "https://script.google.com/macros/s/AKfycbzDxWpKyBbR7muK-wkmE2lSp4zoc70juhvXf9teOZ9BdtrJnqtK8Q_kFK7XUvGLxeUn/exec";
+/* ====== CONFIG ====== */
+const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json"; // utenti + premi
+const API_URL  = "https://script.google.com/macros/s/AKfycbwUo3JXn-SU4bTYW3ukt6RVezAUz73HhJMXd94-n2spIqv8RBdO8qVB-QZrJMdJrZT4/exec"; // risultati live
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+const MESE_NOW = () => MESI[new Date().getMonth()];
+const euro = n => Number(n||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct  = (a,b)=> b>0? Math.max(0, Math.min(100, (a/b)*100 )) : 0;
+/* ==================== */
 
-let DATA = {};
-let LIVE = {};
-let CURRENT_USER = null;
+let DATA={}, LIVE={}, CURRENT_USER=null;
+const $ = q => document.querySelector(q);
 
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("✅ RAMTARGET avviato");
+function showLoader(s=true){ $("#loader").style.display = s?"flex":"none"; }
 
-  const btn = document.getElementById("lbtn");
-  if (btn) btn.addEventListener("click", login);
+document.addEventListener("DOMContentLoaded", () => {
+  $("#lbtn").addEventListener("click", login);
+  $("#logout").addEventListener("click", ()=>{ localStorage.removeItem("ram_user"); location.reload(); });
+  $("#reloadBtn").addEventListener("click", ()=>{ showLoader(true); loadLive().then(render).catch(showErr).finally(()=>showLoader(false)); });
 
-  // se utente già loggato
-  const savedUser = localStorage.getItem("ram_user");
-  if (savedUser) {
-    try {
-      const r = await fetch(JSON_URL + "?v=" + Date.now());
-      DATA = await r.json();
-      CURRENT_USER = savedUser;
-      await showApp();
-      return;
-    } catch (e) {
-      console.error("Errore caricamento iniziale:", e);
-    }
-  }
+  const saved = localStorage.getItem("ram_user");
+  if(saved){ CURRENT_USER=saved; bootstrap(); }
 });
 
-async function login() {
-  const user = document.getElementById("luser").value.trim();
-  const pass = document.getElementById("lpass").value.trim();
-  const msg = document.getElementById("lmsg");
-  msg.textContent = "";
+async function login(){
+  $("#lmsg").textContent = "";
+  const user = $("#luser").value.trim();
+  const pass = $("#lpass").value.trim();
+  showLoader(true);
+  try{
+    // config con utenti e premi
+    const r = await fetch(JSON_URL+"?v="+Date.now());
+    if(!r.ok) throw new Error("Config HTTP "+r.status);
+    DATA = await r.json();
 
-  try {
-    const res = await fetch(JSON_URL + "?v=" + Date.now());
-    if (!res.ok) throw new Error("Errore rete: " + res.status);
-    DATA = await res.json();
+    const ok = (DATA.users||[]).find(u => String(u.user).trim()===user && String(u.pass).trim()===pass);
+    if(!ok){ $("#lmsg").textContent="❌ Credenziali errate"; showLoader(false); return; }
 
-    const u = DATA.users.find(x => x.user === user && x.pass === pass);
-    if (!u) {
-      msg.textContent = "❌ Credenziali errate";
-      return;
-    }
-
-    CURRENT_USER = u.user;
+    CURRENT_USER = ok.user;
     localStorage.setItem("ram_user", CURRENT_USER);
-    await showApp();
-  } catch (err) {
-    msg.textContent = "Errore: " + err.message;
+    await bootstrap();
+  }catch(e){
+    $("#lmsg").textContent = "Errore: "+e.message;
+  }finally{
+    showLoader(false);
   }
 }
 
-async function showApp() {
-  console.log("Mostro app per:", CURRENT_USER);
-
-  try {
-    const api = await fetch(API_URL + "?v=" + Date.now());
-    if (!api.ok) throw new Error("API HTTP " + api.status);
-    LIVE = await api.json();
-    console.log("Dati LIVE:", LIVE);
-
-    if (!LIVE || typeof LIVE !== "object") LIVE = { mese: "OTTOBRE", fatt: 0, wind: 0, ho: 0 };
-
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block";
+async function bootstrap(){
+  try{
+    if(!Object.keys(DATA).length){
+      const c = await fetch(JSON_URL+"?v="+Date.now());
+      DATA = await c.json();
+    }
+    await loadLive();
+    $("#login").style.display="none";
+    $("#top").style.display="";
+    $("#app").style.display="";
     render();
-  } catch (err) {
-    console.error("Errore caricando dati live:", err);
-    alert("Errore caricando dati dal foglio Google");
+  }catch(e){
+    showErr(e);
   }
 }
 
-function render() {
-  const m = (LIVE.mese || "OTTOBRE").toUpperCase();
-  const conf = DATA.config[m];
-  if (!conf) {
-    document.getElementById("app").innerHTML = `<p>Nessuna configurazione trovata per ${m}</p>`;
+async function loadLive(){
+  const r = await fetch(API_URL+"?v="+Date.now());
+  if(!r.ok) throw new Error("API HTTP "+r.status);
+  const js = await r.json();
+  // atteso: {mese:"OTTOBRE", fatt: N, wind: N, ho: N}
+  LIVE = { mese: (js.mese||MESE_NOW()).toUpperCase(), fatt: Number(js.fatt||0), wind: Number(js.wind||0), ho: Number(js.ho||0) };
+}
+
+function normCfg(m){
+  const raw = (DATA.config||{})[m];
+  if(!raw) return null;
+  const n = k=>{
+    const o = {...(raw[k]||{})};
+    return {
+      main_thr:  Number(o.main_thr ?? o.x1_thr ?? 0),
+      base_prize:Number(o.base_prize ?? o.base ?? 0),
+      x1_thr:    Number(o.x1_thr ?? 0),
+      x1_prize:  Number(o.x1_prize ?? 0),
+      x2_thr:    Number(o.x2_thr ?? 0),
+      x2_prize:  Number(o.x2_prize ?? 0)
+    };
+  };
+  return { fatt:n("fatt"), wind:n("wind"), ho:n("ho") };
+}
+
+function makeBar(p, cls){ const d=document.createElement("div"); d.className="bar "+cls; d.innerHTML=`<div class="fill" style="width:${p}%"></div>`; return d; }
+
+function metricCard({title, conf, value, showNumbers}){
+  const target = conf.main_thr;
+  const r = Number(value||0);
+  const p = pct(r,target);
+  const over = p>=100;
+
+  const card = document.createElement("section");
+  card.className="card metric";
+
+  const nums = showNumbers
+    ? `<div class="nums">Target: <b>${target}</b> · Risultato: <b>${r}</b></div>`
+    : `<div class="nums">Progresso: <b>${Math.round(p)}%</b></div>`;
+
+  card.innerHTML = `
+    <div class="head">
+      <h3>${title}</h3>
+      ${nums}
+    </div>
+  `;
+
+  // base
+  const baseBar = makeBar(p, "base"+(over?" over":""));
+  card.appendChild(baseBar);
+  card.innerHTML += `<div class="row"><div>${Math.round(p)}%</div>${over?`<div class="badge">Target completato</div>`:`<div class="mini">In progresso</div>`}</div>`;
+
+  // extra 1
+  if(conf.x1_thr>0){
+    const p1 = pct(r, conf.x1_thr);
+    const label1 = showNumbers ? `Extra 1 — soglia ${conf.x1_thr}` : "Extra 1";
+    card.appendChild(makeBar(p1,"x1"));
+    card.innerHTML += `<div class="row"><div>${label1}</div><div>${Math.round(p1)}%</div></div>`;
+    if(r>=conf.x1_thr) card.innerHTML += `<div class="rew">🎉 Premio Extra 1: <b>${euro(conf.x1_prize)}</b></div>`;
+  }
+
+  // extra 2
+  if(conf.x2_thr>0){
+    const p2 = pct(r, conf.x2_thr);
+    const label2 = showNumbers ? `Extra 2 — soglia ${conf.x2_thr}` : "Extra 2";
+    card.appendChild(makeBar(p2,"x2"));
+    card.innerHTML += `<div class="row"><div>${label2}</div><div>${Math.round(p2)}%</div></div>`;
+    if(r>=conf.x2_thr) card.innerHTML += `<div class="rew">🏆 Premio Extra 2: <b>${euro(conf.x2_prize)}</b></div>`;
+  }
+
+  // premio base
+  if(over && conf.base_prize>0){
+    card.innerHTML += `<div class="rew">🏆 Premio base: <b>${euro(conf.base_prize)}</b></div>`;
+  }
+
+  return card;
+}
+
+function render(){
+  const app = $("#app");
+  app.innerHTML = "";
+
+  const mese = MESE_NOW(); // titolo mese corrente
+  const cfg = normCfg(mese) || normCfg((LIVE.mese||"").toUpperCase());
+
+  const head = document.createElement("section");
+  head.className="card";
+  head.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <div>
+        <h2 style="margin:0">📅 Target — ${mese}</h2>
+        <div class="mini">Premi dal file · risultati live da Google Sheet</div>
+      </div>
+      <div class="mini">Ultimo aggiornamento: ${new Date().toLocaleString("it-IT")}</div>
+    </div>
+  `;
+  app.appendChild(head);
+
+  if(!cfg){
+    const warn = document.createElement("section");
+    warn.className="card alert warn";
+    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${mese}</b> in <code>ramdata.json</code>.`;
+    app.appendChild(warn);
     return;
   }
 
-  const percent = (val, base) => Math.min(100, Math.round((val / base) * 100));
+  const grid = document.createElement("div");
+  grid.className="grid";
+  app.appendChild(grid);
 
-  const fattP = percent(LIVE.fatt, conf.fatt.main_thr);
-  const windP = percent(LIVE.wind, conf.wind.main_thr);
-  const hoP = percent(LIVE.ho, conf.ho.main_thr);
+  // Fatturato: NASCONDI cifre → mostra solo %
+  grid.appendChild( metricCard({ title:"Fatturato", conf:cfg.fatt, value:LIVE.fatt, showNumbers:false }) );
 
-  document.getElementById("app").innerHTML = `
-    <div class="header">
-      <h2>📅 Target — ${m}</h2>
-      <button onclick="logout()">Logout</button>
-    </div>
+  // WindTre e ho: MOSTRA numeri
+  const wCard = metricCard({ title:"WindTre", conf:cfg.wind, value:LIVE.wind, showNumbers:true });
+  const hCard = metricCard({ title:"ho. Mobile", conf:cfg.ho, value:LIVE.ho, showNumbers:true });
+  // sostituisco le righe "Target/Risultato" anch'io a vista
+  wCard.querySelector(".nums").innerHTML = `Target: <b>${cfg.wind.main_thr}</b> · Risultato: <b>${LIVE.wind}</b>`;
+  hCard.querySelector(".nums").innerHTML = `Target: <b>${cfg.ho.main_thr}</b> · Risultato: <b>${LIVE.ho}</b>`;
+  grid.appendChild(wCard);
+  grid.appendChild(hCard);
 
-    <div class="card">
-      <h3>Fatturato</h3>
-      <p>Base: €${conf.fatt.base_prize}</p>
-      <div class="bar"><div class="fill" style="width:${fattP}%"></div></div>
-    </div>
-
-    <div class="card">
-      <h3>WindTre</h3>
-      <p>${LIVE.wind}/${conf.wind.main_thr}</p>
-      <div class="bar"><div class="fill" style="width:${windP}%; background:#0071E3"></div></div>
-    </div>
-
-    <div class="card">
-      <h3>ho. Mobile</h3>
-      <p>${LIVE.ho}/${conf.ho.main_thr}</p>
-      <div class="bar"><div class="fill" style="width:${hoP}%; background:#00C853"></div></div>
-    </div>
-
-    <footer>© RAMSERVICE — dati aggiornati</footer>
-  `;
+  // nota se l'API è su mese diverso
+  if(LIVE.mese && LIVE.mese !== mese){
+    const note = document.createElement("section");
+    note.className="card alert warn";
+    note.innerHTML = `ℹ️ I risultati live sono di <b>${LIVE.mese}</b>, mentre il titolo mostra <b>${mese}</b>.`;
+    app.appendChild(note);
+  }
 }
 
-function logout() {
-  localStorage.removeItem("ram_user");
-  location.reload();
-}
+/* accessibilità / fallback tastiera */
+document.addEventListener("keydown", (e)=>{
+  if(e.key==="Enter" && document.activeElement && document.activeElement.id && document.activeElement.id.startsWith("l")) {
+    $("#lbtn").click();
+  }
+});
 </script>
 </body>
 </html>
