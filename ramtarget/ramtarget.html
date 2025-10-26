@@ -2,167 +2,354 @@
 <html lang="it">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RAMSERVICE · Target</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>RAMSERVICE · Target Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#f5f5f7; --card:#fff; --ink:#0f172a; --muted:#64748b;
-  --blue:#0071E3; --green:#10b981; --amber:#f59e0b; --gray:#e5e7eb;
+:root{
+  --bg:#0f172a;            /* sfondo profondo */
+  --panel:#0b1220;         /* pannello app scuro */
+  --card:#0e1526;          /* card */
+  --ink:#e5e7eb;           /* testo principale */
+  --muted:#94a3b8;         /* testo secondario */
+  --line:#1e293b;
+  --brand:#4f9cff;         /* blu brand */
+  --accent:#a78bfa;        /* viola accent */
+  --ok:#22c55e;
+  --warn:#f59e0b;
+  --alert:#ef4444;
+  --barBase1:#3b82f6; --barBase2:#60a5fa;
+  --barX1a:#f59e0b; --barX1b:#fbbf24;
+  --barX2a:#22c55e; --barX2b:#86efac;
+  --glow:0 20px 60px rgba(79,156,255,.25);
 }
-body { margin:0; font-family:Poppins,sans-serif; background:var(--bg); color:var(--ink);}
-h1,h2,h3 {margin:0;}
-button {cursor:pointer;font-family:inherit;}
-#login {max-width:400px;margin:80px auto;padding:20px;text-align:center;}
-#login h2 {color:var(--blue);}
-#login input {width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid var(--gray);}
-#login button {background:var(--blue);color:#fff;border:0;padding:10px 16px;border-radius:10px;width:100%;font-weight:600;}
-.err {color:#b91c1c;font-size:13px;margin-top:6px;}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:
+  radial-gradient(1200px 800px at 10% -10%, #14213e 0%, transparent 60%),
+  radial-gradient(1400px 1000px at 120% 10%, #1b2a4a 0%, transparent 60%),
+  var(--bg);
+  color:var(--ink); font-family:Poppins,system-ui,Segoe UI,Roboto,sans-serif;
+}
 
-header {background:var(--card);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--gray);}
-header h2 {font-size:18px;color:var(--blue);}
-main {max-width:900px;margin:auto;padding:16px;}
-.card {background:var(--card);border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,.04);}
-.bar {height:12px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-top:6px;}
-.bar .fill {height:100%;width:0%;transition:width .8s ease;border-radius:10px;}
-.bar.base .fill {background:var(--blue);}
-.bar.x1 .fill {background:var(--amber);}
-.bar.x2 .fill {background:var(--green);}
-.row {display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:4px;}
-.rew {font-size:13px;margin-top:6px;color:var(--green);}
-nav {display:flex;align-items:center;gap:10px;}
-nav button {border:0;background:var(--blue);color:#fff;padding:6px 10px;border-radius:8px;}
-nav span {font-weight:600;color:var(--ink);}
-.actions button {background:#e2e8f0;color:#111;border:0;padding:6px 10px;border-radius:8px;}
-footer {text-align:center;font-size:12px;color:var(--muted);padding:20px;}
-#popup {position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50;}
-#popup .box {background:var(--card);padding:20px;border-radius:16px;max-width:500px;width:90%;max-height:80%;overflow:auto;}
-#popup table {width:100%;border-collapse:collapse;font-size:14px;}
-#popup th,#popup td {border-bottom:1px solid var(--gray);padding:6px;text-align:center;}
-#popup th {background:var(--bg);}
+/* HEADER */
+header{
+  display:none; position:sticky; top:0; z-index:30;
+  background:linear-gradient(180deg, rgba(14,21,38,.85), rgba(14,21,38,.65));
+  backdrop-filter: blur(10px); border-bottom:1px solid var(--line);
+}
+.wrap{max-width:1100px; margin:auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.brand{display:flex; align-items:center; gap:10px}
+.brand .dot{width:26px;height:26px;border-radius:10px; background:linear-gradient(135deg,var(--brand),#7dd3fc); box-shadow:0 6px 18px rgba(79,156,255,.5)}
+.brand h1{font-size:18px; margin:0}
+.controls{display:flex; gap:8px; align-items:center}
+.chip{border:1px solid var(--line); background:#0a1220; color:var(--ink); padding:8px 10px; border-radius:12px; font-weight:600; cursor:pointer}
+.chip.alt{background:#0d1a2f}
+.monthnav{display:flex; align-items:center; gap:6px}
+.monthnav button{border:1px solid var(--line); background:#0a1220; color:var(--ink); padding:8px 10px; border-radius:12px; cursor:pointer}
+.monthname{font-weight:700; letter-spacing:.3px}
+
+/* LAYOUT */
+main{display:none; max-width:1100px; margin:auto; padding:18px; }
+.section{background:linear-gradient(180deg,#0f172a 0%, #0b1220 120%); border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0; box-shadow:var(--glow)}
+.hrow{display:flex; align-items:center; justify-content:space-between}
+.hrow .meta{font-size:12px; color:var(--muted)}
+.grid{display:grid; grid-template-columns:1fr; gap:16px}
+@media(min-width:840px){ .grid{grid-template-columns:1fr 1fr} }
+
+/* CARD / METRIC */
+.card{background:linear-gradient(180deg,#0f172a 0%, #0c1222 120%); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:0 10px 40px rgba(2,6,23,.35)}
+.card h3{margin:0 0 4px}
+.sub{font-size:12px; color:var(--muted)}
+.row{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:13px; color:var(--muted)}
+.badge{font-size:11px; padding:4px 10px; border-radius:999px; font-weight:700; background:#0a1220; border:1px solid var(--line)}
+.badge.ok{color:#16f195; border-color:#16f19533; background:linear-gradient(135deg,#042516,#053a23)}
+.rew{margin-top:10px; font-size:13px}
+
+/* PROGRESS BARS */
+.bar{height:14px; background:#0a1427; border:1px solid #0f213f; border-radius:999px; overflow:hidden; box-shadow:inset 0 6px 12px rgba(0,0,0,.35)}
+.fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--barBase1),var(--barBase2)); animation:load .9s cubic-bezier(.22,1,.36,1)}
+.bar.x1 .fill{background:linear-gradient(90deg,var(--barX1a),var(--barX1b))}
+.bar.x2 .fill{background:linear-gradient(90deg,var(--barX2a),var(--barX2b))}
+.bar.over .fill{filter:saturate(1.2)}
+@keyframes load{from{width:0%}to{width:var(--w)}}
+
+/* TOTALS STRIP */
+.totals{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px}
+@media(min-width:620px){ .totals{grid-template-columns:1fr 1fr 1fr} }
+.totalbox{background:#0a1220; border:1px solid var(--line); border-radius:14px; padding:12px}
+.totalbox h4{margin:0 0 4px; font-size:13px; color:#cbd5e1}
+.totalbox .val{font-weight:800; font-size:18px}
+
+/* LOGIN */
+#login{max-width:420px; margin:80px auto; padding:0 16px; text-align:center}
+#login h2{color:#cfe6ff}
+#login input{width:100%; margin:8px 0; padding:12px; border-radius:12px; border:1px solid var(--line); background:#0a1220; color:#e6edf7}
+#login button{width:100%; padding:12px; border-radius:12px; border:1px solid #1d4ed8; background:linear-gradient(90deg,#1d4ed8,#60a5fa); color:#fff; font-weight:800; box-shadow:0 10px 30px rgba(37,99,235,.35)}
+.err{color:#fb7185; font-size:13px; margin-top:8px}
+
+/* POPUP */
+#popup{position:fixed; inset:0; background:rgba(2,6,23,.55); display:none; align-items:center; justify-content:center; z-index:50}
+.popupBox{width:min(96%,880px); max-height:86vh; overflow:auto; background:#0c1426; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
+table{width:100%; border-collapse:collapse; font-size:14px}
+th,td{border-bottom:1px solid var(--line); padding:10px; text-align:center}
+th{color:#cbd5e1; background:#0a1220; position:sticky; top:0}
+.tag{font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:#dbeafe}
+.tag.ok{border-color:#16f19533; color:#86efac; background:linear-gradient(135deg,#062318,#0a2e23)}
+footer{color:var(--muted); text-align:center; padding:24px}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <section id="login">
   <h2>RAMSERVICE · Accesso</h2>
-  <input id="user" placeholder="Utente">
-  <input id="pass" type="password" placeholder="Password">
-  <button id="btnLogin">Accedi</button>
+  <input id="luser" placeholder="Username" autocomplete="username">
+  <input id="lpass" type="password" placeholder="Password" autocomplete="current-password">
+  <button id="lbtn">Accedi</button>
   <div id="lmsg" class="err"></div>
 </section>
 
-<header id="top" style="display:none;">
-  <nav>
-    <button id="prevM">◀️</button>
-    <span id="monthTitle"></span>
-    <button id="nextM">▶️</button>
-  </nav>
-  <div class="actions">
-    <button id="summaryBtn">📊 Riepilogo</button>
-    <button id="logout">Logout</button>
+<!-- HEADER -->
+<header id="top">
+  <div class="wrap">
+    <div class="brand"><div class="dot"></div><h1>Target Premium</h1></div>
+    <div class="controls">
+      <div class="monthnav">
+        <button id="prevM">◀︎</button>
+        <span class="monthname" id="mname">OTTOBRE</span>
+        <button id="nextM">▶︎</button>
+      </div>
+      <button class="chip" id="btnSummary">📊 Riepilogo</button>
+      <button class="chip alt" id="btnLogout">Logout</button>
+    </div>
   </div>
 </header>
 
-<main id="app" style="display:none;"></main>
+<!-- APP -->
+<main id="app"></main>
 <footer>© RAMSERVICE — dati aggiornati</footer>
 
+<!-- POPUP riepilogo -->
 <div id="popup">
-  <div class="box">
-    <h3>📊 Riepilogo mensile</h3>
-    <table id="summaryTable">
-      <thead><tr><th>Mese</th><th>Fatturato</th><th>WindTre</th><th>ho. Mobile</th></tr></thead>
-      <tbody></tbody>
+  <div class="popupBox">
+    <div class="hrow" style="margin-bottom:10px">
+      <h3>📊 Riepilogo mensile</h3>
+      <button class="chip" onclick="document.getElementById('popup').style.display='none'">Chiudi</button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Mese</th><th>Fatturato</th><th>WindTre</th><th>ho. Mobile</th><th>Premi raggiunti</th></tr>
+      </thead>
+      <tbody id="sumBody"></tbody>
     </table>
-    <button style="margin-top:10px;" onclick="document.getElementById('popup').style.display='none'">Chiudi</button>
   </div>
 </div>
 
 <script>
+/* === CONFIG === */
 const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
-const API_URL  = "https://script.google.com/macros/s/AKfycbwUo3JXn-SU4bTYW3ukt6RVezAUz73HhJMXd94-n2spIqv8RBdO8qVB-QZrJMdJrZT4/exec";
+const API_URL  = "https://script.google.com/macros/s/AKfycbzlUCO_Ffp4TH6NFgFxy7Nt9_YI44q3DeBjiM4u6TB3vcqCgvRnG1xkl-BnaVbNR5Tm/exec";
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-let DATA={}, LIVE={}, currentMese = new Date().getMonth();
-const $ = s=>document.querySelector(s);
-localStorage.clear(); // login sempre pulito
+/* ============ */
 
-$("#btnLogin").onclick = async ()=>{
-  const u=$("#user").value.trim(), p=$("#pass").value.trim();
+const $ = s => document.querySelector(s);
+let DATA={}, LIVE={}, MESE_INDEX = new Date().getMonth();
+
+/* login sempre pulito */
+localStorage.clear();
+
+$("#lbtn").onclick = async () => {
   $("#lmsg").textContent="";
   try{
-    const j = await (await fetch(JSON_URL)).json();
-    DATA=j;
-    const ok=j.users.find(x=>x.user===u && x.pass===p);
+    DATA = await (await fetch(JSON_URL+"?v="+Date.now())).json();
+    const u=$("#luser").value.trim(), p=$("#lpass").value.trim();
+    const ok = (DATA.users||[]).find(x=>x.user===u && x.pass===p);
     if(!ok){ $("#lmsg").textContent="Credenziali errate"; return; }
+    await loadAllMonths();
     $("#login").style.display="none";
     $("#top").style.display="";
     $("#app").style.display="";
-    await loadLive();
     render();
   }catch(e){ $("#lmsg").textContent="Errore: "+e.message; }
 };
 
-async function loadLive(){
-  try{
-    const r=await fetch(API_URL+"?v="+Date.now());
-    const js=await r.json();
-    LIVE[js.mese.toUpperCase()]=js;
-  }catch(e){
-    console.warn("Errore caricamento dati live:",e);
+async function loadAllMonths(){
+  // ritorna array: [{mese:"OTTOBRE", fatt: N, wind: N, ho: N}, ...]
+  const arr = await (await fetch(API_URL+"?v="+Date.now())).json();
+  LIVE = {};
+  (arr||[]).forEach(o => { if(o && o.mese) LIVE[String(o.mese).toUpperCase()] = { fatt:+(o.fatt||0), wind:+(o.wind||0), ho:+(o.ho||0) }; });
+}
+
+/* Utils */
+const euro = v => Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct  = (v,t)=> t>0? Math.max(0, Math.min(100, (v/t)*100 )) : 0;
+
+function monthName(){ return MESI[MESE_INDEX]; }
+function cfgFor(m){
+  const raw = (DATA.config||{})[m];
+  if(!raw) return null;
+  const N = k => {
+    const o = raw[k]||{};
+    return {
+      main_thr : Number(o.main_thr || 0),
+      base_prize: Number(o.base_prize || o.base || 0),
+      x1_thr   : Number(o.x1_thr || 0),
+      x1_prize : Number(o.x1_prize || 0),
+      x2_thr   : Number(o.x2_thr || 0),
+      x2_prize : Number(o.x2_prize || 0),
+    };
+  };
+  return {fatt:N("fatt"), wind:N("wind"), ho:N("ho")};
+}
+
+function bar(p, cls){ const div=document.createElement("div"); div.className="bar "+cls; div.style.setProperty("--w", p+"%"); div.innerHTML=`<div class="fill" style="--w:${p}%"></div>`; return div; }
+
+/* Premi: calcolo quanto raggiunto e quanto manca */
+function prizesFor(catCfg, value){
+  let got=0, left=0;
+  const status = { base:false, x1:false, x2:false };
+  if(value >= catCfg.main_thr && catCfg.base_prize>0){ got += catCfg.base_prize; status.base=true; }
+  else { left += catCfg.base_prize; }
+  if(catCfg.x1_thr>0){
+    if(value >= catCfg.x1_thr){ got += catCfg.x1_prize; status.x1=true; }
+    else { left += catCfg.x1_prize; }
   }
+  if(catCfg.x2_thr>0){
+    if(value >= catCfg.x2_thr){ got += catCfg.x2_prize; status.x2=true; }
+    else { left += catCfg.x2_prize; }
+  }
+  return {got,left,status};
 }
 
-function normCfg(m){
-  const raw=DATA.config[m];
-  if(!raw)return null;
-  const n=k=>({ main_thr:Number(raw[k].main_thr||0), base_prize:Number(raw[k].base_prize||raw[k].base||0),
-    x1_thr:Number(raw[k].x1_thr||0), x1_prize:Number(raw[k].x1_prize||0),
-    x2_thr:Number(raw[k].x2_thr||0), x2_prize:Number(raw[k].x2_prize||0)});
-  return { fatt:n("fatt"), wind:n("wind"), ho:n("ho") };
+function metricCard({title,conf,value,showNumbers}){
+  const wrap = document.createElement("section");
+  wrap.className="card";
+
+  // blocco header + sub
+  const sub = showNumbers ? `Target: <b>${conf.main_thr}</b> · Risultato: <b>${value}</b>`
+                          : `Progresso percentuale`;
+
+  wrap.innerHTML = `<h3>${title}</h3><div class="sub">${sub}</div>`;
+
+  // base
+  const pBase = pct(value, conf.main_thr);
+  const row = document.createElement("div"); row.className="row";
+  row.innerHTML = `<div>${showNumbers? "" : ""}</div><div><span class="badge">${Math.round(pBase)}%</span></div>`;
+  wrap.appendChild(bar(pBase, "base"+(pBase>=100?" over":"")));
+  wrap.appendChild(row);
+
+  // extra1
+  if(conf.x1_thr>0){
+    const p1 = pct(value, conf.x1_thr);
+    wrap.appendChild(bar(p1,"x1"));
+    const r1 = document.createElement("div"); r1.className="row";
+    r1.innerHTML = `<div>Extra 1 ${showNumbers?`· soglia ${conf.x1_thr}`:""}</div><div>${Math.round(p1)}%</div>`;
+    wrap.appendChild(r1);
+  }
+  // extra2
+  if(conf.x2_thr>0){
+    const p2 = pct(value, conf.x2_thr);
+    wrap.appendChild(bar(p2,"x2"));
+    const r2 = document.createElement("div"); r2.className="row";
+    r2.innerHTML = `<div>Extra 2 ${showNumbers?`· soglia ${conf.x2_thr}`:""}</div><div>${Math.round(p2)}%</div>`;
+    wrap.appendChild(r2);
+  }
+
+  // premi raggiunti/mancanti
+  const pv = prizesFor(conf, value);
+  const totals = document.createElement("div");
+  totals.className="totals";
+  totals.innerHTML = `
+    <div class="totalbox">
+      <h4>Questo mese hai raggiunto</h4>
+      <div class="val">+ ${euro(pv.got)}</div>
+    </div>
+    <div class="totalbox">
+      <h4>Puoi ancora raggiungere</h4>
+      <div class="val">${euro(pv.left)}</div>
+    </div>
+    <div class="totalbox">
+      <h4>Totale (raggiunto / potenziale)</h4>
+      <div class="val">${euro(pv.got)} / ${euro(pv.got+pv.left)}</div>
+    </div>
+  `;
+  wrap.appendChild(totals);
+
+  // badge “target completato”
+  if(pBase>=100){
+    const done = document.createElement("div");
+    done.className="rew";
+    done.innerHTML = `<span class="badge ok">Target completato</span>`;
+    wrap.appendChild(done);
+  }
+  return wrap;
 }
-
-function euro(v){return "€"+Number(v||0).toLocaleString("it-IT");}
-function pct(v,t){return t>0?Math.min(100,(v/t)*100):0;}
-
-function barHTML(p,cls){return `<div class="bar ${cls}"><div class="fill" style="width:${p}%"></div></div>`;}
 
 function render(){
-  const mese=MESI[currentMese];
-  $("#monthTitle").textContent=mese;
-  const cfg=normCfg(mese); const live=LIVE[mese]||{fatt:0,wind:0,ho:0};
-  const app=$("#app"); app.innerHTML="";
-  if(!cfg){app.innerHTML=`<div class='card'>Nessuna configurazione per ${mese}</div>`;return;}
-  
-  const fattP=pct(live.fatt,cfg.fatt.main_thr);
-  app.innerHTML+=`
-  <div class='card'><h3>Fatturato</h3>
-  <div class='row'><div>Base: ${euro(cfg.fatt.base_prize)}</div><div>${Math.round(fattP)}%</div></div>
-  ${barHTML(fattP,"base")}
-  ${fattP>=100?`<div class='rew'>🏆 Premio base ${euro(cfg.fatt.base_prize)}</div>`:""}
-  </div>`;
+  const m = monthName();
+  $("#mname").textContent = m;
 
-  ["wind","ho"].forEach(k=>{
-    const val=live[k], c=cfg[k], p1=pct(val,c.x1_thr), p2=pct(val,c.x2_thr);
-    app.innerHTML+=`
-    <div class='card'><h3>${k==="wind"?"WindTre":"ho. Mobile"}</h3>
-    <div class='row'><div>${val}/${c.main_thr}</div></div>
-    ${barHTML(p1,"x1")}
-    ${p1>=100?`<div class='rew'>🎉 Extra 1: ${euro(c.x1_prize)}</div>`:""}
-    ${barHTML(p2,"x2")}
-    ${p2>=100?`<div class='rew'>🏆 Extra 2: ${euro(c.x2_prize)}</div>`:""}
+  const cfg = cfgFor(m);
+  const live = LIVE[m] || {fatt:0, wind:0, ho:0};
+
+  const app = $("#app");
+  app.innerHTML = "";
+
+  const head = document.createElement("section");
+  head.className = "section";
+  head.innerHTML = `
+    <div class="hrow">
+      <div><h2>📅 ${m}</h2><div class="meta">Premi da file · Risultati live da Google Sheet</div></div>
+      <div class="meta">${new Date().toLocaleString("it-IT")}</div>
     </div>`;
-  });
+  app.appendChild(head);
+
+  if(!cfg){
+    const warn = document.createElement("section");
+    warn.className="section";
+    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${m}</b> in <code>ramdata.json</code>.`;
+    app.appendChild(warn);
+    return;
+  }
+
+  const grid = document.createElement("div");
+  grid.className="grid";
+  app.appendChild(grid);
+
+  // Fatturato: cifre nascoste → solo percentuali
+  grid.appendChild( metricCard({ title:"Fatturato", conf:cfg.fatt, value:live.fatt, showNumbers:false }) );
+
+  // WindTre e ho: mostra numeri
+  grid.appendChild( metricCard({ title:"WindTre",   conf:cfg.wind, value:live.wind, showNumbers:true }) );
+  grid.appendChild( metricCard({ title:"ho. Mobile", conf:cfg.ho,   value:live.ho,   showNumbers:true }) );
 }
 
-$("#prevM").onclick=()=>{currentMese=(currentMese+11)%12;render();};
-$("#nextM").onclick=()=>{currentMese=(currentMese+1)%12;render();};
-$("#logout").onclick=()=>location.reload();
-$("#summaryBtn").onclick=()=>{
-  const tb=$("#summaryTable tbody"); tb.innerHTML="";
+/* NAV mesi */
+$("#prevM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+11)%12; render(); };
+$("#nextM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+1)%12; render(); };
+$("#btnLogout").onclick = ()=> location.reload();
+
+/* RIEPILOGO POPUP */
+$("#btnSummary").onclick = ()=>{
+  const tb = $("#sumBody");
+  tb.innerHTML="";
   MESI.forEach(m=>{
-    const l=LIVE[m]||{}, c=normCfg(m)||{fatt:{},wind:{},ho:{}};
-    if(!c.fatt.main_thr)return;
-    tb.innerHTML+=`<tr><td>${m}</td><td>${euro(l.fatt||0)}</td><td>${l.wind||0}</td><td>${l.ho||0}</td></tr>`;
+    const c = cfgFor(m); if(!c) return;
+    const v = LIVE[m] || {fatt:0,wind:0,ho:0};
+    const pF = pct(v.fatt, c.fatt.main_thr);
+    const pW = pct(v.wind, c.wind.main_thr||c.wind.x1_thr||0);
+    const pH = pct(v.ho,   c.ho.main_thr||c.ho.x1_thr||0);
+    const got = prizesFor(c.fatt,v.fatt).got + prizesFor(c.wind,v.wind).got + prizesFor(c.ho,v.ho).got;
+    tb.innerHTML += `
+      <tr>
+        <td>${m}</td>
+        <td><span class="tag ${pF>=100?'ok':''}">${Math.round(pF)}%</span></td>
+        <td><span class="tag ${pW>=100?'ok':''}">${Math.round(pW)}%</span></td>
+        <td><span class="tag ${pH>=100?'ok':''}">${Math.round(pH)}%</span></td>
+        <td>${euro(got)}</td>
+      </tr>`;
   });
   $("#popup").style.display="flex";
 };
