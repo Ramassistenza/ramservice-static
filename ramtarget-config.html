@@ -14,7 +14,7 @@
     --muted:#6b7280;
   }
   body{margin:0;background:var(--bg);font-family:Poppins,sans-serif;color:var(--ink)}
-  .container{max-width:800px;margin:30px auto;padding:20px;background:var(--card);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+  .container{max-width:850px;margin:30px auto;padding:20px;background:var(--card);border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
   h1{font-size:22px;margin-bottom:20px;color:var(--ram-blue)}
   h2{font-size:16px;margin:20px 0 8px;color:var(--ram-blue)}
   label{display:block;margin:8px 0 4px;font-weight:600}
@@ -35,6 +35,7 @@
 <div class="container">
   <h1>⚙️ Configuratore RAMSERVICE Target</h1>
 
+  <!-- LOGIN ADMIN -->
   <div class="section">
     <h2>🔑 Accesso Amministratore</h2>
     <label>Utente admin</label>
@@ -45,9 +46,27 @@
     <div id="loginMsg"></div>
   </div>
 
+  <!-- UTENTI -->
+  <div class="section">
+    <h2>👥 Gestione Utenti</h2>
+    <p style="font-size:13px;color:var(--muted);margin-top:0">Crea utenti che potranno accedere alla dashboard <b>ramtarget.html</b>.</p>
+
+    <label>Nome</label>
+    <input type="text" id="userName" placeholder="Es: Emanuele">
+    <label>Username</label>
+    <input type="text" id="userUser" placeholder="Es: emanuele">
+    <label>Password</label>
+    <input type="password" id="userPass" placeholder="Password">
+    <button onclick="addUser()">Aggiungi utente</button>
+
+    <h3 style="margin-top:20px;font-size:14px;">Utenti registrati:</h3>
+    <div id="userList" style="font-size:14px;margin-top:8px;"></div>
+  </div>
+
+  <!-- PREMI -->
   <div class="section">
     <h2>💰 Premi per mese e target</h2>
-    <p style="font-size:13px;color:var(--muted);margin-top:0">Imposta premio base ed extra per ogni mese e categoria. L’app li leggerà automaticamente.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:0">Imposta premio base ed extra per ogni mese e categoria.</p>
     
     <label>Mese</label>
     <select id="monthSelect"></select>
@@ -86,11 +105,9 @@
 
 <script>
 // ===========================
-// CONFIG BASE (LOCALE)
+// CONFIG BASE
 // ===========================
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-
-// Carica mesi nella select
 const sel = document.getElementById("monthSelect");
 MESI.forEach(m => {
   const opt = document.createElement("option");
@@ -100,7 +117,9 @@ MESI.forEach(m => {
   sel.appendChild(opt);
 });
 
-// Salvataggio credenziali admin (in locale)
+// ===========================
+// ADMIN LOGIN
+// ===========================
 function saveLogin(){
   const user = document.getElementById("adminUser").value.trim();
   const pass = document.getElementById("adminPass").value.trim();
@@ -110,7 +129,9 @@ function saveLogin(){
   showMsg("loginMsg","success","Credenziali salvate (localStorage).");
 }
 
-// Salvataggio premi per mese (in locale)
+// ===========================
+// PREMI
+// ===========================
 function savePrizes(){
   const m = document.getElementById("monthSelect").value;
   const data = {
@@ -125,7 +146,40 @@ function savePrizes(){
   showMsg("prizeMsg","success",`Premi salvati per ${m}.`);
 }
 
-// Messaggi helper
+// ===========================
+// UTENTI
+// ===========================
+function getUsers(){return JSON.parse(localStorage.getItem("ram_users") || "[]");}
+function saveUsers(list){localStorage.setItem("ram_users", JSON.stringify(list)); renderUsers();}
+function addUser(){
+  const name = document.getElementById("userName").value.trim();
+  const user = document.getElementById("userUser").value.trim();
+  const pass = document.getElementById("userPass").value.trim();
+  if(!name || !user || !pass){ showMsg("prizeMsg","error","Compila tutti i campi."); return; }
+  const list = getUsers();
+  if(list.some(u => u.user === user)){ showMsg("prizeMsg","error","Username esistente."); return; }
+  list.push({name,user,pass});
+  saveUsers(list);
+  document.getElementById("userName").value="";
+  document.getElementById("userUser").value="";
+  document.getElementById("userPass").value="";
+  showMsg("prizeMsg","success",`Utente ${name} creato.`);
+}
+function renderUsers(){
+  const list = getUsers();
+  const container = document.getElementById("userList");
+  if(list.length===0){container.innerHTML="<i>Nessun utente</i>";return;}
+  container.innerHTML = list.map((u,i)=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding:4px 0;">
+      <div>${u.name} <span style="color:#999;">(${u.user})</span></div>
+      <button style="background:#dc2626;color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:12px" onclick="deleteUser(${i})">Rimuovi</button>
+    </div>
+  `).join("");
+}
+function deleteUser(i){const list=getUsers();if(confirm(`Eliminare ${list[i].name}?`)){list.splice(i,1);saveUsers(list);}}
+renderUsers();
+
+// ===========================
 function showMsg(id,type,text){
   const el=document.getElementById(id);
   el.className=type;el.textContent=text;
