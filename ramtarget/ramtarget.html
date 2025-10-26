@@ -2,89 +2,209 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RAMSERVICE · Target (Debug)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RAMSERVICE · Target</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Poppins,sans-serif;background:#f5f5f7;color:#111;text-align:center}
-.card{max-width:600px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.1);text-align:left}
-button{background:#0071E3;color:#fff;border:0;border-radius:8px;padding:10px 24px;cursor:pointer}
-input{padding:10px;width:80%;margin:6px 0;border-radius:8px;border:1px solid #ccc}
-.bar{height:14px;background:#e4e7eb;border-radius:999px;overflow:hidden;margin-top:6px}
-.bar>.fill{height:100%;width:0;transition:width .8s ease;background:linear-gradient(90deg,#0071E3,#33b1ff)}
-.bar.x1>.fill{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
-.bar.x2>.fill{background:linear-gradient(90deg,#10b981,#6ee7b7)}
-#msg{color:#d00;margin-top:10px;font-size:13px}
-.debug{color:#0071E3;margin-top:10px;font-size:13px}
+:root{
+  --ram:#0071E3; --ink:#0f172a; --muted:#64748b; --page:#f5f5f7; --card:#fff;
+  --ok:#16a34a; --x1:#f59e0b; --x2:#10b981;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{display:none;max-width:880px;margin:auto;padding:16px}
+header{display:none;position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
+.wrap{max-width:880px;margin:auto;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:10px;align-items:center}
+.brand .dot{width:30px;height:30px;border-radius:8px;background:var(--ram)}
+.brand h1{font-size:18px;margin:0}
+.logout{background:#eef2ff;border:0;color:#1e40af;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer}
+.card{background:var(--card);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 6px 20px rgba(2,6,23,.05)}
+h2{margin:6px 0 2px 0}
+h3{margin:0 0 6px 0}
+.mini{font-size:12px;color:var(--muted)}
+.metric{margin-top:16px}
+.head{display:flex;justify-content:space-between;align-items:end;margin-bottom:6px}
+.nums{font-size:12px;color:var(--muted)}
+.bar{height:14px;background:#e9eef6;border-radius:999px;overflow:hidden}
+.bar>.fill{height:100%;width:0%;transition:width .8s ease;background:linear-gradient(90deg,var(--ram),#33b1ff)}
+.bar.over>.fill{background:linear-gradient(90deg,#0ea5e9,#67e8f9)}
+.bar.x1>.fill{background:linear-gradient(90deg,var(--x1),#fbbf24)}
+.bar.x2>.fill{background:linear-gradient(90deg,var(--x2),#6ee7b7)}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
+.badge{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
+.rew{margin-top:8px;font-size:13px}
+#login{max-width:440px;margin:64px auto;padding:0 16px;text-align:center}
+#login input{padding:10px;width:100%;border-radius:10px;border:1px solid #cbd5e1;margin:6px 0}
+#login button{background:var(--ram);color:#fff;border:0;padding:10px 20px;border-radius:10px;font-weight:700;margin-top:6px;cursor:pointer}
+.err{color:#b91c1c;font-size:13px;margin-top:6px;white-space:pre-wrap}
 </style>
 </head>
 <body>
 
-<div id="loginScreen">
-  <h2>RAMSERVICE · Accesso</h2>
-  <input id="user" placeholder="Username"><br>
-  <input id="pass" type="password" placeholder="Password"><br>
-  <button id="loginBtn">Accedi</button>
-  <div id="msg"></div>
-</div>
+<!-- LOGIN -->
+<section id="login">
+  <h2 style="color:var(--ram);">RAMSERVICE · Accesso</h2>
+  <input id="luser" autocomplete="username" placeholder="Username">
+  <input id="lpass" autocomplete="current-password" type="password" placeholder="Password">
+  <button id="lbtn">Accedi</button>
+  <div id="lmsg" class="err"></div>
+</section>
 
-<div id="main" style="display:none;">
-  <h2 id="title"></h2>
-  <div id="content"></div>
-</div>
+<!-- HEADER -->
+<header id="top">
+  <div class="wrap">
+    <div class="brand"><div class="dot"></div><h1>RAMSERVICE · Target</h1></div>
+    <button class="logout" id="logout">Logout</button>
+  </div>
+</header>
+
+<!-- APP -->
+<main id="app"></main>
+<footer class="mini" style="text-align:center;padding:18px">© RAMSERVICE — dati aggiornati</footer>
 
 <script>
 const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
 const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-function meseCorrente(){return MESI[new Date().getMonth()];}
-let DATA={};
-
-document.getElementById("loginBtn").onclick = async ()=>{
-  document.getElementById("msg").textContent="Connessione in corso...";
-  try{
-    const res=await fetch(JSON_URL+"?v="+Date.now());
-    const txt=await res.text();
-    DATA=JSON.parse(txt);
-    console.log("JSON",DATA);
-    document.getElementById("msg").innerHTML="<span class='debug'>✅ JSON caricato</span>";
-    const u=document.getElementById("user").value.trim().toLowerCase();
-    const p=document.getElementById("pass").value.trim();
-    const found=(DATA.users||[]).find(x=>x.user.toLowerCase()===u && x.pass===p);
-    if(!found){document.getElementById("msg").textContent="❌ Credenziali errate";return;}
-    document.getElementById("msg").innerHTML="<span class='debug'>✅ Login riuscito</span>";
-    showDashboard();
-  }catch(e){
-    document.getElementById("msg").textContent="Errore JSON: "+e.message;
-  }
+const M = ()=> MESI[new Date().getMonth()];
+const euro = n => n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct = (a,b)=> b>0? Math.max(0, Math.min(100, (a/b)*100 )) : 0;
+const bar = (p,cls="") => {
+  const el = document.createElement("div");
+  el.className = "bar "+cls;
+  el.innerHTML = `<div class="fill" style="width:${p}%"></div>`;
+  return el;
 };
 
-function showDashboard(){
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("main").style.display="block";
-  const mese=meseCorrente();
-  document.getElementById("title").textContent="📅 Target — "+mese;
-  const cfg=(DATA.config||{})[mese];
-  const c=document.getElementById("content");
-  if(!cfg){c.innerHTML="<div class='card'>⚠️ Nessuna configurazione per "+mese+"</div>";return;}
-  c.innerHTML="<div class='debug'>✅ Configurazione trovata per "+mese+"</div>";
-  addMetric("Fatturato",cfg.fatt,false);
-  addMetric("WindTre",cfg.wind,true);
-  addMetric("ho. Mobile",cfg.ho,true);
+let DATA={};
+
+// boot
+const cached = localStorage.getItem("ram_user");
+if(cached){ showApp(); } // se già loggato prova a mostrare subito
+
+document.getElementById("lbtn").onclick = login;
+document.getElementById("logout").onclick = ()=>{ localStorage.removeItem("ram_user"); location.reload(); };
+
+async function login(){
+  // carica JSON
+  try{
+    const res = await fetch(JSON_URL + "?v=" + Date.now());
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    DATA = await res.json();
+  }catch(e){
+    return showErr("Impossibile caricare le impostazioni.\n" + e.message);
+  }
+
+  const u = document.getElementById("luser").value.trim().toLowerCase();
+  const p = document.getElementById("lpass").value.trim();
+  const found = (DATA.users||[]).find(x => String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
+  if(!found) return showErr("Credenziali errate");
+
+  localStorage.setItem("ram_user", found.user);
+  showApp();
 }
 
-function addMetric(label,d,showNumbers){
-  const c=document.getElementById("content");
-  if(!d)return;
-  const div=document.createElement("div");
-  div.className="card";
-  div.innerHTML=`<h3>${label}</h3>`;
-  div.innerHTML+=`<div>Base: ${d.base}</div>`;
-  div.innerHTML+=`<div>Soglia 1: ${d.x1_thr} (Premio: €${d.x1_prize})</div>`;
-  div.innerHTML+=`<div>Soglia 2: ${d.x2_thr} (Premio: €${d.x2_prize})</div>`;
-  div.innerHTML+=`<div class='bar'><div class='fill' style='width:${(d.base/d.x1_thr*100)}%'></div></div>`;
-  c.appendChild(div);
+function showErr(msg){ document.getElementById("lmsg").textContent = "❌ " + msg; }
+
+async function showApp(){
+  // assicura DATA
+  if(!Object.keys(DATA).length){
+    try{
+      const r = await fetch(JSON_URL + "?v=" + Date.now());
+      DATA = await r.json();
+    }catch(e){
+      document.getElementById("lmsg").textContent = "Errore dati: " + e.message;
+      return;
+    }
+  }
+  document.getElementById("login").style.display="none";
+  document.getElementById("top").style.display="";
+  document.getElementById("app").style.display="";
+  render();
+}
+
+function getCfg(mese){
+  const cfg = (DATA.config||{})[mese];
+  if(!cfg) return null;
+
+  // compat: supporta chiavi vecchie (base→base_prize; assenza main_thr/result)
+  const norm = k => {
+    const o = {...(cfg[k]||{})};
+    if(o.base_prize==null && o.base!=null) o.base_prize = o.base;
+    if(o.main_thr==null && o.x1_thr!=null) o.main_thr = o.x1_thr;
+    if(o.result==null) o.result = 0; // se non impostato, 0
+    return o;
+  };
+  return { fatt: norm("fatt"), wind: norm("wind"), ho: norm("ho") };
+}
+
+function metricCard({title,conf,showNumbers}){
+  const t = Number(conf.main_thr||0);
+  const r = Number(conf.result||0);
+  const p = pct(r,t);
+  const over = p>=100;
+
+  const wrap = document.createElement("section");
+  wrap.className="card metric";
+  const nums = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : `<div class="nums">Progresso: <b>${Math.round(p)}%</b></div>`;
+  wrap.innerHTML = `<div class="head"><h3>${title}</h3>${nums}</div>`;
+  wrap.appendChild(bar(p, over?"over":""));
+  const row = document.createElement("div");
+  row.className="row";
+  row.innerHTML = `<div>${Math.round(p)}%</div>${over?`<div class="badge">Target completato</div>`:""}`;
+  wrap.appendChild(row);
+
+  // Extra 1
+  if(conf.x1_thr>0){
+    const p1 = pct(r, Number(conf.x1_thr));
+    const label1 = document.createElement("div");
+    label1.className="row";
+    label1.innerHTML = showNumbers ? `<div>Extra 1 — soglia ${conf.x1_thr}</div><div>${Math.round(p1)}%</div>` : `<div>Extra 1</div><div>${Math.round(p1)}%</div>`;
+    wrap.appendChild(label1);
+    wrap.appendChild(bar(p1,"x1"));
+    if(r>=conf.x1_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 1: <b>${euro(Number(conf.x1_prize||0))}</b></div>`;
+  }
+  // Extra 2
+  if(conf.x2_thr>0){
+    const p2 = pct(r, Number(conf.x2_thr));
+    const label2 = document.createElement("div");
+    label2.className="row";
+    label2.innerHTML = showNumbers ? `<div>Extra 2 — soglia ${conf.x2_thr}</div><div>${Math.round(p2)}%</div>` : `<div>Extra 2</div><div>${Math.round(p2)}%</div>`;
+    wrap.appendChild(label2);
+    wrap.appendChild(bar(p2,"x2"));
+    if(r>=conf.x2_thr) wrap.innerHTML += `<div class="rew">🎉 Premio Extra 2: <b>${euro(Number(conf.x2_prize||0))}</b></div>`;
+  }
+
+  if(over && Number(conf.base_prize||0)>0){
+    wrap.innerHTML += `<div class="rew">🏆 Premio base: <b>${euro(Number(conf.base_prize))}</b></div>`;
+  }
+  return wrap;
+}
+
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  const mese = M();
+  const cfg = getCfg(mese);
+  const head = document.createElement("section");
+  head.className="card";
+  head.innerHTML = `<h2>${mese}</h2><div class="mini">Premi & Target del mese</div>`;
+  app.appendChild(head);
+
+  if(!cfg){
+    const warn = document.createElement("section");
+    warn.className="card";
+    warn.innerHTML = `⚠️ Nessuna configurazione trovata per <b>${mese}</b>.`;
+    app.appendChild(warn);
+    return;
+  }
+
+  // Fatturato: nascondi cifre (mostra solo %)
+  app.appendChild( metricCard({title:"Fatturato", conf:cfg.fatt, showNumbers:false}) );
+  // WindTre, ho. Mobile: mostra cifre
+  app.appendChild( metricCard({title:"WindTre", conf:cfg.wind, showNumbers:true}) );
+  app.appendChild( metricCard({title:"ho. Mobile", conf:cfg.ho, showNumbers:true}) );
 }
 </script>
-
 </body>
 </html>
