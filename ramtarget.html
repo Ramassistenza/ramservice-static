@@ -45,10 +45,12 @@
   #loginScreen input{padding:10px;width:90%;max-width:280px;border-radius:8px;border:1px solid #ccc;margin:6px 0}
   #loginScreen button{background:var(--ram-blue);color:#fff;border:0;padding:10px 24px;border-radius:8px;margin-top:10px}
   .subbar-label{font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+  .errorcard{background:#fff3f3;border:1px solid #fca5a5;color:#7f1d1d;border-radius:12px;padding:12px}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <h2 style="color:#0071E3;">RAMSERVICE · Accesso</h2>
   <input id="loginUser" placeholder="Username"><br>
@@ -57,6 +59,7 @@
   <div id="loginMsg" style="margin-top:10px;font-size:13px;color:#d00;"></div>
 </div>
 
+<!-- HEADER -->
 <header id="header">
   <div class="wrap">
     <div class="brand">
@@ -74,100 +77,202 @@
   </div>
 </header>
 
+<!-- APP -->
 <main id="app"></main>
 <footer id="footer">© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-const ENDPOINT="https://script.google.com/macros/s/AKfycbwSDDgBLYXdEm0ju4ccIGjzPnw_F37tvzpLQz5DjghDZ3hn2nT_LnVYBTeTMaSwyMRA/exec";
+/* =========================
+   CONFIG
+========================= */
+const ENDPOINT="https://script.google.com/macros/s/AKfycbzDxWpKyBbR7muK-wkmE2lSp4zoc70juhvXf9teOZ9BdtrJnqtK8Q_kFK7XUvGLxeUn/exec";
 const COL={mese:"mese",fatturato_target:"fatturato_target",fatturato_risultato:"fatturato_risultato",wind3_target:"Wind3_target",wind3_result:"Wind3_Risultato",ho_target:"Ho_target",ho_result:"ho_risultato"};
 const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-
 function meseCorrenteKey(){return MESI[new Date().getMonth()];}
+
+/* =========================
+   UTILS
+========================= */
 function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");return Number(s)||0;}
 function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
+function pct(a,b){return b>0?(a/b)*100:0;}
+function bar(percent,cls=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${cls}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
+function rowPercent(pctVal,over){const d=document.createElement("div");d.className="percent-row";d.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div><div>${over?`<span class='badge-ok'>Target completato</span>`:""}</div>`;return d;}
 function cfgKey(m){return `ram_cfg_${m}`;}
 function getCfg(m){return JSON.parse(localStorage.getItem(cfgKey(m))||"null")||{
+  // default (puoi cambiarli nel configuratore)
   fatt:{base:200,x1_thr:28000,x1_prize:50,x2_thr:30000,x2_prize:100},
   wind:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50},
   ho:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50}
 };}
 
-// ===== LOGIN DAL FOGLIO TARGET =====
+/* =========================
+   LOGIN (utenti dal foglio TARGET I:J:K)
+========================= */
 async function getUsers(){
-  const res = await fetch(ENDPOINT + "?table=users",{cache:"no-store"});
+  const res = await fetch(ENDPOINT + "?table=users", { cache: "no-store" });
+  if(!res.ok) throw new Error("Impossibile leggere gli utenti");
   return await res.json();
 }
 async function tryLogin(){
   const u=document.getElementById("loginUser").value.trim().toLowerCase();
   const p=document.getElementById("loginPass").value.trim();
-  const list=await getUsers();
-  const found=list.find(x=>String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
-  if(found){
-    localStorage.setItem("ram_logged_user",found.user);
-    localStorage.setItem("ram_logged_name",found.name);
-    showApp(found.name);
-  }else{
-    document.getElementById("loginMsg").textContent="❌ Credenziali errate";
+  try{
+    const list=await getUsers();
+    const found=list.find(x=>String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
+    if(found){
+      localStorage.setItem("ram_logged_user",found.user);
+      localStorage.setItem("ram_logged_name",found.name);
+      showApp(found.name);
+    }else{
+      document.getElementById("loginMsg").textContent="❌ Credenziali errate";
+    }
+  }catch(err){
+    document.getElementById("loginMsg").textContent="Errore accesso: " + err.message;
   }
 }
 document.getElementById("loginBtn").onclick=tryLogin;
-document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_logged_user");location.reload();};
+document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_logged_user");localStorage.removeItem("ram_logged_name");location.reload();};
 const logged=localStorage.getItem("ram_logged_user");
-if(logged)showApp(localStorage.getItem("ram_logged_name"));
+if(logged) showApp(localStorage.getItem("ram_logged_name"));
+function showApp(name=""){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("header").style.display="";
+  document.getElementById("app").style.display="";
+  document.getElementById("footer").style.display="";
+  loadData();
+}
 
-// ===== DATA =====
+/* =========================
+   DATA & RENDER
+========================= */
 let RAW=[],idx=0;
 async function loadData(){
-  const res=await fetch(ENDPOINT,{cache:"no-store"});
-  const data=await res.json();
-  const map=new Map();data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
-  RAW=MESI.map(m=>map.get(m)).filter(Boolean);
-  idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
-  render();
+  const app=document.getElementById("app");
+  app.innerHTML="<div class='card'>Caricamento dati…</div>";
+  try{
+    const res=await fetch(ENDPOINT,{cache:"no-store"});
+    if(!res.ok) throw new Error("Endpoint non disponibile");
+    const data=await res.json();
+
+    // Mappo i dati per mese e prendo solo i 12 in ordine
+    const map=new Map(); data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
+    RAW=MESI.map(m=>map.get(m)).filter(Boolean);
+
+    if(!RAW.length){app.innerHTML="<div class='errorcard'><b>Attenzione:</b> nessun dato ricevuto dall'endpoint. Controlla il foglio e le intestazioni.</div>";return;}
+
+    idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
+    render();
+  }catch(e){
+    app.innerHTML=`<div class='errorcard'>Errore: ${e.message}</div>`;
+  }
 }
-function pct(a,b){return b>0?(a/b)*100:0;}
-function bar(percent,cls=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${cls}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
-function rowPercent(pctVal,over){const d=document.createElement("div");d.className="percent-row";d.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div><div>${over?`<span class='badge-ok'>Target completato</span>`:""}</div>`;return d;}
 
-function metricCard({name,target,result,key,showNumbers,cfg}){
-  const t=toNumber(target),r=toNumber(result);
-  const basePct=pct(r,t),over=basePct>=100;
-  const wrap=document.createElement("div");wrap.className="metric";
-  const numsHTML=showNumbers?`<div class='nums'>Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`:"";
-  wrap.innerHTML=`<div class='head'><div>${name}</div>${numsHTML}</div>`;
-  wrap.appendChild(bar(basePct,over?"over":""));
-  wrap.appendChild(rowPercent(basePct,over));
+function metricCard({name,target,result,showNumbers,cfg}){
+  const t=toNumber(target), r=toNumber(result);
+  const basePct=pct(r,t), over=basePct>=100;
 
-  // extra bars
-  const extras=[];
-  if(cfg.x1_thr>0)extras.push({label:"Extra 1",thr:cfg.x1_thr,prize:cfg.x1_prize,p:pct(r,cfg.x1_thr),class:"x1",achieved:r>=cfg.x1_thr});
-  if(cfg.x2_thr>0)extras.push({label:"Extra 2",thr:cfg.x2_thr,prize:cfg.x2_prize,p:pct(r,cfg.x2_thr),class:"x2",achieved:r>=cfg.x2_thr});
-  extras.forEach(ex=>{
-    const label=document.createElement("div");
-    label.className="subbar-label";
-    label.innerHTML=showNumbers?`<span>${ex.label} soglia: <b>${ex.thr}</b></span><span>${Math.round(ex.p)}%</span>`:`<span>${ex.label}</span><span>${Math.round(ex.p)}%</span>`;
-    wrap.appendChild(label);
-    wrap.appendChild(bar(ex.p,ex.class));
-    if(ex.achieved){const rw=document.createElement("div");rw.className="rewards";rw.innerHTML=`🎉 Premio ${ex.label}: <b>${euro(ex.prize)}</b>`;wrap.appendChild(rw);}
-  });
+  const wrap=document.createElement("div"); wrap.className="metric";
+  const numsHTML = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : "";
+  wrap.innerHTML=`<div class="head"><div>${name}</div>${numsHTML}</div>`;
 
-  if(over&&cfg.base>0){const rw=document.createElement("div");rw.className="rewards";rw.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;wrap.appendChild(rw);}
+  // barra principale
+  wrap.appendChild(bar(basePct, over?"over":""));
+  wrap.appendChild(rowPercent(basePct, over));
+
+  // extra 1
+  if(cfg.x1_thr>0){
+    const p1=pct(r,cfg.x1_thr);
+    const label1=document.createElement("div");
+    label1.className="subbar-label";
+    label1.innerHTML = showNumbers
+      ? `<span>Extra 1 · soglia: <b>${cfg.x1_thr}</b></span><span>${Math.round(p1)}%</span>`
+      : `<span>Extra 1</span><span>${Math.round(p1)}%</span>`;
+    wrap.appendChild(label1);
+    wrap.appendChild(bar(p1,"x1"));
+    if(r>=cfg.x1_thr){
+      const rw=document.createElement("div");rw.className="rewards";
+      rw.innerHTML=`🎉 Premio Extra 1: <b>${euro(cfg.x1_prize)}</b>`;
+      wrap.appendChild(rw);
+    }
+  }
+
+  // extra 2
+  if(cfg.x2_thr>0){
+    const p2=pct(r,cfg.x2_thr);
+    const label2=document.createElement("div");
+    label2.className="subbar-label";
+    label2.innerHTML = showNumbers
+      ? `<span>Extra 2 · soglia: <b>${cfg.x2_thr}</b></span><span>${Math.round(p2)}%</span>`
+      : `<span>Extra 2</span><span>${Math.round(p2)}%</span>`;
+    wrap.appendChild(label2);
+    wrap.appendChild(bar(p2,"x2"));
+    if(r>=cfg.x2_thr){
+      const rw=document.createElement("div");rw.className="rewards";
+      rw.innerHTML=`🎉 Premio Extra 2: <b>${euro(cfg.x2_prize)}</b>`;
+      wrap.appendChild(rw);
+    }
+  }
+
+  // premio base (100%)
+  if(over && cfg.base>0){
+    const rb=document.createElement("div");rb.className="rewards";
+    rb.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;
+    wrap.appendChild(rb);
+  }
+
   return wrap;
 }
 
 function render(){
-  const app=document.getElementById("app");app.innerHTML="";
-  if(!RAW.length){app.innerHTML="<div class='card'>Nessun dato</div>";return;}
-  const row=RAW[idx];const mese=row[COL.mese];const cfgAll=getCfg(mese);
+  const app=document.getElementById("app"); app.innerHTML="";
+  if(!RAW.length){app.innerHTML="<div class='errorcard'>Nessun dato</div>";return;}
+  const row=RAW[idx]; const mese=row[COL.mese];
+  const cfg=getCfg(mese);
   document.getElementById("monthLabel").textContent=mese;
-  const card=document.createElement("section");card.className="card";
-  card.innerHTML=`<div class='month-title'><h2>${mese}</h2></div>`;
-  card.appendChild(metricCard({name:"Fatturato",target:row[COL.fatturato_target],result:row[COL.fatturato_risultato],key:"fatt",showNumbers:false,cfg:cfgAll.fatt}));
-  card.appendChild(metricCard({name:"WindTre",target:row[COL.wind3_target],result:row[COL.wind3_result],key:"wind",showNumbers:true,cfg:cfgAll.wind}));
-  card.appendChild(metricCard({name:"ho. Mobile",target:row[COL.ho_target],result:row[COL.ho_result],key:"ho",showNumbers:true,cfg:cfgAll.ho}));
+
+  const card=document.createElement("section"); card.className="card";
+  card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;
+
+  // Fatturato (niente cifre)
+  card.appendChild(
+    metricCard({
+      name:"Fatturato",
+      target:row[COL.fatturato_target],
+      result:row[COL.fatturato_risultato],
+      showNumbers:false,
+      cfg:cfg.fatt
+    })
+  );
+
+  // WindTre (cifre visibili)
+  card.appendChild(
+    metricCard({
+      name:"WindTre",
+      target:row[COL.wind3_target],
+      result:row[COL.wind3_result],
+      showNumbers:true,
+      cfg:cfg.wind
+    })
+  );
+
+  // ho. Mobile (cifre visibili)
+  card.appendChild(
+    metricCard({
+      name:"ho. Mobile",
+      target:row[COL.ho_target],
+      result:row[COL.ho_result],
+      showNumbers:true,
+      cfg:cfg.ho
+    })
+  );
+
   app.appendChild(card);
 }
 
+/* =========================
+   NAV & INIT
+========================= */
 document.getElementById("prevBtn").onclick=()=>{if(!RAW.length)return;idx=(idx-1+RAW.length)%RAW.length;render();}
 document.getElementById("nextBtn").onclick=()=>{if(!RAW.length)return;idx=(idx+1)%RAW.length;render();}
 document.getElementById("refreshBtn").onclick=()=>loadData();
