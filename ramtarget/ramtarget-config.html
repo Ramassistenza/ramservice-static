@@ -3,101 +3,252 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RAMSERVICE Configuratore Grafico</title>
+<title>RAMSERVICE · Configuratore</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:Poppins,sans-serif;background:#f5f5f5;margin:0;padding:20px;color:#111}
-h1{color:#0071E3}
-fieldset{border:1px solid #ddd;border-radius:8px;margin:10px 0;padding:10px;background:#fff}
-legend{font-weight:600;color:#0071E3}
-label{display:block;margin-top:6px}
-input{padding:6px;width:100%;border-radius:6px;border:1px solid #ccc;margin-top:2px}
-button{background:#0071E3;color:#fff;border:0;padding:8px 16px;border-radius:8px;margin-top:10px;cursor:pointer}
-hr{margin:20px 0;border:none;border-top:1px solid #ccc}
-textarea{width:100%;height:300px;margin-top:10px;border-radius:6px;padding:8px;font-family:monospace}
+:root{--ram:#0071E3;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f5f7;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#0f172a}
+.wrap{max-width:1000px;margin:auto;padding:18px}
+h1{color:var(--ram);margin:6px 0 14px}
+.panel{background:#fff;padding:16px;border-radius:14px;box-shadow:0 6px 20px rgba(2,6,23,.05);margin:12px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:var(--muted)}
+input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px}
+small{color:var(--muted)}
+.btn{background:var(--ram);color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#e2e8f0;color:#0f172a}
+.list{margin-top:8px}
+.item{display:flex;justify-content:space-between;align-items:center;border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;margin:6px 0}
+.code{white-space:pre-wrap;background:#0b1020;color:#eaeefb;border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.note{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <h1>⚙️ RAMSERVICE · Configuratore JSON</h1>
 
-<h1>⚙️ RAMSERVICE · Configuratore</h1>
+  <!-- Carica JSON -->
+  <section class="panel">
+    <h3>1) Carica / crea configurazione</h3>
+    <div class="row">
+      <div>
+        <label>URL JSON (opzionale)</label>
+        <input id="jsonUrl" placeholder="https://.../ramdata.json">
+      </div>
+      <div style="display:flex;align-items:end;gap:8px">
+        <button class="btn" onclick="loadJson()">Carica da URL</button>
+        <button class="btn secondary" onclick="loadTemplate()">Nuovo (template)</button>
+      </div>
+    </div>
+    <div id="loadMsg" class="note" style="margin-top:8px"></div>
+  </section>
 
-<!-- UTENTI -->
-<fieldset>
-<legend>👤 Aggiungi Utente</legend>
-<label>Nome completo</label><input id="uName" placeholder="Emanuele">
-<label>Username</label><input id="uUser" placeholder="emanuele">
-<label>Password</label><input id="uPass" placeholder="abcd">
-<button onclick="addUser()">➕ Aggiungi utente</button>
-<div id="userList"></div>
-</fieldset>
+  <!-- Utenti -->
+  <section class="panel">
+    <h3>2) Utenti</h3>
+    <div class="row">
+      <div><label>Nome</label><input id="uName" placeholder="Emanuele"></div>
+      <div><label>Username</label><input id="uUser" placeholder="emanuele"></div>
+      <div><label>Password</label><input id="uPass" placeholder="••••"></div>
+      <div style="display:flex;align-items:end"><button class="btn" onclick="addUser()">Aggiungi utente</button></div>
+    </div>
+    <div id="userList" class="list"></div>
+  </section>
 
-<!-- CONFIGURAZIONE -->
-<fieldset>
-<legend>📅 Configurazione Mensile</legend>
-<label>Mese (es. OTTOBRE)</label><input id="cMonth" placeholder="OTTOBRE">
-<h4>📊 Fatturato</h4>
-<label>Base</label><input id="fBase" type="number" value="200">
-<label>Extra1 soglia</label><input id="fX1T" type="number" value="28000">
-<label>Extra1 premio</label><input id="fX1P" type="number" value="50">
-<label>Extra2 soglia</label><input id="fX2T" type="number" value="30000">
-<label>Extra2 premio</label><input id="fX2P" type="number" value="100">
-<h4>💨 WindTre</h4>
-<label>Base</label><input id="wBase" type="number" value="50">
-<label>Extra1 soglia</label><input id="wX1T" type="number" value="20">
-<label>Extra1 premio</label><input id="wX1P" type="number" value="20">
-<label>Extra2 soglia</label><input id="wX2T" type="number" value="25">
-<label>Extra2 premio</label><input id="wX2P" type="number" value="50">
-<h4>📱 ho. Mobile</h4>
-<label>Base</label><input id="hBase" type="number" value="50">
-<label>Extra1 soglia</label><input id="hX1T" type="number" value="20">
-<label>Extra1 premio</label><input id="hX1P" type="number" value="20">
-<label>Extra2 soglia</label><input id="hX2T" type="number" value="25">
-<label>Extra2 premio</label><input id="hX2P" type="number" value="50">
-<button onclick="addConfig()">➕ Aggiungi Configurazione</button>
-<div id="configList"></div>
-</fieldset>
+  <!-- Mesi -->
+  <section class="panel">
+    <h3>3) Configurazione mensile</h3>
+    <div class="row">
+      <div>
+        <label>Mese</label>
+        <select id="monthSel"></select>
+      </div>
+      <div style="display:flex;align-items:end"><button class="btn secondary" onclick="copyPrev()">Copia dal mese precedente</button></div>
+    </div>
 
-<hr>
+    <h4>Fatturato</h4>
+    <div class="row">
+      <div><label>Target principale (main_thr)</label><input id="f_thr" type="number" min="0"></div>
+      <div><label>Risultato (result)</label><input id="f_res" type="number" min="0"></div>
+      <div><label>Premio base (€)</label><input id="f_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="f_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="f_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="f_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="f_x2p" type="number" min="0"></div>
+    </div>
 
-<button onclick="generate()">📄 Genera JSON Finale</button>
-<textarea id="output"></textarea>
+    <h4>WindTre</h4>
+    <div class="row">
+      <div><label>Target principale</label><input id="w_thr" type="number" min="0"></div>
+      <div><label>Risultato</label><input id="w_res" type="number" min="0"></div>
+      <div><label>Premio base (€)</label><input id="w_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="w_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="w_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="w_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="w_x2p" type="number" min="0"></div>
+    </div>
+
+    <h4>ho. Mobile</h4>
+    <div class="row">
+      <div><label>Target principale</label><input id="h_thr" type="number" min="0"></div>
+      <div><label>Risultato</label><input id="h_res" type="number" min="0"></div>
+      <div><label>Premio base (€)</label><input id="h_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="h_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="h_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="h_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="h_x2p" type="number" min="0"></div>
+    </div>
+
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn" onclick="saveMonth()">Salva mese</button>
+      <div class="note" id="saveMsg"></div>
+    </div>
+  </section>
+
+  <!-- Output -->
+  <section class="panel">
+    <h3>4) Esporta</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="generate()">Genera JSON</button>
+      <button class="btn secondary" onclick="copyJSON()">Copia negli appunti</button>
+      <button class="btn secondary" onclick="downloadJSON()">Scarica ramdata.json</button>
+    </div>
+    <div class="code" id="out" style="margin-top:10px">—</div>
+    <div class="note">Carica questo file nel tuo repo: <code>ramservice-static/ramtarget/ramdata.json</code></div>
+  </section>
+</div>
 
 <script>
-let data={users:[],config:{}};
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+const $ = id => document.getElementById(id);
+let DATA = { users:[], config:{} };
 
-function addUser(){
-  const name=uName.value.trim(),user=uUser.value.trim(),pass=uPass.value.trim();
-  if(!name||!user||!pass)return alert("Compila tutti i campi utente");
-  data.users.push({name,user,pass});
+(function init(){
+  MESI.forEach(m=>{ const o=document.createElement("option"); o.value=o.textContent=m; $("monthSel").appendChild(o); });
+  $("monthSel").value = MESI[new Date().getMonth()];
+  loadTemplate();
+})();
+
+function loadTemplate(){
+  DATA = {
+    users:[{name:"Emanuele",user:"emanuele",pass:"Giorgia2016"}],
+    config:{}
+  };
   renderUsers();
-  uName.value=uUser.value=uPass.value="";
+  fillMonthUI({});
+  $("loadMsg").textContent = "Template pronto.";
+}
+
+async function loadJson(){
+  const url = $("jsonUrl").value.trim();
+  if(!url) return $("loadMsg").textContent="Inserisci l’URL del JSON.";
+  $("loadMsg").textContent="Carico…";
+  try{
+    const r = await fetch(url+"?v="+Date.now());
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    DATA = await r.json();
+    $("loadMsg").textContent="✅ Caricato!";
+    renderUsers();
+    // se esiste il mese selezionato, valorizza form
+    const m = $("monthSel").value;
+    fillMonthUI(DATA.config[m]||{});
+  }catch(e){
+    $("loadMsg").textContent="❌ Errore: "+e.message;
+  }
 }
 
 function renderUsers(){
-  userList.innerHTML=data.users.map(u=>`👤 ${u.name} (${u.user})`).join("<br>");
+  const box=$("userList"); box.innerHTML="";
+  (DATA.users||[]).forEach((u,i)=>{
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`<div>👤 <b>${u.name}</b> <span class="note">(${u.user})</span></div>
+                   <button class="btn secondary" onclick="delUser(${i})">Rimuovi</button>`;
+    box.appendChild(div);
+  });
 }
 
-function addConfig(){
-  const m=cMonth.value.trim().toUpperCase();
-  if(!m)return alert("Inserisci il mese");
-  data.config[m]={
-    fatt:{base:+fBase.value,x1_thr:+fX1T.value,x1_prize:+fX1P.value,x2_thr:+fX2T.value,x2_prize:+fX2P.value},
-    wind:{base:+wBase.value,x1_thr:+wX1T.value,x1_prize:+wX1P.value,x2_thr:+wX2T.value,x2_prize:+wX2P.value},
-    ho:{base:+hBase.value,x1_thr:+hX1T.value,x1_prize:+hX1P.value,x2_thr:+hX2T.value,x2_prize:+hX2P.value}
+function addUser(){
+  const name=$("uName").value.trim(), user=$("uUser").value.trim(), pass=$("uPass").value.trim();
+  if(!name||!user||!pass) return alert("Compila nome, user e password.");
+  DATA.users.push({name,user,pass});
+  $("uName").value=$("uUser").value=$("uPass").value="";
+  renderUsers();
+}
+
+function delUser(i){ DATA.users.splice(i,1); renderUsers(); }
+
+function fillMonthUI(cfg){
+  const norm = k => {
+    const o = (cfg[k]||{});
+    return {
+      main_thr: o.main_thr ?? o.x1_thr ?? 0,
+      result:   o.result   ?? 0,
+      base:     o.base_prize ?? o.base ?? 0,
+      x1t:      o.x1_thr ?? 0,
+      x1p:      o.x1_prize ?? 0,
+      x2t:      o.x2_thr ?? 0,
+      x2p:      o.x2_prize ?? 0
+    };
   };
-  renderConfig();
-  cMonth.value="";
+  const F = norm("fatt"), W = norm("wind"), H = norm("ho");
+  $("f_thr").value=F.main_thr; $("f_res").value=F.result; $("f_base").value=F.base; $("f_x1t").value=F.x1t; $("f_x1p").value=F.x1p; $("f_x2t").value=F.x2t; $("f_x2p").value=F.x2p;
+  $("w_thr").value=W.main_thr; $("w_res").value=W.result; $("w_base").value=W.base; $("w_x1t").value=W.x1t; $("w_x1p").value=W.x1p; $("w_x2t").value=W.x2t; $("w_x2p").value=W.x2p;
+  $("h_thr").value=H.main_thr; $("h_res").value=H.result; $("h_base").value=H.base; $("h_x1t").value=H.x1t; $("h_x1p").value=H.x1p; $("h_x2t").value=H.x2t; $("h_x2p").value=H.x2p;
 }
 
-function renderConfig(){
-  configList.innerHTML=Object.keys(data.config).map(k=>`📅 ${k}`).join("<br>");
+$("monthSel").onchange = ()=>{
+  const m = $("monthSel").value;
+  fillMonthUI(DATA.config[m]||{});
+};
+
+function copyPrev(){
+  const idx = MESI.indexOf($("monthSel").value);
+  if(idx<=0) return;
+  const prev = DATA.config[MESI[idx-1]];
+  if(!prev) return alert("Nessuna config del mese precedente.");
+  DATA.config[MESI[idx]] = JSON.parse(JSON.stringify(prev));
+  fillMonthUI(DATA.config[MESI[idx]]);
+}
+
+function saveMonth(){
+  const m = $("monthSel").value;
+  DATA.config[m] = {
+    fatt:{ main_thr:+$("f_thr").value, result:+$("f_res").value, base_prize:+$("f_base").value,
+           x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value },
+    wind:{ main_thr:+$("w_thr").value, result:+$("w_res").value, base_prize:+$("w_base").value,
+           x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value },
+    ho:{   main_thr:+$("h_thr").value, result:+$("h_res").value, base_prize:+$("h_base").value,
+           x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value }
+  };
+  $("saveMsg").textContent="✅ Salvato per " + m;
+  setTimeout(()=>$("saveMsg").textContent="",2000);
 }
 
 function generate(){
-  const json=JSON.stringify(data,null,2);
-  output.value=json;
-  alert("✅ JSON generato! Copialo e incollalo nel file ramdata.json del tuo repo GitHub.");
+  const txt = JSON.stringify(DATA, null, 2);
+  $("out").textContent = txt;
+}
+
+async function copyJSON(){
+  const txt = $("out").textContent.trim();
+  if(!txt) return alert("Genera prima il JSON.");
+  try{ await navigator.clipboard.writeText(txt); alert("✅ Copiato! Incolla in ramdata.json"); }
+  catch{ alert("Copia non riuscita, seleziona e copia manualmente."); }
+}
+
+function downloadJSON(){
+  const txt = $("out").textContent.trim() || JSON.stringify(DATA,null,2);
+  const blob = new Blob([txt], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "ramdata.json"; a.click();
+  URL.revokeObjectURL(url);
 }
 </script>
-
 </body>
 </html>
