@@ -14,9 +14,11 @@
   body{margin:0;background:var(--page);color:var(--ink);font-family:Poppins,sans-serif}
   header{display:none;position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:10}
   .wrap{max-width:820px;margin:auto;padding:14px 16px;}
-  .brand{display:flex;align-items:center;gap:10px}
-  .logo{width:30px;height:30px;border-radius:8px;background:var(--ram-blue)}
-  .brand h1{font-size:18px;margin:0}
+  .brand{display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo div{width:30px;height:30px;border-radius:8px;background:var(--ram-blue)}
+  .logo h1{font-size:18px;margin:0}
+  .logout{background:#eee;border:0;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
   .toolbar{display:flex;gap:10px;margin-top:10px}
   .selector{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ddd;padding:8px;border-radius:10px}
   .selector button{background:#f0f2f5;border:0;padding:6px 10px;border-radius:8px}
@@ -37,7 +39,6 @@
   .percent-row{display:flex;justify-content:space-between;margin-top:6px}
   .percent{font-weight:700}
   .badge-ok{font-size:11px;color:#fff;background:var(--ok);padding:3px 8px;border-radius:999px}
-  .badge-over{font-size:11px;color:#0ea5e9;background:#e0f2fe;padding:3px 8px;border-radius:999px}
   .rewards{margin-top:8px;font-size:13px}
   footer{display:none;text-align:center;padding:20px;color:var(--muted);font-size:12px}
   #loginScreen{text-align:center;padding:60px 20px}
@@ -59,8 +60,8 @@
 <header id="header">
   <div class="wrap">
     <div class="brand">
-      <div class="logo"></div>
-      <div><h1>RAMSERVICE · Target</h1></div>
+      <div class="logo"><div></div><h1>RAMSERVICE · Target</h1></div>
+      <button class="logout" id="logoutBtn">Logout</button>
     </div>
     <div class="toolbar">
       <div class="selector">
@@ -77,136 +78,93 @@
 <footer id="footer">© RAMSERVICE — dati aggiornati</footer>
 
 <script>
-const ENDPOINT="https://script.google.com/macros/s/AKfycbwxsVy7SINAGb3_LW-m3PUo7Db5nuVAU9SRtVoLO-SPy4fxaSZdyiBLyxmP6775WsrN/exec";
+const ENDPOINT="https://script.google.com/macros/s/AKfycbwSDDgBLYXdEm0ju4ccIGjzPnw_F37tvzpLQz5DjghDZ3hn2nT_LnVYBTeTMaSwyMRA/exec";
 const COL={mese:"mese",fatturato_target:"fatturato_target",fatturato_risultato:"fatturato_risultato",wind3_target:"Wind3_target",wind3_result:"Wind3_Risultato",ho_target:"Ho_target",ho_result:"ho_risultato"};
 const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+
 function meseCorrenteKey(){return MESI[new Date().getMonth()];}
 function toNumber(v){if(typeof v==="number")return v;if(!v)return 0;let s=String(v).replace(/[€\s]/g,"").replace(/\./g,"").replace(",",".");return Number(s)||0;}
 function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0});}
 function cfgKey(m){return `ram_cfg_${m}`;}
 function getCfg(m){return JSON.parse(localStorage.getItem(cfgKey(m))||"null")||{
-  fatt:{base:200,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
-  wind:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0},
-  ho:{base:50,x1_thr:0,x1_prize:0,x2_thr:0,x2_prize:0}
+  fatt:{base:200,x1_thr:28000,x1_prize:50,x2_thr:30000,x2_prize:100},
+  wind:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50},
+  ho:{base:50,x1_thr:20,x1_prize:20,x2_thr:25,x2_prize:50}
 };}
 
-// ===== Login =====
-function getUsers(){return JSON.parse(localStorage.getItem("ram_users")||"[]");}
-document.getElementById("loginBtn").onclick=()=>{const u=document.getElementById("loginUser").value.trim();const p=document.getElementById("loginPass").value.trim();const ok=getUsers().find(x=>x.user===u&&x.pass===p);if(ok){localStorage.setItem("ram_logged_user",u);showApp();}else{document.getElementById("loginMsg").textContent="Credenziali errate";}};
-const logged=localStorage.getItem("ram_logged_user"); if(logged) showApp();
-function showApp(){document.getElementById("loginScreen").style.display="none";document.getElementById("header").style.display="";document.getElementById("app").style.display="";document.getElementById("footer").style.display="";loadData();}
+// ===== LOGIN DAL FOGLIO TARGET =====
+async function getUsers(){
+  const res = await fetch(ENDPOINT + "?table=users",{cache:"no-store"});
+  return await res.json();
+}
+async function tryLogin(){
+  const u=document.getElementById("loginUser").value.trim().toLowerCase();
+  const p=document.getElementById("loginPass").value.trim();
+  const list=await getUsers();
+  const found=list.find(x=>String(x.user).trim().toLowerCase()===u && String(x.pass).trim()===p);
+  if(found){
+    localStorage.setItem("ram_logged_user",found.user);
+    localStorage.setItem("ram_logged_name",found.name);
+    showApp(found.name);
+  }else{
+    document.getElementById("loginMsg").textContent="❌ Credenziali errate";
+  }
+}
+document.getElementById("loginBtn").onclick=tryLogin;
+document.getElementById("logoutBtn").onclick=()=>{localStorage.removeItem("ram_logged_user");location.reload();};
+const logged=localStorage.getItem("ram_logged_user");
+if(logged)showApp(localStorage.getItem("ram_logged_name"));
 
-// ===== Data & Render =====
+// ===== DATA =====
 let RAW=[],idx=0;
 async function loadData(){
-  const res=await fetch(ENDPOINT,{cache:"no-store"}); const data=await res.json();
-  const map=new Map(); data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
+  const res=await fetch(ENDPOINT,{cache:"no-store"});
+  const data=await res.json();
+  const map=new Map();data.forEach(r=>map.set(String(r[COL.mese]).toUpperCase(),r));
   RAW=MESI.map(m=>map.get(m)).filter(Boolean);
   idx=Math.max(0,RAW.findIndex(r=>String(r[COL.mese]).toUpperCase()===meseCorrenteKey()));
   render();
 }
-function pct(a,b){return b>0? (a/b)*100 : 0;}
+function pct(a,b){return b>0?(a/b)*100:0;}
+function bar(percent,cls=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${cls}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
+function rowPercent(pctVal,over){const d=document.createElement("div");d.className="percent-row";d.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div><div>${over?`<span class='badge-ok'>Target completato</span>`:""}</div>`;return d;}
 
-// crea barra (generica)
-function bar(percent,extraClass=""){const p=Math.max(0,Math.min(percent,100));const el=document.createElement("div");el.className=`bar ${extraClass}`;el.innerHTML=`<div class="fill" style="width:${p}%"></div>`;return el;}
-
-// card metrica con extra1/extra2
 function metricCard({name,target,result,key,showNumbers,cfg}){
-  const t=toNumber(target), r=toNumber(result);
-  const basePct=pct(r,t);
-  const over=basePct>=100;
+  const t=toNumber(target),r=toNumber(result);
+  const basePct=pct(r,t),over=basePct>=100;
+  const wrap=document.createElement("div");wrap.className="metric";
+  const numsHTML=showNumbers?`<div class='nums'>Target: <b>${t}</b> · Risultato: <b>${r}</b></div>`:"";
+  wrap.innerHTML=`<div class='head'><div>${name}</div>${numsHTML}</div>`;
+  wrap.appendChild(bar(basePct,over?"over":""));
+  wrap.appendChild(rowPercent(basePct,over));
 
-  const wrap=document.createElement("div"); wrap.className="metric";
-  const numsHTML = showNumbers ? `<div class="nums">Target: <b>${t}</b> · Risultato: <b>${r}</b></div>` : "";
-  wrap.innerHTML=`<div class="head"><div class="name">${name}</div>${numsHTML}</div>`;
-
-  // barra principale
-  const baseBar = bar(basePct, over?"over":"");
-  wrap.appendChild(baseBar);
-  wrap.appendChild(rowPercent(basePct, over));
-
-  // sotto: barre extra se configurate (>0)
-  const extras = [];
-  if(cfg.x1_thr>0){
-    const p1=pct(r,cfg.x1_thr);
-    extras.push({label:"Extra 1", thr: cfg.x1_thr, prize: cfg.x1_prize, p:p1, class:"x1", achieved: r>=cfg.x1_thr});
-  }
-  if(cfg.x2_thr>0){
-    const p2=pct(r,cfg.x2_thr);
-    extras.push({label:"Extra 2", thr: cfg.x2_thr, prize: cfg.x2_prize, p:p2, class:"x2", achieved: r>=cfg.x2_thr});
-  }
-
+  // extra bars
+  const extras=[];
+  if(cfg.x1_thr>0)extras.push({label:"Extra 1",thr:cfg.x1_thr,prize:cfg.x1_prize,p:pct(r,cfg.x1_thr),class:"x1",achieved:r>=cfg.x1_thr});
+  if(cfg.x2_thr>0)extras.push({label:"Extra 2",thr:cfg.x2_thr,prize:cfg.x2_prize,p:pct(r,cfg.x2_thr),class:"x2",achieved:r>=cfg.x2_thr});
   extras.forEach(ex=>{
-    // etichetta soglia (per fatturato non mostriamo cifre)
     const label=document.createElement("div");
     label.className="subbar-label";
-    label.innerHTML = showNumbers ? `<span>${ex.label} — soglia: <b>${ex.thr}</b></span><span>${Math.round(ex.p)}%</span>` : `<span>${ex.label}</span><span>${Math.round(ex.p)}%</span>`;
+    label.innerHTML=showNumbers?`<span>${ex.label} soglia: <b>${ex.thr}</b></span><span>${Math.round(ex.p)}%</span>`:`<span>${ex.label}</span><span>${Math.round(ex.p)}%</span>`;
     wrap.appendChild(label);
-    wrap.appendChild(bar(ex.p, ex.class));
-    // premio extra (solo se raggiunto)
-    if(ex.achieved){
-      const rw=document.createElement("div"); rw.className="rewards";
-      rw.innerHTML=`🎉 Premio ${ex.label}: <b>${euro(ex.prize)}</b>`;
-      wrap.appendChild(rw);
-    }
+    wrap.appendChild(bar(ex.p,ex.class));
+    if(ex.achieved){const rw=document.createElement("div");rw.className="rewards";rw.innerHTML=`🎉 Premio ${ex.label}: <b>${euro(ex.prize)}</b>`;wrap.appendChild(rw);}
   });
 
-  // premio base (se 100%)
-  if(over && cfg.base>0){
-    const rw=document.createElement("div"); rw.className="rewards";
-    rw.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;
-    wrap.appendChild(rw);
-  }
-
+  if(over&&cfg.base>0){const rw=document.createElement("div");rw.className="rewards";rw.innerHTML=`🎉 Premio base: <b>${euro(cfg.base)}</b>`;wrap.appendChild(rw);}
   return wrap;
 }
 
-function rowPercent(pctVal, over){
-  const div=document.createElement("div"); div.className="percent-row";
-  div.innerHTML=`<div class="percent">${Math.round(pctVal)}%</div>
-                 <div>${over?`<span class="badge-ok">Target completato</span>`:""}</div>`;
-  return div;
-}
-
 function render(){
-  const app=document.getElementById("app"); app.innerHTML="";
+  const app=document.getElementById("app");app.innerHTML="";
   if(!RAW.length){app.innerHTML="<div class='card'>Nessun dato</div>";return;}
-  const row=RAW[idx]; const mese=row[COL.mese]; const cfgAll=getCfg(mese);
+  const row=RAW[idx];const mese=row[COL.mese];const cfgAll=getCfg(mese);
   document.getElementById("monthLabel").textContent=mese;
-
-  const card=document.createElement("section"); card.className="card";
-  card.innerHTML=`<div class="month-title"><h2>${mese}</h2></div>`;
-
-  // Fatturato (no cifre)
-  card.appendChild(metricCard({
-    name:"Fatturato",
-    target:row[COL.fatturato_target],
-    result:row[COL.fatturato_risultato],
-    key:"fatt",
-    showNumbers:false,
-    cfg:cfgAll.fatt
-  }));
-
-  // WindTre (mostra cifre)
-  card.appendChild(metricCard({
-    name:"WindTre",
-    target:row[COL.wind3_target],
-    result:row[COL.wind3_result],
-    key:"wind",
-    showNumbers:true,
-    cfg:cfgAll.wind
-  }));
-
-  // ho. Mobile (mostra cifre)
-  card.appendChild(metricCard({
-    name:"ho. Mobile",
-    target:row[COL.ho_target],
-    result:row[COL.ho_result],
-    key:"ho",
-    showNumbers:true,
-    cfg:cfgAll.ho
-  }));
-
+  const card=document.createElement("section");card.className="card";
+  card.innerHTML=`<div class='month-title'><h2>${mese}</h2></div>`;
+  card.appendChild(metricCard({name:"Fatturato",target:row[COL.fatturato_target],result:row[COL.fatturato_risultato],key:"fatt",showNumbers:false,cfg:cfgAll.fatt}));
+  card.appendChild(metricCard({name:"WindTre",target:row[COL.wind3_target],result:row[COL.wind3_result],key:"wind",showNumbers:true,cfg:cfgAll.wind}));
+  card.appendChild(metricCard({name:"ho. Mobile",target:row[COL.ho_target],result:row[COL.ho_result],key:"ho",showNumbers:true,cfg:cfgAll.ho}));
   app.appendChild(card);
 }
 
