@@ -53,6 +53,15 @@ main{display:none;padding:16px}
 .totalbox h4{margin:0 0 4px;font-size:13px;color:var(--muted)}
 .totalbox .val{font-weight:900;font-size:18px}
 footer{color:var(--muted);text-align:center;padding:22px}
+
+/* Popup Report */
+#popup{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);z-index:100;backdrop-filter:blur(3px)}
+.popupBox{width:min(96%,880px);max-height:86vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.2);padding:20px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:center}
+th{background:#f8fafc}
+.tag{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid #e2e8f0;background:#f1f5f9}
+.tag.ok{background:#dcfce7;border-color:#86efac;color:#166534}
 </style>
 </head>
 <body>
@@ -77,6 +86,7 @@ footer{color:var(--muted);text-align:center;padding:22px}
         <span class="monthname" id="mname">OTTOBRE</span>
         <button id="nextM">▶︎</button>
       </div>
+      <button class="chip" id="btnReport">📊 Report</button>
       <button class="chip" id="btnReload">Ricarica</button>
       <button class="chip" id="btnLogout">Logout</button>
     </div>
@@ -85,6 +95,20 @@ footer{color:var(--muted);text-align:center;padding:22px}
 
 <main id="app"></main>
 <footer>© RAMSERVICE — dati aggiornati automaticamente</footer>
+
+<!-- Popup Report -->
+<div id="popup">
+  <div class="popupBox">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3>📊 Riepilogo premi mensili</h3>
+      <button class="chip" onclick="document.getElementById('popup').style.display='none'">Chiudi ✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Mese</th><th>Fatturato</th><th>WindTre</th><th>ho.</th><th>Premi raggiunti</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+    </table>
+  </div>
+</div>
 
 <script>
 const JSON_URL="https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
@@ -99,31 +123,28 @@ function byMonthDict(arr){const out={};(arr||[]).forEach(o=>{const k=o.mese.toUp
 function cfgFor(m){const raw=(DATA.config||{})[m];if(!raw)return null;const n=k=>raw[k]||{};return{fatt:n("fatt"),wind:n("wind"),ho:n("ho")};}
 function prizesFor(o,v,b){let got=0,left=0;if(b>0&&v>=b)got+=+o.base_prize;else left+=+o.base_prize;if(o.x1_thr>0){if(v>=o.x1_thr)got+=+o.x1_prize;else left+=+o.x1_prize;}if(o.x2_thr>0){if(v>=o.x2_thr)got+=+o.x2_prize;else left+=+o.x2_prize;}return{got,left};}
 
-function makeBar(title,p,value,target,cls,isMoney){
-  const block=document.createElement("div");
-  block.className="barblock "+cls;
+function makeBar(title,p,value,target,cls,isMoney,hideValues=false){
+  const block=document.createElement("div");block.className="barblock "+cls;
   const percent=Math.round(p);
-  const labelVal=isMoney?`${euro(value)} / ${euro(target)}`:`${value} / ${target}`;
+  const labelVal=hideValues?"":(isMoney?`${euro(value)} / ${euro(target)}`:`${value} / ${target}`);
   block.innerHTML=`
     <div class="bartitle">
       <span>${title}</span>
       <span style="font-weight:600;${percent>=100?'color:var(--ok)':''}">${percent}%</span>
     </div>
     <div class="bar ${cls}"><div class="fill" style="--w:${p}%"></div></div>
-    <div class="row"><div>${labelVal}</div><div>${percent>=100?'✅ Completato':''}</div></div>`;
+    ${hideValues?'':`<div class="row"><div>${labelVal}</div><div>${percent>=100?'✅ Completato':''}</div></div>`}`;
   return block;
 }
 
-function metricCard({title,value,baseTarget,conf,isMoney}){
-  const wrap=document.createElement("section");
-  wrap.className="card";
-  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato in euro':'Numero attivazioni'}</div>`;
-  wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney));
-  if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney));
-  if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney));
+function metricCard({title,value,baseTarget,conf,isMoney,hideValues}){
+  const wrap=document.createElement("section");wrap.className="card";
+  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato (nascosto)':'Numero attivazioni'}</div>`;
+  wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney,hideValues));
+  if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney,hideValues));
+  if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney,hideValues));
   const pv=prizesFor(conf,value,baseTarget);
-  const totals=document.createElement("div");
-  totals.className="totals";
+  const totals=document.createElement("div");totals.className="totals";
   totals.innerHTML=`<div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(pv.got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(pv.left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got+pv.left)}</div></div>`;
   wrap.appendChild(totals);
   return wrap;
@@ -149,7 +170,7 @@ function render(){
   const cfg=cfgFor(m),live=LIVE[m];
   if(!cfg||!live){app.innerHTML=`<div class='section'>⚠️ Dati non disponibili per ${m}</div>`;return;}
   const grid=document.createElement("div");grid.className="grid";app.appendChild(grid);
-  grid.appendChild(metricCard({title:"Fatturato",value:live.fatt,baseTarget:live.fatt_target,conf:cfg.fatt,isMoney:true}));
+  grid.appendChild(metricCard({title:"Fatturato",value:live.fatt,baseTarget:live.fatt_target,conf:cfg.fatt,isMoney:true,hideValues:true}));
   grid.appendChild(metricCard({title:"WindTre",value:live.wind,baseTarget:live.wind_target,conf:cfg.wind,isMoney:false}));
   grid.appendChild(metricCard({title:"ho. Mobile",value:live.ho,baseTarget:live.ho_target,conf:cfg.ho,isMoney:false}));
   const pf=prizesFor(cfg.fatt,live.fatt,live.fatt_target);
@@ -166,6 +187,19 @@ $("#btnReload").onclick=async()=>{showLoader(true);const r=await fetch(API_URL+"
 $("#btnLogout").onclick=()=>location.reload();
 $("#prevM").onclick=()=>{MESE_INDEX=(MESE_INDEX+11)%12;render();};
 $("#nextM").onclick=()=>{MESE_INDEX=(MESE_INDEX+1)%12;render();};
+
+/* ====== REPORT ====== */
+$("#btnReport").onclick=()=>{
+  const tb=$("#sumBody");tb.innerHTML="";
+  MESI.forEach(m=>{
+    const c=cfgFor(m),l=LIVE[m];
+    if(!c||!l)return;
+    const pF=pct(l.fatt,l.fatt_target),pW=pct(l.wind,l.wind_target),pH=pct(l.ho,l.ho_target);
+    const got=prizesFor(c.fatt,l.fatt,l.fatt_target).got+prizesFor(c.wind,l.wind,l.wind_target).got+prizesFor(c.ho,l.ho,l.ho_target).got;
+    tb.innerHTML+=`<tr><td>${m}</td><td><span class="tag ${pF>=100?'ok':''}">${Math.round(pF)}%</span></td><td><span class="tag ${pW>=100?'ok':''}">${Math.round(pW)}%</span></td><td><span class="tag ${pH>=100?'ok':''}">${Math.round(pH)}%</span></td><td>${euro(got)}</td></tr>`;
+  });
+  $("#popup").style.display="flex";
+};
 </script>
 </body>
 </html>
