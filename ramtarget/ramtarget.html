@@ -139,7 +139,7 @@ function makeBar(title,p,value,target,cls,isMoney,hideValues=false){
 
 function metricCard({title,value,baseTarget,conf,isMoney,hideValues}){
   const wrap=document.createElement("section");wrap.className="card";
-  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato (nascosto)':'Numero attivazioni'}</div>`;
+  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato':'Numero attivazioni'}</div>`;
   wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney,hideValues));
   if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney,hideValues));
   if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney,hideValues));
