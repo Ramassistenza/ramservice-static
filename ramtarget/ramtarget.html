@@ -85,13 +85,33 @@ const $=s=>document.querySelector(s);
 let DATA={},LIVE={},MESE_INDEX=new Date().getMonth();
 localStorage.clear();
 
-function parseNum(v){
-  if(v==null)return 0;
-  if(typeof v==="string"){
-    v=v.replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",",".");
+function parseNum(v) {
+  if (v == null || v === "") return 0;
+  if (typeof v === "number") return v;
+
+  // Rimuove simboli € e spazi
+  v = v.replace(/[€\s]/g, "").trim();
+
+  // Se il formato è tipo "26.973,58" → toFixed = 26973.58
+  if (v.match(/^\d{1,3}(\.\d{3})*,\d{2}$/)) {
+    return parseFloat(v.replace(/\./g, "").replace(",", "."));
   }
-  return Number(v)||0;
+
+  // Se formato è "26,973.58" (inglese)
+  if (v.match(/^\d{1,3}(,\d{3})*\.\d{2}$/)) {
+    return parseFloat(v.replace(/,/g, ""));
+  }
+
+  // Se contiene solo cifre o virgola decimale
+  v = v.replace(/[^\d.,-]/g, "");
+  const parts = v.split(",");
+  if (parts.length === 2 && parts[1].length <= 2) {
+    return parseFloat(v.replace(".", "").replace(",", "."));
+  }
+
+  return parseFloat(v.replace(/[^\d.-]/g, "")) || 0;
 }
+
 const euro=v=>Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:2});
 const pct=(v,t)=>t>0?Math.min(100,Math.max(0,(v/t)*100)):0;
 function showLoader(s=true){$("#loader").style.display=s?"flex":"none";}
