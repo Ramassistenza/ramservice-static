@@ -10,7 +10,7 @@
     "OTTOBRE": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -33,7 +33,7 @@
     "GENNAIO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -56,7 +56,7 @@
     "FEBBRAIO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -79,7 +79,7 @@
     "MARZO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -102,7 +102,7 @@
     "APRILE": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -125,7 +125,7 @@
     "MAGGIO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -148,7 +148,7 @@
     "GIUGNO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -171,7 +171,7 @@
     "LUGLIO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -194,7 +194,7 @@
     "AGOSTO": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -217,7 +217,7 @@
     "SETTEMBRE": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -240,7 +240,7 @@
     "NOVEMBRE": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
@@ -263,7 +263,7 @@
     "DICEMBRE": {
       "fatt": {
         "base_prize": 100,
-        "x1_thr": 31000,
+        "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
         "x2_prize": 100
