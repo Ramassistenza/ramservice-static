@@ -14,16 +14,9 @@
   --glow:0 8px 24px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui,sans-serif}
-.loader-backdrop{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:90;backdrop-filter:blur(2px)}
-.loader{width:56px;height:56px;border-radius:50%;border:5px solid #ddd;border-top-color:var(--brand);animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#login{max-width:420px;margin:80px auto;padding:0 18px;text-align:center}
-.login-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--glow)}
-#login input{width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line)}
-#login button{width:100%;padding:12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--brand),#60a5fa);color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(0,113,227,.25)}
-.err{color:#ef4444;font-size:13px;margin-top:8px}
-header{display:none;position:sticky;top:0;z-index:30;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
-.wrap{max-width:1080px;margin:auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+header,main,footer{max-width:1080px;margin:auto}
+header{display:none;position:sticky;top:0;z-index:30;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.wrap{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .dot{width:26px;height:26px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#7dd3fc)}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -31,7 +24,15 @@ header{display:none;position:sticky;top:0;z-index:30;background:rgba(255,255,255
 .monthnav{display:flex;align-items:center;gap:6px}
 .monthnav button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 10px;border-radius:12px;cursor:pointer}
 .monthname{font-weight:800}
-main{display:none;max-width:1080px;margin:auto;padding:16px}
+#login{max-width:420px;margin:80px auto;padding:0 18px;text-align:center}
+.login-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--glow)}
+#login input{width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line)}
+#login button{width:100%;padding:12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--brand),#60a5fa);color:#fff;font-weight:700}
+.err{color:#ef4444;font-size:13px;margin-top:8px}
+.loader-backdrop{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:90}
+.loader{width:56px;height:56px;border-radius:50%;border:5px solid #ddd;border-top-color:var(--brand);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+main{display:none;padding:16px}
 .section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--glow)}
 .grid{display:grid;grid-template-columns:1fr;gap:16px}
 @media(min-width:840px){.grid{grid-template-columns:1fr 1fr}}
@@ -39,8 +40,9 @@ main{display:none;max-width:1080px;margin:auto;padding:16px}
 .card h3{margin:0 0 6px}
 .sub{font-size:13px;color:var(--muted)}
 .row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--muted)}
-.badge{font-size:11px;padding:4px 10px;border-radius:999px;font-weight:800;background:#f8fafc;border:1px solid var(--line)}
-.bar{height:14px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;overflow:hidden;margin-top:8px}
+.barblock{margin-top:10px}
+.bartitle{font-size:12px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+.bar{height:14px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;overflow:hidden}
 .fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--baseA),var(--baseB));animation:fill .9s cubic-bezier(.22,1,.36,1) forwards}
 .bar.x1 .fill{background:linear-gradient(90deg,var(--x1a),var(--x1b))}
 .bar.x2 .fill{background:linear-gradient(90deg,var(--x2a),var(--x2b))}
@@ -82,7 +84,7 @@ footer{color:var(--muted);text-align:center;padding:22px}
 </header>
 
 <main id="app"></main>
-<footer>© RAMSERVICE — dati aggiornati</footer>
+<footer>© RAMSERVICE — dati aggiornati automaticamente</footer>
 
 <script>
 const JSON_URL="https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
@@ -90,26 +92,38 @@ const API_URL="https://script.google.com/macros/s/AKfycbxJwlXUhUYTqT1oOZoMb_F-X0
 const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
 const $=s=>document.querySelector(s);
 let DATA={},LIVE={},MESE_INDEX=new Date().getMonth();
-
 const euro=v=>Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",minimumFractionDigits:2});
 const pct=(v,t)=>t>0?Math.min(100,(v/t)*100):0;
 function showLoader(s=true){$("#loader").style.display=s?"flex":"none";}
 function byMonthDict(arr){const out={};(arr||[]).forEach(o=>{const k=o.mese.toUpperCase();out[k]=o});return out;}
 function cfgFor(m){const raw=(DATA.config||{})[m];if(!raw)return null;const n=k=>raw[k]||{};return{fatt:n("fatt"),wind:n("wind"),ho:n("ho")};}
 function prizesFor(o,v,b){let got=0,left=0;if(b>0&&v>=b)got+=+o.base_prize;else left+=+o.base_prize;if(o.x1_thr>0){if(v>=o.x1_thr)got+=+o.x1_prize;else left+=+o.x1_prize;}if(o.x2_thr>0){if(v>=o.x2_thr)got+=+o.x2_prize;else left+=+o.x2_prize;}return{got,left};}
-function makeBar(p,cls){const d=document.createElement("div");d.className="bar "+cls;d.innerHTML=`<div class="fill" style="--w:${p}%"></div>`;return d;}
+
+function makeBar(title,p,value,target,cls,isMoney){
+  const block=document.createElement("div");
+  block.className="barblock "+cls;
+  const percent=Math.round(p);
+  const labelVal=isMoney?`${euro(value)} / ${euro(target)}`:`${value} / ${target}`;
+  block.innerHTML=`
+    <div class="bartitle">
+      <span>${title}</span>
+      <span style="font-weight:600;${percent>=100?'color:var(--ok)':''}">${percent}%</span>
+    </div>
+    <div class="bar ${cls}"><div class="fill" style="--w:${p}%"></div></div>
+    <div class="row"><div>${labelVal}</div><div>${percent>=100?'✅ Completato':''}</div></div>`;
+  return block;
+}
 
 function metricCard({title,value,baseTarget,conf,isMoney}){
-  const wrap=document.createElement("section");wrap.className="card";
-  const sub=`Target: <b>${isMoney?euro(baseTarget):baseTarget}</b> · Risultato: <b>${isMoney?euro(value):value}</b>`;
-  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${sub}</div>`;
-  const pBase=pct(value,baseTarget);
-  wrap.appendChild(makeBar(pBase,"base"));
-  const x1p=pct(value,conf.x1_thr),x2p=pct(value,conf.x2_thr);
-  if(conf.x1_thr>0)wrap.appendChild(makeBar(x1p,"x1"));
-  if(conf.x2_thr>0)wrap.appendChild(makeBar(x2p,"x2"));
+  const wrap=document.createElement("section");
+  wrap.className="card";
+  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato in euro':'Numero attivazioni'}</div>`;
+  wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney));
+  if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney));
+  if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney));
   const pv=prizesFor(conf,value,baseTarget);
-  const totals=document.createElement("div");totals.className="totals";
+  const totals=document.createElement("div");
+  totals.className="totals";
   totals.innerHTML=`<div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(pv.got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(pv.left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got+pv.left)}</div></div>`;
   wrap.appendChild(totals);
   return wrap;
@@ -128,13 +142,12 @@ async function doLogin(){
   }catch(e){$("#lmsg").textContent="Errore: "+e.message;}
   finally{showLoader(false);}
 }
-
-$("#lbtn").onclick=doLogin;
-$("#lpass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+$("#lbtn").onclick=doLogin;$("#lpass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 
 function render(){
   const m=MESI[MESE_INDEX],app=$("#app");app.innerHTML="";$("#mname").textContent=m;
-  const cfg=cfgFor(m),live=LIVE[m];if(!cfg||!live){app.innerHTML=`<div class='section'>⚠️ Dati non disponibili per ${m}</div>`;return;}
+  const cfg=cfgFor(m),live=LIVE[m];
+  if(!cfg||!live){app.innerHTML=`<div class='section'>⚠️ Dati non disponibili per ${m}</div>`;return;}
   const grid=document.createElement("div");grid.className="grid";app.appendChild(grid);
   grid.appendChild(metricCard({title:"Fatturato",value:live.fatt,baseTarget:live.fatt_target,conf:cfg.fatt,isMoney:true}));
   grid.appendChild(metricCard({title:"WindTre",value:live.wind,baseTarget:live.wind_target,conf:cfg.wind,isMoney:false}));
@@ -143,7 +156,8 @@ function render(){
   const pw=prizesFor(cfg.wind,live.wind,live.wind_target);
   const ph=prizesFor(cfg.ho,live.ho,live.ho_target);
   const got=pf.got+pw.got+ph.got,left=pf.left+pw.left+ph.left;
-  const total=document.createElement("section");total.className="section";
+  const total=document.createElement("section");
+  total.className="section";
   total.innerHTML=`<h3>💶 Totale complessivo</h3><div class="totals"><div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(got+left)}</div></div></div>`;
   app.appendChild(total);
 }
