@@ -87,30 +87,38 @@ localStorage.clear();
 
 function parseNum(v) {
   if (v == null || v === "") return 0;
+
+  // Se è già un numero → ritorna direttamente
   if (typeof v === "number") return v;
 
-  // Rimuove simboli € e spazi
-  v = v.replace(/[€\s]/g, "").trim();
+  // Converti in stringa e rimuovi caratteri non stampabili e spazi Unicode (es. € 26.973,59)
+  v = String(v)
+        .replace(/\s+/g, "")
+        .replace(/\u00A0/g, "")
+        .replace(/[€]/g, "")
+        .trim();
 
-  // Se il formato è tipo "26.973,58" → toFixed = 26973.58
-  if (v.match(/^\d{1,3}(\.\d{3})*,\d{2}$/)) {
+  // Caso tipico italiano: "26.973,58" oppure "26973,58"
+  if (/^\d{1,3}(\.\d{3})*(,\d{2})?$/.test(v)) {
     return parseFloat(v.replace(/\./g, "").replace(",", "."));
   }
 
-  // Se formato è "26,973.58" (inglese)
-  if (v.match(/^\d{1,3}(,\d{3})*\.\d{2}$/)) {
+  // Caso anglosassone: "26,973.58"
+  if (/^\d{1,3}(,\d{3})*(\.\d{2})?$/.test(v)) {
     return parseFloat(v.replace(/,/g, ""));
   }
 
-  // Se contiene solo cifre o virgola decimale
-  v = v.replace(/[^\d.,-]/g, "");
-  const parts = v.split(",");
-  if (parts.length === 2 && parts[1].length <= 2) {
-    return parseFloat(v.replace(".", "").replace(",", "."));
+  // Se è un intero con o senza separatori
+  if (/^\d+(\.\d+)?$/.test(v)) {
+    return parseFloat(v);
   }
 
-  return parseFloat(v.replace(/[^\d.-]/g, "")) || 0;
+  // Tentativo finale: sostituisce qualsiasi virgola con punto
+  v = v.replace(",", ".");
+  const num = parseFloat(v);
+  return isNaN(num) ? 0 : num;
 }
+
 
 const euro=v=>Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:2});
 const pct=(v,t)=>t>0?Math.min(100,Math.max(0,(v/t)*100)):0;
