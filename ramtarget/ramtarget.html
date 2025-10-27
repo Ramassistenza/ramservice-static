@@ -2,94 +2,60 @@
 <html lang="it">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>RAMSERVICE · Target Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f7f9fb; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
   --panel:#ffffff; --card:#ffffff;
-  --brand:#0071E3; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+  --brand:#0071E3; --ok:#22c55e; --warn:#f59e0b;
   --x1a:#f59e0b; --x1b:#fbbf24; --x2a:#22c55e; --x2b:#86efac; --baseA:#3b82f6; --baseB:#60a5fa;
   --glow:0 8px 24px rgba(0,0,0,.06);
 }
-*{box-sizing:border-box} html,body{height:100%}
-body{margin:0; background:var(--bg); color:var(--ink); font-family:Poppins,system-ui,sans-serif}
-
-/* LOADER */
-.loader-backdrop{position:fixed; inset:0; background:rgba(255,255,255,.6); display:none; align-items:center; justify-content:center; z-index:90; backdrop-filter: blur(2px)}
-.loader{width:56px;height:56px;border-radius:50%;border:5px solid #ddd;border-top-color:var(--brand); animation:spin 1s linear infinite}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui,sans-serif}
+.loader-backdrop{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:90;backdrop-filter:blur(2px)}
+.loader{width:56px;height:56px;border-radius:50%;border:5px solid #ddd;border-top-color:var(--brand);animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* LOGIN */
-#login{max-width:420px; margin:80px auto; padding:0 18px; text-align:center}
-#login h2{margin:0 0 12px}
-.login-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:var(--glow)}
-#login input{width:100%; margin:8px 0; padding:12px; border-radius:10px; border:1px solid var(--line)}
-#login button{width:100%; padding:12px; border-radius:10px; border:0; background:linear-gradient(90deg,var(--brand),#60a5fa); color:#fff; font-weight:700; box-shadow:0 4px 12px rgba(0,113,227,.25)}
-.err{color:var(--err); font-size:13px; margin-top:8px}
-
-/* HEADER */
-header{display:none; position:sticky; top:0; z-index:30; background:rgba(255,255,255,.92); border-bottom:1px solid var(--line); backdrop-filter: blur(10px)}
-.wrap{max-width:1080px; margin:auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px}
-.brand{display:flex; align-items:center; gap:10px}
+#login{max-width:420px;margin:80px auto;padding:0 18px;text-align:center}
+.login-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--glow)}
+#login input{width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line)}
+#login button{width:100%;padding:12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--brand),#60a5fa);color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(0,113,227,.25)}
+.err{color:#ef4444;font-size:13px;margin-top:8px}
+header{display:none;position:sticky;top:0;z-index:30;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.wrap{max-width:1080px;margin:auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
 .brand .dot{width:26px;height:26px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#7dd3fc)}
-.brand h1{font-size:18px; margin:0}
-.controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-.chip{border:1px solid var(--line); background:#fff; color:var(--ink); padding:8px 10px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.04)}
-.monthnav{display:flex; align-items:center; gap:6px}
-.monthnav button{border:1px solid var(--line); background:#fff; color:var(--ink); padding:8px 10px; border-radius:12px; cursor:pointer}
-.monthname{font-weight:800; letter-spacing:.3px}
-
-/* LAYOUT */
-main{display:none; max-width:1080px; margin:auto; padding:16px}
-.section{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0; box-shadow:var(--glow)}
-.hrow{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap}
-.hrow .meta{font-size:12px; color:var(--muted)}
-.grid{display:grid; grid-template-columns:1fr; gap:16px}
-@media(min-width:840px){ .grid{grid-template-columns:1fr 1fr} }
-
-.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 10px;border-radius:12px;font-weight:700;cursor:pointer}
+.monthnav{display:flex;align-items:center;gap:6px}
+.monthnav button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 10px;border-radius:12px;cursor:pointer}
+.monthname{font-weight:800}
+main{display:none;max-width:1080px;margin:auto;padding:16px}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--glow)}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:840px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--glow)}
 .card h3{margin:0 0 6px}
-.sub{font-size:13px; color:var(--muted)}
-.row{display:flex; align-items:center; justify-content:space-between; margin-top:8px; font-size:13px; color:var(--muted)}
-.badge{font-size:11px; padding:4px 10px; border-radius:999px; font-weight:800; background:#f8fafc; border:1px solid var(--line)}
-.badge.ok{color:var(--ok); border-color:var(--ok); background:#ecfdf5}
-.rew{margin-top:10px; font-size:13px}
-
-/* PROGRESS */
-.bar{height:14px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; overflow:hidden; box-shadow:inset 0 2px 6px rgba(0,0,0,.05); margin-top:8px}
-.fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--baseA),var(--baseB)); animation:fill .9s cubic-bezier(.22,1,.36,1) forwards}
+.sub{font-size:13px;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--muted)}
+.badge{font-size:11px;padding:4px 10px;border-radius:999px;font-weight:800;background:#f8fafc;border:1px solid var(--line)}
+.bar{height:14px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;overflow:hidden;margin-top:8px}
+.fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--baseA),var(--baseB));animation:fill .9s cubic-bezier(.22,1,.36,1) forwards}
 .bar.x1 .fill{background:linear-gradient(90deg,var(--x1a),var(--x1b))}
 .bar.x2 .fill{background:linear-gradient(90deg,var(--x2a),var(--x2b))}
 @keyframes fill{from{width:0%}to{width:var(--w)}}
-.bar.over .fill{filter:saturate(1.2)}
-
-/* TOTALS */
-.totals{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px}
-@media(min-width:620px){ .totals{grid-template-columns:1fr 1fr 1fr} }
-.totalbox{background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:12px}
-.totalbox h4{margin:0 0 4px; font-size:13px; color:var(--muted)}
-.totalbox .val{font-weight:900; font-size:18px}
-
-footer{color:var(--muted); text-align:center; padding:22px}
-
-/* POPUP RIEPILOGO */
-#popup{position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; z-index:50}
-.popupBox{width:min(96%,920px); max-height:86vh; overflow:auto; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--glow)}
-table{width:100%; border-collapse:collapse; font-size:14px}
-th,td{border-bottom:1px solid var(--line); padding:10px; text-align:center}
-th{color:var(--ink); background:#f1f5f9; position:sticky; top:0}
-.tag{font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--ink); background:#f9fafb}
-.tag.ok{border-color:#16f19533; color:#16a34a; background:#ecfdf5}
+.totals{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+@media(min-width:620px){.totals{grid-template-columns:1fr 1fr 1fr}}
+.totalbox{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}
+.totalbox h4{margin:0 0 4px;font-size:13px;color:var(--muted)}
+.totalbox .val{font-weight:900;font-size:18px}
+footer{color:var(--muted);text-align:center;padding:22px}
 </style>
 </head>
 <body>
+<div class="loader-backdrop" id="loader"><div class="loader"></div></div>
 
-<!-- LOADER -->
-<div class="loader-backdrop" id="loader"><div class="loader" aria-label="Caricamento"></div></div>
-
-<!-- LOGIN -->
 <section id="login">
   <h2>RAMSERVICE · Accesso</h2>
   <div class="login-card">
@@ -100,284 +66,92 @@ th{color:var(--ink); background:#f1f5f9; position:sticky; top:0}
   </div>
 </section>
 
-<!-- HEADER -->
 <header id="top">
   <div class="wrap">
     <div class="brand"><div class="dot"></div><h1>Target Premium</h1></div>
     <div class="controls">
       <div class="monthnav">
-        <button id="prevM" title="Mese precedente">◀︎</button>
+        <button id="prevM">◀︎</button>
         <span class="monthname" id="mname">OTTOBRE</span>
-        <button id="nextM" title="Mese successivo">▶︎</button>
+        <button id="nextM">▶︎</button>
       </div>
-      <button class="chip" id="btnSummary">📊 Riepilogo</button>
-      <button class="chip" id="btnReload" title="Ricarica">Ricarica</button>
+      <button class="chip" id="btnReload">Ricarica</button>
       <button class="chip" id="btnLogout">Logout</button>
     </div>
   </div>
 </header>
 
-<!-- APP -->
 <main id="app"></main>
 <footer>© RAMSERVICE — dati aggiornati</footer>
 
-<!-- POPUP RIEPILOGO -->
-<div id="popup">
-  <div class="popupBox">
-    <div class="hrow" style="margin-bottom:10px">
-      <h3>📊 Riepilogo mensile</h3>
-      <button class="chip" onclick="document.getElementById('popup').style.display='none'">Chiudi</button>
-    </div>
-    <table>
-      <thead>
-        <tr><th>Mese</th><th>Fatturato</th><th>WindTre</th><th>ho. Mobile</th><th>Premi raggiunti</th></tr>
-      </thead>
-      <tbody id="sumBody"></tbody>
-    </table>
-  </div>
-</div>
-
 <script>
-/* ====== CONFIG ====== */
-const JSON_URL = "https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json"; // utenti + premi/extra
-const API_URL  = "https://script.google.com/macros/s/AKfycbxJwlXUhUYTqT1oOZoMb_F-X0xUhVuxgReXbPFgChNQZWc32B-XJnPCCXPtOCr0NE5L/exec"; // nuovo webapp
-const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
-/* ===================== */
+const JSON_URL="https://ramassistenza.github.io/ramservice-static/ramtarget/ramdata.json";
+const API_URL="https://script.google.com/macros/s/AKfycbxJwlXUhUYTqT1oOZoMb_F-X0xUhVuxgReXbPFgChNQZWc32B-XJnPCCXPtOCr0NE5L/exec";
+const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+const $=s=>document.querySelector(s);
+let DATA={},LIVE={},MESE_INDEX=new Date().getMonth();
 
-const $ = s => document.querySelector(s);
-let DATA={}, LIVE={}, MESE_INDEX = new Date().getMonth();
-localStorage.clear(); // login sempre pulito
-
-/* Helpers */
-const euro = v => Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",minimumFractionDigits:2});
-const pct  = (v,t)=> t>0? Math.max(0, Math.min(100, (v/t)*100 )) : 0;
-function showLoader(s=true){ $("#loader").style.display = s?"flex":"none"; }
-function monthName(){ return MESI[MESE_INDEX]; }
-function byMonthDict(arr){
-  const out={};
-  (arr||[]).forEach(o=>{
-    if(!o || !o.mese) return;
-    const k=String(o.mese).toUpperCase();
-    out[k] = {
-      fatt: +o.fatt || 0,
-      wind: +o.wind || 0,
-      ho:   +o.ho   || 0,
-      fatt_target: +o.fatt_target || 0,
-      wind_target: +o.wind_target || 0,
-      ho_target:   +o.ho_target   || 0,
-    };
-  });
-  return out;
-}
-
-function cfgFor(m){
-  const raw = (DATA.config||{})[m];
-  if(!raw) return null;
-  const N = k => {
-    const o = raw[k]||{};
-    return {
-      base_prize: Number(o.base_prize||0),
-      x1_thr:     Number(o.x1_thr||0),
-      x1_prize:   Number(o.x1_prize||0),
-      x2_thr:     Number(o.x2_thr||0),
-      x2_prize:   Number(o.x2_prize||0),
-    };
-  };
-  return {fatt:N("fatt"), wind:N("wind"), ho:N("ho")};
-}
-
-function prizesFor({base_prize,x1_thr,x1_prize,x2_thr,x2_prize}, value, baseTarget){
-  let got=0, left=0;
-  if(baseTarget>0 && value>=baseTarget && base_prize>0){ got+=base_prize; } else { left+=base_prize; }
-  if(x1_thr>0){ if(value>=x1_thr){ got+=x1_prize; } else { left+=x1_prize; } }
-  if(x2_thr>0){ if(value>=x2_thr){ got+=x2_prize; } else { left+=x2_prize; } }
-  return {got,left};
-}
-
-function makeBar(p, cls){ const d=document.createElement("div"); d.className="bar "+cls; d.innerHTML=`<div class="fill" style="--w:${p}%"></div>`; return d; }
+const euro=v=>Number(v||0).toLocaleString("it-IT",{style:"currency",currency:"EUR",minimumFractionDigits:2});
+const pct=(v,t)=>t>0?Math.min(100,(v/t)*100):0;
+function showLoader(s=true){$("#loader").style.display=s?"flex":"none";}
+function byMonthDict(arr){const out={};(arr||[]).forEach(o=>{const k=o.mese.toUpperCase();out[k]=o});return out;}
+function cfgFor(m){const raw=(DATA.config||{})[m];if(!raw)return null;const n=k=>raw[k]||{};return{fatt:n("fatt"),wind:n("wind"),ho:n("ho")};}
+function prizesFor(o,v,b){let got=0,left=0;if(b>0&&v>=b)got+=+o.base_prize;else left+=+o.base_prize;if(o.x1_thr>0){if(v>=o.x1_thr)got+=+o.x1_prize;else left+=+o.x1_prize;}if(o.x2_thr>0){if(v>=o.x2_thr)got+=+o.x2_prize;else left+=+o.x2_prize;}return{got,left};}
+function makeBar(p,cls){const d=document.createElement("div");d.className="bar "+cls;d.innerHTML=`<div class="fill" style="--w:${p}%"></div>`;return d;}
 
 function metricCard({title,value,baseTarget,conf,isMoney}){
-  const wrap = document.createElement("section");
-  wrap.className="card";
-
-  const sub = `Target: <b>${isMoney?euro(baseTarget):baseTarget}</b> · Risultato: <b>${isMoney?euro(value):value}</b>`;
-  wrap.innerHTML = `<h3>${title}</h3><div class="sub">${sub}</div>`;
-
-  const pBase = pct(value, baseTarget);
-  wrap.appendChild(makeBar(pBase, "base"+(pBase>=100?" over":"")));
-  const row = document.createElement("div"); row.className="row";
-  row.innerHTML = `<div></div><div><span class="badge">${Math.round(pBase)}%</span></div>`;
-  wrap.appendChild(row);
-
-  const pv = prizesFor(conf, value, baseTarget);
-  const totals = document.createElement("div");
-  totals.className="totals";
-  totals.innerHTML = `
-    <div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(pv.got)}</div></div>
-    <div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(pv.left)}</div></div>
-    <div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got+pv.left)}</div></div>
-  `;
+  const wrap=document.createElement("section");wrap.className="card";
+  const sub=`Target: <b>${isMoney?euro(baseTarget):baseTarget}</b> · Risultato: <b>${isMoney?euro(value):value}</b>`;
+  wrap.innerHTML=`<h3>${title}</h3><div class="sub">${sub}</div>`;
+  const pBase=pct(value,baseTarget);
+  wrap.appendChild(makeBar(pBase,"base"));
+  const x1p=pct(value,conf.x1_thr),x2p=pct(value,conf.x2_thr);
+  if(conf.x1_thr>0)wrap.appendChild(makeBar(x1p,"x1"));
+  if(conf.x2_thr>0)wrap.appendChild(makeBar(x2p,"x2"));
+  const pv=prizesFor(conf,value,baseTarget);
+  const totals=document.createElement("div");totals.className="totals";
+  totals.innerHTML=`<div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(pv.got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(pv.left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got+pv.left)}</div></div>`;
   wrap.appendChild(totals);
-
   return wrap;
 }
 
-/* ---------- LOGIN ---------- */
 async function doLogin(){
-  $("#lmsg").textContent="";
-  showLoader(true);
+  $("#lmsg").textContent="";showLoader(true);
   try{
-    // 1) Config user + premi
-    const conf = await fetch(JSON_URL+"?v="+Date.now());
-    if(!conf.ok) throw new Error("Config non raggiungibile");
-    DATA = await conf.json();
-
-    const u=$("#luser").value.trim(), p=$("#lpass").value.trim();
-    const ok = (DATA.users||[]).find(x=>String(x.user).trim()===u && String(x.pass).trim()===p);
-    if(!ok){ $("#lmsg").textContent="❌ Credenziali errate"; return; }
-
-    // 2) Live (tutti i mesi): targets + risultati
-    const liveR = await fetch(API_URL+"?v="+Date.now());
-    if(!liveR.ok) throw new Error("API non raggiungibile");
-    const arr = await liveR.json();
-    LIVE = byMonthDict(arr);
-
-    // 3) show app (forza display:block)
-    $("#login").style.display="none";
-    $("#top").style.display="block";
-    $("#app").style.display="block";
+    const conf=await fetch(JSON_URL+"?v="+Date.now());DATA=await conf.json();
+    const u=$("#luser").value.trim(),p=$("#lpass").value.trim();
+    const ok=(DATA.users||[]).find(x=>x.user===u&&x.pass===p);
+    if(!ok){$("#lmsg").textContent="❌ Credenziali errate";return;}
+    const liveR=await fetch(API_URL+"?v="+Date.now());LIVE=byMonthDict(await liveR.json());
+    $("#login").style.display="none";$("#top").style.display="block";$("#app").style.display="block";
     render();
-  }catch(e){
-    $("#lmsg").textContent = "Errore: "+e.message;
-  }finally{
-    showLoader(false);
-  }
+  }catch(e){$("#lmsg").textContent="Errore: "+e.message;}
+  finally{showLoader(false);}
 }
 
-document.getElementById("lbtn").onclick = doLogin;
-document.getElementById("lpass").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
+$("#lbtn").onclick=doLogin;
+$("#lpass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 
-/* ---------- RENDER ---------- */
 function render(){
-  const m = monthName();
-  document.getElementById("mname").textContent = m;
-
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  const head = document.createElement("section");
-  head.className="section";
-  head.innerHTML = `
-    <div class="hrow">
-      <div><h2>📅 ${m}</h2><div class="meta">Premi dal file · Target/Risultati dal foglio Google</div></div>
-      <div class="meta">${new Date().toLocaleString("it-IT")}</div>
-    </div>`;
-  app.appendChild(head);
-
-  const cfg = cfgFor(m);
-  const live = LIVE[m];
-  if(!cfg || !live){
-    const warn = document.createElement("section");
-    warn.className="section";
-    warn.innerHTML = `⚠️ Dati mancanti per <b>${m}</b>: ${!cfg? "configurazione premi":"target/risultati"} non disponibile.`;
-    app.appendChild(warn);
-    return;
-  }
-
-  const grid = document.createElement("div");
-  grid.className="grid";
-  app.appendChild(grid);
-
-  // Fatturato: formato EURO
-  grid.appendChild( metricCard({
-    title:"Fatturato",
-    value: live.fatt,
-    baseTarget: live.fatt_target,
-    conf: cfg.fatt,
-    isMoney: true
-  }));
-
-  // WindTre: numeri
-  grid.appendChild( metricCard({
-    title:"WindTre",
-    value: live.wind,
-    baseTarget: live.wind_target,
-    conf: cfg.wind,
-    isMoney: false
-  }));
-
-  // ho. Mobile: numeri
-  grid.appendChild( metricCard({
-    title:"ho. Mobile",
-    value: live.ho,
-    baseTarget: live.ho_target,
-    conf: cfg.ho,
-    isMoney: false
-  }));
-
-  // Riepilogo mese (somma premi delle 3 metriche)
-  const pf = prizesFor(cfg.fatt, live.fatt, live.fatt_target);
-  const pw = prizesFor(cfg.wind, live.wind, live.wind_target);
-  const ph = prizesFor(cfg.ho,   live.ho,   live.ho_target);
-  const got  = pf.got + pw.got + ph.got;
-  const left = pf.left + pw.left + ph.left;
-
-  const monthTotals = document.createElement("section");
-  monthTotals.className="section";
-  monthTotals.innerHTML = `
-    <h3 style="margin:0 0 8px 0">💶 Totale complessivo</h3>
-    <div class="totals">
-      <div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(got)}</div></div>
-      <div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(left)}</div></div>
-      <div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(got+left)}</div></div>
-    </div>
-  `;
-  app.appendChild(monthTotals);
+  const m=MESI[MESE_INDEX],app=$("#app");app.innerHTML="";$("#mname").textContent=m;
+  const cfg=cfgFor(m),live=LIVE[m];if(!cfg||!live){app.innerHTML=`<div class='section'>⚠️ Dati non disponibili per ${m}</div>`;return;}
+  const grid=document.createElement("div");grid.className="grid";app.appendChild(grid);
+  grid.appendChild(metricCard({title:"Fatturato",value:live.fatt,baseTarget:live.fatt_target,conf:cfg.fatt,isMoney:true}));
+  grid.appendChild(metricCard({title:"WindTre",value:live.wind,baseTarget:live.wind_target,conf:cfg.wind,isMoney:false}));
+  grid.appendChild(metricCard({title:"ho. Mobile",value:live.ho,baseTarget:live.ho_target,conf:cfg.ho,isMoney:false}));
+  const pf=prizesFor(cfg.fatt,live.fatt,live.fatt_target);
+  const pw=prizesFor(cfg.wind,live.wind,live.wind_target);
+  const ph=prizesFor(cfg.ho,live.ho,live.ho_target);
+  const got=pf.got+pw.got+ph.got,left=pf.left+pw.left+ph.left;
+  const total=document.createElement("section");total.className="section";
+  total.innerHTML=`<h3>💶 Totale complessivo</h3><div class="totals"><div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(got+left)}</div></div></div>`;
+  app.appendChild(total);
 }
 
-/* ---------- NAV ---------- */
-document.getElementById("btnReload").onclick = async ()=>{
-  showLoader(true);
-  try{
-    const liveR = await fetch(API_URL+"?v="+Date.now());
-    const arr = await liveR.json();
-    LIVE = byMonthDict(arr);
-    render();
-  }catch(e){ alert("Errore ricaricando i dati live: "+e.message); }
-  finally{ showLoader(false); }
-};
-document.getElementById("btnLogout").onclick = ()=> location.reload();
-document.getElementById("prevM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+11)%12; render(); };
-document.getElementById("nextM").onclick = ()=>{ MESE_INDEX=(MESE_INDEX+1)%12; render(); };
-
-/* ---------- POPUP RIEPILOGO ---------- */
-document.getElementById("btnSummary").onclick = ()=>{
-  const tb = document.getElementById("sumBody");
-  tb.innerHTML = "";
-  MESI.forEach(m=>{
-    const c = cfgFor(m);
-    const l = LIVE[m];
-    if(!c || !l) return;
-    const pF = pct(l.fatt, l.fatt_target);
-    const pW = pct(l.wind, l.wind_target);
-    const pH = pct(l.ho,   l.ho_target);
-    const got = (
-      prizesFor(c.fatt,l.fatt,l.fatt_target).got +
-      prizesFor(c.wind,l.wind,l.wind_target).got +
-      prizesFor(c.ho,  l.ho,  l.ho_target).got
-    );
-    tb.innerHTML += `
-      <tr>
-        <td>${m}</td>
-        <td><span class="tag ${pF>=100?'ok':''}">${Math.round(pF)}%</span></td>
-        <td><span class="tag ${pW>=100?'ok':''}">${Math.round(pW)}%</span></td>
-        <td><span class="tag ${pH>=100?'ok':''}">${Math.round(pH)}%</span></td>
-        <td>${euro(got)}</td>
-      </tr>
-    `;
-  });
-  document.getElementById("popup").style.display="flex";
-};
+$("#btnReload").onclick=async()=>{showLoader(true);const r=await fetch(API_URL+"?v="+Date.now());LIVE=byMonthDict(await r.json());showLoader(false);render();}
+$("#btnLogout").onclick=()=>location.reload();
+$("#prevM").onclick=()=>{MESE_INDEX=(MESE_INDEX+11)%12;render();};
+$("#nextM").onclick=()=>{MESE_INDEX=(MESE_INDEX+1)%12;render();};
 </script>
 </body>
 </html>
