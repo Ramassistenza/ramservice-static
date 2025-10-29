@@ -1,0 +1,3 @@
+:root { --ram-blue:#0071E3; --ink:#111; --page:#F3F4F7; --card:#fff; --radius:18px; }
+.card { background:var(--card); border-radius:var(--radius); box-shadow:0 8px 30px rgba(0,0,0,.06); }
+.btn-primary { background:#000; color:#fff; border-radius:14px; padding:.7rem 1rem; }

@@ -1,0 +1,32 @@
+{
+"_schema": {
+"version": "1.0.0",
+"updated_at": "2025-10-29T00:00:00Z"
+},
+"models": [
+{
+"id": "iphone13",
+"name": "iPhone 13",
+"width_mm": 72,
+"height_mm": 146,
+"dpi": 300,
+"print_width_px": 850,
+"print_height_px": 1730,
+"mask": "/templates/iphone13.png",
+"camera_hole": { "x": 640, "y": 130, "width": 200, "height": 250 },
+"active": true
+},
+{
+"id": "s24",
+"name": "Galaxy S24",
+"width_mm": 71,
+"height_mm": 147,
+"dpi": 300,
+"print_width_px": 838,
+"print_height_px": 1740,
+"mask": "/templates/s24.png",
+"camera_hole": { "x": 100, "y": 90, "width": 180, "height": 200 },
+"active": true
+}
+]
+}
