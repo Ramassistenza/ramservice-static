@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generatore Etichette Prezzo — RAMSERVICE</title>
+<style>
+  body {
+    font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    background: #f8f8f8;
+    margin: 0;
+    padding: 20px;
+    color: #111;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 0 auto 30px;
+  }
+  .field {
+    margin-bottom: 12px;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  textarea { resize: vertical; }
+  button {
+    display: inline-block;
+    background: #0071e3;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  button:hover { background: #005bb5; }
+
+  #preview-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    page-break-inside: avoid;
+  }
+
+  /* Etichetta */
+  .label {
+    width: 10cm;
+    height: 6.5cm;
+    border: 0.5mm solid #000;
+    background: #fff;
+    position: relative;
+    padding: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Badge */
+  .badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: #e5e5e5;
+    color: #111;
+    font-weight: 700;
+    font-size: 10pt;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  /* Titolo prodotto */
+  .label h2 {
+    font-size: 18pt;
+    text-align: center;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .desc-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .desc {
+    font-size: 11pt;
+    line-height: 1.2;
+  }
+
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .price {
+    font-size: 28pt;
+    font-weight: 800;
+    line-height: 1;
+    text-align: right;
+  }
+
+  .label img {
+    width: 80px;
+    height: auto;
+  }
+
+  .ram-code {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9pt;
+    color: #333;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  @media print {
+    body {
+      background: none;
+      padding: 0;
+    }
+    form, h1 {
+      display: none;
+    }
+    #preview-area {
+      page-break-after: always;
+    }
+    .label {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>🧾 Generatore Etichette Prezzo — RAMSERVICE</h1>
+
+<form id="labelForm">
+  <div class="field">
+    <label for="badge">Badge (es. NOVITÀ / OFFERTA)</label>
+    <input type="text" id="badge" placeholder="Lascia vuoto se non serve">
+  </div>
+  <div class="field">
+    <label for="titolo">Titolo prodotto</label>
+    <input type="text" id="titolo" required>
+  </div>
+  <div class="field">
+    <label for="descTitle">Titolo descrizione</label>
+    <input type="text" id="descTitle" value="SPECIFICHE TECNICHE:">
+  </div>
+  <div class="field">
+    <label for="descrizione">Descrizione</label>
+    <textarea id="descrizione" rows="3"></textarea>
+  </div>
+  <div class="field">
+    <label for="prezzo">Prezzo (€)</label>
+    <input type="text" id="prezzo" required>
+  </div>
+  <div class="field">
+    <label for="codiceRam">Codice RAM</label>
+    <input type="text" id="codiceRam" placeholder="Es. RAM-01870">
+  </div>
+
+  <button type="button" onclick="addLabel()">➕ Aggiungi etichetta</button>
+  <button type="button" onclick="printLabels()">🖨️ Stampa etichette</button>
+</form>
+
+<section id="preview-area"></section>
+
+<script>
+  function addLabel() {
+    const badge = document.getElementById('badge').value.trim();
+    const titolo = document.getElementById('titolo').value.trim();
+    const descTitle = document.getElementById('descTitle').value.trim() || "SPECIFICHE TECNICHE:";
+    const descrizione = document.getElementById('descrizione').value.trim();
+    const prezzo = document.getElementById('prezzo').value.trim();
+    const codiceRam = document.getElementById('codiceRam').value.trim();
+
+    if (!titolo || !prezzo) {
+      alert('Compila almeno titolo e prezzo.');
+      return;
+    }
+
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.innerHTML = `
+      ${badge ? `<div class="badge">${badge}</div>` : ''}
+      <h2>${titolo}</h2>
+      <div class="middle">
+        ${descTitle ? `<div class="desc-title">${descTitle}</div>` : ''}
+        ${descrizione ? `<div class="desc">${descrizione}</div>` : ''}
+      </div>
+      <div class="bottom">
+        <img src="https://ramassistenza.github.io/ramservice-static/immagini/logo-ramservice.png" alt="Logo RAMSERVICE">
+        <div class="price">€ ${prezzo}</div>
+      </div>
+      ${codiceRam ? `<div class="ram-code">${codiceRam}</div>` : ''}
+    `;
+
+    document.getElementById('preview-area').appendChild(label);
+    document.getElementById('labelForm').reset();
+    document.getElementById('descTitle').value = "SPECIFICHE TECNICHE:"; // reset default
+  }
+
+  function printLabels() {
+    if (document.querySelectorAll('.label').length === 0) {
+      alert('Aggiungi almeno un\'etichetta prima di stampare.');
+      return;
+    }
+    window.print();
+  }
+</script>
+
+</body>
+</html>
