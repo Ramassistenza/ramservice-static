@@ -263,21 +263,26 @@ function drawWheelTo(context, W, H, cfg, rot){
 
     // immagine PNG
     if(seg.imageUrl){
-      let img = seg._img;
-      if(!img){ img=new Image(); img.src=seg.imageUrl; img.onload=()=>{ seg._img=img; drawWheel(cfg); }; seg._img=img; }
-      const rPlace = rInner*0.74;
-      const sz = rInner*0.45*(seg.special?0.9:1);
-      context.save(); context.rotate(g.mid + Math.PI/2);
-      if(img.complete) context.drawImage(img, -sz/2, -rPlace, sz, sz);
-      context.restore();
-    }else{
-      // fallback testo minimal
-      context.save(); context.rotate(g.mid + Math.PI/2);
-      context.fillStyle='#fff'; context.font=`900 ${rInner*0.10}px Montserrat`; context.textAlign='center';
-      context.fillText((seg.label||'').toUpperCase(), 0, -rInner*0.7);
-      context.restore();
-    }
-  }
+  // ✅ Forza reload: aggiunge query anti-cache a ogni disegno in modalità config
+  const isConfig = window.location.search.includes('mode=config');
+  const src = isConfig
+    ? `${seg.imageUrl}${seg.imageUrl.includes('?') ? '&' : '?'}_=${Date.now()}`
+    : seg.imageUrl;
+
+  let img = new Image();
+  img.src = src;
+  img.onload = () => {
+    seg._img = img;
+    if (isConfig) drawWheel(cfg); // aggiorna subito l’anteprima in config
+  };
+
+  const rPlace = rInner * 0.74;
+  const sz = rInner * 0.45 * (seg.special ? 0.9 : 1);
+  context.save();
+  context.rotate(g.mid + Math.PI / 2);
+  if (img.complete) context.drawImage(img, -sz / 2, -rPlace, sz, sz);
+  context.restore();
+}
 
   // pin esterni
   const pinC=56,pinR=R*0.965;
