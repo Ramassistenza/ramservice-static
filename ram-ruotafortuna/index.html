@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>RAMSERVICE — La Ruota della Fortuna v8.5 PRO</title>
+<title>RAMSERVICE — La Ruota della Fortuna v9.0 PRO</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
@@ -20,35 +20,30 @@
   html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:"SF Pro Display",-apple-system,system-ui,Segoe UI,Roboto,Arial}
   a{color:#9dd1ff}
 
-  /* PLAY */
-  .stage{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;place-items:center;background:
-    radial-gradient(1300px 1200px at 25% 18%,#0b1626 0%,#0a1120 55%,#080b15 100%);
-    background-size:cover;background-position:center}
-  .canvas-wrap{position:relative;width:90vmin;height:90vmin;max-height:95vh;max-width:95vh;filter:drop-shadow(0 50px 140px rgba(0,0,0,.6))}
+  /* --- PLAY MODE --- */
+  .stage{position:fixed;inset:0;display:grid;place-items:center;background:
+    radial-gradient(1300px 1200px at 25% 18%,#0b1626 0%,#0a1120 55%,#080b15 100%)}
+  .canvas-wrap{position:relative;width:90vmin;height:90vmin;max-width:95vh;max-height:95vh;filter:drop-shadow(0 50px 140px rgba(0,0,0,.6))}
   canvas#wheel{width:100%;height:100%;touch-action:none;display:block}
-  .pointer{position:absolute;top:1.8%;left:50%;transform:translateX(-50%);width:min(6.2vmin,68px);height:auto;z-index:5}
-  .spin-btn{position:fixed;bottom:3.5vmin;left:50%;transform:translateX(-50%);width:min(20vmin,240px);height:min(20vmin,240px);border-radius:50%;
-    border:none;cursor:pointer;display:grid;place-items:center;font-weight:1000;letter-spacing:.5px;font-size:min(3.4vmin,30px);
-    background:conic-gradient(from 0deg,#33a9ff,#8c63ff,#33a9ff);color:#fff;box-shadow:0 18px 42px rgba(0,0,0,.45)}
+  .pointer{position:absolute;top:1.6%;left:50%;transform:translateX(-50%);width:min(6vmin,68px);height:auto;z-index:5}
+  .spin-btn{position:fixed;bottom:3.5vmin;left:50%;transform:translateX(-50%);
+    width:min(22vmin,240px);height:min(22vmin,240px);border-radius:50%;border:none;cursor:pointer;
+    display:grid;place-items:center;font-weight:1000;letter-spacing:.5px;
+    font-size:min(3.4vmin,30px);background:conic-gradient(from 0deg,#33a9ff,#8c63ff,#33a9ff);
+    color:#fff;box-shadow:0 18px 42px rgba(0,0,0,.45)}
 
-  /* POPUP */
+  /* --- POPUP GATE / RESULT --- */
   .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:30}
   .card{width:min(100vw,980px);padding:24px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
     border:1px solid rgba(255,255,255,.12)}
-  .ledbar{display:grid;gap:6px;margin-bottom:14px;text-align:center}
-  .led-title{font-weight:1000;font-size:clamp(32px,4.6vmin,60px);text-transform:uppercase;letter-spacing:.8px;
-    background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(235,245,255,.86));color:transparent;-webkit-background-clip:text;background-clip:text;
-    text-shadow:0 0 18px rgba(120,200,255,.45),0 0 40px rgba(80,140,255,.28)}
-  .led-sub{font-weight:800;color:#d6e7ff;opacity:.96}
-  .qr{width:220px;height:220px;border-radius:14px;overflow:hidden;background:#fff;display:grid;place-items:center}
-  .code-input{display:flex;gap:10px;margin-top:10px}
-  .code-box{width:54px;height:64px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-    color:#fff;text-align:center;font-size:30px;font-weight:900;outline:none}
-  .btn{border:none;border-radius:12px;padding:12px 16px;font-weight:900;cursor:pointer}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
-  .btn-pri{background:linear-gradient(180deg,var(--acc),var(--acc2));color:#fff}
-
-  /* Risultato */
+  .ledbar{text-align:center;margin-bottom:14px}
+  .led-title{font-weight:1000;font-size:clamp(32px,4.6vmin,60px);text-transform:uppercase;
+    background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(235,245,255,.86));
+    color:transparent;-webkit-background-clip:text;background-clip:text}
+  .led-sub{font-weight:700;color:#cfe1ff;margin-bottom:12px}
+  .qr{width:220px;height:220px;border-radius:14px;overflow:hidden;background:#fff;display:grid;place-items:center;margin-bottom:12px}
+  .code-box{width:54px;height:64px;border-radius:12px;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);color:#fff;text-align:center;font-size:30px;font-weight:900;outline:none}
   .result-card{max-width:860px;text-align:center;padding:42px 30px;border-radius:22px;background:linear-gradient(180deg,#0d47a1,#001e3c);
     border:1px solid rgba(255,255,255,.1)}
   .res-title{font-size:clamp(40px,5.2vmin,66px);font-weight:1000;text-transform:uppercase;margin:0 0 10px}
@@ -56,7 +51,7 @@
   .res-close{font-size:clamp(20px,3vmin,36px);padding:16px 28px;border-radius:16px;background:linear-gradient(90deg,#0071E3,#0053b8);
     color:#fff;border:none;font-weight:1000;cursor:pointer}
 
-  /* ADMIN */
+  /* --- CONFIG / ADMIN --- */
   .admin{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr;background:var(--bg)}
   .bar{display:flex;gap:10px;align-items:center;padding:10px 14px;background:#0c1222;border-bottom:1px solid var(--stroke)}
   .bar h2{margin:0;font-size:18px;font-weight:1000}
@@ -64,11 +59,12 @@
   .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px}
   .field{display:grid;gap:6px;margin-bottom:12px}
   .field label{font-size:13px;color:#b6c3d8}
-  .field input,.field select{background:var(--panel2);border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:10px;outline:none}
-  .colors{display:flex;gap:12px;align-items:center}
-  .colors input[type="color"]{width:40px;height:28px;border:none;background:transparent}
+  input,select{background:var(--panel2);border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:10px;outline:none}
+  .seg-row{padding:12px;border:1px dashed rgba(255,255,255,.15);border-radius:12px;margin-bottom:12px}
   .btn-sm{padding:10px 12px;border-radius:10px;border:1px solid var(--stroke);background:transparent;color:#fff;cursor:pointer}
   .btn-save{background:linear-gradient(180deg,var(--acc),var(--acc2));border:none}
+  .thumb{width:60px;height:60px;object-fit:contain;background:#111;border-radius:10px}
+  .drop-zone{border:2px dashed rgba(255,255,255,.25);padding:10px;text-align:center;border-radius:10px;font-size:13px;color:#ccc}
 </style>
 </head>
 <body>
@@ -81,153 +77,99 @@
   </div>
   <button class="spin-btn" id="spinBtn">GIRA</button>
 
-  <!-- Popup iniziale -->
   <div class="overlay" id="gate">
     <div class="card">
       <div class="ledbar">
-        <div class="led-title">RAMSERVICE — La Ruota della Fortuna</div>
-        <div class="led-sub">Segui @ramassistenza su Instagram e ottieni il codice spin!</div>
+        <div class="led-title">RAMSERVICE — LA RUOTA DELLA FORTUNA</div>
+        <div class="led-sub">Segui @ramassistenza su Instagram per giocare!</div>
       </div>
-      <div class="row" style="display:flex;gap:20px;flex-wrap:wrap;">
+      <div style="display:grid;justify-items:center;">
         <div class="qr"><img id="qrImg" width="220" height="220" alt="QR"></div>
-        <div class="steps" style="flex:1;min-width:280px;">
-          <ol>
-            <li>Scansiona il QR e apri Instagram.</li>
-            <li>Segui <b>@ramassistenza</b>.</li>
-            <li>Invia un DM con scritto <b>“codice spin”</b>.</li>
-            <li>Inserisci qui sotto il codice ricevuto:</li>
-          </ol>
-          <div class="code-input" id="codeBoxes"></div>
-          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
-            <button class="btn btn-ghost" id="pasteCode">Incolla</button>
-            <button class="btn btn-pri" id="goPlay">Gioca</button>
-          </div>
-        </div>
+        <div id="codeBoxes" style="display:flex;gap:10px;margin:10px auto;"></div>
+        <button class="btn-pri" id="goPlay">GIOCA ORA</button>
       </div>
     </div>
   </div>
 
-  <!-- Popup risultato -->
   <div class="overlay" id="result"><div class="result-card" id="resultCard"></div></div>
 </div>
 
-<!-- CONFIG / CODES -->
+<!-- CONFIG -->
 <div class="admin" id="adminRoot" style="display:none;">
   <div class="bar">
-    <h2 id="adminTitle">Configuratore Ruota v8.5</h2>
+    <h2 id="adminTitle">Configuratore Ruota v9.0</h2>
     <div style="flex:1"></div>
     <button class="btn-sm" onclick="location.href='?mode=play'">Play</button>
-    <button class="btn-sm" onclick="location.href='?mode=codes'">Codici</button>
     <button class="btn-sm btn-save" id="saveCfg">Salva</button>
   </div>
   <div class="main" id="adminMain"></div>
 </div>
 
 <script>
-/* === CONFIG STORAGE === */
-const K = { CFG:'ram_cfg_v85', CODES:'ram_codes_v85' };
-function loadCfg(){ try{ return JSON.parse(localStorage.getItem(K.CFG))||null;}catch{return null;} }
-function saveCfg(c){ localStorage.setItem(K.CFG,JSON.stringify(c)); }
+const K={CFG:'ram_cfg_v90'};
+function loadCfg(){try{return JSON.parse(localStorage.getItem(K.CFG))||null}catch{return null}}
+function saveCfg(c){localStorage.setItem(K.CFG,JSON.stringify(c));}
 
-/* === DRAW === */
-const wheel=document.getElementById('wheel'),ctx=wheel.getContext('2d');ctx.imageSmoothingQuality='high';
-let rotation=0,spinning=false,geom=[];
+/* === RUOTA === */
+const wheel=document.getElementById('wheel');const ctx=wheel.getContext('2d');ctx.imageSmoothingQuality='high';
+let rotation=0,geom=[];
 function computeGeometry(cfg){const segs=cfg.segments;const base=(Math.PI*2)/segs.length;geom=[];let s=-Math.PI/2;for(const seg of segs){const e=s+base;geom.push({start:s,end:e,mid:(s+e)/2});s=e;}}
-function drawWheelTo(c,W,H,cfg,rot){
-  const segs=cfg.segments||[];const cx=W/2,cy=H/2,R=Math.min(W,H)/2-10;c.clearRect(0,0,W,H);
-  c.save();c.translate(cx,cy);c.rotate(rot);
-  const rInner=R*0.9;
-  for(let i=0;i<segs.length;i++){
-    const seg=segs[i];const g=geom[i];
-    const grad=c.createRadialGradient(0,0,R*0.1,0,0,R*0.88);
-    grad.addColorStop(0,lighten(seg.color,.2));grad.addColorStop(1,seg.color);
-    c.beginPath();c.moveTo(0,0);c.arc(0,0,rInner,g.start,g.end);c.closePath();c.fillStyle=grad;c.fill();
-    // immagine PNG con anti-cache controllata
-    if(seg.imageUrl){
-      const isConfig=window.location.search.includes('mode=config');
-      const v=window._ramForceReload||1;
-      const src=isConfig?`${seg.imageUrl}${seg.imageUrl.includes('?')?'&':'?'}v=${v}`:seg.imageUrl;
-      const img=new Image();img.src=src;
-      img.onload=()=>{const r=rInner*0.75,sz=rInner*0.45;c.save();c.rotate(g.mid+Math.PI/2);c.drawImage(img,-sz/2,-r,sz,sz);c.restore();};
-    }
-  }
-  c.restore();
-}
+function lighten(h,a){try{let n=parseInt(h.replace('#',''),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.min(255,r+255*a*255);g=Math.min(255,g+255*a*255);b=Math.min(255,b+255*a*255);return`rgb(${r},${g},${b})`}catch{return h}}
+function drawWheelTo(c,W,H,cfg,rot){const cx=W/2,cy=H/2,R=Math.min(W,H)/2-10;c.clearRect(0,0,W,H);c.save();c.translate(cx,cy);c.rotate(rot);
+const segs=cfg.segments;const rInner=R*0.9;
+for(let i=0;i<segs.length;i++){const seg=segs[i],g=geom[i];
+const grad=c.createRadialGradient(0,0,R*0.1,0,0,R*0.88);grad.addColorStop(0,lighten(seg.color,.25));grad.addColorStop(1,seg.color);
+c.beginPath();c.moveTo(0,0);c.arc(0,0,rInner,g.start,g.end);c.closePath();c.fillStyle=grad;c.fill();
+if(seg._img){const r=rInner*0.75,sz=rInner*0.45;c.save();c.rotate(g.mid+Math.PI/2);c.drawImage(seg._img,-sz/2,-r,sz,sz);c.restore();}}
+c.restore();}
 function drawWheel(cfg){drawWheelTo(ctx,wheel.width,wheel.height,cfg,rotation);}
-function lighten(hex,a){try{let n=parseInt(hex.replace('#',''),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.min(255,r+255*a);g=Math.min(255,g+255*a);b=Math.min(255,b+255*a);return`rgb(${r},${g},${b})`}catch{return hex}}
 
 /* === SPIN === */
-function startSpin(cfg){
-  if(spinning)return;spinning=true;
-  const idx=Math.floor(Math.random()*cfg.segments.length);
-  const mid=geom[idx].mid;
-  const turns=5+Math.random()*3;
-  const base=(Math.PI*2)*turns+(Math.PI/2-mid);
-  const dur=4000,t0=performance.now();
-  (function anim(t){const k=Math.min(1,(t-t0)/dur);rotation=base*(1-Math.pow(1-k,3));drawWheel(cfg);
-  if(k<1)requestAnimationFrame(anim);else{spinning=false;showResult(cfg.segments[idx]);}})(t0);
-}
+function startSpin(cfg){let spinning=true;const idx=Math.floor(Math.random()*cfg.segments.length);
+const mid=geom[idx].mid;const turns=5+Math.random()*3;const base=(Math.PI*2)*turns+(Math.PI/2-mid);const dur=4000,t0=performance.now();
+(function anim(t){const k=Math.min(1,(t-t0)/dur);rotation=base*(1-Math.pow(1-k,3));drawWheel(cfg);
+if(k<1)requestAnimationFrame(anim);else{spinning=false;showResult(cfg.segments[idx]);}})(t0);}
 
 /* === POPUP === */
-function openGate(cfg){
-  const g=document.getElementById('gate');g.style.display='grid';
-  document.getElementById('qrImg').src=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(cfg.instagram||'https://instagram.com/ramassistenza')}`;
-  const wrap=document.getElementById('codeBoxes');wrap.innerHTML='';
-  for(let i=0;i<6;i++){const inp=document.createElement('input');inp.className='code-box';inp.maxLength=1;wrap.appendChild(inp);}
-  document.getElementById('goPlay').onclick=()=>{g.style.display='none';document.getElementById('spinBtn').style.display='grid';};
-}
-function showResult(seg){
-  const r=document.getElementById('result'),c=document.getElementById('resultCard');
-  const win=!/non hai vinto/i.test(seg.label);const t=win?'HAI VINTO! 🎉':'RITENTA 😅';
-  const s=win?seg.prize:'Nessuna vincita stavolta.';
-  c.innerHTML=`<div class='res-title'>${t}</div><div class='res-sub'>${s}</div><button class='res-close' id='closeRes'>CHIUDI</button>`;
-  r.style.display='grid';
-  document.getElementById('closeRes').onclick=()=>{r.style.display='none';openGate(loadCfg());};
-}
+function openGate(cfg){const g=document.getElementById('gate');g.style.display='grid';
+document.getElementById('qrImg').src=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(cfg.instagram)}`;
+const boxes=document.getElementById('codeBoxes');boxes.innerHTML='';for(let i=0;i<6;i++){const b=document.createElement('input');b.className='code-box';boxes.appendChild(b);}
+document.getElementById('goPlay').onclick=()=>{g.style.display='none';document.getElementById('spinBtn').style.display='grid';};}
+function showResult(seg){const r=document.getElementById('result'),c=document.getElementById('resultCard');
+const win=!/non hai vinto/i.test(seg.label);const t=win?'HAI VINTO! 🎉':'RITENTA 😅';const s=win?seg.prize:'Nessuna vincita stavolta.';
+c.innerHTML=`<div class='res-title'>${t}</div><div class='res-sub'>${s}</div><button class='res-close' id='closeRes'>CHIUDI</button>`;
+r.style.display='grid';document.getElementById('closeRes').onclick=()=>{r.style.display='none';openGate(loadCfg());};}
 
-/* === ADMIN CONFIG === */
-function mountConfig(cfg){
-  const root=document.getElementById('adminRoot');root.style.display='grid';
-  const main=document.getElementById('adminMain');
-  main.innerHTML=`
-    <div class='panel'><h3>Spicchi</h3><div id='segs'></div>
-    <button class='btn-sm' onclick='forceReloadImages()'>Aggiorna anteprima</button></div>
-    <div class='panel'><canvas id='prev' width='900' height='900' style='max-width:92vw;border-radius:12px;background:#0a0f18'></canvas></div>`;
-  const list=document.getElementById('segs');
-  cfg.segments.forEach((s,i)=>{
-    const row=document.createElement('div');row.innerHTML=`
-      <div class='field'><label>Etichetta</label><input data-k='label' value='${s.label}'></div>
-      <div class='field'><label>Premio</label><input data-k='prize' value='${s.prize}'></div>
-      <div class='field'><label>Immagine PNG</label><input data-k='imageUrl' value='${s.imageUrl}'></div>
-      <div class='field'><label>Colore</label><input data-k='color' type='color' value='${s.color}'></div>`;
-    row.querySelectorAll('[data-k]').forEach(inp=>inp.oninput=()=>{s[inp.dataset.k]=inp.value;});
-    list.appendChild(row);
-  });
-  const prev=document.getElementById('prev');const pc=prev.getContext('2d');
-  window.forceReloadImages=()=>{window._ramForceReload=Date.now();computeGeometry(cfg);drawWheelTo(pc,prev.width,prev.height,cfg,-Math.PI/2);}
-  computeGeometry(cfg);drawWheelTo(pc,prev.width,prev.height,cfg,-Math.PI/2);
-  document.getElementById('saveCfg').onclick=()=>{saveCfg(cfg);alert('Configurazione salvata ✅');};
-}
+/* === CONFIG === */
+function mountConfig(cfg){const root=document.getElementById('adminRoot');root.style.display='grid';const main=document.getElementById('adminMain');
+main.innerHTML=`<div class='panel'><h3>Spicchi</h3><div id='segs'></div><button class='btn-sm' onclick='updatePrev()'>Aggiorna anteprima</button></div>
+<div class='panel'><canvas id='prev' width='900' height='900' style='max-width:92vw;border-radius:12px;background:#0a0f18'></canvas></div>`;
+const list=document.getElementById('segs');
+cfg.segments.forEach((s,i)=>{const row=document.createElement('div');row.className='seg-row';row.innerHTML=`
+<div class='field'><label>Etichetta</label><input data-k='label' value='${s.label}'></div>
+<div class='field'><label>Premio</label><input data-k='prize' value='${s.prize}'></div>
+<div class='field'><label>Colore</label><input type='color' data-k='color' value='${s.color}'></div>
+<div class='field'><label>PNG</label><div class='drop-zone' data-i='${i}'>Trascina PNG o clicca</div><img class='thumb' id='thumb${i}' ${s._img?"src='"+s.imageUrl+"'":""}></div>`; 
+row.querySelectorAll('[data-k]').forEach(inp=>inp.oninput=()=>{s[inp.dataset.k]=inp.value;updatePrev();});
+list.appendChild(row);
+const dz=row.querySelector('.drop-zone');dz.onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='image/png';f.onchange=e=>handleFile(e,i);f.click();};
+dz.ondrop=e=>{e.preventDefault();handleFile(e,i);};dz.ondragover=e=>e.preventDefault();});
+const prev=document.getElementById('prev');const pc=prev.getContext('2d');
+window.updatePrev=()=>{computeGeometry(cfg);drawWheelTo(pc,prev.width,prev.height,cfg,-Math.PI/2);}
+updatePrev();document.getElementById('saveCfg').onclick=()=>{saveCfg(cfg);alert('Salvato ✅');};}
+function handleFile(e,i){const file=e.dataTransfer?e.dataTransfer.files[0]:e.target.files[0];if(!file)return;
+const r=new FileReader();r.onload=()=>{const cfg=loadCfg();const seg=cfg.segments[i];seg.imageUrl=r.result;const img=new Image();img.src=r.result;img.onload=()=>{seg._img=img;saveCfg(cfg);mountConfig(cfg);};};r.readAsDataURL(file);}
 
 /* === BOOT === */
 (function(){
-  let cfg=loadCfg();
-  if(!cfg){
-    cfg={instagram:'https://instagram.com/ramassistenza',segments:[
-      {label:'NON HAI VINTO',prize:'😅 Non hai vinto',color:'#2f3645',imageUrl:'assets/spicchi/nonvinto.png'},
-      {label:'SCONTO 10€',prize:'💰 Sconto 10€',color:'#FFD200',imageUrl:'assets/spicchi/sconto10.png'},
-      {label:'GADGET RAM',prize:'🧢 Gadget RAMSERVICE',color:'#1ABC9C',imageUrl:'assets/spicchi/gadgetram.png'},
-      {label:'MISTERY BOX',prize:'🎁 Mistery Box RAM',color:'#8E44AD',imageUrl:'assets/spicchi/misterybox.png'}
-    ]};
-    saveCfg(cfg);
-  }
-  const mode=(new URL(location.href).searchParams.get('mode')||'play');
-  if(mode==='config'){mountConfig(cfg);return;}
-  if(mode==='codes'){alert('Pagina codici disponibile presto');return;}
-  document.getElementById('playRoot').style.display='grid';
-  computeGeometry(cfg);drawWheel(cfg);
-  openGate(cfg);
-  document.getElementById('spinBtn').onclick=()=>startSpin(cfg);
+let cfg=loadCfg();if(!cfg){
+cfg={instagram:'https://instagram.com/ramassistenza',segments:[]};
+for(let i=0;i<18;i++){cfg.segments.push({label:i%2?'NON HAI VINTO':'PREMIO','prize':i%2?'😅 Non hai vinto':'🎁 Premio RAM',color:i%2?'#2f3645':'#0071E3'});}
+saveCfg(cfg);}
+const mode=(new URL(location.href).searchParams.get('mode')||'play');
+if(mode==='config'){mountConfig(cfg);return;}
+document.getElementById('playRoot').style.display='grid';computeGeometry(cfg);drawWheel(cfg);
+openGate(cfg);document.getElementById('spinBtn').onclick=()=>startSpin(cfg);
 })();
 </script>
 </body>
