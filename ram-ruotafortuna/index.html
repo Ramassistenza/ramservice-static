@@ -120,7 +120,17 @@ const segs=cfg.segments;const rInner=R*0.9;
 for(let i=0;i<segs.length;i++){const seg=segs[i],g=geom[i];
 const grad=c.createRadialGradient(0,0,R*0.1,0,0,R*0.88);grad.addColorStop(0,lighten(seg.color,.25));grad.addColorStop(1,seg.color);
 c.beginPath();c.moveTo(0,0);c.arc(0,0,rInner,g.start,g.end);c.closePath();c.fillStyle=grad;c.fill();
-if(seg._img){const r=rInner*0.75,sz=rInner*0.45;c.save();c.rotate(g.mid+Math.PI/2);c.drawImage(seg._img,-sz/2,-r,sz,sz);c.restore();}}
+if(seg._img){
+  // ✅ Immagine spicchio: riempie quasi tutto lo spicchio partendo dall'esterno
+  const outerR = R * 0.93;   // distanza dal centro verso il bordo
+  const imgH   = R * 0.6;    // altezza verticale (profondità verso il centro)
+  const imgW   = R * 0.4;    // larghezza (regola la proporzione orizzontale)
+
+  c.save();
+  c.rotate(g.mid + Math.PI / 2);
+  c.drawImage(seg._img, -imgW / 2, -outerR, imgW, imgH);
+  c.restore();
+}}
 c.restore();}
 function drawWheel(cfg){drawWheelTo(ctx,wheel.width,wheel.height,cfg,rotation);}
 
