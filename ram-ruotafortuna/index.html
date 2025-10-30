@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>RAMSERVICE — La Ruota della Fortuna v8.2 PRO</title>
+
+<!-- Font base (usa immagini per i testi degli spicchi) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#060913;
+    --panel:#0e1524;
+    --panel2:#10192d;
+    --stroke:rgba(255,255,255,.14);
+    --acc:#0071E3; --acc2:#8a5bff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:"SF Pro Display",-apple-system,system-ui,Segoe UI,Roboto,Arial}
+  a{color:#9dd1ff}
+
+  /* PLAY (kiosk verticale) */
+  .stage{position:fixed;inset:0;display:grid;grid-template-rows:1fr auto;place-items:center;background:
+    radial-gradient(1300px 1200px at 25% 18%,#0b1626 0%,#0a1120 55%,#080b15 100%);
+    background-size:cover;background-position:center}
+  .canvas-wrap{position:relative; width:90vmin; height:90vmin; max-height:95vh; max-width:95vh; filter:drop-shadow(0 50px 140px rgba(0,0,0,.6))}
+  canvas#wheel{width:100%;height:100%;touch-action:none;display:block}
+  .pointer{position:absolute;top:1.8%;left:50%;transform:translateX(-50%); width:min(6.2vmin,68px); height:auto; z-index:5}
+  .spin-btn{position:fixed; bottom:3.5vmin; left:50%; transform:translateX(-50%); width:min(20vmin,240px); height:min(20vmin,240px); border-radius:50%;
+    border:none; cursor:pointer; display:grid; place-items:center; font-weight:1000; letter-spacing:.5px; font-size:min(3.4vmin,30px);
+    background:conic-gradient(from 0deg,#33a9ff,#8c63ff,#33a9ff); color:#fff; box-shadow:0 18px 42px rgba(0,0,0,.45)}
+
+  /* Gate popup (QR + codice) */
+  .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); z-index:30}
+  .card{width:min(100vw,980px); padding:24px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
+    border:1px solid rgba(255,255,255,.12)}
+  .ledbar{display:grid;gap:6px;margin-bottom:14px;text-align:center}
+  .led-title{font-weight:1000; font-size:clamp(32px,4.6vmin,60px); text-transform:uppercase; letter-spacing:.8px;
+    background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(235,245,255,.86)); color:transparent;-webkit-background-clip:text;background-clip:text;
+    text-shadow:0 0 18px rgba(120,200,255,.45),0 0 40px rgba(80,140,255,.28)}
+  .led-sub{font-weight:800; color:#d6e7ff; opacity:.96}
+  .row{display:flex; gap:18px; flex-wrap:wrap; align-items:center}
+  .qr{width:220px;height:220px;border-radius:14px;overflow:hidden;background:#fff;display:grid;place-items:center}
+  .steps{flex:1; min-width:280px}
+  .code-input{display:flex;gap:10px;margin-top:10px}
+  .code-box{width:54px;height:64px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;text-align:center;font-size:30px;font-weight:900;outline:none}
+  .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+  .btn{border:none;border-radius:12px;padding:12px 16px;font-weight:900;cursor:pointer}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+  .btn-pri{background:linear-gradient(180deg,var(--acc),var(--acc2));color:#fff}
+
+  /* Result popup */
+  .result-card{max-width:860px;text-align:center;padding:42px 30px;border-radius:22px;background:linear-gradient(180deg,#0d47a1,#001e3c); border:1px solid rgba(255,255,255,.1)}
+  .res-title{font-size:clamp(40px,5.2vmin,66px); font-weight:1000; text-transform:uppercase; margin:0 0 10px}
+  .res-sub{font-size:clamp(24px,3.6vmin,44px); font-weight:800; margin:6px 0 28px}
+  .res-close{font-size:clamp(20px,3vmin,36px); padding:16px 28px; border-radius:16px; background:linear-gradient(90deg,#0071E3,#0053b8); color:#fff; border:none; font-weight:1000; cursor:pointer}
+
+  /* Admin (config / codes) */
+  .admin{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr; background:var(--bg)}
+  .bar{display:flex;gap:10px;align-items:center;padding:10px 14px;background:#0c1222;border-bottom:1px solid var(--stroke)}
+  .bar h2{margin:0;font-size:18px;font-weight:1000}
+  .main{overflow:auto;padding:16px;display:grid;gap:16px}
+  .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px}
+  .panel h3{margin:0 0 10px}
+  .field{display:grid;gap:6px;margin-bottom:12px}
+  .field label{font-size:13px;color:#b6c3d8}
+  .field input[type="text"], .field input[type="url"], .field input[type="number"], .field select{background:var(--panel2);border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:10px;outline:none}
+  .colors{display:flex;gap:12px;align-items:center}
+  .colors input[type="color"]{width:40px;height:28px;border:none;background:transparent}
+  .sw{width:26px;height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.35)}
+  .seg-row{padding:12px;border:1px dashed rgba(255,255,255,.15);border-radius:12px;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .btn-sm{padding:10px 12px;border-radius:10px;border:1px solid var(--stroke);background:transparent;color:#fff;cursor:pointer}
+  .btn-save{background:linear-gradient(180deg,var(--acc),var(--acc2));border:none}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{border-bottom:1px solid var(--stroke);padding:10px;text-align:left}
+</style>
+</head>
+<body>
+
+<!-- PLAY -->
+<div class="stage" id="playRoot" style="display:none;">
+  <div class="canvas-wrap">
+    <canvas id="wheel" width="2000" height="2000"></canvas>
+    <img class="pointer" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 120'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23fff7c4'/><stop offset='100%' stop-color='%23ffd54a'/></linearGradient></defs><path d='M40 0 L70 70 Q40 62 10 70 Z' fill='url(%23g)' stroke='rgba(0,0,0,.35)' stroke-width='4'/><circle cx='40' cy='80' r='10' fill='%23fff'/></svg>" alt="">
+  </div>
+  <button class="spin-btn" id="spinBtn">GIRA</button>
+
+  <!-- Gate -->
+  <div class="overlay" id="gate">
+    <div class="card">
+      <div class="ledbar">
+        <div class="led-title">RAM - La Ruota Della Fortuna</div>
+        <div class="led-sub">gira e vinci premi Ramservice</div>
+      </div>
+      <div class="row">
+        <div class="qr"><img id="qrImg" width="220" height="220" alt="QR"></div>
+        <div class="steps">
+          <ol>
+            <li>Inquadra il QR e apri <b>Instagram</b>.</li>
+            <li>Metti <b>Segui</b> su <b>@ramassistenza</b>.</li>
+            <li>Manda DM: <b>“codice spin”</b>.</li>
+            <li>Inserisci il codice qui sotto e gioca.</li>
+          </ol>
+          <div class="code-input" id="codeBoxes"></div>
+          <div class="actions">
+            <button class="btn btn-ghost" id="pasteCode">Incolla codice</button>
+            <button class="btn btn-pri" id="goPlay">Vai alla ruota</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="overlay" id="result" style="place-items:center;">
+    <div class="result-card" id="resultCard"></div>
+  </div>
+</div>
+
+<!-- ADMIN (CONFIG / CODES) -->
+<div class="admin" id="adminRoot" style="display:none;">
+  <div class="bar">
+    <h2 id="adminTitle">Configuratore Ruota v8.2</h2>
+    <div style="flex:1"></div>
+    <button class="btn-sm" onclick="location.href='?mode=play'">Play</button>
+    <button class="btn-sm" onclick="location.href='?mode=codes'">Codici</button>
+    <button class="btn-sm btn-save" id="saveCfg">Salva</button>
+  </div>
+  <div class="main" id="adminMain"></div>
+</div>
+
+<script>
+/* =========================
+   STORAGE / DEFAULT CONFIG
+   ========================= */
+const K = { CFG:'ram_wheel_cfg_v82', CODES:'ram_wheel_codes_v82' };
+
+function loadCfg(){
+  const raw = localStorage.getItem(K.CFG);
+  let cfg;
+  if(raw){
+    try{ cfg = JSON.parse(raw); }catch{ cfg = null; }
+  }
+  if(!cfg || !Array.isArray(cfg.segments)) cfg = null;
+
+  const defaults = {
+    instagram:'https://www.instagram.com/ramassistenza',
+    bgImageUrl:'',
+    segments: [],
+    spin:{minTurns:5,maxTurns:8}
+  };
+
+  if(!cfg){
+    // build default come prima…
+    cfg = (function buildDefault(){
+      const base = [
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png', prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'PELLICOLA',     color:'#00AEEF', imageUrl:'assets/spicchi/pellicola.png',   prize:'🎉 Pellicola protettiva GRATIS!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'CUFFIETTE',     color:'#FF3B3B', imageUrl:'assets/spicchi/cuffiette.png',   prize:'🎧 Cuffiette in regalo!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'SCONTO 10€',    color:'#FFD200', imageUrl:'assets/spicchi/sconto10.png',    prize:'💰 Sconto 10€ sul tuo acquisto!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'GADGET RAM',    color:'#1ABC9C', imageUrl:'assets/spicchi/gadgetram.png',   prize:'🧢 Gadget RAMSERVICE!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'MISTERY BOX',   color:'#8E44AD', imageUrl:'assets/spicchi/misterybox.png',  prize:'🎁 Mistery Box RAM!', prob:0.6, special:true},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'PREMIO TOP',    color:'#0071E3', imageUrl:'assets/spicchi/premio_special.png', prize:'🏆 PREMIO SPECIALE RAM!', prob:0.6, special:true},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'SCONTO 10€',    color:'#FFD200', imageUrl:'assets/spicchi/sconto10.png',    prize:'💰 Sconto 10€ sul tuo acquisto!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+        {label:'PELLICOLA',     color:'#00AEEF', imageUrl:'assets/spicchi/pellicola.png',   prize:'🎉 Pellicola protettiva GRATIS!', prob:1, special:false},
+        {label:'NON HAI VINTO', color:'#2f3645', imageUrl:'assets/spicchi/nonvinto.png',    prize:'😅 Non hai vinto. Ritenta!', prob:6, special:false},
+      ];
+      // mescola i 2 speciali in posizioni random
+      const specials = base.filter(s=>s.special);
+      const normals  = base.filter(s=>!s.special);
+      const posSpecial = [Math.floor(Math.random()*8), 8+Math.floor(Math.random()*8)];
+      const segments = [];
+      let si=0,ni=0;
+      for(let i=0;i<18;i++){
+        if(posSpecial.includes(i) && si<specials.length){ segments.push(specials[si++]); }
+        else { segments.push(normals[ni++]); }
+      }
+      return { ...defaults, segments };
+    })();
+    localStorage.setItem(K.CFG, JSON.stringify(cfg));
+    return cfg;
+  }
+
+  // SANIFICA: rimuovi null/undefined e applica default sicuri
+  cfg = { ...defaults, ...cfg };
+  cfg.segments = (cfg.segments||[])
+    .filter(s => s && typeof s==='object')
+    .map(s => ({
+      label:'', color:'#888888', imageUrl:'', prize:'', prob:0, special:false, ...s
+    }));
+  if(!Array.isArray(cfg.segments) || cfg.segments.length===0){
+    // fallback: se per qualche motivo è vuoto, ricrea il default
+    localStorage.removeItem(K.CFG);
+    return loadCfg();
+  }
+  return cfg;
+}
+
+function saveCfg(cfg){ localStorage.setItem(K.CFG, JSON.stringify(cfg)); }
+function loadCodes(){ const raw=localStorage.getItem(K.CODES); if(raw){ try{return JSON.parse(raw)}catch{} } const d={list:[]}; localStorage.setItem(K.CODES,JSON.stringify(d)); return d; }
+function saveCodes(d){ localStorage.setItem(K.CODES, JSON.stringify(d)); }
+
+/* =============== GEOMETRIA =============== */
+let geom = []; // [{start,end,mid,sweep}]
+function computeGeometry(cfg){
+  const segs = (cfg.segments||[]).filter(Boolean);
+  if(segs.length===0){ geom=[]; return; }
+
+  const k = 1/3; // ampiezza relative degli special (1/3)
+  let weightSum = 0;
+  for(const s of segs){ weightSum += (s && s.special) ? k : 1; }
+  const base = (Math.PI*2) / weightSum;
+
+  geom.length = 0;
+  let start = -Math.PI/2;
+  for(const s of segs){
+    const sweep = (s && s.special) ? base*k : base;
+    const end = start + sweep;
+    geom.push({ start, end, mid: start + sweep/2, sweep });
+    start = end;
+  }
+}
+
+
+/* =============== DRAW WHEEL (play & preview) =============== */
+const wheel = document.getElementById('wheel'); const ctx = wheel.getContext('2d'); ctx.imageSmoothingQuality='high';
+let rotation=0, spinning=false;
+
+function drawWheelTo(context, W, H, cfg, rot){
+  const segs = (cfg.segments||[]).filter(Boolean);
+  const cx=W/2, cy=H/2, R=Math.min(W,H)/2-14;
+  context.clearRect(0,0,W,H);
+  context.save(); context.translate(cx,cy); context.rotate(rot||0);
+
+  const rOuter=R, rRing=R*0.955, rInner=R*0.90;
+
+  // cornice 3D
+  let g1=context.createRadialGradient(0,0,rRing,0,0,rOuter);
+  g1.addColorStop(0,'#f2f6ff'); g1.addColorStop(0.55,'#a2b3dc'); g1.addColorStop(1,'#2d3d66');
+  ring(rOuter,rRing); context.fillStyle=g1; context.fill();
+  ring(rRing,rInner); context.fillStyle='rgba(15,20,34,.72)'; context.fill();
+
+  for(let i=0;i<segs.length;i++){
+    const seg = segs[i] || {color:'#666',label:'',imageUrl:''};
+    const g   = geom[i] || {start:0,end:0,mid:0};
+    // fetta
+    const grad=context.createRadialGradient(0,0,R*0.1,0,0,R*0.88);
+    grad.addColorStop(0,lighten(seg.color,.22)); grad.addColorStop(1, seg.color || '#666');
+    context.beginPath(); context.moveTo(0,0); context.arc(0,0,rInner,g.start,g.end); context.closePath();
+    context.fillStyle=grad; context.fill();
+    context.lineWidth=4; context.strokeStyle='rgba(0,0,0,.32)';
+    context.beginPath(); context.arc(0,0,rInner,g.start,g.end); context.stroke();
+
+    // immagine PNG
+    if(seg.imageUrl){
+      let img = seg._img;
+      if(!img){ img=new Image(); img.src=seg.imageUrl; img.onload=()=>{ seg._img=img; drawWheel(cfg); }; seg._img=img; }
+      const rPlace = rInner*0.74;
+      const sz = rInner*0.45*(seg.special?0.9:1);
+      context.save(); context.rotate(g.mid + Math.PI/2);
+      if(img.complete) context.drawImage(img, -sz/2, -rPlace, sz, sz);
+      context.restore();
+    }else{
+      // fallback testo minimal
+      context.save(); context.rotate(g.mid + Math.PI/2);
+      context.fillStyle='#fff'; context.font=`900 ${rInner*0.10}px Montserrat`; context.textAlign='center';
+      context.fillText((seg.label||'').toUpperCase(), 0, -rInner*0.7);
+      context.restore();
+    }
+  }
+
+  // pin esterni
+  const pinC=56,pinR=R*0.965;
+  for(let i=0;i<pinC;i++){
+    const a=i*(2*Math.PI/pinC), x=Math.cos(a)*pinR, y=Math.sin(a)*pinR;
+    context.save(); context.translate(x,y); context.rotate(a);
+    const lg=context.createLinearGradient(0,-18,0,18);
+    lg.addColorStop(0,'#192437'); lg.addColorStop(0.5,'#0b0f16'); lg.addColorStop(1,'#121a2a');
+    context.fillStyle=lg; context.strokeStyle='rgba(255,255,255,.22)';
+    context.beginPath(); context.moveTo(-4,-16); context.lineTo(4,-16); context.lineTo(4,8); context.lineTo(-4,8); context.closePath(); context.fill(); context.stroke();
+    context.restore();
+  }
+
+  // centro
+  context.beginPath(); context.arc(0,0,R*0.26,0,Math.PI*2);
+  const mg=context.createRadialGradient(-R*0.06,-R*0.06,R*0.03,0,0,R*0.26);
+  mg.addColorStop(0,'#ffffff'); mg.addColorStop(0.32,'#cfe2ff'); mg.addColorStop(1,'#1559d8');
+  context.fillStyle=mg; context.fill(); context.lineWidth=6; context.strokeStyle='rgba(255,255,255,.7)'; context.stroke();
+
+  context.restore();
+
+  function ring(ro,ri){ context.beginPath(); context.moveTo(ri,0); context.arc(0,0,ri,0,Math.PI*2,true); context.moveTo(ro,0); context.arc(0,0,ro,0,Math.PI*2,false); }
+}
+
+function drawWheel(cfg){ drawWheelTo(ctx, wheel.width, wheel.height, cfg, rotation); }
+function lighten(hex,a){try{const n=parseInt(hex.replace('#',''),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.min(255,Math.floor(r+255*a));g=Math.min(255,Math.floor(g+255*a));b=Math.min(255,Math.floor(b+255*a));return `rgb(${r},${g},${b})`}catch{return hex}}
+
+/* =============== SPIN =============== */
+function pickIndex(cfg){
+  const w=cfg.segments.map(s=>Math.max(0,Number(s.prob)||0)); let sum=w.reduce((a,b)=>a+b,0); if(sum<=0) return Math.floor(Math.random()*w.length);
+  let r=Math.random()*sum; for(let i=0;i<w.length;i++){ if(r<w[i]) return i; r-=w[i]; } return w.length-1;
+}
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function startSpin(cfg){
+  if(spinning) return; spinning=true;
+  const idx=pickIndex(cfg); const mid=geom[idx].mid;
+  const turns = rand(cfg.spin.minTurns||5, cfg.spin.maxTurns||8);
+  const start=rotation%(Math.PI*2);
+  const delta = ((Math.PI*2)- (mid-(-Math.PI/2)));
+  const base  = (Math.PI*2)*turns + delta;
+  const dur=4200+Math.random()*1200; const t0=performance.now();
+  (function frame(t){
+    const k=Math.min(1,(t-t0)/dur), e=easeOut(k);
+    rotation=start + base*e; drawWheel(cfg);
+    if(k<1) requestAnimationFrame(frame);
+    else { rotation=start+base; drawWheel(cfg); spinning=false; showResult(cfg.segments[idx]); }
+  })(performance.now());
+}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+/* Drag-to-spin (touch friendly) */
+function enableDrag(cfg){
+  const rect=wheel.getBoundingClientRect();
+  function center(){ const r=wheel.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
+  let dragging=false,lastA=0;
+  function getA(e){const p=(e.touches&&e.touches[0])?e.touches[0]:e; const c=center(); return Math.atan2(p.clientY-c.y,p.clientX-c.x)}
+  function norm(d){while(d>Math.PI)d-=Math.PI*2; while(d<-Math.PI)d+=Math.PI*2; return d}
+  wheel.addEventListener('pointerdown',e=>{ if(spinning)return; dragging=true; lastA=getA(e); e.preventDefault(); });
+  wheel.addEventListener('pointermove',e=>{ if(!dragging)return; const a=getA(e); rotation+=norm(a-lastA); lastA=a; drawWheel(cfg); e.preventDefault(); });
+  addEventListener('pointerup',e=>{ if(!dragging)return; dragging=false; startSpin(cfg); e.preventDefault(); });
+}
+
+/* =============== POPUP GATE & RESULT =============== */
+function buildCodeBoxes(){
+  const wrap=document.getElementById('codeBoxes'); wrap.innerHTML=''; for(let i=0;i<6;i++){ const inp=document.createElement('input'); inp.className='code-box'; inp.maxLength=1; wrap.appendChild(inp); }
+  const boxes=[...wrap.querySelectorAll('.code-box')];
+  boxes.forEach((b,i)=>{ b.addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase(); if(b.value && i<5) boxes[i+1].focus();}); b.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!b.value && i>0) boxes[i-1].focus();}); });
+  return boxes;
+}
+function openGate(cfg){
+  const g=document.getElementById('gate'); g.style.display='grid';
+  const qr=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(cfg.instagram||'https://instagram.com/ramassistenza')}`;
+  document.getElementById('qrImg').src=qr; buildCodeBoxes();
+  document.getElementById('pasteCode').onclick=async()=>{ try{ const t=(await navigator.clipboard.readText())||''; const s=t.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6); const boxes=[...document.querySelectorAll('.code-box')]; for(let i=0;i<6;i++){ boxes[i].value = s[i]||''; } }catch{} };
+  document.getElementById('goPlay').onclick=()=>{const code=[...document.querySelectorAll('.code-box')].map(i=>i.value).join(''); if(code.length<6){ alert('Inserisci il codice completo.'); return; } g.style.display='none'; document.getElementById('spinBtn').style.display='grid'; };
+}
+function showResult(seg){
+  const o=document.getElementById('result'), card=document.getElementById('resultCard');
+  const win = !/non hai vinto/i.test(seg.label||'') && !/ritenta/i.test(seg.prize||'');
+  const emoji=win?'🎉':'😅';
+  const title=win?'LA FORTUNA È CON TE!':'OGGI NON È IL TUO GIORNO...';
+  const sub = win?`Hai vinto <b>${(seg.prize||seg.label)}</b>!`:'Ritenta alla prossima!';
+
+  card.innerHTML = `<div class="res-title">${emoji} ${title}</div>
+                    <div class="res-sub">${sub}</div>
+                    <button class="res-close" id="closeRes">CHIUDI</button>`;
+  o.style.display='grid';
+  const close=()=>{o.style.display='none'; document.getElementById('spinBtn').style.display='none'; openGate(loadCfg()); };
+  document.getElementById('closeRes').onclick=close; setTimeout(close, 90000);
+}
+
+/* =============== ADMIN: CONFIG =============== */
+function mountConfig(cfg){
+  const root=document.getElementById('adminRoot'); const main=document.getElementById('adminMain');
+  root.style.display='grid'; document.getElementById('adminTitle').textContent='Configuratore Ruota v8.2 (geometria fissa)';
+
+  main.innerHTML = `
+    <div class="panel">
+      <h3>Branding & Sfondo</h3>
+      <div class="grid">
+        <div class="field"><label>URL immagine di sfondo (facoltativa)</label><input id="bg" type="url" value="${cfg.bgImageUrl||''}"></div>
+        <div class="field"><label>URL Instagram (QR)</label><input id="ig" type="url" value="${cfg.instagram||'https://www.instagram.com/ramassistenza'}"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Spicchi (immagini PNG consigliate)</h3>
+      <div id="segs"></div>
+      <button class="btn-sm" id="preview">Aggiorna anteprima</button>
+    </div>
+
+    <div class="panel">
+      <h3>Anteprima fedele</h3>
+      <canvas id="prev" width="900" height="900" style="max-width:92vw;border-radius:12px;background:radial-gradient(900px 720px at 25% 20%,#142033,#0c1220 60%,#0a0f18 100%)"></canvas>
+    </div>
+  `;
+
+  const $=id=>document.getElementById(id); $('bg').oninput=()=>cfg.bgImageUrl=$('bg').value; $('ig').oninput=()=>cfg.instagram=$('ig').value;
+
+  const list=document.getElementById('segs'); list.innerHTML='';
+  cfg.segments.forEach((s,idx)=>{
+    const row=document.createElement('div'); row.className='seg-row';
+    row.innerHTML=`
+      <div class="grid">
+        <div class="field"><label>Etichetta / Premio</label><input data-k="label" type="text" value="${(s.label||'')}"></div>
+        <div class="field"><label>Testo popup (premio)</label><input data-k="prize" type="text" value="${(s.prize||'')}"></div>
+        <div class="field"><label>URL immagine PNG</label><input data-k="imageUrl" type="url" value="${(s.imageUrl||'')}"></div>
+        <div class="field"><label>Probabilità</label><input data-k="prob" type="number" step="0.1" min="0" value="${Number(s.prob)||0}"></div>
+        <div class="field">
+          <label>Colore spicchio</label>
+          <div class="colors"><div class="sw" style="background:${s.color}"></div><input data-k="color" type="color" value="${s.color||'#888888'}"></div>
+        </div>
+        <div class="field">
+          <label>Tipo</label>
+          <select data-k="special">
+            <option value="false" ${!s.special?'selected':''}>Normale</option>
+            <option value="true"  ${ s.special?'selected':''}>Special (1/3)</option>
+          </select>
+        </div>
+      </div>`;
+    row.querySelectorAll('[data-k]').forEach(inp=>{
+      inp.addEventListener('input',()=>{
+        const k=inp.getAttribute('data-k'); let v=inp.value;
+        if(k==='prob') v=Number(v)||0; if(k==='special') v=(v==='true');
+        s[k]=v; if(k==='color') row.querySelector('.sw').style.background=v;
+      });
+    });
+    list.appendChild(row);
+  });
+
+  const prev=document.getElementById('prev'); const pc=prev.getContext('2d'); pc.imageSmoothingQuality='high';
+  function drawPrev(){ computeGeometry(cfg); drawWheelTo(pc, prev.width, prev.height, cfg, -Math.PI/2); }
+  drawPrev();
+  document.getElementById('preview').onclick=drawPrev;
+
+  document.getElementById('saveCfg').onclick=()=>{ saveCfg(cfg); alert('Salvato ✅'); };
+}
+
+/* =============== ADMIN: CODES =============== */
+function mountCodes(){
+  const root=document.getElementById('adminRoot'); const main=document.getElementById('adminMain');
+  root.style.display='grid'; document.getElementById('adminTitle').textContent='Codici Spin';
+  const store=loadCodes();
+
+  main.innerHTML=`
+    <div class="panel">
+      <h3>Genera codici</h3>
+      <div class="grid">
+        <div class="field"><label>Quanti?</label><input id="qty" type="number" value="20" min="1" max="10000"></div>
+        <div class="field"><label>Prefisso (opz.)</label><input id="pref" type="text" placeholder="RM"></div>
+      </div>
+      <button class="btn-sm btn-save" id="gen">Genera</button>
+    </div>
+    <div class="panel">
+      <h3>Elenco codici</h3>
+      <table><thead><tr><th>#</th><th>Codice</th></tr></thead><tbody id="tbody"></tbody></table>
+    </div>`;
+  const tbody=document.getElementById('tbody');
+  function render(){ tbody.innerHTML=''; store.list.forEach((c,i)=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${i+1}</td><td><code style="font-weight:900">${c.code}</code></td>`; tbody.appendChild(tr); }); }
+  render();
+
+  document.getElementById('gen').onclick=()=>{
+    const qty=Math.max(1,Math.min(10000,Number(document.getElementById('qty').value)||1));
+    const pref=(document.getElementById('pref').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,2);
+    for(let i=0;i<qty;i++) store.list.push({code:mk(pref),createdAt:Date.now()});
+    saveCodes(store); render();
+  };
+  function mk(p=''){const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=(p||''); while(s.length<6)s+=ch[Math.floor(Math.random()*ch.length)]; return s.slice(0,6);}
+}
+
+/* =============== BOOT =============== */
+(function(){
+  const mode = (new URL(location.href).searchParams.get('mode')||'play').toLowerCase();
+  const cfg = loadCfg();
+
+  if(mode==='config'){
+    document.getElementById('adminRoot').style.display='grid';
+    mountConfig(cfg);
+    computeGeometry(cfg);
+    const prev = document.getElementById('prev');
+    if(prev){
+      const pc = prev.getContext('2d'); pc.imageSmoothingQuality='high';
+      drawWheelTo(pc, prev.width, prev.height, cfg, -Math.PI/2);
+    }
+    return;
+  }
+
+  if(mode==='codes'){
+    document.getElementById('adminRoot').style.display='grid';
+    mountCodes();
+    return;
+  }
+
+  // PLAY
+  document.getElementById('playRoot').style.display='grid';
+  if(cfg.bgImageUrl) document.querySelector('.stage').style.backgroundImage = `url('${cfg.bgImageUrl}')`;
+  computeGeometry(cfg);
+  drawWheel(cfg);
+  document.getElementById('spinBtn').style.display='none'; // appare dopo il gate
+  openGate(cfg);                 // mostra subito il popup iniziale
+  document.getElementById('spinBtn').onclick=()=>startSpin(loadCfg());
+  enableDrag(loadCfg());
+  addEventListener('resize',()=>{ computeGeometry(loadCfg()); drawWheel(loadCfg()); });
+})();
+</script>
+</body>
+</html>
