@@ -56,7 +56,7 @@ small{color:var(--muted)}
     <div id="userList" class="list"></div>
   </section>
 
-  <!-- Mesi -->
+    <!-- Mesi -->
   <section class="panel">
     <h3>3) Configurazione mensile</h3>
     <div class="row">
@@ -70,6 +70,7 @@ small{color:var(--muted)}
       </div>
     </div>
 
+    <!-- === FATTURATO === -->
     <h4>Fatturato</h4>
     <div class="row">
       <div><label>Premio base (€)</label><input id="f_base" type="number" min="0"></div>
@@ -78,8 +79,16 @@ small{color:var(--muted)}
       <div><label>Premio Extra 1 (€)</label><input id="f_x1p" type="number" min="0"></div>
       <div><label>Soglia Extra 2</label><input id="f_x2t" type="number" min="0"></div>
       <div><label>Premio Extra 2 (€)</label><input id="f_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="f_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="f_payamt" type="number" min="0"></div>
     </div>
 
+    <!-- === WINDTRE === -->
     <h4>WindTre</h4>
     <div class="row">
       <div><label>Premio base (€)</label><input id="w_base" type="number" min="0"></div>
@@ -88,8 +97,16 @@ small{color:var(--muted)}
       <div><label>Premio Extra 1 (€)</label><input id="w_x1p" type="number" min="0"></div>
       <div><label>Soglia Extra 2</label><input id="w_x2t" type="number" min="0"></div>
       <div><label>Premio Extra 2 (€)</label><input id="w_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="w_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="w_payamt" type="number" min="0"></div>
     </div>
 
+    <!-- === HO MOBILE === -->
     <h4>ho. Mobile</h4>
     <div class="row">
       <div><label>Premio base (€)</label><input id="h_base" type="number" min="0"></div>
@@ -98,6 +115,13 @@ small{color:var(--muted)}
       <div><label>Premio Extra 1 (€)</label><input id="h_x1p" type="number" min="0"></div>
       <div><label>Soglia Extra 2</label><input id="h_x2t" type="number" min="0"></div>
       <div><label>Premio Extra 2 (€)</label><input id="h_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="h_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="h_payamt" type="number" min="0"></div>
     </div>
 
     <div style="margin-top:10px;display:flex;gap:8px">
@@ -105,6 +129,7 @@ small{color:var(--muted)}
       <div class="note" id="saveMsg"></div>
     </div>
   </section>
+
 
   <!-- Output -->
   <section class="panel">
@@ -182,8 +207,13 @@ function delUser(i){ DATA.users.splice(i,1); renderUsers(); }
 function fillMonthUI(cfg){
   const F = cfg.fatt||{}, W = cfg.wind||{}, H = cfg.ho||{};
   $("f_base").value=F.base_prize||0; $("f_x1t").value=F.x1_thr||0; $("f_x1p").value=F.x1_prize||0; $("f_x2t").value=F.x2_thr||0; $("f_x2p").value=F.x2_prize||0;
+  $("f_paystatus").value=F.payment_status||"In attesa"; $("f_payamt").value=F.payment_amount||0;
+
   $("w_base").value=W.base_prize||0; $("w_x1t").value=W.x1_thr||0; $("w_x1p").value=W.x1_prize||0; $("w_x2t").value=W.x2_thr||0; $("w_x2p").value=W.x2_prize||0;
+  $("w_paystatus").value=W.payment_status||"In attesa"; $("w_payamt").value=W.payment_amount||0;
+
   $("h_base").value=H.base_prize||0; $("h_x1t").value=H.x1_thr||0; $("h_x1p").value=H.x1_prize||0; $("h_x2t").value=H.x2_thr||0; $("h_x2p").value=H.x2_prize||0;
+  $("h_paystatus").value=H.payment_status||"In attesa"; $("h_payamt").value=H.payment_amount||0;
 }
 
 $("monthSel").onchange = ()=>{
@@ -215,9 +245,9 @@ function copyAll(){
 function saveMonth(){
   const m = $("monthSel").value;
   DATA.config[m] = {
-    fatt:{ base_prize:+$("f_base").value, x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value },
-    wind:{ base_prize:+$("w_base").value, x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value },
-    ho:{   base_prize:+$("h_base").value, x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value }
+    fatt:{ base_prize:+$("f_base").value, x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value, payment_status:$("f_paystatus").value, payment_amount:+$("f_payamt").value },
+    wind:{ base_prize:+$("w_base").value, x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value, payment_status:$("w_paystatus").value, payment_amount:+$("w_payamt").value },
+    ho:{ base_prize:+$("h_base").value, x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value, payment_status:$("h_paystatus").value, payment_amount:+$("h_payamt").value }
   };
   $("saveMsg").textContent="✅ Salvato per " + m;
   setTimeout(()=>$("saveMsg").textContent="",2000);
