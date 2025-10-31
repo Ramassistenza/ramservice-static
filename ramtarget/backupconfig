@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAMSERVICE · Configuratore</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ram:#0071E3;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f5f7;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#0f172a}
+.wrap{max-width:1000px;margin:auto;padding:18px}
+h1{color:var(--ram);margin:6px 0 14px}
+.panel{background:#fff;padding:16px;border-radius:14px;box-shadow:0 6px 20px rgba(2,6,23,.05);margin:12px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;color:var(--muted)}
+input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px}
+small{color:var(--muted)}
+.btn{background:var(--ram);color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer}
+.btn.secondary{background:#e2e8f0;color:#0f172a}
+.list{margin-top:8px}
+.item{display:flex;justify-content:space-between;align-items:center;border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;margin:6px 0}
+.code{white-space:pre-wrap;background:#0b1020;color:#eaeefb;border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.note{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚙️ RAMSERVICE · Configuratore JSON</h1>
+
+  <!-- Carica JSON -->
+  <section class="panel">
+    <h3>1) Carica / crea configurazione</h3>
+    <div class="row">
+      <div>
+        <label>URL JSON (opzionale)</label>
+        <input id="jsonUrl" placeholder="https://.../ramdata.json">
+      </div>
+      <div style="display:flex;align-items:end;gap:8px">
+        <button class="btn" onclick="loadJson()">Carica da URL</button>
+        <button class="btn secondary" onclick="loadTemplate()">Nuovo (template)</button>
+      </div>
+    </div>
+    <div id="loadMsg" class="note" style="margin-top:8px"></div>
+  </section>
+
+  <!-- Utenti -->
+  <section class="panel">
+    <h3>2) Utenti</h3>
+    <div class="row">
+      <div><label>Nome</label><input id="uName" placeholder="Emanuele"></div>
+      <div><label>Username</label><input id="uUser" placeholder="emanuele"></div>
+      <div><label>Password</label><input id="uPass" placeholder="••••"></div>
+      <div style="display:flex;align-items:end"><button class="btn" onclick="addUser()">Aggiungi utente</button></div>
+    </div>
+    <div id="userList" class="list"></div>
+  </section>
+
+    <!-- Mesi -->
+  <section class="panel">
+    <h3>3) Configurazione mensile</h3>
+    <div class="row">
+      <div>
+        <label>Mese</label>
+        <select id="monthSel"></select>
+      </div>
+      <div style="display:flex;align-items:end;gap:8px;flex-wrap:wrap">
+        <button class="btn secondary" onclick="copyPrev()">Copia dal mese precedente</button>
+        <button class="btn secondary" onclick="copyAll()">📆 Copia su tutti i 12 mesi</button>
+      </div>
+    </div>
+
+    <!-- === FATTURATO === -->
+    <h4>Fatturato</h4>
+    <div class="row">
+      <div><label>Premio base (€)</label><input id="f_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="f_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="f_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="f_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="f_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="f_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="f_payamt" type="number" min="0"></div>
+    </div>
+
+    <!-- === WINDTRE === -->
+    <h4>WindTre</h4>
+    <div class="row">
+      <div><label>Premio base (€)</label><input id="w_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="w_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="w_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="w_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="w_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="w_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="w_payamt" type="number" min="0"></div>
+    </div>
+
+    <!-- === HO MOBILE === -->
+    <h4>ho. Mobile</h4>
+    <div class="row">
+      <div><label>Premio base (€)</label><input id="h_base" type="number" min="0"></div>
+      <div></div>
+      <div><label>Soglia Extra 1</label><input id="h_x1t" type="number" min="0"></div>
+      <div><label>Premio Extra 1 (€)</label><input id="h_x1p" type="number" min="0"></div>
+      <div><label>Soglia Extra 2</label><input id="h_x2t" type="number" min="0"></div>
+      <div><label>Premio Extra 2 (€)</label><input id="h_x2p" type="number" min="0"></div>
+      <div><label>Stato pagamento</label>
+        <select id="h_paystatus">
+          <option value="In attesa">In attesa</option>
+          <option value="Pagato">Pagato</option>
+        </select>
+      </div>
+      <div><label>Importo pagato (€)</label><input id="h_payamt" type="number" min="0"></div>
+    </div>
+
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn" onclick="saveMonth()">Salva mese</button>
+      <div class="note" id="saveMsg"></div>
+    </div>
+  </section>
+
+
+  <!-- Output -->
+  <section class="panel">
+    <h3>4) Esporta</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="generate()">Genera JSON</button>
+      <button class="btn secondary" onclick="copyJSON()">Copia negli appunti</button>
+      <button class="btn secondary" onclick="downloadJSON()">Scarica ramdata.json</button>
+    </div>
+    <div class="code" id="out" style="margin-top:10px">—</div>
+    <div class="note">Carica questo file nel tuo repo: <code>ramservice-static/ramtarget/ramdata.json</code></div>
+  </section>
+</div>
+
+<script>
+const MESI = ["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
+const $ = id => document.getElementById(id);
+let DATA = { users:[], config:{} };
+
+(function init(){
+  MESI.forEach(m=>{ const o=document.createElement("option"); o.value=o.textContent=m; $("monthSel").appendChild(o); });
+  $("monthSel").value = MESI[new Date().getMonth()];
+  loadTemplate();
+})();
+
+function loadTemplate(){
+  DATA = {
+    users:[{name:"Emanuele",user:"emanuele",pass:"Giorgia2016"}],
+    config:{}
+  };
+  MESI.forEach(m=> DATA.config[m] = {fatt:{},wind:{},ho:{}} );
+  renderUsers();
+  fillMonthUI({});
+  $("loadMsg").textContent = "Template pronto.";
+}
+
+async function loadJson(){
+  const url = $("jsonUrl").value.trim();
+  if(!url) return $("loadMsg").textContent="Inserisci l’URL del JSON.";
+  $("loadMsg").textContent="Carico…";
+  try{
+    const r = await fetch(url+"?v="+Date.now());
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    DATA = await r.json();
+    $("loadMsg").textContent="✅ Caricato!";
+    renderUsers();
+    const m = $("monthSel").value;
+    fillMonthUI(DATA.config[m]||{});
+  }catch(e){
+    $("loadMsg").textContent="❌ Errore: "+e.message;
+  }
+}
+
+function renderUsers(){
+  const box=$("userList"); box.innerHTML="";
+  (DATA.users||[]).forEach((u,i)=>{
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`<div>👤 <b>${u.name}</b> <span class="note">(${u.user})</span></div>
+                   <button class="btn secondary" onclick="delUser(${i})">Rimuovi</button>`;
+    box.appendChild(div);
+  });
+}
+
+function addUser(){
+  const name=$("uName").value.trim(), user=$("uUser").value.trim(), pass=$("uPass").value.trim();
+  if(!name||!user||!pass) return alert("Compila nome, user e password.");
+  DATA.users.push({name,user,pass});
+  $("uName").value=$("uUser").value=$("uPass").value="";
+  renderUsers();
+}
+
+function delUser(i){ DATA.users.splice(i,1); renderUsers(); }
+
+function fillMonthUI(cfg){
+  const F = cfg.fatt||{}, W = cfg.wind||{}, H = cfg.ho||{};
+  $("f_base").value=F.base_prize||0; $("f_x1t").value=F.x1_thr||0; $("f_x1p").value=F.x1_prize||0; $("f_x2t").value=F.x2_thr||0; $("f_x2p").value=F.x2_prize||0;
+  $("f_paystatus").value=F.payment_status||"In attesa"; $("f_payamt").value=F.payment_amount||0;
+
+  $("w_base").value=W.base_prize||0; $("w_x1t").value=W.x1_thr||0; $("w_x1p").value=W.x1_prize||0; $("w_x2t").value=W.x2_thr||0; $("w_x2p").value=W.x2_prize||0;
+  $("w_paystatus").value=W.payment_status||"In attesa"; $("w_payamt").value=W.payment_amount||0;
+
+  $("h_base").value=H.base_prize||0; $("h_x1t").value=H.x1_thr||0; $("h_x1p").value=H.x1_prize||0; $("h_x2t").value=H.x2_thr||0; $("h_x2p").value=H.x2_prize||0;
+  $("h_paystatus").value=H.payment_status||"In attesa"; $("h_payamt").value=H.payment_amount||0;
+}
+
+$("monthSel").onchange = ()=>{
+  const m = $("monthSel").value;
+  fillMonthUI(DATA.config[m]||{});
+};
+
+function copyPrev(){
+  const idx = MESI.indexOf($("monthSel").value);
+  if(idx<=0) return alert("Nessun mese precedente.");
+  const prev = DATA.config[MESI[idx-1]];
+  if(!prev) return alert("Nessuna config del mese precedente.");
+  DATA.config[MESI[idx]] = JSON.parse(JSON.stringify(prev));
+  fillMonthUI(DATA.config[MESI[idx]]);
+  $("saveMsg").textContent="📋 Copiato da " + MESI[idx-1];
+  setTimeout(()=>$("saveMsg").textContent="",2000);
+}
+
+function copyAll(){
+  const current = $("monthSel").value;
+  const base = DATA.config[current];
+  MESI.forEach(m=>{
+    DATA.config[m] = JSON.parse(JSON.stringify(base));
+  });
+  $("saveMsg").textContent="📆 Copiato su tutti i 12 mesi.";
+  setTimeout(()=>$("saveMsg").textContent="",2500);
+}
+
+function saveMonth(){
+  const m = $("monthSel").value;
+  DATA.config[m] = {
+    fatt:{ base_prize:+$("f_base").value, x1_thr:+$("f_x1t").value, x1_prize:+$("f_x1p").value, x2_thr:+$("f_x2t").value, x2_prize:+$("f_x2p").value, payment_status:$("f_paystatus").value, payment_amount:+$("f_payamt").value },
+    wind:{ base_prize:+$("w_base").value, x1_thr:+$("w_x1t").value, x1_prize:+$("w_x1p").value, x2_thr:+$("w_x2t").value, x2_prize:+$("w_x2p").value, payment_status:$("w_paystatus").value, payment_amount:+$("w_payamt").value },
+    ho:{ base_prize:+$("h_base").value, x1_thr:+$("h_x1t").value, x1_prize:+$("h_x1p").value, x2_thr:+$("h_x2t").value, x2_prize:+$("h_x2p").value, payment_status:$("h_paystatus").value, payment_amount:+$("h_payamt").value }
+  };
+  $("saveMsg").textContent="✅ Salvato per " + m;
+  setTimeout(()=>$("saveMsg").textContent="",2000);
+}
+
+function generate(){
+  const txt = JSON.stringify(DATA, null, 2);
+  $("out").textContent = txt;
+}
+
+async function copyJSON(){
+  const txt = $("out").textContent.trim();
+  if(!txt) return alert("Genera prima il JSON.");
+  try{ await navigator.clipboard.writeText(txt); alert("✅ Copiato! Incolla in ramdata.json"); }
+  catch{ alert("Copia non riuscita, seleziona e copia manualmente."); }
+}
+
+function downloadJSON(){
+  const txt = $("out").textContent.trim() || JSON.stringify(DATA,null,2);
+  const blob = new Blob([txt], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "ramdata.json"; a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
