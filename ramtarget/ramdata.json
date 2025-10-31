@@ -13,21 +13,27 @@
         "x1_thr": 33000,
         "x1_prize": 50,
         "x2_thr": 35000,
-        "x2_prize": 100
+        "x2_prize": 100,
+        "payment_status": "Pagato",
+        "payment_amount": 100
       },
       "wind": {
         "base_prize": 100,
         "x1_thr": 20,
         "x1_prize": 100,
         "x2_thr": 25,
-        "x2_prize": 100
+        "x2_prize": 100,
+        "payment_status": "In attesa",
+        "payment_amount": 0
       },
       "ho": {
         "base_prize": 100,
         "x1_thr": 24,
         "x1_prize": 100,
         "x2_thr": 30,
-        "x2_prize": 100
+        "x2_prize": 100,
+        "payment_status": "In attesa",
+        "payment_amount": 0
       }
     },
     "GENNAIO": {
