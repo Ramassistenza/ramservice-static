@@ -122,30 +122,46 @@ function showLoader(s=true){$("#loader").style.display=s?"flex":"none";}
 function byMonthDict(arr){const out={};(arr||[]).forEach(o=>{const k=o.mese.toUpperCase();out[k]=o});return out;}
 function cfgFor(m){const raw=(DATA.config||{})[m];if(!raw)return null;const n=k=>raw[k]||{};return{fatt:n("fatt"),wind:n("wind"),ho:n("ho")};}
 function prizesFor(o,v,b){let got=0,left=0;if(b>0&&v>=b)got+=+o.base_prize;else left+=+o.base_prize;if(o.x1_thr>0){if(v>=o.x1_thr)got+=+o.x1_prize;else left+=+o.x1_prize;}if(o.x2_thr>0){if(v>=o.x2_thr)got+=+o.x2_prize;else left+=+o.x2_prize;}return{got,left};}
-
-function makeBar(title,p,value,target,cls,isMoney,hideValues=false){
+function paymentInfo(conf, type){
+  const p = conf[type] || {};
+  return {status: p.payment_status || "In attesa", amount: +p.payment_amount || 0};
+}
+  
+function makeBar(title,p,value,target,cls,isMoney,hideValues=false,paidInfo=null){
   const block=document.createElement("div");block.className="barblock "+cls;
   const percent=Math.round(p);
   const labelVal=hideValues?"":(isMoney?`${euro(value)} / ${euro(target)}`:`${value} / ${target}`);
+  let statusMsg = "";
+  if(percent>=100){
+    if(paidInfo && paidInfo.status==="Pagato")
+      statusMsg = `💰 Pagato (${euro(paidInfo.amount)})`;
+    else
+      statusMsg = "✅ Completato";
+  }
   block.innerHTML=`
     <div class="bartitle">
       <span>${title}</span>
       <span style="font-weight:600;${percent>=100?'color:var(--ok)':''}">${percent}%</span>
     </div>
     <div class="bar ${cls}"><div class="fill" style="--w:${p}%"></div></div>
-    ${hideValues?'':`<div class="row"><div>${labelVal}</div><div>${percent>=100?'✅ Completato':''}</div></div>`}`;
+    ${hideValues?'':`<div class="row"><div>${labelVal}</div><div>${statusMsg}</div></div>`}`;
   return block;
 }
 
 function metricCard({title,value,baseTarget,conf,isMoney,hideValues}){
   const wrap=document.createElement("section");wrap.className="card";
   wrap.innerHTML=`<h3>${title}</h3><div class="sub">${isMoney?'Fatturato':'Numero attivazioni'}</div>`;
-  wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney,hideValues));
-  if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney,hideValues));
-  if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney,hideValues));
+  const paid = paymentInfo({fatt:conf,wind:conf,ho:conf}, isMoney?"fatt":(title.toLowerCase().includes("wind")?"wind":"ho"));
+  wrap.appendChild(makeBar("Target principale",pct(value,baseTarget),value,baseTarget,"base",isMoney,hideValues,paid));
+  if(conf.x1_thr>0)wrap.appendChild(makeBar("Extra soglia 1",pct(value,conf.x1_thr),value,conf.x1_thr,"x1",isMoney,hideValues,paid));
+  if(conf.x2_thr>0)wrap.appendChild(makeBar("Extra soglia 2",pct(value,conf.x2_thr),value,conf.x2_thr,"x2",isMoney,hideValues,paid));
   const pv=prizesFor(conf,value,baseTarget);
   const totals=document.createElement("div");totals.className="totals";
-  totals.innerHTML=`<div class="totalbox"><h4>Premi raggiunti</h4><div class="val">+ ${euro(pv.got)}</div></div><div class="totalbox"><h4>Ancora raggiungibili</h4><div class="val">${euro(pv.left)}</div></div><div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got+pv.left)}</div></div>`;
+  const paidVal = paid.status==="Pagato" ? paid.amount : 0;
+  totals.innerHTML=`
+    <div class="totalbox"><h4>Premi pagati</h4><div class="val">+ ${euro(paidVal)}</div></div>
+    <div class="totalbox"><h4>Raggiunti non pagati</h4><div class="val">${euro(pv.got - paidVal)}</div></div>
+    <div class="totalbox"><h4>Totale potenziale</h4><div class="val">${euro(pv.got + pv.left)}</div></div>`;
   wrap.appendChild(totals);
   return wrap;
 }
