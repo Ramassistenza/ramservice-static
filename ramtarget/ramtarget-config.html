@@ -135,7 +135,7 @@ small{color:var(--muted)}
 const MESI=["GENNAIO","FEBBRAIO","MARZO","APRILE","MAGGIO","GIUGNO","LUGLIO","AGOSTO","SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"];
 const $=id=>document.getElementById(id);
 let DATA={users:[],config:{}};
-const GSCRIPT_URL="https://script.google.com/macros/s/AKfycbxTUO_XXXXXXXXXXXX/exec"; // 🔗 sostituisci con il tuo URL Apps Script
+const GSCRIPT_URL="https://script.google.com/macros/s/AKfycbxAtZTkTlhQRGRIJU4Je9dx1Gr70lUIKMJEvagaDDnMhDkVXsW0hxyelTjG2UJrXPh05Q/exec"; // 🔗 sostituisci con il tuo URL Apps Script
 
 (async function init(){
   MESI.forEach(m=>{const o=document.createElement("option");o.value=o.textContent=m;$("monthSel").appendChild(o);});
