@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RAMSERVICE — Dashboard v3</title>
+<style>
+  :root {
+    --blue: #0071e3;
+    --dark: #0a0a0a;
+    --gray: #f4f5f7;
+    --soft: rgba(255,255,255,0.8);
+  }
+  body {
+    font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+    background: linear-gradient(180deg,#f7f8fa,#e9ebef);
+    margin: 0;
+    color: var(--dark);
+  }
+  header {
+    text-align: center;
+    padding: 40px 10px 10px;
+  }
+  header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--blue);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    margin: 8px 0 0;
+    color: #555;
+  }
+  main {
+    max-width: 1150px;
+    margin: 40px auto 100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 32px;
+    padding: 0 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    padding: 30px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-3px); }
+  .card h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 0 0 6px;
+  }
+  .card p {
+    color: #666;
+    margin: 0 0 20px;
+    font-size: 15px;
+  }
+  .btn {
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 4px 6px 10px 0;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn:hover { background:#005bb5; transform:translateY(-2px); }
+  input[type=text] {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 220px;
+    margin-right: 10px;
+  }
+  .log {
+    margin-top: 12px;
+    font-size: 13px;
+    background: #f8f9fb;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+  .ok { color:#28c76f; }
+  .err { color:#ea5455; }
+  .status-dot {
+    width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;
+  }
+  .status-on { background:#28c76f;box-shadow:0 0 8px #28c76f; }
+  .status-off { background:#ea5455;box-shadow:0 0 8px #ea5455; }
+  #loader {
+    display:none;position:fixed;inset:0;background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center;
+  }
+  #loader div {
+    border:4px solid #ccc;border-top:4px solid var(--blue);
+    border-radius:50%;width:48px;height:48px;animation:spin 1s linear infinite;
+  }
+  @keyframes spin {to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>RAMSERVICE — SYNC DASHBOARD</h1>
+  <p>Controllo unificato dei microservizi Ragic → Shopify</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>📦 Sincronizzazione Principale</h2>
+    <p>Prodotti, immagini, quantità e flash deals in tempo reale.</p>
+    <button class="btn" onclick="run('/sync-all')">🚀 Avvia Sync-All</button><br>
+    <input id="skuInput" type="text" placeholder="RAM-01870">
+    <button class="btn" onclick="syncOne()">🔁 Sync Singolo</button><br>
+    <button class="btn" onclick="run('/update-images')">🖼️ Aggiorna Immagini</button>
+    <button class="btn" onclick="run('/flashdeals')">🔥 Flash Deals</button>
+    <div class="log" id="logMain"></div>
+  </div>
+
+  <div class="card">
+    <h2>📱 Prodotti Usati</h2>
+    <p>Gestione bundle e compatibilità automatica per i dispositivi usati.</p>
+    <input id="skuUsato" type="text" placeholder="U-00001">
+    <button class="btn" onclick="syncUsato()">♻️ Sync Usato</button><br>
+    <button class="btn" onclick="run('/webhook-usato','usato')">🔄 Test Webhook</button>
+    <div class="log" id="logUsato"></div>
+  </div>
+
+  <div class="card">
+    <h2>🧠 Descrizioni AI</h2>
+    <p>Generazione automatica descrizioni Apple-like per i prodotti selezionati.</p>
+    <button class="btn" onclick="run('/sync','descrizioni')">✨ Genera Tutte</button><br>
+    <input id="idDescr" type="text" placeholder="ID Ragic es. 303">
+    <button class="btn" onclick="forceDescr()">📝 Rigenera Singola</button>
+    <div class="log" id="logDescr"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔍 Stato Server</h2>
+    <p>Verifica la disponibilità in tempo reale dei microservizi RAMSERVICE.</p>
+    <button class="btn" onclick="ping('/status','main')">🟢 Server Principale</button> <span id="stMain"><span class="status-dot"></span></span><br>
+    <button class="btn" onclick="ping('/status-usato','usato')">🔵 Server Usato</button> <span id="stUsato"><span class="status-dot"></span></span><br>
+    <button class="btn" onclick="ping('/','descrizioni')">🧠 Server Descrizioni</button> <span id="stDescr"><span class="status-dot"></span></span>
+    <div class="log" id="logStatus"></div>
+  </div>
+
+</main>
+
+<div id="loader"><div></div></div>
+
+<script>
+const BASE_MAIN="https://ramservice-sync-main-xxxx.run.app";
+const BASE_USATO="https://ramservice-usato-xxxx.run.app";
+const BASE_DESCR="https://ramservice-descrizioni-xxxx.run.app";
+const TOKEN="ram123secure";
+
+function showLoader(s=true){document.getElementById("loader").style.display=s?"flex":"none";}
+function appendLog(msg,type="main",ok=true){
+  const el=document.getElementById(type==="usato"?"logUsato":type==="descrizioni"||type==="descr"?"logDescr":type==="status"?"logStatus":"logMain");
+  el.innerHTML=`<span class="${ok?'ok':'err'}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`+el.innerHTML;
+}
+
+async function run(path,type="main"){
+  if(!confirm(`Confermi l'esecuzione di ${path}?`))return;
+  showLoader(true);
+  const base=type==="usato"?BASE_USATO:type==="descrizioni"?BASE_DESCR:BASE_MAIN;
+  try{
+    const res=await fetch(`${base}${path}?token=${TOKEN}`);
+    const txt=await res.text();
+    appendLog(`${path} → ${res.status} ${res.ok?"OK":"ERR"}: ${txt}`,type,res.ok);
+  }catch(e){appendLog(`${path} ❌ ${e.message}`,type,false);}
+  showLoader(false);
+}
+
+async function syncOne(){
+  const sku=document.getElementById("skuInput").value.trim();
+  if(!sku)return alert("Inserisci SKU es. RAM-01870");
+  await run(`/sync-one?sku=${encodeURIComponent(sku)}`);
+}
+async function syncUsato(){
+  const sku=document.getElementById("skuUsato").value.trim();
+  if(!sku)return alert("Inserisci SKU usato es. U-00001");
+  await run(`/sync-one-usato?sku=${encodeURIComponent(sku)}`,"usato");
+}
+async function forceDescr(){
+  const id=document.getElementById("idDescr").value.trim();
+  if(!id)return alert("Inserisci ID Ragic es. 303");
+  await run(`/force?id=${encodeURIComponent(id)}`,"descrizioni");
+}
+
+async function ping(path,type="main"){
+  const base=type==="usato"?BASE_USATO:type==="descrizioni"?BASE_DESCR:BASE_MAIN;
+  const dot=document.querySelector(type==="usato"?"#stUsato .status-dot":type==="descrizioni"?"#stDescr .status-dot":"#stMain .status-dot");
+  showLoader(true);
+  try{
+    const res=await fetch(`${base}${path}`);
+    const txt=await res.text();
+    dot.className=`status-dot ${res.ok?"status-on":"status-off"}`;
+    appendLog(`${base}${path} → ${res.status}: ${txt}`, "status", res.ok);
+  }catch(e){
+    dot.className="status-dot status-off";
+    appendLog(`${base}${path} ❌ ${e.message}`,"status",false);
+  }
+  showLoader(false);
+}
+</script>
+</body>
+</html>
