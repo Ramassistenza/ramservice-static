@@ -180,17 +180,27 @@ function appendLog(msg,type="main",ok=true){
   el.innerHTML=`<span class="${ok?'ok':'err'}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`+el.innerHTML;
 }
 
-async function run(path,type="main"){
-  if(!confirm(`Confermi l'esecuzione di ${path}?`))return;
+<script>
+async function run(path, type="main"){
+  if(!confirm(`Confermi l'esecuzione di ${path}?`)) return;
   showLoader(true);
-  const base=type==="usato"?BASE_USATO:type==="descrizioni"?BASE_DESCR:BASE_MAIN;
+  const base = type==="usato" ? BASE_USATO : (type==="descrizioni" ? BASE_DESCR : BASE_MAIN);
+
+  // ✅ se path ha già "?", aggiunge &token=..., altrimenti ?token=...
+  const sep = path.includes("?") ? "&" : "?";
+  const url = `${base}${path}${sep}token=${TOKEN}`;
+
   try{
-    const res=await fetch(`${base}${path}?token=${TOKEN}`); // ✅ usa token, non APIKey
-    const txt=await res.text();
-    appendLog(`${path} → ${res.status} ${res.ok?"OK":"ERR"}: ${txt}`,type,res.ok);
-  }catch(e){appendLog(`${path} ❌ ${e.message}`,type,false);}
+    const res = await fetch(url);
+    const txt = await res.text();
+    appendLog(`${path} → ${res.status} ${res.ok ? "OK" : "ERR"}: ${txt}`, type, res.ok);
+  }catch(e){
+    appendLog(`${path} ❌ ${e.message}`, type, false);
+  }
   showLoader(false);
 }
+</script>
+
 
 async function syncOne(){
   const sku=document.getElementById("skuInput").value.trim();
