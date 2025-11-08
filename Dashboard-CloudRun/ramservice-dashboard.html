@@ -185,7 +185,7 @@ async function run(path,type="main"){
   showLoader(true);
   const base=type==="usato"?BASE_USATO:type==="descrizioni"?BASE_DESCR:BASE_MAIN;
   try{
-    const res=await fetch(`${base}${path}?APIKey=${TOKEN}`);
+    const res=await fetch(`${base}${path}?token=${TOKEN}`); // ✅ usa token, non APIKey
     const txt=await res.text();
     appendLog(`${path} → ${res.status} ${res.ok?"OK":"ERR"}: ${txt}`,type,res.ok);
   }catch(e){appendLog(`${path} ❌ ${e.message}`,type,false);}
