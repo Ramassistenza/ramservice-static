@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Usato Certificato RAMSERVICE</title>
+
+  <link rel="stylesheet" href="../stile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    .content {
+      flex:1;
+      background:#000;
+      color:#fff;
+      padding:50px 70px;
+      overflow-y:auto;
+    }
+
+    .hero {
+      text-align:center;
+      margin-bottom:40px;
+    }
+
+    .hero h1 {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:4em;
+      letter-spacing:2px;
+      margin-bottom:10px;
+      color:#0077cc;
+    }
+
+    .hero p {
+      font-size:1.3em;
+      opacity:0.85;
+    }
+
+    .comparison {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:40px;
+      margin-top:50px;
+    }
+
+    .box {
+      background:#fff;
+      color:#111;
+      border-radius:26px;
+      padding:35px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .box h2 {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:2.4em;
+      margin-bottom:20px;
+      letter-spacing:1px;
+    }
+
+    .box ul {
+      list-style:none;
+      padding:0;
+    }
+
+    .box li {
+      font-size:1.15em;
+      margin-bottom:14px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .bad { color:#c0392b; font-weight:700; }
+    .good { color:#27ae60; font-weight:700; }
+
+    .why {
+      margin-top:60px;
+      background:linear-gradient(135deg,#ffffff,#eef5ff);
+      color:#111;
+      border-radius:30px;
+      padding:45px;
+      box-shadow:0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    .why h2 {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:2.6em;
+      margin-bottom:20px;
+      color:#0077cc;
+    }
+
+    .why p {
+      font-size:1.25em;
+      line-height:1.6;
+      margin-bottom:16px;
+    }
+
+    .home-btn {
+      position:fixed;
+      bottom:30px;
+      right:30px;
+      background:#0077cc;
+      color:#fff;
+      font-size:2em;
+      border:none;
+      width:110px;
+      height:90px;
+      border-radius:24px;
+      cursor:pointer;
+      box-shadow:0 10px 30px rgba(0,0,0,0.5);
+      transition:all 0.25s ease;
+    }
+
+    .home-btn:hover {
+      background:#005fa3;
+      transform:scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+<div class="screen">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left"></div>
+    <div class="header-center">
+      <img src="../img/logoram.png" class="logo" alt="RAMSERVICE">
+    </div>
+    <div class="header-right"></div>
+  </header>
+
+  <!-- CONTENUTO -->
+  <section class="content">
+
+    <div class="hero">
+      <h1>USATO CERTIFICATO RAMSERVICE</h1>
+      <p>Non è un semplice ricondizionato. È una scelta intelligente.</p>
+    </div>
+
+    <div class="comparison">
+
+      <div class="box">
+        <h2>Ricondizionato Online</h2>
+        <ul>
+          <li>❌ <span class="bad">Gradi estetici vaghi</span> (A, B, C)</li>
+          <li>❌ Test standardizzati e automatizzati</li>
+          <li>❌ Batteria spesso al limite minimo di legge</li>
+          <li>❌ Nessun controllo diretto del cliente</li>
+          <li>❌ Assistenza distante e impersonale</li>
+          <li>❌ Provenienza poco trasparente</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <h2>Usato Certificato RAMSERVICE</h2>
+        <ul>
+          <li>✅ <span class="good">Dispositivo reale, visibile e verificabile</span></li>
+          <li>✅ Test manuali completi su oltre 30 controlli</li>
+          <li>✅ Batteria verificata e sostituita se necessario</li>
+          <li>✅ Zero sorprese: sai esattamente cosa compri</li>
+          <li>✅ Assistenza diretta in negozio</li>
+          <li>✅ Provenienza selezionata e tracciata</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="why">
+      <h2>Perché conviene davvero</h2>
+      <p>
+        Un usato certificato RAMSERVICE non segue logiche industriali,
+        ma <strong>criteri qualitativi reali</strong>.
+      </p>
+      <p>
+        Ogni dispositivo viene controllato, testato e selezionato singolarmente
+        dai nostri tecnici, come se fosse destinato a noi stessi.
+      </p>
+      <p>
+        Risparmi rispetto al nuovo, ma <strong>non rinunci a sicurezza,
+        affidabilità e assistenza</strong>.
+      </p>
+      <p>
+        È per questo che chi prova RAMSERVICE, non torna indietro.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    RAMSERVICE
+  </footer>
+
+</div>
+
+<!-- HOME BUTTON -->
+<button class="home-btn" onclick="window.location.href='../index.html'">🏠</button>
+
+</body>
+</html>
