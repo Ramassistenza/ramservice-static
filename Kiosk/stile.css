@@ -412,104 +412,140 @@ footer {
 }
 
 /* ===============================
-   POPUP RAM FIDELITY
+   POPUP PROMO — RAM FIDELITY
 ================================ */
 .fidelity-popup {
   position:fixed;
   inset:0;
-  background:linear-gradient(135deg,#000,#0a0a0a);
+  background:rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   z-index:9999;
 }
 
-.fidelity-popup.hidden {
-  display:none;
-}
+.fidelity-popup.hidden { display:none; }
 
-.fidelity-box {
-  width:100%;
-  height:100%;
-  padding:70px 90px;
+/* Card promo centrale */
+.fidelity-card {
+  width:min(920px, 90vw);
+  height:min(1200px, 82vh);
+  border-radius:34px;
+  background:linear-gradient(135deg,#0b0b0f,#111827);
   color:#fff;
-  text-align:center;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  animation: fadeZoomIn 0.8s ease;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,0.75),
+    0 0 0 2px rgba(255,255,255,0.06),
+    0 0 40px rgba(0,119,204,0.25);
+  padding:46px 44px 38px;
+  position:relative;
+  overflow:hidden;
+  animation: fidelityIn 0.55s ease;
 }
 
-@keyframes fadeZoomIn {
-  from { opacity:0; transform:scale(0.9); }
-  to   { opacity:1; transform:scale(1); }
+/* decorazioni */
+.fidelity-card::before{
+  content:"";
+  position:absolute;
+  inset:-80px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0,119,204,.45), transparent 55%),
+    radial-gradient(circle at 90% 30%, rgba(255,212,0,.25), transparent 55%),
+    radial-gradient(circle at 35% 95%, rgba(0,208,255,.18), transparent 55%);
+  filter: blur(6px);
+  opacity:.9;
+}
+
+.fidelity-card * { position:relative; z-index:1; }
+
+@keyframes fidelityIn {
+  from { opacity:0; transform:scale(0.92) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+/* X chiusura */
+.fidelity-x {
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:64px;
+  height:64px;
+  border:none;
+  border-radius:18px;
+  background:rgba(255,255,255,0.10);
+  color:#fff;
+  font-size:28px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+  transition:all .2s ease;
+}
+.fidelity-x:hover {
+  background:rgba(255,255,255,0.18);
+  transform:scale(1.05);
+}
+
+/* header */
+.fidelity-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:24px;
 }
 
 .fidelity-logo {
-  width:320px;
-  margin-bottom:30px;
+  width:240px;
+  height:auto;
 }
 
-.fidelity-box h1 {
+.fidelity-badge {
   font-family:'Bebas Neue', sans-serif;
-  font-size:4.8em;
-  letter-spacing:3px;
-  margin-bottom:20px;
+  font-size:34px;
+  letter-spacing:2px;
+  padding:10px 18px;
+  border-radius:18px;
+  background:rgba(255,212,0,0.18);
+  border:1px solid rgba(255,212,0,0.25);
   color:#ffd400;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
+/* titolo */
+.fidelity-title {
+  font-family:'Bebas Neue', sans-serif;
+  font-size:72px;
+  line-height:0.95;
+  letter-spacing:3px;
+  margin:8px 0 14px;
+  color:#ffd400;
+  text-shadow:0 10px 40px rgba(0,0,0,.55);
+}
 .fidelity-sub {
-  font-size:1.6em;
-  opacity:0.9;
-  margin-bottom:40px;
+  font-size:22px;
+  opacity:.92;
+  margin-bottom:26px;
 }
+.fidelity-sub strong { color:#00d0ff; }
 
+/* cards row */
 .fidelity-cards {
   display:flex;
-  gap:25px;
-  margin-bottom:35px;
+  justify-content:center;
+  gap:16px;
+  margin:22px 0 22px;
+  flex-wrap:wrap;
 }
 
 .fidelity-cards img {
-  height:140px;
-  animation: float 3s ease-in-out infinite alternate;
-}
+  width:190px;
+  height:auto;
+  border-radius:18px;
+  box-shadow:0 18px 45px rgba(0,0,0,0.5);
+  transform:translateY(0);
+  a
 
-@keyframes float {
-  from { transform:translateY(0); }
-  to   { transform:translateY(-12px); }
-}
-
-.fidelity-points {
-  font-size:1.4em;
-  line-height:1.8;
-  margin-bottom:35px;
-}
-
-.fidelity-cta {
-  font-size:2em;
-  font-weight:800;
-  color:#00d0ff;
-  margin-bottom:40px;
-}
-
-.fidelity-close {
-  font-size:1.4em;
-  padding:18px 36px;
-  border:none;
-  border-radius:22px;
-  background:#0077cc;
-  color:#fff;
-  cursor:pointer;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
-  transition:all 0.25s ease;
-}
-
-.fidelity-close:hover {
-  background:#005fa3;
-  transform:scale(1.05);
-}
 
 
 
