@@ -60,15 +60,6 @@
   </div>
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
   </section>
-  <section id="webview" class="hidden">
-    <iframe id="webFrame" src=""></iframe>
-  
-    <div class="web-nav">
-      <button onclick="goHome()">🏠</button>
-      <button onclick="goBack()">◀</button>
-      <button onclick="goForward()">▶</button>
-    </div>
-  </section>
 
 
   <!-- FOOTER -->
@@ -157,22 +148,8 @@
   const frame = document.getElementById("webFrame");
 
   function openWeb() {
-    frame.src = "https://www.ramserviceitalia.it";
-    webview.classList.remove("hidden");
-  }
-
-  function goHome() {
-    frame.src = "";
-    webview.classList.add("hidden");
-  }
-
-  function goBack() {
-    frame.contentWindow.history.back();
-  }
-
-  function goForward() {
-    frame.contentWindow.history.forward();
-  }
+  window.location.href = "https://www.ramserviceitalia.it";
+ }
 </script>
 
 </body>
