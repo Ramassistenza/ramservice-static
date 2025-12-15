@@ -57,16 +57,14 @@
     </div>
   
     <!-- BOX 2 – USATO CERTIFICATO -->
-    <div class="riquadro riquadro-usato"
-         onclick="location.href='usato-certificato.html'"
-  
+    <div class="riquadro riquadro-usato" onclick="location.href='usato-certificato-view.html'">
       <div class="usato-content">
         <div class="usato-icon">✔️</div>
         <div class="usato-title">Usato Certificato RAM</div>
-        <button class="usato-btn">
-          Perché scegliere l’usato certificato RAM
-        </button>
+        <button class="usato-btn">Perché scegliere l’usato certificato RAM</button>
       </div>
+    </div>
+
   
     <!-- BOX 3 -->
     <div class="riquadro">
@@ -98,55 +96,54 @@
 </div>
 
   <!-- ===============================
-     POPUP RAM FIDELITY (AUTO)
+     POPUP AUTO — RAM FIDELITY
   ================================ -->
   <div id="fidelityPopup" class="fidelity-popup hidden">
-    <div class="fidelity-box">
+    <div class="fidelity-card" role="dialog" aria-modal="true">
   
-      <!-- LOGO -->
-      <img
-        src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/ramfidelity_logo_w.png"
-        class="fidelity-logo"
-        alt="RAM Fidelity"
-      >
+      <button class="fidelity-x" onclick="closeFidelityPopup()" aria-label="Chiudi popup">✕</button>
   
-      <!-- TITOLO -->
-      <h1>ATTIVA GRATIS<br>RAM FIDELITY</h1>
+      <div class="fidelity-top">
+        <img
+          src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/ramfidelity_logo_w.png"
+          class="fidelity-logo"
+          alt="RAM Fidelity"
+        >
+        <div class="fidelity-badge">ATTIVAZIONE IN NEGOZIO</div>
+      </div>
   
-      <!-- SOTTOTITOLO -->
-      <p class="fidelity-sub">
-        Il programma fedeltà che <strong>premia ogni tuo acquisto</strong>
-      </p>
+      <div class="fidelity-title">RAM FIDELITY</div>
+      <div class="fidelity-sub">
+        Ogni acquisto ti fa guadagnare <strong>punti</strong> e <strong>vantaggi</strong>.<br>
+        Attiva ora il programma fedeltà: <strong>ci pensiamo noi al banco</strong>.
+      </div>
   
-      <!-- CARD -->
       <div class="fidelity-cards">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_bronzo.png">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_argento.png">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_oro.png">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_platino.png">
+        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_bronzo.png" alt="Bronzo">
+        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_argento.png" alt="Argento">
+        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_oro.png" alt="Oro">
+        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_platino.png" alt="Platino">
       </div>
   
-      <!-- BENEFICI -->
-      <div class="fidelity-points">
-        <div>🎁 <strong>Punti su ogni acquisto</strong></div>
-        <div>💰 <strong>Sconti e premi esclusivi</strong></div>
-        <div>👥 <strong>Bonus invita un amico</strong></div>
-        <div>⭐ <strong>Livelli Bronze, Silver, Gold, Platinum</strong></div>
+      <div class="fidelity-grid">
+        <div class="fidelity-pill">🎁 <strong>Punti su ogni acquisto</strong><br><span>premi & sconti</span></div>
+        <div class="fidelity-pill">⭐ <strong>Livelli fedeltà</strong><br><span>più acquisti, più vantaggi</span></div>
+        <div class="fidelity-pill">👥 <strong>Invita un amico</strong><br><span>bonus per entrambi</span></div>
+        <div class="fidelity-pill">🛡️ <strong>Totale controllo</strong><br><span>saldo punti & benefici</span></div>
       </div>
   
-      <!-- CTA -->
       <div class="fidelity-cta">
-        <strong>Attivazione GRATUITA</strong><br>
-        Chiedi ora al banco RAMSERVICE
+        Chiedi adesso l’attivazione al banco<br>
+        <div class="free">È GRATIS</div>
       </div>
   
-      <!-- CHIUDI -->
-      <button class="fidelity-close" onclick="closeFidelityPopup()">
-        TORNA ALLA HOME
-      </button>
+      <div class="fidelity-note">
+        Attivazione rapida in negozio • Nessun costo • Inizia a guadagnare subito
+      </div>
   
     </div>
   </div>
+
 
 
 <script>
@@ -224,29 +221,52 @@
   loadImages("operatori", "slideshow", true);
 </script>
 <script>
+  // Popup: start ogni 10 minuti, durata 5 minuti
   const FIDELITY_INTERVAL = 10 * 60 * 1000; // 10 minuti
-  let fidelityTimer;
+  const FIDELITY_DURATION = 5 * 60 * 1000;  // 5 minuti
+
+  let fidelityIntervalId = null;
+  let fidelityAutoCloseId = null;
 
   function showFidelityPopup() {
     const popup = document.getElementById("fidelityPopup");
+    if (!popup) return;
+
     popup.classList.remove("hidden");
 
-    // chiusura automatica dopo 25 sec
-    setTimeout(closeFidelityPopup, 25000);
+    // reset autoclose
+    if (fidelityAutoCloseId) clearTimeout(fidelityAutoCloseId);
+    fidelityAutoCloseId = setTimeout(() => {
+      closeFidelityPopup();
+    }, FIDELITY_DURATION);
   }
 
   function closeFidelityPopup() {
     const popup = document.getElementById("fidelityPopup");
+    if (!popup) return;
+
     popup.classList.add("hidden");
+
+    // se chiudo prima, annullo l’autoclose
+    if (fidelityAutoCloseId) {
+      clearTimeout(fidelityAutoCloseId);
+      fidelityAutoCloseId = null;
+    }
   }
 
   function startFidelityCycle() {
-    fidelityTimer = setInterval(showFidelityPopup, FIDELITY_INTERVAL);
+    // avvia intervallo (10 min)
+    if (fidelityIntervalId) clearInterval(fidelityIntervalId);
+    fidelityIntervalId = setInterval(showFidelityPopup, FIDELITY_INTERVAL);
   }
 
   // Avvio ciclo
   startFidelityCycle();
+
+  // (opzionale) se vuoi farlo partire subito al boot kiosk:
+  // showFidelityPopup();
 </script>
+
 
 
 </body>
