@@ -623,24 +623,40 @@ footer {
 
 .fidelity-logo{width:260px;margin-bottom:20px;}
 
-.fidelity-card h1{
+/* ===== TITOLI POPUP ===== */
+.fidelity-card h1 {
   font-family:'Bebas Neue',sans-serif;
-  font-size:3.4em;color:#0077cc;
+  font-size:4.6em;              /* 🔥 più grande */
+  color:#0077cc;
+  margin-bottom:10px;
+  text-align:center;
 }
-.fidelity-card h2{
-  font-size:1.4em;margin-bottom:24px;
-}
-.fidelity-card h2 span{color:#00b894;}
 
+.fidelity-card h2 {
+  font-size:1.6em;
+  margin-bottom:28px;
+  text-align:center;
+}
+
+.fidelity-card h2 span {
+  color:#00b894;
+  font-weight:800;
+}
 .fidelity-cards{
   display:flex;justify-content:center;gap:16px;margin-bottom:26px;
 }
 .fidelity-cards img{height:120px;}
 
-.fidelity-list{
-  font-size:1.15em;
-  line-height:1.7;
-  margin-bottom:26px;
+/* ===== LISTA VANTAGGI ===== */
+.fidelity-list {
+  font-size:1.4em;              /* 🔥 più grande */
+  line-height:1.8;
+  margin-bottom:30px;
+  text-align:center;
+}
+
+.fidelity-list div {
+margin-bottom:10px;
 }
 
 .fidelity-final{
