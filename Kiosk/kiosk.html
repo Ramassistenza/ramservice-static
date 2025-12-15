@@ -61,6 +61,19 @@
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
   </section>
 
+  <!-- POPUP TORNA AL KIOSK -->
+  <div id="kioskPopup" class="kiosk-popup hidden">
+    <div class="kiosk-popup-box">
+      <div class="kiosk-popup-icon">🏠</div>
+      <h2>Tornare alla Home?</h2>
+      <p>Vuoi tornare alla schermata principale del kiosk?</p>
+  
+      <div class="kiosk-popup-actions">
+        <button class="btn-secondary" onclick="closePopup()">Annulla</button>
+        <button class="btn-primary" onclick="goKioskHome()">Vai alla Home</button>
+      </div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer>
