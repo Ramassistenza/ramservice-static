@@ -451,12 +451,14 @@ footer {
 }
 
 /* ==================================================
-   POPUP RAM FIDELITY — VERSIONE DEFINITIVA
+   POPUP RAM FIDELITY — VERSIONE PREMIUM BLU
 ================================================== */
+
 .fidelity-popup {
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -465,59 +467,75 @@ footer {
 
 .fidelity-popup.hidden { display:none; }
 
+/* CARD */
 .fidelity-card {
-  width:900px;
+  width:920px;
   max-width:92%;
-  background:#ffffff;
-  border-radius:34px;
-  padding:46px 44px 40px;
+  border-radius:36px;
+  padding:48px 44px 42px;
   text-align:center;
-  box-shadow:0 30px 90px rgba(0,0,0,0.55);
+  color:#fff;
   position:relative;
-  animation: popupIn .5s ease;
+  overflow:hidden;
+
+  /* 🔥 SFONDO BLU MULTICOLOR */
+  background:
+    radial-gradient(circle at top left, #00c6ff 0%, transparent 45%),
+    radial-gradient(circle at bottom right, #0077cc 0%, transparent 50%),
+    linear-gradient(135deg, #0b2a4a, #081c34);
+
+  box-shadow:
+    0 40px 120px rgba(0,0,0,0.8),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+
+  animation: popupIn .55s ease;
 }
 
 @keyframes popupIn {
-  from { transform:scale(.9); opacity:0; }
+  from { transform:scale(.92); opacity:0; }
   to   { transform:scale(1); opacity:1; }
 }
 
-/* X chiusura */
+/* X */
 .fidelity-x {
   position:absolute;
-  top:20px;
-  right:20px;
-  width:56px;
-  height:56px;
+  top:22px;
+  right:22px;
+  width:58px;
+  height:58px;
   border-radius:18px;
   border:none;
-  background:#eee;
+  background:rgba(255,255,255,0.18);
+  color:#fff;
   font-size:26px;
   font-weight:900;
   cursor:pointer;
 }
 
-/* Logo */
+/* LOGO */
 .fidelity-logo {
   width:260px;
-  margin-bottom:20px;
+  margin-bottom:22px;
 }
 
 /* TITOLI */
 .fidelity-card h1 {
   font-family:'Bebas Neue',sans-serif;
-  font-size:5em;              /* 🔥 MAX */
-  color:#0077cc;
-  margin-bottom:8px;
+  font-size:5.2em;
+  letter-spacing:3px;
+  margin-bottom:10px;
+  color:#ffffff;
+  text-shadow:0 10px 40px rgba(0,0,0,0.6);
 }
 
 .fidelity-card h2 {
-  font-size:1.8em;
-  margin-bottom:30px;
+  font-size:1.9em;
+  margin-bottom:34px;
+  font-weight:600;
 }
 
 .fidelity-card h2 span {
-  color:#00b894;
+  color:#ffd400;
   font-weight:900;
 }
 
@@ -526,35 +544,37 @@ footer {
   display:flex;
   justify-content:center;
   gap:18px;
-  margin-bottom:32px;
+  margin-bottom:34px;
 }
 
 .fidelity-cards img {
-  height:130px;
+  height:135px;
+  border-radius:16px;
+  box-shadow:0 18px 45px rgba(0,0,0,0.5);
 }
 
-/* ELENCO VANTAGGI */
+/* LISTA VANTAGGI */
 .fidelity-list {
-  font-size:1.5em;           /* 🔥 PIÙ GRANDE */
+  font-size:1.55em;
   line-height:1.9;
-  margin-bottom:34px;
-  text-align:center;
+  margin-bottom:38px;
+  font-weight:700;
 }
 
-.fidelity-list div {
-  margin-bottom:10px;
+.fidelity-list strong {
+  color:#00e0ff;
 }
 
 /* CTA FINALE */
 .fidelity-final {
   background:#ffd400;
   color:#111;
-  padding:26px;
-  border-radius:28px;
-  font-size:2em;             /* 🔥 PROTAGONISTA */
+  padding:28px;
+  border-radius:30px;
+  font-size:2.1em;
   font-weight:900;
   letter-spacing:1px;
-  box-shadow:0 14px 36px rgba(0,0,0,.4);
+  box-shadow:0 18px 45px rgba(0,0,0,.45);
 }
 
 /* LAMPEGGIO */
@@ -564,14 +584,15 @@ footer {
 
 @keyframes blinkGlow {
   from {
-    box-shadow:0 0 10px rgba(255,212,0,.6);
+    box-shadow:0 0 14px rgba(255,212,0,.6);
     transform:scale(1);
   }
   to {
-    box-shadow:0 0 34px rgba(255,212,0,1);
+    box-shadow:0 0 40px rgba(255,212,0,1);
     transform:scale(1.06);
   }
 }
+
 
 
 
