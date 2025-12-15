@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Kiosk RAMSERVICE</title>
+
   <link rel="stylesheet" href="https://ramassistenza.github.io/ramservice-static/Kiosk/stile.css">
-  <!-- Font -->
+
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 <div class="screen">
 
   <!-- HEADER -->
   <header>
-    <div class="header-left">
-      <div id="date"></div>
-    </div>
+    <div class="header-left"><div id="date"></div></div>
     <div class="header-center">
-      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" alt="RAMSERVICE Logo" class="logo">
+      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" class="logo">
     </div>
-    <div class="header-right">
-      <div id="clock"></div>
-    </div>
+    <div class="header-right"><div id="clock"></div></div>
   </header>
 
-  <!-- PULSANTI TOUCH -->
+  <!-- NAV -->
   <nav>
     <button>
       <div class="icon">📢</div>
@@ -42,232 +40,147 @@
     </button>
   </nav>
 
-  <!-- IMMAGINE CENTRALE -->
+  <!-- CENTER -->
   <section id="center"></section>
 
-  <!-- SLIDESHOW -->
+  <!-- SLIDES -->
   <section id="slideshow"></section>
 
-  <!-- 3 RIQUADRI -->
+  <!-- RIQUADRI -->
   <section id="riquadri">
-  
-    <!-- BOX 1 -->
+
     <div class="riquadro">
-      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1">
+      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png">
     </div>
-  
-    <!-- BOX 2 – USATO CERTIFICATO -->
+
+    <!-- BOX 2 RIDISEGNATO -->
     <div class="riquadro riquadro-usato" onclick="location.href='usato-certificato.html'">
-      <div class="usato-content">
-        <div class="usato-icon">✔️</div>
-        <div class="usato-title">Usato Certificato RAM</div>
-        <button class="usato-btn">Perché scegliere l’usato certificato RAM</button>
+      <div class="usato-box">
+        <div class="usato-badge">USATO CERTIFICATO</div>
+        <div class="usato-title">RAMSERVICE</div>
+        <div class="usato-desc">
+          Controllato • Originale • Garantito
+        </div>
+        <div class="usato-cta">
+          Perché scegliere l’usato certificato RAM
+        </div>
       </div>
     </div>
 
-  
-    <!-- BOX 3 -->
     <div class="riquadro">
-      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost">
+      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png">
     </div>
-  
+
   </section>
 
-
-  <!-- POPUP TORNA AL KIOSK -->
-  <div id="kioskPopup" class="kiosk-popup hidden">
-    <div class="kiosk-popup-box">
-      <div class="kiosk-popup-icon">🏠</div>
-      <h2>Tornare alla Home?</h2>
-      <p>Vuoi tornare alla schermata principale del kiosk?</p>
-  
-      <div class="kiosk-popup-actions">
-        <button class="btn-secondary" onclick="closePopup()">Annulla</button>
-        <button class="btn-primary" onclick="goKioskHome()">Vai alla Home</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    RAMSERVICE
-  </footer>
+  <footer>RAMSERVICE</footer>
 
 </div>
 
-  <!-- ===============================
-     POPUP AUTO — RAM FIDELITY
-  ================================ -->
-  <div id="fidelityPopup" class="fidelity-popup hidden">
-    <div class="fidelity-card" role="dialog" aria-modal="true">
-  
-      <button class="fidelity-x" onclick="closeFidelityPopup()" aria-label="Chiudi popup">✕</button>
-  
-      <div class="fidelity-top">
-        <img
-          src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/ramfidelity_logo_w.png"
-          class="fidelity-logo"
-          alt="RAM Fidelity"
-        >
-        <div class="fidelity-badge">ATTIVAZIONE IN NEGOZIO</div>
-      </div>
-  
-      <div class="fidelity-title">RAM FIDELITY</div>
-      <div class="fidelity-sub">
-        Ogni acquisto ti fa guadagnare <strong>punti</strong> e <strong>vantaggi</strong>.<br>
-        Attiva ora il programma fedeltà: <strong>ci pensiamo noi al banco</strong>.
-      </div>
-  
-      <div class="fidelity-cards">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_bronzo.png" alt="Bronzo">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_argento.png" alt="Argento">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_oro.png" alt="Oro">
-        <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_platino.png" alt="Platino">
-      </div>
-  
-      <div class="fidelity-grid">
-        <div class="fidelity-pill">🎁 <strong>Punti su ogni acquisto</strong><br><span>premi & sconti</span></div>
-        <div class="fidelity-pill">⭐ <strong>Livelli fedeltà</strong><br><span>più acquisti, più vantaggi</span></div>
-        <div class="fidelity-pill">👥 <strong>Invita un amico</strong><br><span>bonus per entrambi</span></div>
-        <div class="fidelity-pill">🛡️ <strong>Totale controllo</strong><br><span>saldo punti & benefici</span></div>
-      </div>
-  
-      <div class="fidelity-cta">
-        Chiedi adesso l’attivazione al banco<br>
-        <div class="free">È GRATIS</div>
-      </div>
-  
-      <div class="fidelity-note">
-        Attivazione rapida in negozio • Nessun costo • Inizia a guadagnare subito
-      </div>
-  
+<!-- ===============================
+     POPUP RAM FIDELITY
+================================ -->
+<div id="fidelityPopup" class="fidelity-popup hidden">
+  <div class="fidelity-card">
+
+    <button class="fidelity-x" onclick="closeFidelityPopup()">✕</button>
+
+    <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/ramfidelity_logo_w.png" class="fidelity-logo">
+
+    <h1>ATTIVA RAM FIDELITY</h1>
+    <h2>È <span>GRATIS</span> e ti premia ogni volta</h2>
+
+    <div class="fidelity-cards">
+      <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_bronzo.png">
+      <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_argento.png">
+      <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_oro.png">
+      <img src="https://ramassistenza.github.io/ramservice-static/reward_shopify/mail_ramfidelity/card_platino.png">
     </div>
+
+    <div class="fidelity-list">
+      <div>🎁 Accumula <strong>punti cashback</strong> su ogni acquisto</div>
+      <div>🔧 Usa i punti per <strong>riparazioni</strong></div>
+      <div>📱 Sconta <strong>accessori e smartphone</strong></div>
+      <div>👥 Invita amici e ottieni punti dai loro acquisti</div>
+      <div>⭐ Scala i livelli e ottieni sempre più vantaggi</div>
+    </div>
+
+    <div class="fidelity-final">
+      ATTIVALA SUBITO GRATUITAMENTE AL BANCO
+    </div>
+
   </div>
+</div>
 
-
-
+<!-- JS -->
 <script>
-  /* 🕒 CLOCK */
-  function updateClock() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const s = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('clock').innerHTML = `${h}:${m}:${s}`;
+  function updateClock(){
+    const n=new Date();
+    clock.innerHTML=
+      String(n.getHours()).padStart(2,'0')+":"+
+      String(n.getMinutes()).padStart(2,'0')+":"+
+      String(n.getSeconds()).padStart(2,'0');
   }
-  setInterval(updateClock, 1000);
-  updateClock();
+  setInterval(updateClock,1000);updateClock();
 
-  /* 📅 DATE */
-  function updateDate() {
-    const now = new Date();
-    const options = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
-    const dateStr = now.toLocaleDateString('it-IT', options);
-    const pretty = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-    document.getElementById('date').innerHTML = pretty;
+  function updateDate(){
+    date.innerHTML=new Date().toLocaleDateString('it-IT',{
+      weekday:'long',day:'2-digit',month:'long',year:'numeric'
+    });
   }
   updateDate();
 
-  /* 🖼️ IMAGE LOADER per GitHub (senza PHP) */
-  async function loadImages(folder, containerId, slideshow=false) {
-    const base = "https://ramassistenza.github.io/ramservice-static/Kiosk/img";
-    const container = document.getElementById(containerId);
-
-    // Supporta numerazione sequenziale e formati misti
-    const extensions = ["jpg", "jpeg", "png"];
-    const images = [];
-
-    // tenta di caricare fino a 10 immagini
-    for (let i = 1; i <= 10; i++) {
-      for (const ext of extensions) {
-        const url = `${base}/${folder}/${i}.${ext}`;
-        try {
-          const response = await fetch(url, { method: "HEAD" });
-          if (response.ok) {
-            images.push(`${i}.${ext}`);
+  async function loadImages(folder,id,slide=false){
+    const base="https://ramassistenza.github.io/ramservice-static/Kiosk/img";
+    const c=document.getElementById(id);
+    for(let i=1;i<=10;i++){
+      for(const e of["jpg","png","jpeg"]){
+        const u=`${base}/${folder}/${i}.${e}`;
+        try{
+          const r=await fetch(u,{method:"HEAD"});
+          if(r.ok){
+            const img=document.createElement("img");
+            img.src=u;
+            if(slide){
+              if(!c.children.length) img.classList.add("active");
+              c.appendChild(img);
+            }else{
+              c.appendChild(img);return;
+            }
             break;
           }
-        } catch(e) { /* ignora errori 404 */ }
+        }catch{}
       }
     }
-
-    if (images.length === 0) return;
-
-    if (slideshow) {
-      images.forEach((file, i) => {
-        const img = document.createElement("img");
-        img.src = `${base}/${folder}/${file}`;
-        if (i === 0) img.classList.add("active");
-        container.appendChild(img);
-      });
-
-      let index = 0;
-      setInterval(() => {
-        const slides = container.querySelectorAll("img");
-        if (slides.length === 0) return;
-        slides[index].classList.remove("active");
-        index = (index + 1) % slides.length;
-        slides[index].classList.add("active");
-      }, 4000);
-    } else {
-      const img = document.createElement("img");
-      img.src = `${base}/${folder}/${images[0]}`;
-      container.appendChild(img);
+    if(slide){
+      let x=0;
+      setInterval(()=>{
+        const s=c.querySelectorAll("img");
+        s[x].classList.remove("active");
+        x=(x+1)%s.length;
+        s[x].classList.add("active");
+      },4000);
     }
   }
 
-  // 🔹 Caricamento immagini
-  loadImages("center", "center", false);
-  loadImages("operatori", "slideshow", true);
+  loadImages("center","center");
+  loadImages("operatori","slideshow",true);
+
+  const INTERVAL=10*60*1000;
+  const DURATION=5*60*1000;
+  let autoClose;
+
+  function showFidelityPopup(){
+    fidelityPopup.classList.remove("hidden");
+    clearTimeout(autoClose);
+    autoClose=setTimeout(closeFidelityPopup,DURATION);
+  }
+  function closeFidelityPopup(){
+    fidelityPopup.classList.add("hidden");
+    clearTimeout(autoClose);
+  }
+  setInterval(showFidelityPopup,INTERVAL);
 </script>
-<script>
-  // Popup: start ogni 10 minuti, durata 5 minuti
-  const FIDELITY_INTERVAL = 10 * 60 * 1000; // 10 minuti
-  const FIDELITY_DURATION = 5 * 60 * 1000;  // 5 minuti
-
-  let fidelityIntervalId = null;
-  let fidelityAutoCloseId = null;
-
-  function showFidelityPopup() {
-    const popup = document.getElementById("fidelityPopup");
-    if (!popup) return;
-
-    popup.classList.remove("hidden");
-
-    // reset autoclose
-    if (fidelityAutoCloseId) clearTimeout(fidelityAutoCloseId);
-    fidelityAutoCloseId = setTimeout(() => {
-      closeFidelityPopup();
-    }, FIDELITY_DURATION);
-  }
-
-  function closeFidelityPopup() {
-    const popup = document.getElementById("fidelityPopup");
-    if (!popup) return;
-
-    popup.classList.add("hidden");
-
-    // se chiudo prima, annullo l’autoclose
-    if (fidelityAutoCloseId) {
-      clearTimeout(fidelityAutoCloseId);
-      fidelityAutoCloseId = null;
-    }
-  }
-
-  function startFidelityCycle() {
-    // avvia intervallo (10 min)
-    if (fidelityIntervalId) clearInterval(fidelityIntervalId);
-    fidelityIntervalId = setInterval(showFidelityPopup, FIDELITY_INTERVAL);
-  }
-
-  // Avvio ciclo
-  startFidelityCycle();
-
-  // (opzionale) se vuoi farlo partire subito al boot kiosk:
-  // showFidelityPopup();
-</script>
-
-
 
 </body>
 </html>
