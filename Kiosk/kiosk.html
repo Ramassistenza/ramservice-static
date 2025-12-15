@@ -51,13 +51,7 @@
   <!-- 3 RIQUADRI -->
   <section id="riquadri">
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
-    <div class="riquadro riquadro-web" onclick="openWeb()">
-    <div class="web-content">
-      <div class="web-icon">🌐</div>
-      <div class="web-title">Vai al nostro sito</div>
-      <div class="web-desc">ramserviceitalia.it</div>
-    </div>
-  </div>
+    <div class="riquadro riquadro-web" onclick="location.href='usato-certificato/index.html'"></div>
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
   </section>
 
@@ -155,14 +149,6 @@
   // 🔹 Caricamento immagini
   loadImages("center", "center", false);
   loadImages("operatori", "slideshow", true);
-</script>
-<script>
-  const webview = document.getElementById("webview");
-  const frame = document.getElementById("webFrame");
-
-  function openWeb() {
-  window.location.href = "https://www.ramserviceitalia.it";
- }
 </script>
 
 </body>
