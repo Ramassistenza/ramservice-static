@@ -659,13 +659,33 @@ footer {
 margin-bottom:10px;
 }
 
-.fidelity-final{
-  background:#0077cc;
-  color:#fff;
-  padding:18px;
-  border-radius:22px;
-  font-size:1.3em;
-  font-weight:800;
+/* ===== CTA FINALE LAMPEGGIANTE ===== */
+.fidelity-final {
+  background:#ffd400;
+  color:#111;
+  padding:22px;
+  border-radius:26px;
+  font-size:1.8em;          /* 🔥 più grande */
+  font-weight:900;
+  letter-spacing:1px;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+  text-align:center;
+}
+
+  /* Animazione lampeggio */
+.blink {
+  animation: blinkGlow 1.4s infinite alternate;
+}
+
+@keyframes blinkGlow {
+  from {
+    box-shadow:0 0 10px rgba(255,212,0,.6);
+    transform:scale(1);
+  }
+  to {
+    box-shadow:0 0 30px rgba(255,212,0,1);
+    transform:scale(1.04);
+  }
 }
 
 /* ===============================
