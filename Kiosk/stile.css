@@ -411,5 +411,105 @@ footer {
   to   { transform:scale(1); opacity:1; }
 }
 
+/* ===============================
+   POPUP RAM FIDELITY
+================================ */
+.fidelity-popup {
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#000,#0a0a0a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.fidelity-popup.hidden {
+  display:none;
+}
+
+.fidelity-box {
+  width:100%;
+  height:100%;
+  padding:70px 90px;
+  color:#fff;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  animation: fadeZoomIn 0.8s ease;
+}
+
+@keyframes fadeZoomIn {
+  from { opacity:0; transform:scale(0.9); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+.fidelity-logo {
+  width:320px;
+  margin-bottom:30px;
+}
+
+.fidelity-box h1 {
+  font-family:'Bebas Neue', sans-serif;
+  font-size:4.8em;
+  letter-spacing:3px;
+  margin-bottom:20px;
+  color:#ffd400;
+}
+
+.fidelity-sub {
+  font-size:1.6em;
+  opacity:0.9;
+  margin-bottom:40px;
+}
+
+.fidelity-cards {
+  display:flex;
+  gap:25px;
+  margin-bottom:35px;
+}
+
+.fidelity-cards img {
+  height:140px;
+  animation: float 3s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  from { transform:translateY(0); }
+  to   { transform:translateY(-12px); }
+}
+
+.fidelity-points {
+  font-size:1.4em;
+  line-height:1.8;
+  margin-bottom:35px;
+}
+
+.fidelity-cta {
+  font-size:2em;
+  font-weight:800;
+  color:#00d0ff;
+  margin-bottom:40px;
+}
+
+.fidelity-close {
+  font-size:1.4em;
+  padding:18px 36px;
+  border:none;
+  border-radius:22px;
+  background:#0077cc;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  transition:all 0.25s ease;
+}
+
+.fidelity-close:hover {
+  background:#005fa3;
+  transform:scale(1.05);
+}
+
 
 
