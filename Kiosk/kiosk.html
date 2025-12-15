@@ -223,6 +223,31 @@
   loadImages("center", "center", false);
   loadImages("operatori", "slideshow", true);
 </script>
+<script>
+  const FIDELITY_INTERVAL = 10 * 60 * 1000; // 10 minuti
+  let fidelityTimer;
+
+  function showFidelityPopup() {
+    const popup = document.getElementById("fidelityPopup");
+    popup.classList.remove("hidden");
+
+    // chiusura automatica dopo 25 sec
+    setTimeout(closeFidelityPopup, 25000);
+  }
+
+  function closeFidelityPopup() {
+    const popup = document.getElementById("fidelityPopup");
+    popup.classList.add("hidden");
+  }
+
+  function startFidelityCycle() {
+    fidelityTimer = setInterval(showFidelityPopup, FIDELITY_INTERVAL);
+  }
+
+  // Avvio ciclo
+  startFidelityCycle();
+</script>
+
 
 </body>
 </html>
