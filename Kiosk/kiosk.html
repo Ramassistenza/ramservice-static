@@ -51,9 +51,25 @@
   <!-- 3 RIQUADRI -->
   <section id="riquadri">
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro1.png" alt="Box 1"></div>
-    <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/riquadro2.png" alt="Box 2"></div>
+    <div class="riquadro riquadro-web" onclick="openWeb()">
+    <div class="web-content">
+      <div class="web-icon">🌐</div>
+      <div class="web-title">Vai al nostro sito</div>
+      <div class="web-desc">ramserviceitalia.it</div>
+    </div>
+  </div>
     <div class="riquadro"><img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/inpost.png" alt="InPost"></div>
   </section>
+  <section id="webview" class="hidden">
+    <iframe id="webFrame" src=""></iframe>
+  
+    <div class="web-nav">
+      <button onclick="goHome()">🏠</button>
+      <button onclick="goBack()">◀</button>
+      <button onclick="goForward()">▶</button>
+    </div>
+  </section>
+
 
   <!-- FOOTER -->
   <footer>
@@ -136,5 +152,28 @@
   loadImages("center", "center", false);
   loadImages("operatori", "slideshow", true);
 </script>
+<script>
+  const webview = document.getElementById("webview");
+  const frame = document.getElementById("webFrame");
+
+  function openWeb() {
+    frame.src = "https://www.ramserviceitalia.it";
+    webview.classList.remove("hidden");
+  }
+
+  function goHome() {
+    frame.src = "";
+    webview.classList.add("hidden");
+  }
+
+  function goBack() {
+    frame.contentWindow.history.back();
+  }
+
+  function goForward() {
+    frame.contentWindow.history.forward();
+  }
+</script>
+
 </body>
 </html>
