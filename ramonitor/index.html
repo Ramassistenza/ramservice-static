@@ -183,7 +183,7 @@
       fetch(url, { cache: 'no-store', mode: 'no-cors' }).catch(()=>{});
       // ping anche su un’immagine inesistente
       const img = new Image();
-      img.src = `${IMG_FOLDER}/__ping__.png?t=${Date.now()}`;
+      img.src = `${IMG_BASE}__ping__.png?t=${Date.now()}`;
     }
     setInterval(netPing, NET_PING_SEC * 1000);
 
