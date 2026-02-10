@@ -35,7 +35,8 @@
     // =============================
     // CONFIG
     // =============================
-    const IMG_FOLDER = 'img';
+    const MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest.json";
+    const IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/";
     const SLIDE_SECONDS = 7;           // durata slide
     const REFRESH_MINUTES = 5;         // ogni quanto rileggere la cartella
     const FULLSCREEN_PING_SEC = 60;    // tenta fullscreen periodico
@@ -54,43 +55,7 @@
     // =============================
     // SLIDESHOW
     // =============================
-    async function probeImages() {
-      const exts = ['.jpg','.jpeg','.png','.JPG','.PNG','.webp','.WEBP'];
-      const found = [];
-      const MAX = 300;
-
-      // Parallelizza i test per ridurre i tempi su TV lenti
-      const checks = [];
-      for (let i=1; i<=MAX; i++) {
-        const candidates = [String(i).padStart(2,'0'), String(i)];
-        for (const base of candidates) {
-          for (const ext of exts) {
-            const url = `${IMG_FOLDER}/${base}${ext}?t=${Date.now()}`;
-            checks.push(checkExists(url).then(ok => ({ok,url,i})));
-          }
-        }
-      }
-      const results = await Promise.all(checks);
-      // Prendi il primo valido per ogni indice i nell’ordine
-      const seen = new Set();
-      for (const r of results) {
-        if (r.ok && !seen.has(r.i)) {
-          seen.add(r.i);
-          found.push(r.url);
-        }
-      }
-      return found;
-    }
-
-    function checkExists(url) {
-      return new Promise(resolve => {
-        const img = new Image();
-        const timer = setTimeout(() => { img.src = ''; resolve(false); }, 5000);
-        img.onload = () => { clearTimeout(timer); resolve(true); };
-        img.onerror = () => { clearTimeout(timer); resolve(false); };
-        img.src = url;
-      });
-    }
+  
 
     function showNext() {
       if (!IMAGES.length) return;
@@ -107,21 +72,21 @@
     }
 
     async function refreshImageList() {
-      console.log("🔄 Ricerca nuove immagini...");
       try {
-        const newList = await probeImages();
-        if (newList.length) {
-          IMAGES = newList;
-          console.log(`✅ ${IMAGES.length} immagini trovate`);
-          // reset index se siamo oltre
+        const res = await fetch(MANIFEST_URL + "?t=" + Date.now(), { cache: "no-store" });
+        const list = await res.json();
+
+        if (Array.isArray(list) && list.length) {
+          IMAGES = list.map(f =>
+            IMG_BASE + encodeURIComponent(f) + "?t=" + Date.now()
+          );
           index = index % IMAGES.length;
-        } else {
-          console.warn("⚠️ Nessuna immagine trovata");
         }
       } catch (e) {
-        console.warn("Errore refresh immagini:", e);
+        console.warn("Errore caricamento manifest:", e);
       }
     }
+
 
     // =============================
     // AVVIO
