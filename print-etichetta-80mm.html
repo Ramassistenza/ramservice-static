@@ -34,16 +34,24 @@ const BACKEND_BASE = "https://ramservice-signature-721276708443.europe-west1.run
 const PRINTER_NAME = "Aclas Printer"; // <-- se diverso, cambia
 
 async function fetchLabelData() {
-  const id = getParam("id");
+  const id = getParam("id");              // può essere _ragicId
+  const numero = getParam("numero");      // fallback: Numero Scheda
   const type = getParam("type") || "accettazione";
-  if (!id) throw new Error("Parametro ?id mancante");
 
-  const url = `${BACKEND_BASE}/api/label?id=${encodeURIComponent(id)}&type=${encodeURIComponent(type)}`;
+  // preferisco id, ma se manca uso numero
+  const value = id || numero;
+  if (!value) throw new Error("Parametro mancante: ?id oppure ?numero");
+
+  const qs = new URLSearchParams();
+  qs.set("type", type);
+  qs.set("id", value); // sul backend ora accetta sia ragicId sia Numero Scheda
+
+  const url = `${BACKEND_BASE}/api/label?${qs.toString()}`;
   log("GET " + url);
 
   const res = await fetch(url, { method: "GET" });
   if (!res.ok) {
-    const t = await res.text().catch(()=> "");
+    const t = await res.text().catch(() => "");
     throw new Error(`Backend ${res.status} ${t}`);
   }
   return res.json();
