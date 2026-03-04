@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <title>Stampa Etichetta 80mm</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://unpkg.com/qz-tray/qz-tray.js"></script>
   <style>
-    body { font-family: monospace; background:#111; color:#0f0; }
+    body { font-family: monospace; background:#111; color:#0f0; padding:12px; }
+    .ok { color:#0f0; }
+    .err { color:#f55; }
     pre { white-space: pre-wrap; word-wrap: break-word; }
   </style>
 </head>
@@ -14,89 +16,107 @@
   <pre id="log"></pre>
 
 <script>
-const log = msg => {
-  document.getElementById('log').innerText += msg + "\n";
+const logEl = document.getElementById("log");
+const log = (msg, cls="") => {
+  logEl.innerHTML += (cls ? `<span class="${cls}">` : "") + msg + (cls ? `</span>` : "") + "\n";
   console.log(msg);
 };
-
-// ✅ METTI QUI IL NOME ESATTO DELLA STAMPANTE IN WINDOWS
-const PRINTER_NAME = "Aclas Printer";
-
-// ✅ METTI QUI IL TUO CLOUD RUN
-const BACKEND_BASE = "https://ramservice-signature-721276708443.europe-west1.run.app"; // <-- sostituisci
 
 function getParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
 
-async function getLabelById(id, type) {
-  const url = `${BACKEND_BASE}/print-label-by-id?id=${encodeURIComponent(id)}&type=${encodeURIComponent(type||"accettazione")}`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("Errore backend " + res.status);
+// ✅ METTI QUI IL TUO CLOUD RUN (base url)
+const BACKEND_BASE = "https://ramservice-signature-721276708443.europe-west1.run.app"; // <-- CAMBIA
+
+// Nome stampante QZ
+const PRINTER_NAME = "Aclas Printer"; // <-- se diverso, cambia
+
+async function fetchLabelData() {
+  const id = getParam("id");
+  const type = getParam("type") || "accettazione";
+  if (!id) throw new Error("Parametro ?id mancante");
+
+  const url = `${BACKEND_BASE}/api/label?id=${encodeURIComponent(id)}&type=${encodeURIComponent(type)}`;
+  log("GET " + url);
+
+  const res = await fetch(url, { method: "GET" });
+  if (!res.ok) {
+    const t = await res.text().catch(()=> "");
+    throw new Error(`Backend ${res.status} ${t}`);
+  }
   return res.json();
 }
 
-function clip(s, n){
-  s = String(s || "").replace(/\s+/g," ").trim();
-  if (!s) return "";
-  return s.length > n ? s.slice(0, n-1) + "…" : s;
+function escposText(label) {
+  // 80mm: 42-48 colonne circa (dipende dal font). Qui stiamo larghi.
+  const hr = "==========================================\n";
+  const cut = "\x1D\x56\x41"; // cut parziale (molte termiche ok)
+
+  const lines = [];
+  lines.push("\x1B\x40");           // init
+  lines.push("\x1B\x61\x01");       // center
+  lines.push("\x1B\x21\x20");       // doppia altezza
+  lines.push("RAMSERVICE\n");
+  lines.push("\x1B\x21\x00");       // normale
+  lines.push(hr);
+
+  lines.push("\x1B\x61\x00");       // left
+
+  lines.push(`SCHEDA: ${label.numeroScheda}\n`);
+  lines.push(`TIPO:  ${(label.type || "").toUpperCase()}\n`);
+  if (label.dataIngresso) lines.push(`DATA:  ${label.dataIngresso}\n`);
+  lines.push("------------------------------------------\n");
+  lines.push(`CLIENTE: ${label.cliente}\n`);
+  if (label.telefono) lines.push(`TEL:     ${label.telefono}\n`);
+  lines.push("------------------------------------------\n");
+  lines.push(`DEVICE:  ${label.dispositivo}\n`);
+  if (label.seriale) lines.push(`SN:      ${label.seriale}\n`);
+  lines.push("------------------------------------------\n");
+
+  if (label.difetto) {
+    lines.push("DIFETTO:\n");
+    lines.push(String(label.difetto).replace(/\r/g,"") + "\n");
+    lines.push("------------------------------------------\n");
+  }
+
+  lines.push("\x1B\x61\x01");       // center
+  lines.push("\x1B\x45\x01");       // bold on
+  lines.push(`COSTO: ${label.costo}\n`);
+  lines.push("\x1B\x45\x00");       // bold off
+  lines.push(hr);
+
+  lines.push("\n\n\n");
+  lines.push(cut);
+  lines.push("\x00");
+  return lines.join("");
 }
 
 (async function(){
   try {
-    const id = getParam("id");
-    const type = getParam("type") || "accettazione";
-    if (!id) throw new Error("Parametro ?id mancante");
-
-    log("Connessione QZ Tray...");
+    log("Connessione QZ…");
     await qz.websocket.connect();
+    log("QZ connesso ✅", "ok");
 
-    log("Leggo dati etichetta...");
-    const data = await getLabelById(id, type);
-    if (!data.ok) throw new Error("Dati non validi");
+    log("Leggo dati etichetta…");
+    const data = await fetchLabelData();
+    if (!data.ok) throw new Error("Risposta non ok");
 
-    // ====== Testo 80mm (ESC/POS) ======
-    const lines = [
-      "\x1B\x40",           // init
-      "\x1B\x61\x01",       // center
-      "\x1B\x21\x20",       // bold + double height (dipende da stampante)
-      "RAMSERVICE\n",
-      "\x1B\x21\x00",
-      "------------------------------\n",
-      "\x1B\x61\x00",       // left
+    log("Dati ricevuti ✅", "ok");
 
-      `SCHEDA: ${data.numeroScheda || ""}\n`,
-      `DATA:   ${data.dataIngresso || ""}\n`,
-      "------------------------------\n",
-      `CL: ${clip(data.cliente, 28)}\n`,
-      `TEL:${clip(data.telefono, 28)}\n`,
-      "------------------------------\n",
-      `DEV: ${clip(data.dispositivo, 28)}\n`,
-      `SN:  ${clip(data.seriale, 28)}\n`,
-      `GAR: ${clip(data.garanzia, 28)}\n`,
-      "------------------------------\n",
-      "DIFETTO:\n",
-      `${clip(data.difetto, 120)}\n`,
-      "------------------------------\n",
-      `ACCONTO: ${data.acconto || "0"} EUR\n`,
-      `TOTALE:  ${data.costo   || "0"} EUR\n`,
-      "\n\n\n",
-      "\x1D\x56\x41",       // cut
-      "\x00"
-    ].join("");
+    const config = qz.configs.create(PRINTER_NAME);
 
-    const cfg = qz.configs.create(PRINTER_NAME);
+    const raw = escposText(data);
 
-    log("Stampa...");
-    await qz.print(cfg, [{ type:'raw', format:'command', data: lines }]);
+    log("Stampa in corso…");
+    await qz.print(config, [{ type: "raw", format: "command", data: raw }]);
+    log("Stampato ✅", "ok");
 
-    log("OK stampato. Chiudo...");
     setTimeout(() => window.close(), 800);
-
   } catch (e) {
-    log("ERRORE: " + (e.message || e));
-    setTimeout(() => window.close(), 2500);
+    log("ERRORE: " + (e.message || e), "err");
+    // lascia aperto per leggere
   }
 })();
 </script>
