@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stampa Scheda 80mm</title>
+  <script src="https://unpkg.com/qz-tray/qz-tray.js"></script>
+  <style>
+    body { font-family: monospace; background:#111; color:#0f0; }
+    pre { white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <pre id="log"></pre>
+
+<script>
+const log = msg => {
+  document.getElementById('log').innerText += msg + "\n";
+  console.log(msg);
+};
+
+// ====== CONFIG ======
+const PRINTER_NAME = "Aclas Printer"; // <-- cambia se serve
+const API_BASE = "https://ramservice-signature-721276708443.europe-west1.run.app"; // <-- incolla URL Cloud Run
+
+function getParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+async function getReceipt(token) {
+  const url = `${API_BASE}/print-receipt-data?token=${encodeURIComponent(token)}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("Errore receipt " + res.status);
+  return res.json();
+}
+
+function safe(v) {
+  return String(v || "").trim();
+}
+
+// Spezza testo lungo in righe da N caratteri (utile per difetto/note)
+function wrapText(text, width) {
+  const t = safe(text);
+  if (!t) return [];
+  const words = t.split(/\s+/);
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    if ((line + " " + w).trim().length > width) {
+      if (line) lines.push(line.trim());
+      line = w;
+    } else {
+      line = (line + " " + w).trim();
+    }
+  }
+  if (line) lines.push(line.trim());
+  return lines;
+}
+
+function buildEscpos(data) {
+  // 80mm: spesso 48 char/line con font standard, ma dipende dalla stampante.
+  const W = 42;
+
+  const hr = () => "------------------------------------------\n";
+
+  const difettoLines = wrapText(data.difetto, W);
+  const noteLines = wrapText(data.note, W);
+
+  const lines = [
+    "\x1B\x40",            // init
+    "\x1B\x61\x01",        // center
+    "\x1B\x21\x30",        // big+bold
+    "RAMSERVICE\n",
+    "\x1B\x21\x00",
+    "\x1B\x61\x00",        // left
+    hr(),
+
+    `Tipo: ${safe(data.type).toUpperCase()}\n`,
+    `Scheda: ${safe(data.numeroScheda)}\n`,
+    `Data: ${safe(data.data)}\n`,
+    hr(),
+
+    `Cliente: ${safe(data.cliente)}\n`,
+    (data.telefono ? `Tel: ${safe(data.telefono)}\n` : ""),
+    hr(),
+
+    `Dispositivo: ${safe(data.dispositivo)}\n`,
+    (data.imei ? `IMEI/SN: ${safe(data.imei)}\n` : ""),
+    hr(),
+
+    "Difetto:\n",
+    ...(difettoLines.length ? difettoLines.map(l => l + "\n") : ["-\n"]),
+    hr(),
+
+    (data.costo ? `Costo/Prev.: ${safe(data.costo)}\n` : ""),
+    (data.operator ? `Operatore: ${safe(data.operator)}\n` : ""),
+    (data.signedAt ? `Firmato: ${safe(data.signedAt)}\n` : ""),
+    hr(),
+
+    ...(noteLines.length ? ["Note:\n", ...noteLines.map(l => l + "\n"), hr()] : []),
+
+    "\x1B\x61\x01",
+    "\x1B\x45\x01",
+    "ALLEGARE AL DISPOSITIVO\n",
+    "\x1B\x45\x00",
+    "\n\n\n",
+
+    "\x1D\x56\x41", // cut
+    "\x00"
+  ];
+
+  return lines.join("");
+}
+
+(async function(){
+  try {
+    log("Connessione a QZ...");
+    await qz.websocket.connect();
+    log("QZ connesso.");
+
+    const token = getParam("token");
+    if (!token) throw new Error("Parametro ?token mancante");
+
+    log("Recupero dati dal Cloud Run...");
+    const data = await getReceipt(token);
+    if (!data || !data.ok) throw new Error("Dati non validi");
+
+    log("Stampo su: " + PRINTER_NAME);
+    const config = qz.configs.create(PRINTER_NAME);
+
+    const escpos = buildEscpos(data);
+
+    await qz.print(config, [{ type: 'raw', format: 'command', data: escpos }]);
+
+    log("OK stampato. Chiudo...");
+    setTimeout(() => window.close(), 1200);
+
+  } catch (e) {
+    log("ERRORE: " + (e.message || e));
+    setTimeout(() => window.close(), 3500);
+  }
+})();
+</script>
+</body>
+</html>
