@@ -83,42 +83,30 @@ async function fetchLabelData() {
 }
 
 function escposText(label) {
-  const nl  = "\n";
+  const nl = "\n";
   const cut = "\x1D\x56\x41"; // partial cut
 
-  // ===== ESC/POS commands =====
-  const INIT         = "\x1B\x40";
-  const ALIGN_LEFT   = "\x1B\x61\x00";
-  const ALIGN_CENTER = "\x1B\x61\x01";
-  const BOLD_ON      = "\x1B\x45\x01";
-  const BOLD_OFF     = "\x1B\x45\x00";
+  // ===== ESC/POS =====
+  const INIT       = "\x1B\x40";
+  const LEFT       = "\x1B\x61\x00";
+  const BOLD_ON    = "\x1B\x45\x01";
+  const BOLD_OFF   = "\x1B\x45\x00";
+  const FONT_A     = "\x1B\x4D\x00"; // font A
+  const SIZE_1X1   = "\x1D\x21\x00";
+  const SIZE_2X1   = "\x1D\x21\x10"; // leggermente più grande (altezza doppia)
+  const SIZE_2X2   = "\x1D\x21\x11"; // solo per costo
 
-  // Font: A è più leggibile in grande
-  const FONT_A       = "\x1B\x4D\x00";
+  const hr  = "==========================================\n";
+  const sep = "------------------------------------------\n";
 
-  // Size (GS ! n)
-  const SIZE_1X1     = "\x1D\x21\x00";
-  const SIZE_2X1     = "\x1D\x21\x10"; // alto (più leggibile)
-  const SIZE_2X2     = "\x1D\x21\x11"; // molto grande
-
-  // Line spacing un po' più “aria” (ESC 3 n)
-  const LINE_SP_24   = "\x1B\x33\x18"; // 24
-  const LINE_SP_DEF  = "\x1B\x32";     // default
-
-  // qualità (best effort, se ignorati non fanno danni)
-  const SLOW_PRINT   = "\x1F\x11\x02";
-  const DENSITY_HIGH = "\x1D\x7C\x0A";
-  const HEAT_STRONG  = "\x1D\x28\x45\x04\x00\x02\x08\x02\x02";
-
-  // ===== helpers =====
   const clean = (s) =>
-    String(s || "")
+    String(s ?? "")
       .replace(/\r/g, "")
       .replace(/[ \t]+/g, " ")
       .trim();
 
-  // wrap per 80mm con font grande (meno colonne)
-  const wrap = (text, width = 28) => {
+  // wrap semplice per evitare righe lunghissime (80mm)
+  const wrap = (text, width = 42) => {
     const t = clean(text);
     if (!t) return [];
     const words = t.split(" ");
@@ -133,86 +121,83 @@ function escposText(label) {
     return out;
   };
 
-  const hr = "------------------------------" + nl;
-
-  // ===== fields =====
   const numeroScheda = clean(label.numeroScheda) || "-";
-  const type         = (clean(label.type) || "ACCETTAZIONE").toUpperCase();
+  const type = (clean(label.type) || "accettazione").toUpperCase();
   const dataIngresso = clean(label.dataIngresso);
-  const cliente      = clean(label.cliente) || "-";
-  const telefono     = clean(label.telefono);
-  const dispositivo  = clean(label.dispositivo) || "-";
-  const seriale      = clean(label.seriale);
-  const difetto      = clean(label.difetto);
-  const costoRaw     = clean(label.costo);
 
-  // normalizza costo (evita robe strane tipo "0" isolato)
-  const costo = costoRaw ? costoRaw.replace(/\s+/g, " ").trim() : "-";
+  const cliente = clean(label.cliente) || "-";
+  const telefono = clean(label.telefono);
 
-  const out = [];
+  const dispositivo = clean(label.dispositivo) || "-";
+  const seriale = clean(label.seriale);
 
-  // ===== INIT + qualità =====
-  out.push(INIT, FONT_A, SLOW_PRINT, DENSITY_HIGH, HEAT_STRONG, LINE_SP_24);
+  const difetto = clean(label.difetto);
+  const costo = clean(label.costo) || "-";
 
-  // ===== HEADER grande =====
-  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
-  out.push("RAMSERVICE", nl);
-  out.push(SIZE_1X1, BOLD_OFF);
-  out.push(hr);
+  const lines = [];
 
-  // ===== SCHEDA molto evidente =====
-  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
-  out.push("SCHEDA ", numeroScheda, nl);
-  out.push(SIZE_1X1, BOLD_OFF);
+  // init + tutto a sinistra
+  lines.push(INIT);
+  lines.push(FONT_A);
+  lines.push(LEFT);
 
-  // Tipo/Data
-  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X1);
-  out.push(type, nl);
-  out.push(SIZE_1X1, BOLD_OFF);
-  if (dataIngresso) {
-    out.push(ALIGN_CENTER, SIZE_2X1);
-    out.push("DATA ", dataIngresso, nl);
-    out.push(SIZE_1X1);
-  }
-  out.push(hr);
+  // header (come prima, ma un filo più marcato)
+  lines.push(BOLD_ON);
+  lines.push("RAMSERVICE\n");
+  lines.push(BOLD_OFF);
+  lines.push(hr);
 
-  // ===== BLOCCO DETTAGLI (tutto più grande) =====
-  out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
-  out.push("CLIENTE", nl);
-  out.push(BOLD_OFF);
-  wrap(cliente, 28).forEach(l => out.push(l, nl));
-  if (telefono) out.push("TEL: ", telefono, nl);
-  out.push(SIZE_1X1, hr);
+  // scheda grande ma NON gigante
+  lines.push(BOLD_ON);
+  lines.push(SIZE_2X1);
+  lines.push(`SCHEDA: ${numeroScheda}\n`);
+  lines.push(SIZE_1X1);
+  lines.push(BOLD_OFF);
 
-  out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
-  out.push("DISPOSITIVO", nl);
-  out.push(BOLD_OFF);
-  wrap(dispositivo, 28).forEach(l => out.push(l, nl));
-  if (seriale) out.push("SN: ", seriale, nl);
-  out.push(SIZE_1X1, hr);
+  lines.push(`TIPO:  ${type}\n`);
+  if (dataIngresso) lines.push(`DATA:  ${dataIngresso}\n`);
+  lines.push(sep);
 
+  // cliente
+  lines.push(BOLD_ON);
+  lines.push("CLIENTE:\n");
+  lines.push(BOLD_OFF);
+  wrap(cliente, 42).forEach(l => lines.push(l + nl));
+  if (telefono) lines.push(`TEL:     ${telefono}\n`);
+  lines.push(sep);
+
+  // dispositivo
+  lines.push(BOLD_ON);
+  lines.push("DISPOSITIVO:\n");
+  lines.push(BOLD_OFF);
+  wrap(dispositivo, 42).forEach(l => lines.push(l + nl));
+  if (seriale) lines.push(`SN:      ${seriale}\n`);
+  lines.push(sep);
+
+  // difetto
   if (difetto) {
-    out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
-    out.push("DIFETTO", nl);
-    out.push(BOLD_OFF);
-    wrap(difetto, 28).forEach(l => out.push(l, nl));
-    out.push(SIZE_1X1, hr);
+    lines.push(BOLD_ON);
+    lines.push("DIFETTO:\n");
+    lines.push(BOLD_OFF);
+    wrap(difetto, 42).forEach(l => lines.push(l + nl));
+    lines.push(sep);
   }
 
-  // ===== COSTO: mega leggibile, NIENTE underline, NIENTE riga strana =====
-  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
-  out.push("COSTO", nl);
-  out.push(SIZE_2X2);
-  out.push(costo, nl);
-  out.push(SIZE_1X1, BOLD_OFF);
+  // costo: più leggibile (grande + bold), NIENTE underline => niente riga strana
+  lines.push(BOLD_ON);
+  lines.push(SIZE_2X2);
+  lines.push(`COSTO: ${costo}\n`);
+  lines.push(SIZE_1X1);
+  lines.push(BOLD_OFF);
 
-  // ===== FEED + CUT =====
-  out.push(nl, nl, nl, nl);
-  out.push(LINE_SP_DEF);
-  out.push(cut);
-  out.push("\x00");
+  lines.push(hr);
 
-  return out.join("");
+  // feed + cut
+  lines.push("\n\n\n");
+  lines.push(cut);
+  lines.push("\x00");
+
+  return lines.join("");
 }
 
 (async function(){
