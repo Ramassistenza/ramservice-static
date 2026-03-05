@@ -46,8 +46,12 @@ async function fetchLabelData() {
   qs.set("type", type);
   qs.set("id", value); // sul backend ora accetta sia ragicId sia Numero Scheda
 
-  const url = `${BACKEND_BASE}/api/label?${qs.toString()}`;
-  log("GET " + url);
+  const url = `${BACKEND_BASE}/api/label?id=${encodeURIComponent(id || "")}` +
+            `&numero=${encodeURIComponent(getParam("numero") || "")}` +
+            `&type=${encodeURIComponent(type)}` +
+            `&_=${Date.now()}`; // cache-bust
+
+  log(`PARAMS id=${id} numero=${getParam("numero")} type=${type}`);
 
   const res = await fetch(url, { method: "GET" });
   if (!res.ok) {
