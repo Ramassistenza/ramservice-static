@@ -1,136 +1,182 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Stampa Etichetta 80mm</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://unpkg.com/qz-tray/qz-tray.js"></script>
-  <style>
-    body { font-family: monospace; background:#111; color:#0f0; padding:12px; }
-    .ok { color:#0f0; }
-    .err { color:#f55; }
-    pre { white-space: pre-wrap; word-wrap: break-word; }
-  </style>
+<meta charset="utf-8">
+<title>Stampa Etichetta 80mm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://unpkg.com/qz-tray/qz-tray.js"></script>
+
+<style>
+body{font-family:monospace;background:#111;color:#0f0;padding:12px}
+.ok{color:#0f0}
+.err{color:#f55}
+pre{white-space:pre-wrap;word-wrap:break-word}
+</style>
 </head>
+
 <body>
-  <pre id="log"></pre>
+
+<pre id="log"></pre>
 
 <script>
-const logEl = document.getElementById("log");
-const log = (msg, cls="") => {
-  logEl.innerHTML += (cls ? `<span class="${cls}">` : "") + msg + (cls ? `</span>` : "") + "\n";
-  console.log(msg);
-};
 
-function getParam(name) {
+const logEl = document.getElementById("log");
+
+function log(msg,cls=""){
+  logEl.innerHTML += (cls?`<span class="${cls}">`:"") + msg + (cls?`</span>`:"") + "\n";
+  console.log(msg);
+}
+
+function getParam(name){
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
 
-// ✅ METTI QUI IL TUO CLOUD RUN (base url)
-const BACKEND_BASE = "https://ramservice-signature-721276708443.europe-west1.run.app"; // <-- CAMBIA
+function onlyDigits(v){
+  return String(v || "").replace(/\D+/g,"");
+}
 
-// Nome stampante QZ
-const PRINTER_NAME = "Aclas Printer"; // <-- se diverso, cambia
+const BACKEND_BASE = "https://ramservice-signature-721276708443.europe-west1.run.app";
+const PRINTER_NAME = "Aclas Printer";
 
-async function fetchLabelData() {
-  const id = getParam("id");              // può essere _ragicId
-  const numero = getParam("numero");      // fallback: Numero Scheda
+
+async function fetchLabelData(){
+
+  const idRaw = getParam("id");
+  const numeroRaw = getParam("numero");
   const type = getParam("type") || "accettazione";
 
-  // preferisco id, ma se manca uso numero
-  const value = id || numero;
-  if (!value) throw new Error("Parametro mancante: ?id oppure ?numero");
+  const id = onlyDigits(idRaw);
+  const numero = onlyDigits(numeroRaw);
+
+  log(`PARAMS id=${idRaw} → ${id || "-"} numero=${numeroRaw} → ${numero || "-"} type=${type}`);
+
+  if(!id && !numero){
+    throw new Error("Parametro id o numero mancante");
+  }
 
   const qs = new URLSearchParams();
-  qs.set("type", type);
-  qs.set("id", value); // sul backend ora accetta sia ragicId sia Numero Scheda
 
-  const url = `${BACKEND_BASE}/api/label?id=${encodeURIComponent(id || "")}` +
-            `&numero=${encodeURIComponent(getParam("numero") || "")}` +
-            `&type=${encodeURIComponent(type)}` +
-            `&_=${Date.now()}`; // cache-bust
+  if(id) qs.set("id",id);
+  if(numero) qs.set("numero",numero);
 
-  log(`PARAMS id=${id} numero=${getParam("numero")} type=${type}`);
+  qs.set("type",type);
 
-  const res = await fetch(url, { method: "GET" });
-  if (!res.ok) {
-    const t = await res.text().catch(() => "");
+  const url = `${BACKEND_BASE}/api/label?${qs.toString()}&_=${Date.now()}`;
+
+  log("GET "+url);
+
+  const res = await fetch(url);
+
+  if(!res.ok){
+    const t = await res.text().catch(()=> "");
     throw new Error(`Backend ${res.status} ${t}`);
   }
+
   return res.json();
 }
 
-function escposText(label) {
-  // 80mm: 42-48 colonne circa (dipende dal font). Qui stiamo larghi.
-  const hr = "==========================================\n";
-  const cut = "\x1D\x56\x41"; // cut parziale (molte termiche ok)
 
-  const lines = [];
-  lines.push("\x1B\x40");           // init
-  lines.push("\x1B\x61\x01");       // center
-  lines.push("\x1B\x21\x20");       // doppia altezza
-  lines.push("RAMSERVICE\n");
-  lines.push("\x1B\x21\x00");       // normale
-  lines.push(hr);
+function escposText(label){
 
-  lines.push("\x1B\x61\x00");       // left
+const hr="==========================================\n";
+const cut="\x1D\x56\x41";
 
-  lines.push(`SCHEDA: ${label.numeroScheda}\n`);
-  lines.push(`TIPO:  ${(label.type || "").toUpperCase()}\n`);
-  if (label.dataIngresso) lines.push(`DATA:  ${label.dataIngresso}\n`);
-  lines.push("------------------------------------------\n");
-  lines.push(`CLIENTE: ${label.cliente}\n`);
-  if (label.telefono) lines.push(`TEL:     ${label.telefono}\n`);
-  lines.push("------------------------------------------\n");
-  lines.push(`DEVICE:  ${label.dispositivo}\n`);
-  if (label.seriale) lines.push(`SN:      ${label.seriale}\n`);
-  lines.push("------------------------------------------\n");
+const lines=[];
 
-  if (label.difetto) {
-    lines.push("DIFETTO:\n");
-    lines.push(String(label.difetto).replace(/\r/g,"") + "\n");
-    lines.push("------------------------------------------\n");
-  }
+lines.push("\x1B\x40");
+lines.push("\x1B\x61\x01");
+lines.push("\x1B\x21\x20");
+lines.push("RAMSERVICE\n");
+lines.push("\x1B\x21\x00");
+lines.push(hr);
 
-  lines.push("\x1B\x61\x01");       // center
-  lines.push("\x1B\x45\x01");       // bold on
-  lines.push(`COSTO: ${label.costo}\n`);
-  lines.push("\x1B\x45\x00");       // bold off
-  lines.push(hr);
+lines.push("\x1B\x61\x00");
 
-  lines.push("\n\n\n");
-  lines.push(cut);
-  lines.push("\x00");
-  return lines.join("");
+lines.push(`SCHEDA: ${label.numeroScheda}\n`);
+lines.push(`TIPO: ${(label.type||"").toUpperCase()}\n`);
+
+if(label.dataIngresso)
+lines.push(`DATA: ${label.dataIngresso}\n`);
+
+lines.push("------------------------------------------\n");
+
+lines.push(`CLIENTE: ${label.cliente}\n`);
+
+if(label.telefono)
+lines.push(`TEL: ${label.telefono}\n`);
+
+lines.push("------------------------------------------\n");
+
+lines.push(`DEVICE: ${label.dispositivo}\n`);
+
+if(label.seriale)
+lines.push(`SN: ${label.seriale}\n`);
+
+lines.push("------------------------------------------\n");
+
+if(label.difetto){
+lines.push("DIFETTO:\n");
+lines.push(label.difetto+"\n");
+lines.push("------------------------------------------\n");
 }
 
+lines.push("\x1B\x61\x01");
+lines.push("\x1B\x45\x01");
+lines.push(`COSTO: ${label.costo}\n`);
+lines.push("\x1B\x45\x00");
+
+lines.push(hr);
+
+lines.push("\n\n\n");
+lines.push(cut);
+lines.push("\x00");
+
+return lines.join("");
+}
+
+
+
 (async function(){
-  try {
-    log("Connessione QZ…");
-    await qz.websocket.connect();
-    log("QZ connesso ✅", "ok");
 
-    log("Leggo dati etichetta…");
-    const data = await fetchLabelData();
-    if (!data.ok) throw new Error("Risposta non ok");
+try{
 
-    log("Dati ricevuti ✅", "ok");
+log("Connessione QZ…");
 
-    const config = qz.configs.create(PRINTER_NAME);
+await qz.websocket.connect();
 
-    const raw = escposText(data);
+log("QZ connesso ✅","ok");
 
-    log("Stampa in corso…");
-    await qz.print(config, [{ type: "raw", format: "command", data: raw }]);
-    log("Stampato ✅", "ok");
+log("Leggo dati etichetta…");
 
-    setTimeout(() => window.close(), 800);
-  } catch (e) {
-    log("ERRORE: " + (e.message || e), "err");
-    // lascia aperto per leggere
-  }
+const data = await fetchLabelData();
+
+if(!data.ok) throw new Error("Risposta non ok");
+
+log("Dati ricevuti ✅","ok");
+
+const config=qz.configs.create(PRINTER_NAME);
+
+const raw=escposText(data);
+
+log("Stampa in corso…");
+
+await qz.print(config,[{type:"raw",format:"command",data:raw}]);
+
+log("Stampato ✅","ok");
+
+setTimeout(()=>window.close(),800);
+
+}catch(e){
+
+log("ERRORE: "+(e.message||e),"err");
+
+}
+
 })();
+
 </script>
+
 </body>
 </html>
