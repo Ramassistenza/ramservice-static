@@ -83,44 +83,164 @@ async function fetchLabelData() {
 }
 
 function escposText(label) {
-  const hr = "==========================================\n";
-  const cut = "\x1D\x56\x41";
+  // ===== helpers =====
+  const nl = "\n";
+  const cut = "\x1D\x56\x41";               // partial cut
+  const beep = "\x1B\x42\x02\x03";          // beep (non tutte le stampanti)
+  const hr = "------------------------------------------" + nl;
+
+  // pulizia testi lunghi
+  const clean = (s) =>
+    String(s || "")
+      .replace(/\r/g, "")
+      .replace(/[ \t]+/g, " ")
+      .trim();
+
+  // wrap per 80mm: 42 char circa (font A)
+  const wrap = (text, width = 42) => {
+    const t = clean(text);
+    if (!t) return [];
+    const words = t.split(" ");
+    const out = [];
+    let line = "";
+    for (const w of words) {
+      if (!line) {
+        line = w;
+      } else if ((line + " " + w).length <= width) {
+        line += " " + w;
+      } else {
+        out.push(line);
+        line = w;
+      }
+    }
+    if (line) out.push(line);
+    return out;
+  };
+
+  // ===== ESC/POS quality (più scuro possibile) =====
+  // NOTA: alcuni comandi variano per modello. Questi sono abbastanza “safe”
+  const INIT = "\x1B\x40";
+
+  // stampa più scura: density/energy/slow
+  // 1) Print speed più lenta (se supportato)
+  const SLOW_PRINT = "\x1F\x11\x02";
+
+  // 2) “Density” alta (alcuni modelli la interpretano)
+  const DENSITY_HIGH = "\x1D\x7C\x0A";
+
+  // 3) Heat time/interval (molte termiche ESC/POS compatibili)
+  //    GS ( E pL pH fn m t n  (fn=2) — set print density/heat
+  //    Questo è un “best effort”; se la tua stampante lo ignora, non fa danni.
+  const HEAT_STRONG = "\x1D\x28\x45\x04\x00\x02\x08\x02\x02";
+
+  // ===== text styles =====
+  const ALIGN_LEFT = "\x1B\x61\x00";
+  const ALIGN_CENTER = "\x1B\x61\x01";
+  const BOLD_ON = "\x1B\x45\x01";
+  const BOLD_OFF = "\x1B\x45\x00";
+  const UNDER_ON = "\x1B\x2D\x01";
+  const UNDER_OFF = "\x1B\x2D\x00";
+  const FONT_A = "\x1B\x4D\x00"; // più leggibile
+  const SIZE_1X1 = "\x1D\x21\x00";
+  const SIZE_2X2 = "\x1D\x21\x11"; // grande
+  const SIZE_2X1 = "\x1D\x21\x10"; // alto
+  const SIZE_1X2 = "\x1D\x21\x01"; // largo
+
+  // ===== fields =====
+  const numeroScheda = clean(label.numeroScheda);
+  const type = clean(label.type).toUpperCase();
+  const dataIngresso = clean(label.dataIngresso);
+  const cliente = clean(label.cliente);
+  const telefono = clean(label.telefono);
+  const dispositivo = clean(label.dispositivo);
+  const seriale = clean(label.seriale);
+  const difetto = clean(label.difetto);
+  const costo = clean(label.costo);
 
   const lines = [];
-  lines.push("\x1B\x40");           // init
-  lines.push("\x1B\x61\x01");       // center
-  lines.push("\x1B\x21\x20");       // doppia altezza
-  lines.push("RAMSERVICE\n");
-  lines.push("\x1B\x21\x00");
+
+  // ===== INIT + qualità =====
+  lines.push(INIT);
+  lines.push(FONT_A);
+  lines.push(SLOW_PRINT);
+  lines.push(DENSITY_HIGH);
+  lines.push(HEAT_STRONG);
+
+  // ===== HEADER =====
+  lines.push(ALIGN_CENTER);
+  lines.push(BOLD_ON);
+  lines.push(SIZE_2X2);
+  lines.push("RAMSERVICE" + nl);
+  lines.push(SIZE_1X1);
+  lines.push(BOLD_OFF);
+
   lines.push(hr);
 
-  lines.push("\x1B\x61\x00");       // left
-  lines.push(`SCHEDA: ${label.numeroScheda}\n`);
-  lines.push(`TIPO:  ${(label.type || "").toUpperCase()}\n`);
-  if (label.dataIngresso) lines.push(`DATA:  ${label.dataIngresso}\n`);
-  lines.push("------------------------------------------\n");
-  lines.push(`CLIENTE: ${label.cliente}\n`);
-  if (label.telefono) lines.push(`TEL:     ${label.telefono}\n`);
-  lines.push("------------------------------------------\n");
-  lines.push(`DEVICE:  ${label.dispositivo}\n`);
-  if (label.seriale) lines.push(`SN:      ${label.seriale}\n`);
-  lines.push("------------------------------------------\n");
+  // ===== SCHEDA (molto evidente) =====
+  lines.push(ALIGN_CENTER);
+  lines.push(BOLD_ON);
+  lines.push(SIZE_2X2);
+  lines.push("SCHEDA " + (numeroScheda || "-") + nl);
+  lines.push(SIZE_1X1);
+  lines.push(BOLD_OFF);
 
-  if (label.difetto) {
-    lines.push("DIFETTO:\n");
-    lines.push(String(label.difetto).replace(/\r/g,"") + "\n");
-    lines.push("------------------------------------------\n");
+  lines.push(ALIGN_LEFT);
+  lines.push(`TIPO: ${type || "-"}` + nl);
+  if (dataIngresso) lines.push(`DATA: ${dataIngresso}` + nl);
+  lines.push(hr);
+
+  // ===== CLIENTE =====
+  lines.push(BOLD_ON);
+  lines.push("CLIENTE" + nl);
+  lines.push(BOLD_OFF);
+  wrap(cliente || "-", 42).forEach(l => lines.push(l + nl));
+  if (telefono) lines.push("TEL: " + telefono + nl);
+  lines.push(hr);
+
+  // ===== DISPOSITIVO =====
+  lines.push(BOLD_ON);
+  lines.push("DISPOSITIVO" + nl);
+  lines.push(BOLD_OFF);
+
+  // device un po’ più grande
+  lines.push(SIZE_2X1);
+  wrap(dispositivo || "-", 32).forEach(l => lines.push(l + nl));
+  lines.push(SIZE_1X1);
+
+  if (seriale) {
+    lines.push("SN: " + seriale + nl);
+  }
+  lines.push(hr);
+
+  // ===== DIFETTO =====
+  if (difetto) {
+    lines.push(BOLD_ON);
+    lines.push("DIFETTO" + nl);
+    lines.push(BOLD_OFF);
+    wrap(difetto, 42).forEach(l => lines.push(l + nl));
+    lines.push(hr);
   }
 
-  lines.push("\x1B\x61\x01");       // center
-  lines.push("\x1B\x45\x01");       // bold on
-  lines.push(`COSTO: ${label.costo}\n`);
-  lines.push("\x1B\x45\x00");       // bold off
-  lines.push(hr);
+  // ===== COSTO (mega bold) =====
+  lines.push(ALIGN_CENTER);
+  lines.push(BOLD_ON);
+  lines.push(UNDER_ON);
+  lines.push(SIZE_2X2);
+  lines.push((costo ? `€ ${costo.replace("€", "").trim()}` : "€ -") + nl);
+  lines.push(SIZE_1X1);
+  lines.push(UNDER_OFF);
+  lines.push(BOLD_OFF);
 
-  lines.push("\n\n\n");
+  lines.push(nl);
+  lines.push(ALIGN_CENTER);
+  lines.push("Grazie! Conserva questa etichetta." + nl);
+
+  // ===== FEED + CUT =====
+  lines.push(nl + nl + nl);
+  lines.push(beep); // se non supportato, viene ignorato
   lines.push(cut);
   lines.push("\x00");
+
   return lines.join("");
 }
 
