@@ -83,165 +83,136 @@ async function fetchLabelData() {
 }
 
 function escposText(label) {
-  // ===== helpers =====
-  const nl = "\n";
-  const cut = "\x1D\x56\x41";               // partial cut
-  const beep = "\x1B\x42\x02\x03";          // beep (non tutte le stampanti)
-  const hr = "------------------------------------------" + nl;
+  const nl  = "\n";
+  const cut = "\x1D\x56\x41"; // partial cut
 
-  // pulizia testi lunghi
+  // ===== ESC/POS commands =====
+  const INIT         = "\x1B\x40";
+  const ALIGN_LEFT   = "\x1B\x61\x00";
+  const ALIGN_CENTER = "\x1B\x61\x01";
+  const BOLD_ON      = "\x1B\x45\x01";
+  const BOLD_OFF     = "\x1B\x45\x00";
+
+  // Font: A è più leggibile in grande
+  const FONT_A       = "\x1B\x4D\x00";
+
+  // Size (GS ! n)
+  const SIZE_1X1     = "\x1D\x21\x00";
+  const SIZE_2X1     = "\x1D\x21\x10"; // alto (più leggibile)
+  const SIZE_2X2     = "\x1D\x21\x11"; // molto grande
+
+  // Line spacing un po' più “aria” (ESC 3 n)
+  const LINE_SP_24   = "\x1B\x33\x18"; // 24
+  const LINE_SP_DEF  = "\x1B\x32";     // default
+
+  // qualità (best effort, se ignorati non fanno danni)
+  const SLOW_PRINT   = "\x1F\x11\x02";
+  const DENSITY_HIGH = "\x1D\x7C\x0A";
+  const HEAT_STRONG  = "\x1D\x28\x45\x04\x00\x02\x08\x02\x02";
+
+  // ===== helpers =====
   const clean = (s) =>
     String(s || "")
       .replace(/\r/g, "")
       .replace(/[ \t]+/g, " ")
       .trim();
 
-  // wrap per 80mm: 42 char circa (font A)
-  const wrap = (text, width = 42) => {
+  // wrap per 80mm con font grande (meno colonne)
+  const wrap = (text, width = 28) => {
     const t = clean(text);
     if (!t) return [];
     const words = t.split(" ");
     const out = [];
     let line = "";
     for (const w of words) {
-      if (!line) {
-        line = w;
-      } else if ((line + " " + w).length <= width) {
-        line += " " + w;
-      } else {
-        out.push(line);
-        line = w;
-      }
+      if (!line) line = w;
+      else if ((line + " " + w).length <= width) line += " " + w;
+      else { out.push(line); line = w; }
     }
     if (line) out.push(line);
     return out;
   };
 
-  // ===== ESC/POS quality (più scuro possibile) =====
-  // NOTA: alcuni comandi variano per modello. Questi sono abbastanza “safe”
-  const INIT = "\x1B\x40";
-
-  // stampa più scura: density/energy/slow
-  // 1) Print speed più lenta (se supportato)
-  const SLOW_PRINT = "\x1F\x11\x02";
-
-  // 2) “Density” alta (alcuni modelli la interpretano)
-  const DENSITY_HIGH = "\x1D\x7C\x0A";
-
-  // 3) Heat time/interval (molte termiche ESC/POS compatibili)
-  //    GS ( E pL pH fn m t n  (fn=2) — set print density/heat
-  //    Questo è un “best effort”; se la tua stampante lo ignora, non fa danni.
-  const HEAT_STRONG = "\x1D\x28\x45\x04\x00\x02\x08\x02\x02";
-
-  // ===== text styles =====
-  const ALIGN_LEFT = "\x1B\x61\x00";
-  const ALIGN_CENTER = "\x1B\x61\x01";
-  const BOLD_ON = "\x1B\x45\x01";
-  const BOLD_OFF = "\x1B\x45\x00";
-  const UNDER_ON = "\x1B\x2D\x01";
-  const UNDER_OFF = "\x1B\x2D\x00";
-  const FONT_A = "\x1B\x4D\x00"; // più leggibile
-  const SIZE_1X1 = "\x1D\x21\x00";
-  const SIZE_2X2 = "\x1D\x21\x11"; // grande
-  const SIZE_2X1 = "\x1D\x21\x10"; // alto
-  const SIZE_1X2 = "\x1D\x21\x01"; // largo
+  const hr = "------------------------------" + nl;
 
   // ===== fields =====
-  const numeroScheda = clean(label.numeroScheda);
-  const type = clean(label.type).toUpperCase();
+  const numeroScheda = clean(label.numeroScheda) || "-";
+  const type         = (clean(label.type) || "ACCETTAZIONE").toUpperCase();
   const dataIngresso = clean(label.dataIngresso);
-  const cliente = clean(label.cliente);
-  const telefono = clean(label.telefono);
-  const dispositivo = clean(label.dispositivo);
-  const seriale = clean(label.seriale);
-  const difetto = clean(label.difetto);
-  const costo = clean(label.costo);
+  const cliente      = clean(label.cliente) || "-";
+  const telefono     = clean(label.telefono);
+  const dispositivo  = clean(label.dispositivo) || "-";
+  const seriale      = clean(label.seriale);
+  const difetto      = clean(label.difetto);
+  const costoRaw     = clean(label.costo);
 
-  const lines = [];
+  // normalizza costo (evita robe strane tipo "0" isolato)
+  const costo = costoRaw ? costoRaw.replace(/\s+/g, " ").trim() : "-";
+
+  const out = [];
 
   // ===== INIT + qualità =====
-  lines.push(INIT);
-  lines.push(FONT_A);
-  lines.push(SLOW_PRINT);
-  lines.push(DENSITY_HIGH);
-  lines.push(HEAT_STRONG);
+  out.push(INIT, FONT_A, SLOW_PRINT, DENSITY_HIGH, HEAT_STRONG, LINE_SP_24);
 
-  // ===== HEADER =====
-  lines.push(ALIGN_CENTER);
-  lines.push(BOLD_ON);
-  lines.push(SIZE_2X2);
-  lines.push("RAMSERVICE" + nl);
-  lines.push(SIZE_1X1);
-  lines.push(BOLD_OFF);
+  // ===== HEADER grande =====
+  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
+  out.push("RAMSERVICE", nl);
+  out.push(SIZE_1X1, BOLD_OFF);
+  out.push(hr);
 
-  lines.push(hr);
+  // ===== SCHEDA molto evidente =====
+  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
+  out.push("SCHEDA ", numeroScheda, nl);
+  out.push(SIZE_1X1, BOLD_OFF);
 
-  // ===== SCHEDA (molto evidente) =====
-  lines.push(ALIGN_CENTER);
-  lines.push(BOLD_ON);
-  lines.push(SIZE_2X2);
-  lines.push("SCHEDA " + (numeroScheda || "-") + nl);
-  lines.push(SIZE_1X1);
-  lines.push(BOLD_OFF);
-
-  lines.push(ALIGN_LEFT);
-  lines.push(`TIPO: ${type || "-"}` + nl);
-  if (dataIngresso) lines.push(`DATA: ${dataIngresso}` + nl);
-  lines.push(hr);
-
-  // ===== CLIENTE =====
-  lines.push(BOLD_ON);
-  lines.push("CLIENTE" + nl);
-  lines.push(BOLD_OFF);
-  wrap(cliente || "-", 42).forEach(l => lines.push(l + nl));
-  if (telefono) lines.push("TEL: " + telefono + nl);
-  lines.push(hr);
-
-  // ===== DISPOSITIVO =====
-  lines.push(BOLD_ON);
-  lines.push("DISPOSITIVO" + nl);
-  lines.push(BOLD_OFF);
-
-  // device un po’ più grande
-  lines.push(SIZE_2X1);
-  wrap(dispositivo || "-", 32).forEach(l => lines.push(l + nl));
-  lines.push(SIZE_1X1);
-
-  if (seriale) {
-    lines.push("SN: " + seriale + nl);
+  // Tipo/Data
+  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X1);
+  out.push(type, nl);
+  out.push(SIZE_1X1, BOLD_OFF);
+  if (dataIngresso) {
+    out.push(ALIGN_CENTER, SIZE_2X1);
+    out.push("DATA ", dataIngresso, nl);
+    out.push(SIZE_1X1);
   }
-  lines.push(hr);
+  out.push(hr);
 
-  // ===== DIFETTO =====
+  // ===== BLOCCO DETTAGLI (tutto più grande) =====
+  out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
+  out.push("CLIENTE", nl);
+  out.push(BOLD_OFF);
+  wrap(cliente, 28).forEach(l => out.push(l, nl));
+  if (telefono) out.push("TEL: ", telefono, nl);
+  out.push(SIZE_1X1, hr);
+
+  out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
+  out.push("DISPOSITIVO", nl);
+  out.push(BOLD_OFF);
+  wrap(dispositivo, 28).forEach(l => out.push(l, nl));
+  if (seriale) out.push("SN: ", seriale, nl);
+  out.push(SIZE_1X1, hr);
+
   if (difetto) {
-    lines.push(BOLD_ON);
-    lines.push("DIFETTO" + nl);
-    lines.push(BOLD_OFF);
-    wrap(difetto, 42).forEach(l => lines.push(l + nl));
-    lines.push(hr);
+    out.push(ALIGN_LEFT, BOLD_ON, SIZE_2X1);
+    out.push("DIFETTO", nl);
+    out.push(BOLD_OFF);
+    wrap(difetto, 28).forEach(l => out.push(l, nl));
+    out.push(SIZE_1X1, hr);
   }
 
-  // ===== COSTO (mega bold) =====
-  lines.push(ALIGN_CENTER);
-  lines.push(BOLD_ON);
-  lines.push(UNDER_ON);
-  lines.push(SIZE_2X2);
-  lines.push((costo ? `€ ${costo.replace("€", "").trim()}` : "€ -") + nl);
-  lines.push(SIZE_1X1);
-  lines.push(UNDER_OFF);
-  lines.push(BOLD_OFF);
-
-  lines.push(nl);
-  lines.push(ALIGN_CENTER);
-  lines.push("Grazie! Conserva questa etichetta." + nl);
+  // ===== COSTO: mega leggibile, NIENTE underline, NIENTE riga strana =====
+  out.push(ALIGN_CENTER, BOLD_ON, SIZE_2X2);
+  out.push("COSTO", nl);
+  out.push(SIZE_2X2);
+  out.push(costo, nl);
+  out.push(SIZE_1X1, BOLD_OFF);
 
   // ===== FEED + CUT =====
-  lines.push(nl + nl + nl);
-  lines.push(beep); // se non supportato, viene ignorato
-  lines.push(cut);
-  lines.push("\x00");
+  out.push(nl, nl, nl, nl);
+  out.push(LINE_SP_DEF);
+  out.push(cut);
+  out.push("\x00");
 
-  return lines.join("");
+  return out.join("");
 }
 
 (async function(){
