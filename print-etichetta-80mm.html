@@ -194,6 +194,32 @@ function escposText(label) {
   return lines.join("");
 }
 
+// ===== QZ MESSAGE SIGNING =====
+
+qz.security.setCertificatePromise(function(resolve, reject) {
+
+  fetch("https://ramservice-signature-721276708443.europe-west1.run.app/qz/cert")
+  .then(res => res.text())
+  .then(resolve)
+  .catch(reject);
+
+});
+
+qz.security.setSignatureAlgorithm("SHA512");
+
+qz.security.setSignaturePromise(function(toSign) {
+
+  return function(resolve, reject) {
+
+    fetch("https://ramservice-signature-721276708443.europe-west1.run.app/qz/sign?request=" + encodeURIComponent(toSign))
+    .then(res => res.text())
+    .then(resolve)
+    .catch(reject);
+
+  };
+
+});
+
 (async function(){
   try {
     log("Connessione QZ…");
