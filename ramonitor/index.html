@@ -75,18 +75,26 @@
       try {
         const res = await fetch(MANIFEST_URL + "?t=" + Date.now(), { cache: "no-store" });
         const list = await res.json();
-
+  
         if (Array.isArray(list) && list.length) {
-          IMAGES = list.map(f =>
-            IMG_BASE + encodeURIComponent(f) + "?t=" + Date.now()
-          );
-          index = index % IMAGES.length;
+          const newImages = list.map(f => IMG_BASE + encodeURIComponent(f));
+  
+          const changed =
+            newImages.length !== IMAGES.length ||
+            newImages.some((img, i) => img !== IMAGES[i]);
+  
+          if (changed) {
+            IMAGES = newImages;
+            index = index % IMAGES.length;
+            console.log("Manifest aggiornato, immagini ricaricate:", IMAGES.length);
+          } else {
+            console.log("Manifest invariato, nessun cambio immagini");
+          }
         }
       } catch (e) {
         console.warn("Errore caricamento manifest:", e);
       }
     }
-
 
     // =============================
     // AVVIO
