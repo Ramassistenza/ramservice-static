@@ -5,24 +5,41 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RAMONITOR — Slideshow</title>
   <style>
-    html, body { margin:0; padding:0; height:100%; width:100%; overflow:hidden; background:#000; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
     .rotated {
-      position:fixed; top:0; left:0;
-      width:100vh; height:100vw;
-      transform:rotate(90deg) translateY(-100%);
-      transform-origin:top left;
-      background:#000; overflow:hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vh;
+      height: 100vw;
+      transform: rotate(90deg) translateY(-100%);
+      transform-origin: top left;
+      background: #000;
+      overflow: hidden;
     }
+
     .layer {
-      position:absolute; inset:0;
-      background-position:center center;
-      background-size:cover;
-      background-repeat:no-repeat;
-      opacity:0;
-      transition:opacity .5s linear;
-      will-change: opacity, background-image;
+      position: absolute;
+      inset: 0;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity .5s linear;
+      will-change: opacity;
     }
-    .layer.show { opacity:1; }
+
+    .layer.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -37,207 +54,316 @@
     // =============================
     const MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest.json";
     const IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/";
-    const SLIDE_SECONDS = 7;           // durata slide
-    const REFRESH_MINUTES = 5;         // ogni quanto rileggere la cartella
-    const FULLSCREEN_PING_SEC = 60;    // tenta fullscreen periodico
-    const KEEPALIVE_VIDEO_SEC = 25;    // riprodurre/riavviare il video
-    const AUDIO_PING_SEC = 30;         // ping audio a volume ~0
-    const NET_PING_SEC = 45;           // richiesta rete periodica
-    const RAF_JIGGLE_MS = 2000;        // micro attività su GPU/JS
+    const SLIDE_SECONDS = 7;
+    const REFRESH_MINUTES = 5;
+    const FULLSCREEN_PING_SEC = 60;
+    const KEEPALIVE_VIDEO_SEC = 25;
+    const AUDIO_PING_SEC = 30;
+    const NET_PING_SEC = 45;
+    const RAF_JIGGLE_MS = 2000;
+
+    // Preload in memoria per evitare richieste duplicate durante il loop
+    const imageCache = new Map();
 
     let IMAGES = [];
     let index = 0;
     let showingA = true;
+
     const A = document.getElementById("A");
     const B = document.getElementById("B");
     const stage = document.getElementById("stage");
 
+    let slideTimer = null;
+    let refreshTimer = null;
+    let wakeLock = null;
+    let audioCtx = null;
+
+    // =============================
+    // UTILS
+    // =============================
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function preloadImage(url) {
+      return new Promise((resolve) => {
+        if (imageCache.has(url)) {
+          const cached = imageCache.get(url);
+          if (cached.complete) {
+            resolve(cached);
+            return;
+          }
+        }
+
+        const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager";
+
+        img.onload = () => {
+          imageCache.set(url, img);
+          resolve(img);
+        };
+
+        img.onerror = () => {
+          console.warn("Errore preload immagine:", url);
+          resolve(null);
+        };
+
+        img.src = url;
+        imageCache.set(url, img);
+      });
+    }
+
+    function preloadNextImage() {
+      if (!IMAGES.length) return;
+      const nextIndex = index % IMAGES.length;
+      const nextUrl = IMAGES[nextIndex];
+      preloadImage(nextUrl).catch(() => {});
+    }
+
     // =============================
     // SLIDESHOW
     // =============================
-  
-
-    function showNext() {
+    async function showNext() {
       if (!IMAGES.length) return;
+
       const next = IMAGES[index % IMAGES.length];
       const front = showingA ? A : B;
       const back  = showingA ? B : A;
-      // Precaricamento leggero: assegna, poi forza repaint
+
+      const preloaded = await preloadImage(next);
+      if (!preloaded) return;
+
       back.style.backgroundImage = `url("${next}")`;
-      // switch
       back.classList.add("show");
       front.classList.remove("show");
+
       showingA = !showingA;
       index++;
+
+      // preload anticipato della successiva
+      preloadNextImage();
     }
 
     async function refreshImageList() {
       try {
-        const res = await fetch(MANIFEST_URL + "?t=" + Date.now(), { cache: "no-store" });
+        // Solo il manifest ha bust cache, NON le immagini
+        const res = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
+          cache: "no-store"
+        });
+
+        if (!res.ok) {
+          throw new Error(`Manifest HTTP ${res.status}`);
+        }
+
         const list = await res.json();
-  
-        if (Array.isArray(list) && list.length) {
-          const newImages = list.map(f => IMG_BASE + encodeURIComponent(f));
-  
-          const changed =
-            newImages.length !== IMAGES.length ||
-            newImages.some((img, i) => img !== IMAGES[i]);
-  
-          if (changed) {
-            IMAGES = newImages;
-            index = index % IMAGES.length;
-            console.log("Manifest aggiornato, immagini ricaricate:", IMAGES.length);
-          } else {
-            console.log("Manifest invariato, nessun cambio immagini");
+
+        if (!Array.isArray(list) || !list.length) {
+          console.warn("Manifest vuoto o non valido");
+          return;
+        }
+
+        // URL STABILI = cache browser funzionante
+        const newImages = list.map(filename => IMG_BASE + encodeURIComponent(filename));
+
+        // Deduplica eventuali doppioni
+        const uniqueImages = [...new Set(newImages)];
+
+        const changed = !arraysEqual(uniqueImages, IMAGES);
+
+        if (changed) {
+          IMAGES = uniqueImages;
+          index = index % IMAGES.length;
+
+          console.log("Manifest aggiornato. Immagini:", IMAGES.length);
+
+          // Pulisci dalla cache solo le immagini non più presenti
+          for (const key of imageCache.keys()) {
+            if (!IMAGES.includes(key)) {
+              imageCache.delete(key);
+            }
           }
+
+          // preload prima immagine utile
+          preloadNextImage();
+        } else {
+          console.log("Manifest invariato, nessun download inutile.");
         }
       } catch (e) {
         console.warn("Errore caricamento manifest:", e);
       }
     }
 
-    // =============================
-    // AVVIO
-    // =============================
-    let slideTimer = null;
-    let refreshTimer = null;
-
     async function startSlideshow() {
       await refreshImageList();
-      showNext();
+
+      if (IMAGES.length) {
+        await showNext();
+      }
+
       clearInterval(slideTimer);
-      slideTimer = setInterval(showNext, SLIDE_SECONDS * 1000);
+      slideTimer = setInterval(() => {
+        showNext().catch(err => console.warn("Errore slideshow:", err));
+      }, SLIDE_SECONDS * 1000);
+
       clearInterval(refreshTimer);
-      refreshTimer = setInterval(refreshImageList, REFRESH_MINUTES * 60 * 1000);
+      refreshTimer = setInterval(() => {
+        refreshImageList().catch(err => console.warn("Errore refresh:", err));
+      }, REFRESH_MINUTES * 60 * 1000);
     }
 
     // =============================
-    // ANTISTANDBY “MULTI-LEVA”
+    // ANTISTANDBY
     // =============================
-
-    // 1) Wake Lock API (se presente)
-    let wakeLock = null;
     async function requestWakeLock() {
       try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          console.log('🔒 Wake Lock attivo');
-          wakeLock.addEventListener?.('release', () => {
-            console.log('🔓 Wake Lock rilasciato, ritento…');
+        if ("wakeLock" in navigator) {
+          wakeLock = await navigator.wakeLock.request("screen");
+          console.log("🔒 Wake Lock attivo");
+          wakeLock.addEventListener?.("release", () => {
+            console.log("🔓 Wake Lock rilasciato");
           });
         } else {
-          console.log('Wake Lock non supportato');
+          console.log("Wake Lock non supportato");
         }
       } catch (e) {
-        console.warn('Wake Lock errore:', e);
+        console.warn("Wake Lock errore:", e);
       }
     }
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') requestWakeLock();
-    });
-    window.addEventListener('focus', requestWakeLock);
 
-    // 2) Fullscreen periodico (alcuni webOS tengono “vivo” lo schermo)
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        requestWakeLock();
+      }
+    });
+
+    window.addEventListener("focus", requestWakeLock);
+
     async function goFullscreen() {
       try {
         const el = document.documentElement;
-        if (!document.fullscreenElement && el.requestFullscreen) await el.requestFullscreen();
-      } catch (e) { /* ignorato */ }
+        if (!document.fullscreenElement && el.requestFullscreen) {
+          await el.requestFullscreen();
+        }
+      } catch (e) {}
     }
+
     setInterval(goFullscreen, FULLSCREEN_PING_SEC * 1000);
-    // primo tentativo all’avvio
     goFullscreen();
 
-    // 3) Video invisibile keep-alive con restart periodico
+    // Video keepalive locale
     const keepAlive = document.createElement("video");
     keepAlive.src = "keepalive.mp4";
     keepAlive.autoplay = true;
     keepAlive.loop = true;
     keepAlive.muted = true;
     keepAlive.playsInline = true;
-    keepAlive.setAttribute('playsinline','');
+    keepAlive.setAttribute("playsinline", "");
     keepAlive.style = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px;";
     document.body.appendChild(keepAlive);
 
-    // Alcuni browser sospendono i media dopo tot minuti: “stuzzica” il player
     setInterval(() => {
       try {
         keepAlive.currentTime = 0;
-        keepAlive.play().catch(()=>{});
-      } catch(e){}
+        keepAlive.play().catch(() => {});
+      } catch (e) {}
     }, KEEPALIVE_VIDEO_SEC * 1000);
 
-    // 4) AudioContext ping (volume ~0)
-    let audioCtx = null;
     function nudgeAudio() {
       try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        gain.gain.value = 0.0001; // praticamente muto
+
+        gain.gain.value = 0.0001;
         osc.connect(gain).connect(audioCtx.destination);
         osc.start();
-        setTimeout(() => { try { osc.stop(); } catch(e){} }, 200);
+
+        setTimeout(() => {
+          try { osc.stop(); } catch (e) {}
+        }, 200);
       } catch (e) {
-        console.log('AudioContext non disponibile', e);
+        console.log("AudioContext non disponibile", e);
       }
     }
+
     setInterval(nudgeAudio, AUDIO_PING_SEC * 1000);
 
-    // 5) Ping rete periodico (mantiene vivo lo stack)
+    // Ping rete SENZA colpire Cloud Storage
     function netPing() {
-      const url = `${location.href.split('#')[0]}?ping=${Date.now()}`;
-      fetch(url, { cache: 'no-store', mode: 'no-cors' }).catch(()=>{});
-      // ping anche su un’immagine inesistente
-      const img = new Image();
-      img.src = `${IMG_BASE}__ping__.png?t=${Date.now()}`;
+      const url = `${location.origin}${location.pathname}?ping=${Date.now()}`;
+      fetch(url, {
+        cache: "no-store",
+        mode: "no-cors"
+      }).catch(() => {});
     }
+
     setInterval(netPing, NET_PING_SEC * 1000);
 
-    // 6) Micro-interazione JS/GPU via requestAnimationFrame
-    (function rafJiggle(){
+    (function rafJiggle() {
       const t0 = performance.now();
-      function spin(now){
-        // piccolissima attività di layout/paint
-        stage.style.transform = `rotate(90deg) translateY(-100%) translateZ(0)`;
+
+      function spin(now) {
+        stage.style.transform = "rotate(90deg) translateY(-100%) translateZ(0)";
         if (now - t0 < RAF_JIGGLE_MS) {
           requestAnimationFrame(spin);
         } else {
-          setTimeout(rafJiggle, 30000); // ripeti ogni 30s
+          setTimeout(rafJiggle, 30000);
         }
       }
+
       requestAnimationFrame(spin);
     })();
 
-    // 7) Finta attività utente (alcuni browser la ignorano, non nuoce)
     setInterval(() => {
       window.dispatchEvent(new Event("mousemove"));
       window.dispatchEvent(new Event("keydown"));
-      document.body.click?.();
+      if (document.body.click) {
+        try { document.body.click(); } catch (e) {}
+      }
     }, 30000);
 
-    // 8) Riprendi tutto al “risveglio” della pagina
-    window.addEventListener('pageshow', () => {
+    window.addEventListener("pageshow", () => {
       requestWakeLock();
       goFullscreen();
-      keepAlive.play().catch(()=>{});
+      keepAlive.play().catch(() => {});
       nudgeAudio();
       netPing();
-      // riavvia timers slideshow se interrotti
-      if (!slideTimer) slideTimer = setInterval(showNext, SLIDE_SECONDS * 1000);
-      if (!refreshTimer) refreshTimer = setInterval(refreshImageList, REFRESH_MINUTES * 60 * 1000);
+
+      if (!slideTimer) {
+        slideTimer = setInterval(() => {
+          showNext().catch(err => console.warn("Errore slideshow:", err));
+        }, SLIDE_SECONDS * 1000);
+      }
+
+      if (!refreshTimer) {
+        refreshTimer = setInterval(() => {
+          refreshImageList().catch(err => console.warn("Errore refresh:", err));
+        }, REFRESH_MINUTES * 60 * 1000);
+      }
     });
 
     // =============================
     // BOOT
     // =============================
-    (async function boot(){
+    (async function boot() {
       await startSlideshow();
       await requestWakeLock();
-      // Primo “nudge” multicanale
-      goFullscreen(); nudgeAudio(); netPing();
-      keepAlive.play().catch(()=>{});
+      goFullscreen();
+      nudgeAudio();
+      netPing();
+      keepAlive.play().catch(() => {});
     })();
   </script>
 </body>
