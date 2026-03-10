@@ -49,8 +49,7 @@
     var MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json";
     var IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/horizontal/";
     var SLIDE_SECONDS = 7;
-    var REFRESH_SECONDS = 30;          // controllo manifest più frequente
-    var FORCE_RELOAD_MINUTES = 10;     // reload di sicurezza
+    var REFRESH_SECONDS = 20;
     var DEBUG = false;
 
     var slideEl = document.getElementById("slide");
@@ -59,6 +58,8 @@
     var images = [];
     var index = 0;
     var lastManifestSignature = "";
+    var manifestVersion = new Date().getTime();
+    var initialized = false;
 
     function setStatus(msg) {
       if (!DEBUG) return;
@@ -67,7 +68,7 @@
     }
 
     function buildImageUrl(filename) {
-      return IMG_BASE + encodeURIComponent(filename);
+      return IMG_BASE + encodeURIComponent(filename) + "?v=" + manifestVersion;
     }
 
     function showImage(url) {
@@ -103,6 +104,7 @@
 
     function parseManifest(text) {
       var data;
+
       try {
         data = JSON.parse(text);
       } catch (e) {
@@ -122,19 +124,11 @@
       return list.join("|");
     }
 
-    function forceReload() {
-      var base = location.href.split("?")[0];
-      location.replace(base + "?reload=" + new Date().getTime());
-    }
-
     function loadManifest() {
       var xhr = new XMLHttpRequest();
       var url = MANIFEST_URL + "?t=" + new Date().getTime();
 
       xhr.open("GET", url, true);
-      xhr.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-      xhr.setRequestHeader("Pragma", "no-cache");
-      xhr.setRequestHeader("Expires", "0");
 
       xhr.onreadystatechange = function () {
         var newImages;
@@ -156,10 +150,12 @@
         newSignature = manifestSignature(newImages);
         changed = (newSignature !== lastManifestSignature);
 
-        if (changed) {
+        if (!initialized) {
+          initialized = true;
           lastManifestSignature = newSignature;
           images = newImages;
           index = 0;
+          manifestVersion = new Date().getTime();
 
           if (!images.length) {
             clearImage();
@@ -168,12 +164,23 @@
           }
 
           showNext();
+          return;
+        }
 
-          // Su browser vecchi/Opera Mini è più affidabile ricaricare del tutto
-          setTimeout(function () {
-            forceReload();
-          }, 1000);
+        if (changed) {
+          lastManifestSignature = newSignature;
+          images = newImages;
+          index = 0;
+          manifestVersion = new Date().getTime();
 
+          if (!images.length) {
+            clearImage();
+            setStatus("Manifest vuoto");
+            return;
+          }
+
+          showNext();
+          setStatus("Manifest aggiornato: " + images.length + " immagini");
           return;
         }
 
@@ -197,7 +204,6 @@
       loadManifest();
       setInterval(showNext, SLIDE_SECONDS * 1000);
       setInterval(loadManifest, REFRESH_SECONDS * 1000);
-      setInterval(forceReload, FORCE_RELOAD_MINUTES * 60 * 1000);
     }
 
     boot();
