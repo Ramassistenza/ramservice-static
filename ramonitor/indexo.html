@@ -14,16 +14,22 @@
       background: #000;
     }
 
-    #slide {
+    #wrap {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #000;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: contain;
+      background: #000;
+      text-align: center;
+    }
+
+    #slide {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      display: block;
     }
 
     #status {
@@ -34,7 +40,7 @@
       font-family: Arial, sans-serif;
       font-size: 12px;
       color: #fff;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       padding: 4px 8px;
       border-radius: 6px;
       display: none;
@@ -42,7 +48,9 @@
   </style>
 </head>
 <body>
-  <div id="slide"></div>
+  <div id="wrap">
+    <img id="slide" src="" alt="">
+  </div>
   <div id="status"></div>
 
   <script>
@@ -59,7 +67,6 @@
     var index = 0;
     var lastManifestSignature = "";
     var manifestVersion = new Date().getTime();
-    var initialized = false;
 
     function setStatus(msg) {
       if (!DEBUG) return;
@@ -67,44 +74,8 @@
       statusEl.innerHTML = msg;
     }
 
-    function buildImageUrl(filename) {
-      return IMG_BASE + encodeURIComponent(filename) + "?v=" + manifestVersion;
-    }
-
-    function showImage(url) {
-      slideEl.style.backgroundImage = 'url("' + url + '")';
-    }
-
-    function clearImage() {
-      slideEl.style.backgroundImage = "none";
-    }
-
-    function showNext() {
-      var url;
-
-      if (!images || !images.length) {
-        clearImage();
-        setStatus("Nessuna immagine");
-        return;
-      }
-
-      if (index >= images.length) {
-        index = 0;
-      }
-
-      url = buildImageUrl(images[index]);
-      showImage(url);
-      setStatus("Slide " + (index + 1) + "/" + images.length);
-
-      index++;
-      if (index >= images.length) {
-        index = 0;
-      }
-    }
-
     function parseManifest(text) {
       var data;
-
       try {
         data = JSON.parse(text);
       } catch (e) {
@@ -124,6 +95,44 @@
       return list.join("|");
     }
 
+    function buildImageUrl(filename) {
+      return IMG_BASE + encodeURIComponent(filename) + "?v=" + manifestVersion;
+    }
+
+    function showNext() {
+      var filename;
+      var url;
+
+      if (!images || !images.length) {
+        slideEl.removeAttribute("src");
+        setStatus("Nessuna immagine");
+        return;
+      }
+
+      if (index >= images.length) {
+        index = 0;
+      }
+
+      filename = images[index];
+      url = buildImageUrl(filename);
+
+      slideEl.src = url;
+      setStatus("Slide " + (index + 1) + "/" + images.length);
+
+      index++;
+      if (index >= images.length) {
+        index = 0;
+      }
+    }
+
+    slideEl.onerror = function () {
+      setStatus("Errore immagine");
+    };
+
+    slideEl.onload = function () {
+      setStatus("Immagine caricata");
+    };
+
     function loadManifest() {
       var xhr = new XMLHttpRequest();
       var url = MANIFEST_URL + "?t=" + new Date().getTime();
@@ -138,34 +147,15 @@
         if (xhr.readyState !== 4) return;
 
         if (xhr.status !== 200) {
-          setStatus("Errore manifest: HTTP " + xhr.status);
+          setStatus("Errore manifest HTTP " + xhr.status);
           return;
         }
 
         newImages = parseManifest(xhr.responseText);
-        if (newImages === null) {
-          return;
-        }
+        if (newImages === null) return;
 
         newSignature = manifestSignature(newImages);
         changed = (newSignature !== lastManifestSignature);
-
-        if (!initialized) {
-          initialized = true;
-          lastManifestSignature = newSignature;
-          images = newImages;
-          index = 0;
-          manifestVersion = new Date().getTime();
-
-          if (!images.length) {
-            clearImage();
-            setStatus("Manifest vuoto");
-            return;
-          }
-
-          showNext();
-          return;
-        }
 
         if (changed) {
           lastManifestSignature = newSignature;
@@ -174,13 +164,13 @@
           manifestVersion = new Date().getTime();
 
           if (!images.length) {
-            clearImage();
+            slideEl.removeAttribute("src");
             setStatus("Manifest vuoto");
             return;
           }
 
           showNext();
-          setStatus("Manifest aggiornato: " + images.length + " immagini");
+          setStatus("Manifest aggiornato");
           return;
         }
 
@@ -190,7 +180,7 @@
           index = 0;
         }
 
-        setStatus("Manifest OK: " + images.length + " immagini");
+        setStatus("Manifest OK");
       };
 
       xhr.onerror = function () {
