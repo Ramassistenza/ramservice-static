@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAMONITOR — Slideshow Horizontal</title>
+  <title>RAMONITOR — Slideshow Orizzontale</title>
   <style>
     html, body {
       margin: 0;
@@ -41,8 +41,8 @@
 </head>
 <body>
   <div class="stage" id="stage">
-    <div class="layer" id="A"></div>
-    <div class="layer" id="B"></div>
+    <div class="layer" id="A" aria-hidden="true"></div>
+    <div class="layer" id="B" aria-hidden="true"></div>
   </div>
 
   <script>
@@ -71,36 +71,36 @@
       return new Promise((resolve) => {
         if (imageCache.has(url)) {
           const cached = imageCache.get(url);
-          if (cached.complete) return resolve(cached);
+          if (cached.complete) {
+            resolve(cached);
+            return;
+          }
         }
 
         const img = new Image();
+        img.decoding = "async";
+        img.loading = "eager";
+
         img.onload = () => {
           imageCache.set(url, img);
           resolve(img);
         };
-        img.onerror = () => resolve(null);
+
+        img.onerror = () => {
+          console.warn("Errore preload immagine:", url);
+          resolve(null);
+        };
+
         img.src = url;
         imageCache.set(url, img);
       });
     }
 
-    async function refreshImageList() {
-      try {
-        const res = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, { cache: "no-store" });
-        const list = await res.json();
-
-        if (!Array.isArray(list) || !list.length) return;
-
-        const newImages = [...new Set(list.map(filename => IMG_BASE + encodeURIComponent(filename)))];
-
-        if (!arraysEqual(newImages, IMAGES)) {
-          IMAGES = newImages;
-          index = index % IMAGES.length;
-        }
-      } catch (e) {
-        console.warn("Errore caricamento manifest:", e);
-      }
+    function preloadNextImage() {
+      if (!IMAGES.length) return;
+      const nextIndex = index % IMAGES.length;
+      const nextUrl = IMAGES[nextIndex];
+      preloadImage(nextUrl).catch(() => {});
     }
 
     async function showNext() {
@@ -119,14 +119,62 @@
 
       showingA = !showingA;
       index++;
+
+      preloadNextImage();
+    }
+
+    async function refreshImageList() {
+      try {
+        const res = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
+          cache: "no-store"
+        });
+
+        if (!res.ok) {
+          throw new Error(`Manifest HTTP ${res.status}`);
+        }
+
+        const list = await res.json();
+
+        if (!Array.isArray(list) || !list.length) {
+          console.warn("Manifest vuoto o non valido");
+          return;
+        }
+
+        const newImages = list.map(filename => IMG_BASE + encodeURIComponent(filename));
+        const uniqueImages = [...new Set(newImages)];
+        const changed = !arraysEqual(uniqueImages, IMAGES);
+
+        if (changed) {
+          IMAGES = uniqueImages;
+          index = index % IMAGES.length;
+
+          for (const key of imageCache.keys()) {
+            if (!IMAGES.includes(key)) {
+              imageCache.delete(key);
+            }
+          }
+
+          preloadNextImage();
+        }
+      } catch (e) {
+        console.warn("Errore caricamento manifest:", e);
+      }
     }
 
     async function boot() {
       await refreshImageList();
-      if (IMAGES.length) await showNext();
 
-      setInterval(showNext, SLIDE_SECONDS * 1000);
-      setInterval(refreshImageList, REFRESH_MINUTES * 60 * 1000);
+      if (IMAGES.length) {
+        await showNext();
+      }
+
+      setInterval(() => {
+        showNext().catch(err => console.warn("Errore slideshow:", err));
+      }, SLIDE_SECONDS * 1000);
+
+      setInterval(() => {
+        refreshImageList().catch(err => console.warn("Errore refresh:", err));
+      }, REFRESH_MINUTES * 60 * 1000);
     }
 
     boot();
