@@ -1,65 +1,168 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAMONITOR — Orizzontale</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RAMONITOR - Orizzontale</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #000;
       overflow: hidden;
+      background: #000;
     }
+
     #slide {
       position: fixed;
-      inset: 0;
-      background: #000 center center / contain no-repeat;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    #status {
+      position: fixed;
+      left: 10px;
+      bottom: 10px;
+      z-index: 9999;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #fff;
+      background: rgba(0,0,0,0.5);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div id="slide"></div>
+  <div id="status"></div>
 
   <script>
     var MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json";
     var IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/horizontal/";
     var SLIDE_SECONDS = 7;
+    var REFRESH_MINUTES = 5;
+    var DEBUG = false;
 
-    var slide = document.getElementById("slide");
+    var slideEl = document.getElementById("slide");
+    var statusEl = document.getElementById("status");
+
     var images = [];
     var index = 0;
 
-    function loadManifest() {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", MANIFEST_URL + "?t=" + Date.now(), true);
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          try {
-            var list = JSON.parse(xhr.responseText);
-            if (list && list.length) {
-              images = list;
-              if (index >= images.length) index = 0;
-              showNext();
-            }
-          } catch (e) {}
-        }
-      };
-      xhr.send();
+    function setStatus(msg) {
+      if (!DEBUG) return;
+      statusEl.style.display = "block";
+      statusEl.innerHTML = msg;
+    }
+
+    function buildImageUrl(filename) {
+      return IMG_BASE + encodeURIComponent(filename);
+    }
+
+    function showImage(url) {
+      slideEl.style.backgroundImage = 'url("' + url + '")';
     }
 
     function showNext() {
-      if (!images.length) return;
-      var url = IMG_BASE + encodeURIComponent(images[index]);
-      slide.style.backgroundImage = 'url("' + url + '")';
-      index = (index + 1) % images.length;
+      var url;
+
+      if (!images || !images.length) {
+        setStatus("Nessuna immagine");
+        return;
+      }
+
+      if (index >= images.length) {
+        index = 0;
+      }
+
+      url = buildImageUrl(images[index]);
+      showImage(url);
+      setStatus("Slide " + (index + 1) + "/" + images.length);
+
+      index++;
+      if (index >= images.length) {
+        index = 0;
+      }
     }
 
-    loadManifest();
-    setInterval(showNext, SLIDE_SECONDS * 1000);
-    setInterval(loadManifest, 5 * 60 * 1000);
+    function parseManifest(text) {
+      var data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        setStatus("Manifest non valido");
+        return [];
+      }
+
+      if (!data || !data.length) {
+        setStatus("Manifest vuoto");
+        return [];
+      }
+
+      return data;
+    }
+
+    function loadManifest() {
+      var xhr = new XMLHttpRequest();
+      var url = MANIFEST_URL + "?t=" + new Date().getTime();
+
+      xhr.open("GET", url, true);
+
+      xhr.onreadystatechange = function () {
+        var newImages;
+        var firstChanged;
+
+        if (xhr.readyState !== 4) return;
+
+        if (xhr.status !== 200) {
+          setStatus("Errore manifest: HTTP " + xhr.status);
+          return;
+        }
+
+        newImages = parseManifest(xhr.responseText);
+
+        if (!newImages.length) {
+          return;
+        }
+
+        firstChanged = !images.length || newImages.join("|") !== images.join("|");
+
+        images = newImages;
+
+        if (index >= images.length) {
+          index = 0;
+        }
+
+        if (firstChanged) {
+          showNext();
+        }
+
+        setStatus("Manifest OK: " + images.length + " immagini");
+      };
+
+      xhr.onerror = function () {
+        setStatus("Errore rete manifest");
+      };
+
+      xhr.send(null);
+    }
+
+    function boot() {
+      loadManifest();
+      setInterval(showNext, SLIDE_SECONDS * 1000);
+      setInterval(loadManifest, REFRESH_MINUTES * 60 * 1000);
+    }
+
+    boot();
   </script>
 </body>
 </html>
