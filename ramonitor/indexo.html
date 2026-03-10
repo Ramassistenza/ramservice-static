@@ -3,182 +3,63 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAMONITOR — Slideshow Orizzontale</title>
+  <title>RAMONITOR — Orizzontale</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       width: 100%;
-      overflow: hidden;
+      height: 100%;
       background: #000;
+      overflow: hidden;
     }
-
-    .stage {
+    #slide {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
-
-    .layer {
-      position: absolute;
-      inset: 0;
-      background-position: center center;
-      background-size: contain; /* QUI la modifica importante */
-      background-repeat: no-repeat;
-      background-color: #000;
-      opacity: 0;
-      transition: opacity .5s linear;
-      will-change: opacity;
-    }
-
-    .layer.show {
-      opacity: 1;
+      background: #000 center center / contain no-repeat;
     }
   </style>
 </head>
 <body>
-  <div class="stage" id="stage">
-    <div class="layer" id="A" aria-hidden="true"></div>
-    <div class="layer" id="B" aria-hidden="true"></div>
-  </div>
+  <div id="slide"></div>
 
   <script>
-    const MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json";
-    const IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/horizontal/";
-    const SLIDE_SECONDS = 7;
-    const REFRESH_MINUTES = 5;
+    var MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json";
+    var IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/horizontal/";
+    var SLIDE_SECONDS = 7;
 
-    const imageCache = new Map();
-    let IMAGES = [];
-    let index = 0;
-    let showingA = true;
+    var slide = document.getElementById("slide");
+    var images = [];
+    var index = 0;
 
-    const A = document.getElementById("A");
-    const B = document.getElementById("B");
-
-    function arraysEqual(a, b) {
-      if (a.length !== b.length) return false;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-      }
-      return true;
-    }
-
-    function preloadImage(url) {
-      return new Promise((resolve) => {
-        if (imageCache.has(url)) {
-          const cached = imageCache.get(url);
-          if (cached.complete) {
-            resolve(cached);
-            return;
-          }
-        }
-
-        const img = new Image();
-        img.decoding = "async";
-        img.loading = "eager";
-
-        img.onload = () => {
-          imageCache.set(url, img);
-          resolve(img);
-        };
-
-        img.onerror = () => {
-          console.warn("Errore preload immagine:", url);
-          resolve(null);
-        };
-
-        img.src = url;
-        imageCache.set(url, img);
-      });
-    }
-
-    function preloadNextImage() {
-      if (!IMAGES.length) return;
-      const nextIndex = index % IMAGES.length;
-      const nextUrl = IMAGES[nextIndex];
-      preloadImage(nextUrl).catch(() => {});
-    }
-
-    async function showNext() {
-      if (!IMAGES.length) return;
-
-      const next = IMAGES[index % IMAGES.length];
-      const front = showingA ? A : B;
-      const back = showingA ? B : A;
-
-      const preloaded = await preloadImage(next);
-      if (!preloaded) return;
-
-      back.style.backgroundImage = `url("${next}")`;
-      back.classList.add("show");
-      front.classList.remove("show");
-
-      showingA = !showingA;
-      index++;
-
-      preloadNextImage();
-    }
-
-    async function refreshImageList() {
-      try {
-        const res = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
-          cache: "no-store"
-        });
-
-        if (!res.ok) {
-          throw new Error(`Manifest HTTP ${res.status}`);
-        }
-
-        const list = await res.json();
-
-        if (!Array.isArray(list) || !list.length) {
-          console.warn("Manifest vuoto o non valido");
-          return;
-        }
-
-        const newImages = list.map(filename => IMG_BASE + encodeURIComponent(filename));
-        const uniqueImages = [...new Set(newImages)];
-        const changed = !arraysEqual(uniqueImages, IMAGES);
-
-        if (changed) {
-          IMAGES = uniqueImages;
-          index = index % IMAGES.length;
-
-          for (const key of imageCache.keys()) {
-            if (!IMAGES.includes(key)) {
-              imageCache.delete(key);
+    function loadManifest() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", MANIFEST_URL + "?t=" + Date.now(), true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          try {
+            var list = JSON.parse(xhr.responseText);
+            if (list && list.length) {
+              images = list;
+              if (index >= images.length) index = 0;
+              showNext();
             }
-          }
-
-          preloadNextImage();
+          } catch (e) {}
         }
-      } catch (e) {
-        console.warn("Errore caricamento manifest:", e);
-      }
+      };
+      xhr.send();
     }
 
-    async function boot() {
-      await refreshImageList();
-
-      if (IMAGES.length) {
-        await showNext();
-      }
-
-      setInterval(() => {
-        showNext().catch(err => console.warn("Errore slideshow:", err));
-      }, SLIDE_SECONDS * 1000);
-
-      setInterval(() => {
-        refreshImageList().catch(err => console.warn("Errore refresh:", err));
-      }, REFRESH_MINUTES * 60 * 1000);
+    function showNext() {
+      if (!images.length) return;
+      var url = IMG_BASE + encodeURIComponent(images[index]);
+      slide.style.backgroundImage = 'url("' + url + '")';
+      index = (index + 1) % images.length;
     }
 
-    boot();
+    loadManifest();
+    setInterval(showNext, SLIDE_SECONDS * 1000);
+    setInterval(loadManifest, 5 * 60 * 1000);
   </script>
 </body>
 </html>
