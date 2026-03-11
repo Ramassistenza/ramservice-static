@@ -749,6 +749,7 @@ function mobileCandidatePool(ctx){
 
   return arr;
 }
+
 function mobileScore(offer, ctx){
   let s = 0;
   const monthly = offer.effectiveMonthly ?? offer.monthly;
@@ -758,21 +759,48 @@ function mobileScore(offer, ctx){
   if(ctx.mobileGb>0 && offer.effectiveGb>ctx.mobileGb && offer.effectiveGb<9999) s += Math.min(12, (offer.effectiveGb-ctx.mobileGb)/15);
   if(offer.effectiveUnlimited || offer.effectiveGb>=9999) s += 18;
   if(ctx.mobile5g==='no' && offer.fiveg) s += 10;
+
   if(ctx.packageKey==='mobile' && offer.effectiveConvergence) s -= 100;
-  if((ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy') && offer.effectiveConvergence) s += 55;
+
+  if((ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy')){
+    if(offer.effectiveConvergence) s += 55;
+    if(offer.effectiveUnlimited || offer.effectiveGb>=9999) s += 22;
+    if(/fire/i.test(offer.name || '')) s += 26;
+    if(ctx.mobileActivationType==='mnp' && offer.category==='mnp') s += 34;
+    if(ctx.mobileActivationType==='mnp' && offer.category==='consumer') s -= 40;
+    if(offer.requiresSuperFibra || offer.convergenceType==='super_fibra' || offer.applyFixedDiscount || offer.convFlag) s += 24;
+  }
+
   if((ctx.packageKey==='mobile_energy' || ctx.packageKey==='mobile_fixed_energy') && offer.category==='energy') s += 65;
   if(ctx.packageKey==='mobile_energy' && offer.requiresSuperFibra) s -= 80;
   if(offer._fallbackStandard) s -= 25;
   s -= (offer.priority||0)/3;
   return s;
 }
+
+
 function getMobileCandidates(ctx){
-  const list = mobileCandidatePool(ctx).map(o=>({...o, _score:mobileScore(o,ctx)})).sort((a,b)=>(b._score-a._score)||((a.effectiveMonthly??a.monthly)-(b.effectiveMonthly??b.monthly)));
+  const list = mobileCandidatePool(ctx)
+    .map(o=>({...o, _score:mobileScore(o,ctx)}))
+    .sort((a,b)=>(b._score-a._score)||((a.effectiveMonthly??a.monthly)-(b.effectiveMonthly??b.monthly)));
+
+  if(ctx.mobileActivationType==='mnp' && (ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy')){
+    const strongMnp = list.filter(x =>
+      x.category==='mnp' &&
+      (x.effectiveConvergence || x.requiresSuperFibra || x.convergenceType==='super_fibra' || x.applyFixedDiscount || x.convFlag || /fire/i.test(x.name || ''))
+    );
+    if(strongMnp.length){
+      const rest = list.filter(x => !strongMnp.some(y => y.id===x.id));
+      return strongMnp.concat(rest);
+    }
+  }
+
   if((ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy' || ctx.packageKey==='mobile_energy') && list.some(x=>x.effectiveConvergence || x.category==='energy')){
     return list.filter(x=>x.effectiveConvergence || x.category==='energy').concat(list.filter(x=>!(x.effectiveConvergence || x.category==='energy')));
   }
   return list;
 }
+
 
 function fixedCoverageMatch(f, coverage){
   if(coverage==='any') return true;
@@ -864,10 +892,29 @@ function getDisplayedGb(offer){
   return `${offer.effectiveGb} GB`;
 }
 
+
 function buildPackage(ctx){
   const mobileCandidates = getMobileCandidates(ctx);
-  const bestMobile = mobileCandidates[0] || null;
-  const bestFixed = chooseFixed(ctx, bestMobile);
+  let bestMobile = mobileCandidates[0] || null;
+  if(OVERRIDES.mobileId){
+    const forced = mobileCandidates.find(x => x.id === OVERRIDES.mobileId);
+    if(forced) bestMobile = forced;
+  }
+
+  const fixedPool = ctx.includeFixed
+    ? DATA.fixed
+      .filter(f=>fixedCoverageMatch(f, ctx.fixedCoverage))
+      .filter(f=>ctx.fixedNetflix ? true : !f.includeNetflix)
+      .map(f=>({...f, _score:fixedScore(f, ctx, bestMobile)}))
+      .sort((a,b)=>(b._score-a._score))
+    : [];
+
+  let bestFixed = fixedPool[0] || null;
+  if(OVERRIDES.fixedId){
+    const forcedF = fixedPool.find(x => x.id === OVERRIDES.fixedId);
+    if(forcedF) bestFixed = forcedF;
+  }
+
   const energy = estimateEnergy(ctx);
 
   const current = {
@@ -898,8 +945,9 @@ function buildPackage(ctx){
     totalAnnual: current.total>0 ? (current.total - proposed.totalAnnualized)*12 : null
   };
 
-  return {ctx, mobileCandidates, bestMobile, bestFixed, energy, current, proposed, savings};
+  return {ctx, mobileCandidates, bestMobile, fixedPool, bestFixed, energy, current, proposed, savings};
 }
+
 
 function setBullets(el, items){
   el.innerHTML='';
@@ -952,7 +1000,13 @@ function renderMobile(pkg){
     (pkg.ctx.mobile5g==='no' && m.fiveg) ? 'Il cliente ottiene anche il <b>5G</b> che prima non aveva.' : '',
     m.effectiveConvergence ? 'La convergenza è stata applicata in base al pacchetto selezionato.' : ''
   ].filter(Boolean));
-  setAlts(els.mobileAlternatives, pkg.mobileCandidates.slice(1,4), x => `<div class="alt-title">${x.name}</div><div class="alt-meta">${eur(x.effectiveMonthly)}${x.effectiveLaterMonthly?` poi ${eur(x.effectiveLaterMonthly)}`:''} · ${getDisplayedGb(x)}</div><span class="badge">${x.effectiveConvergence?'CONVERGENZA':x.category.toUpperCase()}</span>`);
+  
+setAlts(els.mobileAlternatives, pkg.mobileCandidates.filter(x => x.id !== m.id).slice(0,4), x => `
+  <div class="alt-title">${x.name}</div>
+  <div class="alt-meta">${eur(x.effectiveMonthly)}${x.effectiveLaterMonthly?` poi ${eur(x.effectiveLaterMonthly)}`:''} · ${getDisplayedGb(x)}</div>
+  <span class="badge">${x.effectiveConvergence?'CONVERGENZA':x.category.toUpperCase()}</span>
+  <button type="button" class="btn-secondary alt-select" data-service="mobile" data-id="${x.id}">Seleziona questa offerta</button>
+`);
 }
 
 function renderFixed(pkg){
@@ -979,8 +1033,14 @@ function renderFixed(pkg){
     f.includeNetflix ? `Netflix incluso: <b>${f.netflixPlan}</b>.` : '',
     pkg.savings.fixedMonthly!==null ? `Risparmio immediato sul fisso: <b>${eur(pkg.savings.fixedMonthly)}</b>/mese.` : 'Inserisci il costo fisso attuale per il risparmio.'
   ].filter(Boolean));
-  const alternatives = DATA.fixed.filter(x=>x.id!==f.id).filter(x=>fixedCoverageMatch(x, pkg.ctx.fixedCoverage)).slice(0,4);
-  setAlts(els.fixedAlternatives, alternatives, x => `<div class="alt-title">${x.name}</div><div class="alt-meta">${getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)!==null?eur(getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)):'Prezzo da verificare'}</div><div class="alt-meta">${x.technology || x.scenario || ''}</div>`);
+
+const alternatives = (pkg.fixedPool || []).filter(x=>x.id!==f.id).slice(0,4);
+setAlts(els.fixedAlternatives, alternatives, x => `
+  <div class="alt-title">${x.name}</div>
+  <div class="alt-meta">${getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)!==null?eur(getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)):'Prezzo da verificare'}</div>
+  <div class="alt-meta">${x.technology || x.scenario || ''}</div>
+  <button type="button" class="btn-secondary alt-select" data-service="fixed" data-id="${x.id}">Seleziona questa offerta</button>
+`);
 }
 
 function renderEnergy(pkg){
@@ -1044,6 +1104,19 @@ function renderBreakdowns(pkg){
   els.savingYearly.className = cls(pkg.savings.totalAnnual);
   els.monthlyExplain.textContent = pkg.savings.totalMonthly===null?'Inserisci i costi attuali dei servizi selezionati.':`Differenza tra totale attuale ${eur(pkg.current.total)} e nuovo totale ${eur(pkg.proposed.totalNow)}.`;
   els.yearlyExplain.textContent = pkg.savings.totalAnnual===null?'Calcolo annuale non disponibile.':'Media a 12 mesi considerando eventuali promo con durata limitata.';
+}
+
+
+function bindAlternativeSelectors(){
+  document.querySelectorAll('.alt-select').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const service = btn.getAttribute('data-service');
+      const id = btn.getAttribute('data-id');
+      if(service === 'mobile') OVERRIDES.mobileId = id;
+      if(service === 'fixed') OVERRIDES.fixedId = id;
+      buildRecommendations();
+    });
+  });
 }
 
 function buildRecommendations(){
