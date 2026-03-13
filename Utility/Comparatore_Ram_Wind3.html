@@ -110,7 +110,7 @@
 <body>
 <div class="wrap">
   <section class="hero">
-    <h1>Comparatore RAMSERVICE WindTre - Premium Google Sheets</h1>
+    <h1>Comparatore RAMSERVICE 2.0 WindTre - Premium Google Sheets</h1>
     <p>Confronta prima le singole offerte e poi costruisci il pacchetto. Il comparatore distingue <b>nuova attivazione</b> e <b>MNP</b>, usa le regole dei fogli Google per scegliere le offerte <b>convergenti</b> e calcola il risparmio <b>solo</b> sui servizi inclusi nel pacchetto selezionato.</p>
   </section>
 
@@ -693,151 +693,167 @@ function getEffectiveMobileOffer(offer, ctx){
     (withFixed && !!offer.requiresFixed) ||
     ((withFixed || withEnergy) && !!offer.convFlag);
 
-  const effectiveMonthly = convActive && hasValue(offer.convergencePrice) ? offer.convergencePrice : offer.monthly;
-  const effectiveLaterMonthly = convActive && hasValue(offer.convergenceLaterPrice) ? offer.convergenceLaterPrice : offer.laterMonthly;
-  const effectiveIntroMonths = convActive && hasValue(offer.convergenceIntroMonths) ? offer.convergenceIntroMonths : offer.introMonths;
-  const effectiveGb = convActive && hasValue(offer.convergenceGb) ? offer.convergenceGb : offer.gb;
-  const effectiveUnlimited = convActive
-    ? (!!offer.convergenceUnlimited || !!offer.unlimited || !!offer.convFlag)
-    : !!offer.unlimited;
-  const effectiveFullSpeedGb = convActive && hasValue(offer.convergenceFullSpeedGb)
-    ? offer.convergenceFullSpeedGb
-    : offer.fullSpeedGb;
-
   return {
     ...offer,
-    effectiveConvergence: !!convActive,
-    effectiveMonthly,
-    effectiveLaterMonthly,
-    effectiveIntroMonths,
-    effectiveGb,
-    effectiveUnlimited,
-    effectiveFullSpeedGb
+    effectiveConvergence: convActive,
+    effectiveMonthly: convActive && hasValue(offer.convergencePrice) ? offer.convergencePrice : offer.monthly,
+    effectiveLaterMonthly: convActive && hasValue(offer.convergenceLaterPrice) ? offer.convergenceLaterPrice : offer.laterMonthly,
+    effectiveIntroMonths: convActive && hasValue(offer.convergenceIntroMonths) ? offer.convergenceIntroMonths : offer.introMonths,
+    effectiveGb: convActive && hasValue(offer.convergenceGb) ? offer.convergenceGb : offer.gb,
+    effectiveUnlimited: convActive
+      ? (!!offer.convergenceUnlimited || !!offer.unlimited || !!offer.convFlag)
+      : !!offer.unlimited,
+    effectiveFullSpeedGb: convActive && hasValue(offer.convergenceFullSpeedGb)
+      ? offer.convergenceFullSpeedGb
+      : offer.fullSpeedGb
   };
 }
 
-function mobileCandidatePool(ctx){
-  if(!ctx.includeMobile) return [];
-  const arr = [];
-
-  if(ctx.mobileActivationType==='new'){
-    DATA.consumer.forEach(o=>{
-      if(!matchPaymentFilter(o, ctx.mobilePaymentMode)) return;
-      if(ctx.packageKey==='mobile'){
-        if(baseIsConvergent(o)) return;
-      } else if(ctx.packageKey==='mobile_fixed'){
-        if(!(o.convergenceType==='super_fibra' || o.convergenceType==='entrambi' || o.requiresSuperFibra || o.requiresFixed || o.convFlag)) return;
-      } else if(ctx.packageKey==='mobile_energy'){
-        if(!(o.convergenceType==='luce_gas' || o.convergenceType==='entrambi' || o.requiresLuceGas || o.convFlag)) return;
-      } else if(ctx.packageKey==='mobile_fixed_energy'){
-        if(!(baseIsConvergent(o))) return;
-      } else {
-        return;
-      }
-      arr.push(getEffectiveMobileOffer(o, ctx));
-    });
-  } else {
-    DATA.mnp.forEach(o=>{
-      if(!ctx.mobileOperator) return;
-      if(!operatorMatches(o.operatoriAmmessi, ctx.mobileOperator)) return;
-      if(o.operatoriEsclusi.some(x=>operatorMatches([x], ctx.mobileOperator))) return;
-      if(!matchPaymentFilter(o, ctx.mobilePaymentMode)) return;
-
-      if(ctx.packageKey==='mobile'){
-        if(o.requiresSuperFibra || o.convFlag || o.applyFixedDiscount) return;
-      }
-      if(ctx.packageKey==='mobile_fixed'){
-        if(o.requiresSuperFibra || o.applyFixedDiscount || o.convFlag || o.convergenceType==='super_fibra'){
-          arr.push(getEffectiveMobileOffer(o, ctx));
-          return;
-        }
-      }
-      if(ctx.packageKey==='mobile_fixed_energy'){
-        if(o.requiresSuperFibra || o.applyFixedDiscount || o.convFlag || o.convergenceType==='super_fibra'){
-          arr.push(getEffectiveMobileOffer(o, ctx));
-          return;
-        }
-      }
-      if(ctx.packageKey==='mobile_energy'){
-        // MNP non prioritario su mobile+energia; lasciamo ai piani energy
-      }
-      if(ctx.packageKey==='mobile'){
-        arr.push(getEffectiveMobileOffer(o, ctx));
-      } else if(ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy'){
-        // fallback MNP standard only if no convergent ones found later
-        arr.push({...getEffectiveMobileOffer(o, ctx), _fallbackStandard:true});
-      }
-    });
-
-    if(ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy'){
-      DATA.consumer.forEach(o=>{
-        if(!matchPaymentFilter(o, ctx.mobilePaymentMode)) return;
-        if(!(o.convergenceType==='super_fibra' || o.convergenceType==='entrambi' || o.requiresSuperFibra || o.requiresFixed || o.convFlag)) return;
-        arr.push(getEffectiveMobileOffer(o, ctx));
-      });
-    }
-  }
-
-  if(ctx.packageKey==='mobile_energy' || ctx.packageKey==='mobile_fixed_energy'){
-    DATA.energy.forEach(o=>{
-      if(!matchPaymentFilter(o, ctx.mobilePaymentMode)) return;
-      if(ctx.packageKey==='mobile_energy' && o.requiresSuperFibra) return;
-      arr.push(getEffectiveMobileOffer(o, ctx));
-    });
-  }
-
-  return arr;
+function isMnpFixedConvergent(o){
+  return o.category === 'mnp' && (
+    o.requiresSuperFibra ||
+    o.applyFixedDiscount ||
+    o.convFlag ||
+    o.convergenceType === 'super_fibra' ||
+    /fire/i.test(o.name || '') ||
+    hasValue(o.convergencePrice) ||
+    hasValue(o.convergenceGb)
+  );
 }
 
-function mobileScore(offer, ctx){
+function isEnergyConvergent(o){
+  return o.category === 'energy' && (
+    o.requiresLuceGas ||
+    o.convergenceType === 'luce_gas' ||
+    o.convergenceType === 'entrambi' ||
+    hasValue(o.convergencePrice) ||
+    hasValue(o.convergenceGb) ||
+    o.convFlag
+  );
+}
+
+function isConsumerFixedConvergent(o){
+  return o.category === 'consumer' && (
+    o.requiresSuperFibra ||
+    o.requiresFixed ||
+    o.convergenceType === 'super_fibra' ||
+    o.convergenceType === 'entrambi' ||
+    hasValue(o.convergencePrice) ||
+    hasValue(o.convergenceGb) ||
+    o.convFlag
+  );
+}
+
+function mobileBaseScore(offer, ctx){
   let s = 0;
-  const monthly = offer.effectiveMonthly ?? offer.monthly;
-  s += Math.max(0, 45 - monthly*2.4);
-  if(ctx.mobilePrice>0 && monthly<ctx.mobilePrice) s += Math.min(28, (ctx.mobilePrice-monthly)*4);
-  if(ctx.mobileGb>0 && offer.effectiveGb>=ctx.mobileGb) s += 14;
-  if(ctx.mobileGb>0 && offer.effectiveGb>ctx.mobileGb && offer.effectiveGb<9999) s += Math.min(12, (offer.effectiveGb-ctx.mobileGb)/15);
-  if(offer.effectiveUnlimited || offer.effectiveGb>=9999) s += 18;
-  if(ctx.mobile5g==='no' && offer.fiveg) s += 10;
+  const monthly = hasValue(offer.effectiveMonthly) ? offer.effectiveMonthly : offer.monthly;
 
-  if(ctx.packageKey==='mobile' && offer.effectiveConvergence) s -= 100;
-
-  if((ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy')){
-    if(offer.effectiveConvergence) s += 55;
-    if(offer.effectiveUnlimited || offer.effectiveGb>=9999) s += 22;
-    if(/fire/i.test(offer.name || '')) s += 26;
-    if(ctx.mobileActivationType==='mnp' && offer.category==='mnp') s += 34;
-    if(ctx.mobileActivationType==='mnp' && offer.category==='consumer') s -= 40;
-    if(offer.requiresSuperFibra || offer.convergenceType==='super_fibra' || offer.applyFixedDiscount || offer.convFlag) s += 24;
+  if(hasValue(monthly)) s += Math.max(0, 40 - monthly * 2.2);
+  if(ctx.mobilePrice > 0 && hasValue(monthly) && monthly < ctx.mobilePrice){
+    s += Math.min(30, (ctx.mobilePrice - monthly) * 4);
   }
 
-  if((ctx.packageKey==='mobile_energy' || ctx.packageKey==='mobile_fixed_energy') && offer.category==='energy') s += 65;
-  if(ctx.packageKey==='mobile_energy' && offer.requiresSuperFibra) s -= 80;
-  if(offer._fallbackStandard) s -= 25;
-  s -= (offer.priority||0)/3;
+  if(ctx.mobileGb > 0 && hasValue(offer.effectiveGb) && offer.effectiveGb >= ctx.mobileGb) s += 14;
+  if(ctx.mobileGb > 0 && hasValue(offer.effectiveGb) && offer.effectiveGb > ctx.mobileGb && offer.effectiveGb < 9999){
+    s += Math.min(14, (offer.effectiveGb - ctx.mobileGb) / 12);
+  }
+
+  if(offer.effectiveUnlimited || offer.effectiveGb >= 9999) s += 16;
+  if(ctx.mobile5g === 'no' && offer.fiveg) s += 10;
+
+  s -= (offer.priority || 0) / 3;
   return s;
 }
 
-
 function getMobileCandidates(ctx){
-  const list = mobileCandidatePool(ctx)
-    .map(o=>({...o, _score:mobileScore(o,ctx)}))
-    .sort((a,b)=>(b._score-a._score)||((a.effectiveMonthly??a.monthly)-(b.effectiveMonthly??b.monthly)));
+  if(!ctx.includeMobile) return [];
 
-  if(ctx.mobileActivationType==='mnp' && (ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy')){
-    const strongMnp = list.filter(x =>
-      x.category==='mnp' &&
-      (x.effectiveConvergence || x.requiresSuperFibra || x.convergenceType==='super_fibra' || x.applyFixedDiscount || x.convFlag || /fire/i.test(x.name || ''))
-    );
-    if(strongMnp.length){
-      const rest = list.filter(x => !strongMnp.some(y => y.id===x.id));
-      return strongMnp.concat(rest);
+  let candidates = [];
+
+  if(ctx.mobileActivationType === 'new'){
+    candidates = DATA.consumer
+      .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+      .map(o => getEffectiveMobileOffer(o, ctx));
+
+    if(ctx.packageKey === 'mobile'){
+      candidates = candidates.filter(o => !baseIsConvergent(o));
+    }
+
+    if(ctx.packageKey === 'mobile_fixed'){
+      candidates = candidates.filter(o => isConsumerFixedConvergent(o));
+    }
+
+    if(ctx.packageKey === 'mobile_energy'){
+      const energyCandidates = DATA.energy
+        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+        .filter(o => !o.requiresSuperFibra)
+        .map(o => getEffectiveMobileOffer(o, ctx));
+      candidates = energyCandidates;
+    }
+
+    if(ctx.packageKey === 'mobile_fixed_energy'){
+      const energyCandidates = DATA.energy
+        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+        .map(o => getEffectiveMobileOffer(o, ctx))
+        .filter(o => isEnergyConvergent(o));
+
+      const consumerCandidates = DATA.consumer
+        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+        .map(o => getEffectiveMobileOffer(o, ctx))
+        .filter(o => isConsumerFixedConvergent(o));
+
+      candidates = [...energyCandidates, ...consumerCandidates];
     }
   }
 
-  if((ctx.packageKey==='mobile_fixed' || ctx.packageKey==='mobile_fixed_energy' || ctx.packageKey==='mobile_energy') && list.some(x=>x.effectiveConvergence || x.category==='energy')){
-    return list.filter(x=>x.effectiveConvergence || x.category==='energy').concat(list.filter(x=>!(x.effectiveConvergence || x.category==='energy')));
+  if(ctx.mobileActivationType === 'mnp'){
+    const mnpCandidates = DATA.mnp
+      .filter(o => !!ctx.mobileOperator)
+      .filter(o => operatorMatches(o.operatoriAmmessi, ctx.mobileOperator))
+      .filter(o => !o.operatoriEsclusi.some(x => operatorMatches([x], ctx.mobileOperator)))
+      .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+      .map(o => getEffectiveMobileOffer(o, ctx));
+
+    if(ctx.packageKey === 'mobile'){
+      candidates = mnpCandidates.filter(o => !isMnpFixedConvergent(o));
+    }
+
+    if(ctx.packageKey === 'mobile_fixed'){
+      const strong = mnpCandidates.filter(o => isMnpFixedConvergent(o));
+      const fallback = mnpCandidates.filter(o => !isMnpFixedConvergent(o));
+      candidates = strong.length ? [...strong, ...fallback] : fallback;
+    }
+
+    if(ctx.packageKey === 'mobile_energy'){
+      const energyCandidates = DATA.energy
+        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+        .filter(o => !o.requiresSuperFibra)
+        .map(o => getEffectiveMobileOffer(o, ctx))
+        .filter(o => isEnergyConvergent(o));
+
+      candidates = energyCandidates.length ? energyCandidates : mnpCandidates;
+    }
+
+    if(ctx.packageKey === 'mobile_fixed_energy'){
+      const strongMnp = mnpCandidates.filter(o => isMnpFixedConvergent(o));
+      const energyCandidates = DATA.energy
+        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
+        .map(o => getEffectiveMobileOffer(o, ctx))
+        .filter(o => isEnergyConvergent(o));
+
+      candidates = strongMnp.length ? strongMnp : energyCandidates;
+      if(!candidates.length) candidates = mnpCandidates;
+    }
   }
-  return list;
+
+  return candidates
+    .map(o => ({ ...o, _score: mobileBaseScore(o, ctx) }))
+    .sort((a, b) => {
+      if (b._score !== a._score) return b._score - a._score;
+      const ap = hasValue(a.effectiveMonthly) ? a.effectiveMonthly : 9999;
+      const bp = hasValue(b.effectiveMonthly) ? b.effectiveMonthly : 9999;
+      return ap - bp;
+    });
 }
 
 
@@ -939,9 +955,10 @@ function estimateEnergy(ctx){
     currentConsumptionPeriod = (currentElectricConsumption || 0) + (currentGasConsumption || 0);
   }
 
-  let fixedTaxesPeriod = null;
+  // quota fissa/tasse SOLO informativa, non usata per calcolare WindTre
+  let currentFixedTaxesPeriod = null;
   if(currentPeriodBill > 0 && currentConsumptionPeriod !== null){
-    fixedTaxesPeriod = Math.max(0, currentPeriodBill - currentConsumptionPeriod);
+    currentFixedTaxesPeriod = Math.max(0, currentPeriodBill - currentConsumptionPeriod);
   }
 
   const windRateKwh = idx && hasValue(idx.punWithLosses)
@@ -950,19 +967,21 @@ function estimateEnergy(ctx){
 
   const windRateGas = idx && hasValue(idx.psv) ? idx.psv : null;
 
-  const windElectricConsumption = (ctx.energyKwh > 0 && windRateKwh !== null) ? ctx.energyKwh * windRateKwh : null;
-  const windGasConsumption = (ctx.gasSmc > 0 && windRateGas !== null) ? ctx.gasSmc * windRateGas : null;
+  const windElectricConsumption = (ctx.energyKwh > 0 && windRateKwh !== null)
+    ? ctx.energyKwh * windRateKwh
+    : null;
+
+  const windGasConsumption = (ctx.gasSmc > 0 && windRateGas !== null)
+    ? ctx.gasSmc * windRateGas
+    : null;
 
   let windConsumptionPeriod = null;
   if(windElectricConsumption !== null || windGasConsumption !== null){
     windConsumptionPeriod = (windElectricConsumption || 0) + (windGasConsumption || 0);
   }
 
-  let windTotalPeriod = null;
-  if(windConsumptionPeriod !== null){
-    windTotalPeriod = windConsumptionPeriod + (fixedTaxesPeriod !== null ? fixedTaxesPeriod : 0);
-  }
-
+  // STIMA WINDTRE INDIPENDENTE dal costo attuale cliente
+  const windTotalPeriod = windConsumptionPeriod;
   const windMonthlyTotal = windTotalPeriod !== null ? windTotalPeriod / divisor : null;
 
   if(windRateKwh !== null){
@@ -974,12 +993,13 @@ function estimateEnergy(ctx){
   if(currentConsumptionPeriod !== null){
     notes.push(`Quota consumo operatore attuale stimata: ${eur(currentConsumptionPeriod)} sul periodo.`);
   }
-  if(fixedTaxesPeriod !== null){
-    notes.push(`Quota fissa + tasse stimate mantenute costanti: ${eur(fixedTaxesPeriod)} sul periodo.`);
+  if(currentFixedTaxesPeriod !== null){
+    notes.push(`Quota fissa + tasse attuali stimata: ${eur(currentFixedTaxesPeriod)} sul periodo.`);
   }
   if(currentConsumptionPeriod === null){
     notes.push('Per confrontare correttamente l’operatore attuale inserisci anche il costo €/kWh o €/Smc attuale.');
   }
+  notes.push('La stima WindTre è calcolata solo sulla quota consumo usando i valori del foglio PUN; la quota fissa attuale non viene usata per alterare la tariffa WindTre.');
 
   return {
     included:true,
@@ -987,7 +1007,7 @@ function estimateEnergy(ctx){
     currentPeriodBill,
     currentMonthlyBill,
     currentConsumptionPeriod,
-    fixedTaxesPeriod,
+    currentFixedTaxesPeriod,
     windRateKwh,
     windRateGas,
     windConsumptionPeriod,
