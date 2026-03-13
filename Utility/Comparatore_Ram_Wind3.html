@@ -513,15 +513,32 @@ function normalizeConsumer(r){
 }
 function normalizeMnp(r){
   return {
-    id:String(r.id||'').trim(), active:truthy(r.attiva), name:String(r.nome_promo||'').trim(),
-    monthly:safeNumber(r.prezzo), laterMonthly:r.prezzo_dopo!==''?safeNumber(r.prezzo_dopo):null,
-    introMonths:r.mesi_promo!==''?safeNumber(r.mesi_promo):null, activation:r.attivazione!==''?safeNumber(r.attivazione):0,
-    gb:safeNumber(r.gb), unlimited:truthy(r.giga_illimitati), fullSpeedGb:r.full_speed_gb!==''?safeNumber(r.full_speed_gb):null,
-    fiveg:truthy(r.fiveg), minutes:String(r.minuti||''), sms:r.sms!==''?safeNumber(r.sms):null, euGb:String(r.gb_ue||''),
-    operatoriAmmessi:splitList(r.operatori_ammessi), operatoriEsclusi:splitList(r.operatori_esclusi), easyPay:truthy(r.easy_pay),
-    requiresSuperFibra:truthy(r.richiede_super_fibra), convFlag:truthy(r.convergenza_giga_illimitati),
-    convergenceType:String(r.convergenza_tipo||'nessuna').trim().toLowerCase(), applyFixedDiscount:truthy(r.applica_sconto_fisso),
-    phoneIncluded:truthy(r.telefono_incluso), notes:String(r.note||''), priority:r.priorita!==''?safeNumber(r.priorita):999, category:'mnp'
+    id:String(r.id||'').trim(),
+    active:truthy(r.attiva),
+    name:String(r.nome_promo||'').trim(),
+    monthly:r.prezzo!=='' ? safeNumber(r.prezzo) : null,
+    laterMonthly:r.prezzo_dopo!=='' ? safeNumber(r.prezzo_dopo) : null,
+    introMonths:r.mesi_promo!=='' ? safeNumber(r.mesi_promo) : null,
+    activation:r.attivazione!=='' ? safeNumber(r.attivazione) : 0,
+    gb:r.gb!=='' ? safeNumber(r.gb) : null,
+    unlimited:truthy(r.giga_illimitati),
+    fullSpeedGb:r.full_speed_gb!=='' ? safeNumber(r.full_speed_gb) : null,
+    fiveg:truthy(r.fiveg),
+    minutes:String(r.minuti||''),
+    sms:r.sms!=='' ? safeNumber(r.sms) : null,
+    euGb:String(r.gb_ue||''),
+    operatoriAmmessi:splitList(r.operatori_ammessi),
+    operatoriEsclusi:splitList(r.operatori_esclusi),
+    easyPay:truthy(r.easy_pay),
+    requiresSuperFibra:truthy(r.richiede_super_fibra),
+    convFlag:truthy(r.convergenza_giga_illimitati),
+    convergenceType:String(r.convergenza_tipo||'nessuna').trim().toLowerCase(),
+    applyFixedDiscount:truthy(r.applica_sconto_fisso),
+    phoneIncluded:truthy(r.telefono_incluso),
+    notes:String(r.note||''),
+    priority:r.priorita!=='' ? safeNumber(r.priorita) : 999,
+    category:'mnp',
+    ...normalizeConvergenceFields(r)
   };
 }
 function normalizeFixed(r){
@@ -637,6 +654,10 @@ function currentContext(){
   };
 }
 
+function hasValue(v){
+  return v !== null && v !== undefined && v !== '';
+}
+
 function operatorMatches(list, operator){
   const op = String(operator||'').trim().toLowerCase();
   if(!op) return false;
@@ -661,28 +682,40 @@ function baseIsConvergent(offer){
 function getEffectiveMobileOffer(offer, ctx){
   const withFixed = ctx.includeFixed;
   const withEnergy = ctx.includeEnergy;
-  const type = String(offer.convergenceType||'nessuna').toLowerCase();
+  const type = String(offer.convergenceType || 'nessuna').toLowerCase();
 
   const convActive =
-    (withFixed && type==='super_fibra') ||
-    (withEnergy && !withFixed && type==='luce_gas') ||
-    (withFixed && withEnergy && (type==='entrambi' || type==='luce_gas' || type==='super_fibra')) ||
-    (withFixed && offer.requiresSuperFibra) ||
-    (withEnergy && offer.requiresLuceGas) ||
-    (withFixed && offer.requiresFixed) ||
-    ((withFixed || withEnergy) && offer.convFlag);
+    (withFixed && type === 'super_fibra') ||
+    (withEnergy && !withFixed && type === 'luce_gas') ||
+    (withFixed && withEnergy && (type === 'entrambi' || type === 'luce_gas' || type === 'super_fibra')) ||
+    (withFixed && !!offer.requiresSuperFibra) ||
+    (withEnergy && !!offer.requiresLuceGas) ||
+    (withFixed && !!offer.requiresFixed) ||
+    ((withFixed || withEnergy) && !!offer.convFlag);
+
+  const effectiveMonthly = convActive && hasValue(offer.convergencePrice) ? offer.convergencePrice : offer.monthly;
+  const effectiveLaterMonthly = convActive && hasValue(offer.convergenceLaterPrice) ? offer.convergenceLaterPrice : offer.laterMonthly;
+  const effectiveIntroMonths = convActive && hasValue(offer.convergenceIntroMonths) ? offer.convergenceIntroMonths : offer.introMonths;
+  const effectiveGb = convActive && hasValue(offer.convergenceGb) ? offer.convergenceGb : offer.gb;
+  const effectiveUnlimited = convActive
+    ? (!!offer.convergenceUnlimited || !!offer.unlimited || !!offer.convFlag)
+    : !!offer.unlimited;
+  const effectiveFullSpeedGb = convActive && hasValue(offer.convergenceFullSpeedGb)
+    ? offer.convergenceFullSpeedGb
+    : offer.fullSpeedGb;
 
   return {
     ...offer,
     effectiveConvergence: !!convActive,
-    effectiveMonthly: convActive && offer.convergencePrice!==null ? offer.convergencePrice : offer.monthly,
-    effectiveLaterMonthly: convActive && offer.convergenceLaterPrice!==null ? offer.convergenceLaterPrice : offer.laterMonthly,
-    effectiveIntroMonths: convActive && offer.convergenceIntroMonths!==null ? offer.convergenceIntroMonths : offer.introMonths,
-    effectiveGb: convActive && offer.convergenceGb!==null ? offer.convergenceGb : offer.gb,
-    effectiveUnlimited: convActive ? (offer.convergenceUnlimited || offer.unlimited || offer.convFlag) : offer.unlimited,
-    effectiveFullSpeedGb: convActive && offer.convergenceFullSpeedGb!==null ? offer.convergenceFullSpeedGb : offer.fullSpeedGb
+    effectiveMonthly,
+    effectiveLaterMonthly,
+    effectiveIntroMonths,
+    effectiveGb,
+    effectiveUnlimited,
+    effectiveFullSpeedGb
   };
 }
+
 function mobileCandidatePool(ctx){
   if(!ctx.includeMobile) return [];
   const arr = [];
@@ -871,30 +904,103 @@ function chooseFixed(ctx, bestMobile){
 }
 
 function estimateEnergy(ctx){
-  if(!ctx.includeEnergy) return {included:false, hasEnergyBill:false, notes:[]};
-  const hasEnergyBill = ctx.energyAmount>0 || ctx.energyKwh>0 || ctx.gasSmc>0;
+  if(!ctx.includeEnergy){
+    return {
+      included:false,
+      hasEnergyBill:false,
+      notes:[]
+    };
+  }
+
+  const hasEnergyBill = ctx.energyAmount > 0 || ctx.energyKwh > 0 || ctx.gasSmc > 0;
   const divisor = cycleDivisor(ctx.energyCycle);
   const currentPeriodBill = ctx.energyAmount;
-  const currentMonthlyBill = currentPeriodBill>0 ? currentPeriodBill/divisor : 0;
-  const idx = DATA.pun.find(x=>x.month===ctx.billPeriod) || null;
+  const currentMonthlyBill = currentPeriodBill > 0 ? currentPeriodBill / divisor : 0;
+  const idx = DATA.pun.find(x => x.month === ctx.billPeriod) || null;
   const notes = [];
-  if(!hasEnergyBill) return {included:true, hasEnergyBill:false, currentMonthlyBill:0, notes};
-  const currentConsumptionPeriod = (ctx.energyKwh>0&&ctx.customerRateKwh>0?ctx.energyKwh*ctx.customerRateKwh:0) + (ctx.gasSmc>0&&ctx.customerRateGas>0?ctx.gasSmc*ctx.customerRateGas:0);
-  const fixedTaxesPeriod = currentPeriodBill>0 ? Math.max(0,currentPeriodBill-currentConsumptionPeriod) : 0;
-  const windRateKwh = idx ? (idx.punWithLosses || (((idx.f1+idx.f2+idx.f3)/3)*1.10)) : null;
-  const windRateGas = idx ? idx.psv : null;
-  const windConsumptionPeriod = (ctx.energyKwh>0&&windRateKwh!==null?ctx.energyKwh*windRateKwh:0) + (ctx.gasSmc>0&&windRateGas!==null?ctx.gasSmc*windRateGas:0);
-  const windTotalPeriod = windConsumptionPeriod + fixedTaxesPeriod;
-  const windMonthlyTotal = windTotalPeriod/divisor;
-  if(windRateKwh!==null) notes.push(`Indice energia WindTre ${ctx.billPeriod}: ${windRateKwh.toFixed(4)} €/kWh circa.`);
-  if(windRateGas!==null && ctx.gasSmc>0) notes.push(`Indice gas WindTre ${ctx.billPeriod}: ${windRateGas.toFixed(4)} €/Smc.`);
-  if(fixedTaxesPeriod>0) notes.push(`Spese fisse e tasse stimate del periodo: ${eur(fixedTaxesPeriod)}.`);
-  return {included:true, hasEnergyBill:true, currentPeriodBill, currentMonthlyBill, currentConsumptionPeriod, fixedTaxesPeriod, windConsumptionPeriod, windTotalPeriod, windMonthlyTotal, notes};
+
+  if(!hasEnergyBill){
+    return {
+      included:true,
+      hasEnergyBill:false,
+      currentMonthlyBill:0,
+      notes
+    };
+  }
+
+  const hasCurrentElectricRate = ctx.energyKwh > 0 && ctx.customerRateKwh > 0;
+  const hasCurrentGasRate = ctx.gasSmc > 0 && ctx.customerRateGas > 0;
+
+  const currentElectricConsumption = hasCurrentElectricRate ? ctx.energyKwh * ctx.customerRateKwh : null;
+  const currentGasConsumption = hasCurrentGasRate ? ctx.gasSmc * ctx.customerRateGas : null;
+
+  let currentConsumptionPeriod = null;
+  if(currentElectricConsumption !== null || currentGasConsumption !== null){
+    currentConsumptionPeriod = (currentElectricConsumption || 0) + (currentGasConsumption || 0);
+  }
+
+  let fixedTaxesPeriod = null;
+  if(currentPeriodBill > 0 && currentConsumptionPeriod !== null){
+    fixedTaxesPeriod = Math.max(0, currentPeriodBill - currentConsumptionPeriod);
+  }
+
+  const windRateKwh = idx && hasValue(idx.punWithLosses)
+    ? idx.punWithLosses
+    : (idx ? (((idx.f1 + idx.f2 + idx.f3) / 3) * 1.10) : null);
+
+  const windRateGas = idx && hasValue(idx.psv) ? idx.psv : null;
+
+  const windElectricConsumption = (ctx.energyKwh > 0 && windRateKwh !== null) ? ctx.energyKwh * windRateKwh : null;
+  const windGasConsumption = (ctx.gasSmc > 0 && windRateGas !== null) ? ctx.gasSmc * windRateGas : null;
+
+  let windConsumptionPeriod = null;
+  if(windElectricConsumption !== null || windGasConsumption !== null){
+    windConsumptionPeriod = (windElectricConsumption || 0) + (windGasConsumption || 0);
+  }
+
+  let windTotalPeriod = null;
+  if(windConsumptionPeriod !== null){
+    windTotalPeriod = windConsumptionPeriod + (fixedTaxesPeriod !== null ? fixedTaxesPeriod : 0);
+  }
+
+  const windMonthlyTotal = windTotalPeriod !== null ? windTotalPeriod / divisor : null;
+
+  if(windRateKwh !== null){
+    notes.push(`Tariffa energia WindTre da foglio PUN (${ctx.billPeriod}): ${windRateKwh.toFixed(4)} €/kWh.`);
+  }
+  if(windRateGas !== null && ctx.gasSmc > 0){
+    notes.push(`Tariffa gas WindTre da foglio PUN (${ctx.billPeriod}): ${windRateGas.toFixed(4)} €/Smc.`);
+  }
+  if(currentConsumptionPeriod !== null){
+    notes.push(`Quota consumo operatore attuale stimata: ${eur(currentConsumptionPeriod)} sul periodo.`);
+  }
+  if(fixedTaxesPeriod !== null){
+    notes.push(`Quota fissa + tasse stimate mantenute costanti: ${eur(fixedTaxesPeriod)} sul periodo.`);
+  }
+  if(currentConsumptionPeriod === null){
+    notes.push('Per confrontare correttamente l’operatore attuale inserisci anche il costo €/kWh o €/Smc attuale.');
+  }
+
+  return {
+    included:true,
+    hasEnergyBill:true,
+    currentPeriodBill,
+    currentMonthlyBill,
+    currentConsumptionPeriod,
+    fixedTaxesPeriod,
+    windRateKwh,
+    windRateGas,
+    windConsumptionPeriod,
+    windTotalPeriod,
+    windMonthlyTotal,
+    notes
+  };
 }
 
 function getDisplayedGb(offer){
   if(!offer) return '-';
-  if(offer.effectiveUnlimited || offer.effectiveGb>=9999) return 'Giga illimitati';
+  if(offer.effectiveUnlimited || offer.effectiveGb >= 9999) return 'Giga illimitati';
+  if(!hasValue(offer.effectiveGb)) return '-';
   return `${offer.effectiveGb} GB`;
 }
 
