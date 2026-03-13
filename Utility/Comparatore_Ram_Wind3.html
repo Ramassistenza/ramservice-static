@@ -598,6 +598,8 @@ function renderPackageButtons(){
   els.packageGrid.querySelectorAll('[data-package]').forEach(el=>{
     el.addEventListener('click',()=>{
       ACTIVE_PACKAGE = el.getAttribute('data-package');
+      OVERRIDES.mobileId = null;
+      OVERRIDES.fixedId = null;
       renderPackageButtons();
       buildRecommendations();
     });
@@ -1128,6 +1130,7 @@ function buildRecommendations(){
   renderFixed(pkg);
   renderEnergy(pkg);
   renderBreakdowns(pkg);
+  bindAlternativeSelectors();
 }
 
 document.getElementById('compareBtn').addEventListener('click', buildRecommendations);
