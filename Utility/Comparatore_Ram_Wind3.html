@@ -110,7 +110,7 @@
 <body>
 <div class="wrap">
   <section class="hero">
-    <h1>Comparatore WindTre - Premium Google Sheets</h1>
+    <h1>Comparatore RAMSERVICE WindTre - Premium Google Sheets</h1>
     <p>Confronta prima le singole offerte e poi costruisci il pacchetto. Il comparatore distingue <b>nuova attivazione</b> e <b>MNP</b>, usa le regole dei fogli Google per scegliere le offerte <b>convergenti</b> e calcola il risparmio <b>solo</b> sui servizi inclusi nel pacchetto selezionato.</p>
   </section>
 
@@ -368,6 +368,10 @@ const REQUIRED_COLUMNS = {
   pun:['mese','f1','f2','f3','pun_avg','pun_with_losses','psv','note']
 };
 const DATA = {consumer:[],mnp:[],fixed:[],energy:[],pun:[]};
+const OVERRIDES = {
+  mobileId: null,
+  fixedId: null
+};
 let ACTIVE_PACKAGE = 'mobile';
 
 const PACKAGES = {
@@ -1157,6 +1161,8 @@ document.getElementById('demoBtn').addEventListener('click', ()=>{
   els.gasSmc.value='';
   els.customerRateGas.value='';
   els.billPeriod.value='Dicembre 2025';
+  OVERRIDES.mobileId = null;
+  OVERRIDES.fixedId = null;
   ACTIVE_PACKAGE='mobile_fixed_energy';
   renderPackageButtons();
   buildRecommendations();
