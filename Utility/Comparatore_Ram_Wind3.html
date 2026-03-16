@@ -876,31 +876,66 @@
       }
     }
 
-    function rankedMobileStandaloneOptions(customer, forcedType = null) {
-      const type = forcedType || customer.mobile.tipo;
-      let options = [];
+    function getMobileStandaloneBaseOptions(type) {
       if (type === 'mnp') {
-        options = DATA.mnp
+        return DATA.mnp
           .filter(x => x.attiva !== 0)
           .filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso);
+      }
+      return DATA.consumer
+        .filter(x => x.attiva !== 0)
+        .filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim)
+        .filter(x => !isEnergyBundleConsumerOffer(x));
+    }
+
+    function mobileNeedTier(offer, customer) {
+      const gbValue = offer.giga_illimitati ? 9999 : (offer.gb || 0);
+      const hasEnoughGb = gbValue >= Math.max(1, customer.mobile.gb || 0);
+      const hasNeeded5g = !customer.mobile.fiveg || !!offer.fiveg;
+      if (hasEnoughGb && hasNeeded5g) return 3;
+      if (hasEnoughGb) return 2;
+      if (hasNeeded5g) return 1;
+      return 0;
+    }
+
+    function rankMobileStandaloneOffer(offer, customer, type) {
+      const gbValue = offer.giga_illimitati ? 9999 : (offer.gb || 0);
+      const needTier = mobileNeedTier(offer, customer);
+      const monthlyDelta = customer.mobile.prezzo - (offer.prezzo || 0);
+      const extraGb = Math.max(0, gbValue - (customer.mobile.gb || 0));
+      return {
+        ...offer,
+        kind: type === 'mnp' ? 'mnp' : 'consumer',
+        effectivePrice: offer.prezzo || 0,
+        gbValue,
+        needTier,
+        monthlyDelta,
+        score: (needTier * 100000) + ((customer.mobile.prezzo - (offer.prezzo || 0)) * 1000) + Math.min(extraGb, 500)
+      };
+    }
+
+    function rankedMobileStandaloneOptions(customer, forcedType = null) {
+      const type = forcedType || customer.mobile.tipo;
+      let options = getMobileStandaloneBaseOptions(type);
+      if (type === 'mnp') {
         const strict = options.filter(x => operatorMatches(x, customer.mobile.operatore));
-        if (strict.length) options = strict;
-        else {
+        if (strict.length) {
+          options = strict;
+        } else {
           const relaxed = options.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
           if (relaxed.length) options = relaxed;
         }
       } else {
-        options = DATA.consumer
-          .filter(x => x.attiva !== 0)
-          .filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim)
-          .filter(x => !isEnergyBundleConsumerOffer(x));
+        options = options.filter(x => !x.solo_nuovo_numero || Number(x.solo_nuovo_numero) === 1 || true);
       }
-      return options.map(x => {
-          const gbValue = x.giga_illimitati ? 9999 : (x.gb || 0);
-          const score = mobileScore(x, customer, x.prezzo, gbValue, 0);
-          return { ...x, kind: type === 'mnp' ? 'mnp' : 'consumer', effectivePrice: x.prezzo, score };
-        })
-        .sort((a,b) => b.score - a.score || a.prezzo - b.prezzo || byPriority(a,b));
+      return options
+        .map(x => rankMobileStandaloneOffer(x, customer, type))
+        .sort((a,b) => {
+          if (b.needTier !== a.needTier) return b.needTier - a.needTier;
+          if ((a.effectivePrice || 0) !== (b.effectivePrice || 0)) return (a.effectivePrice || 0) - (b.effectivePrice || 0);
+          if ((b.gbValue || 0) !== (a.gbValue || 0)) return (b.gbValue || 0) - (a.gbValue || 0);
+          return byPriority(a,b);
+        });
     }
 
     function bestMobileStandalone(customer, forcedType = null) {
@@ -975,13 +1010,25 @@
       let alert = '';
 
       if (mode === 'mobile-only') {
-        const mobile = bestMobileStandalone(customer);
+        const ranked = rankedMobileStandaloneOptions(customer);
+        const mobile = ranked[0];
         if (!mobile) return renderNoResult('Nessuna offerta mobile compatibile trovata.');
-        result.title = 'Solo Mobile';
-        result.offers = [{ type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobile.effectivePrice }];
+        const alternatives = ranked.slice(1, 5).map(x => ({
+          nome: x.nome,
+          gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`,
+          prezzo: x.effectivePrice || x.prezzo || 0,
+          note: x.note || ''
+        }));
+        result.title = customer.mobile.tipo === 'mnp' ? 'Solo Mobile MNP' : 'Solo Mobile nuovo numero';
+        result.offers = [{ type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobile.effectivePrice, alternatives }];
         result.monthlySaving = customer.mobile.prezzo - mobile.effectivePrice;
         result.yearlySaving = result.monthlySaving * 12;
-        result.advantage = mobile.giga_illimitati ? 'Giga illimitati' : `${mobile.gb} GB in 5G`;
+        result.advantage = mobile.giga_illimitati ? 'Giga illimitati' : `${mobile.gb || 0} GB${mobile.fiveg ? ' con 5G' : ''}`;
+        if (customer.mobile.tipo === 'mnp') {
+          alert = `Confronto MNP eseguito sulla tabella MNP in base all'operatore selezionato: ${customer.mobile.operatore || 'operatore non indicato'}.`;
+        } else {
+          alert = 'Confronto nuovo numero eseguito sulla tabella CONSUMER.';
+        }
       }
 
       if (mode === 'fixed-only') {
