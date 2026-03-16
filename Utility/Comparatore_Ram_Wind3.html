@@ -114,6 +114,15 @@
     .offer {
       border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: #fff;
     }
+    .offer-mobile { background: linear-gradient(180deg,#fff8f2 0%,#ffffff 100%); border-color:#ffd9bf; }
+    .offer-fixed { background: linear-gradient(180deg,#f3f8ff 0%,#ffffff 100%); border-color:#cfe0ff; }
+    .offer-energy { background: linear-gradient(180deg,#effcf5 0%,#ffffff 100%); border-color:#c8efd7; }
+    .money-positive { color: var(--good) !important; }
+    .money-negative { color: var(--bad) !important; }
+    .summary-card.good { background: linear-gradient(180deg,#f1fcf6 0%,#ffffff 100%); border-color:#cdeedb; }
+    .summary-card.info { background: linear-gradient(180deg,#f4f8ff 0%,#ffffff 100%); border-color:#d8e5ff; }
+    .offer .after strong { color: var(--good); }
+    .offer-energy .price-box .price, .offer-energy .after strong { color: var(--good); }
     .offer-head {
       display: flex; justify-content: space-between; gap: 14px; align-items: start; padding: 18px 18px 10px;
     }
@@ -174,12 +183,12 @@
     <section class="hero no-print">
       <h1>Comparatore WindTre Negozio</h1>
       <p>Raccoglie i dati del cliente, analizza le offerte del mese e confronta singoli servizi o pacchetti. Evidenzia risparmio mensile, annuo, vantaggi tecnici e genera un riepilogo A4 stampabile.</p>
-      <p class="small">Dataset integrato dai fogli <strong>CONSUMER, MNP, FISSO, ENERGY, PUN</strong>. Per la parte <strong>Luce/Gas</strong> il motore usa la tabella PUN/PSV e un pannello parametri modificabile, perché nel tracciato fornito non è presente un listino completo della commodity luce/gas.</p>
+      <p class="small">I dati vengono caricati in automatico dai fogli <strong>CONSUMER, MNP, FISSO, ENERGY, PUN</strong>. Per <strong>Luce/Gas</strong> vengono caricati in automatico dal file gli indici PUN/PSV del mese, mentre i campi di <strong>spread e quote fisse</strong> restano manuali perché non compaiono nel tracciato condiviso.</p>
       <div class="kpi-row">
         <div class="kpi"><div class="label">Confronti disponibili</div><div class="value">8</div></div>
         <div class="kpi"><div class="label">Print A4</div><div class="value">SI</div></div>
         <div class="kpi"><div class="label">Modalità</div><div class="value">Negozio</div></div>
-        <div class="kpi"><div class="label">Aggiornamento listino</div><div class="value">Manuale</div></div>
+        <div class="kpi"><div class="label">Aggiornamento listino</div><div class="value" id="dataLoadStatus">Auto</div></div>
       </div>
     </section>
 
@@ -470,14 +479,201 @@
       };
     }
 
+
+    const SHEET_ID = '1clgRiENuqoJkRwXrcA4LHX4eBWhH2wAaTkvSwQ_SA_Y';
+    const REMOTE_SHEETS = {
+      consumer: 'CONSUMER',
+      mnp: 'MNP',
+      fixed: 'FISSO',
+      energyMobile: 'ENERGY',
+      pun: 'PUN'
+    };
+
+    function normHeader(v='') {
+      return String(v).trim().toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+        .replace(/[^\w]+/g, '_')
+        .replace(/^_+|_+$/g,'');
+    }
+    function val(c) {
+      if (!c) return '';
+      if (typeof c.v === 'number') return c.v;
+      return c.v ?? c.f ?? '';
+    }
+    function numv(v) {
+      if (v === '' || v === null || v === undefined) return 0;
+      const n = Number(String(v).replace(',', '.'));
+      return Number.isFinite(n) ? n : 0;
+    }
+    function parseGviz(text) {
+      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\);?$/);
+      if (!match) throw new Error('Formato risposta Google non valido');
+      const payload = JSON.parse(match[1]);
+      const table = payload.table;
+      const headers = table.cols.map(c => normHeader(c.label || c.id || ''));
+      return table.rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = val((r.c || [])[i]));
+        return obj;
+      });
+    }
+    async function fetchSheet(sheetName) {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`;
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Errore caricamento ${sheetName}`);
+      return parseGviz(await res.text());
+    }
+    function mapConsumerRows(rows) {
+      return rows.map(r => ({
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo),
+        mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati),
+        full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue),
+        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza),
+        gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza),
+        richiede_fisso:numv(r.richiede_fisso), richiede_super_fibra:numv(r.richiede_super_fibra), richiede_second_sim:numv(r.richiede_second_sim),
+        solo_nuovo_numero:numv(r.solo_nuovo_numero), conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna',
+        applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
+      }));
+    }
+    function mapMnpRows(rows) {
+      return rows.map(r => ({
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo),
+        attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati), full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg),
+        minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue), operatori_ammessi:r.operatori_ammessi || '', operatori_esclusi:r.operatori_esclusi || '',
+        easy_pay:numv(r.easy_pay), richiede_super_fibra:numv(r.richiede_super_fibra), conv_giga_illimitati:numv(r.convergenza_giga_illimitati),
+        conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso),
+        note:r.note || '', priorita:numv(r.priorita)
+      }));
+    }
+    function mapFixedRows(rows) {
+      return rows.map(r => ({
+        id:r.id, attiva:numv(r.attiva), famiglia:r.famiglia_offerta, nome:r.nome_promo, variante:r.variante, scenario:r.scenario,
+        tecnologia:r.tecnologia, down:r.velocita_download, up:r.velocita_upload, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo),
+        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), attivazione_mese:numv(r.attivazione_mese), attivazione_mesi:numv(r.attivazione_mesi),
+        copertura_ftth:numv(r.copertura_ftth), copertura_fttc:numv(r.copertura_fttc), copertura_fwa:numv(r.copertura_fwa),
+        richiede_mnp:numv(r.richiede_mnp), richiede_energia:numv(r.richiede_energia), amazon:numv(r.include_amazon_prime_mesi),
+        netflix:numv(r.include_netflix), piano_netflix:r.piano_netflix || '', rata_modem_mese:numv(r.rata_modem_mese), dns_dinamico_una_tantum:numv(r.dns_dinamico_una_tantum),
+        piu_sicuri_mese:numv(r.piu_sicuri_mese), voce_unlimited_mese:numv(r.voce_unlimited_mese), cyc_home_mese:numv(r.cyc_home_mese),
+        metodi_pagamento:r.metodi_pagamento || '', deposito_bollettino_postale:numv(r.deposito_bollettino_postale), note:r.note || '', priorita:numv(r.priorita)
+      }));
+    }
+    function mapEnergyRows(rows) {
+      return rows.map(r => ({
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo),
+        mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati),
+        full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue),
+        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza),
+        gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza),
+        richiede_super_fibra:numv(r.richiede_super_fibra), richiede_luce_gas:numv(r.richiede_luce_gas), richiede_second_sim:numv(r.richiede_second_sim),
+        conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso),
+        telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
+      }));
+    }
+    function mapPunRows(rows) {
+      return rows.map(r => ({
+        mese:r.mese, f1:numv(r.f1), f2:numv(r.f2), f3:numv(r.f3), pun_avg:numv(r.pun_avg), pun_with_losses:numv(r.pun_with_losses), psv:numv(r.psv), note:r.note || ''
+      })).filter(r => r.mese);
+    }
+    function populateEnergyMonths() {
+      els.energyMonth.innerHTML = '';
+      DATA.pun.forEach(row => {
+        const opt = document.createElement('option');
+        opt.value = row.mese;
+        opt.textContent = row.mese;
+        els.energyMonth.appendChild(opt);
+      });
+      if (DATA.pun.length) els.energyMonth.value = DATA.pun[0].mese;
+    }
+    function isFixedBundleConsumerOffer(x) {
+      const conv = String(x.conv_tipo || '').toLowerCase();
+      return !!(x.richiede_fisso || x.richiede_super_fibra || x.prezzo_conv || conv.includes('super_fibra'));
+    }
+    function isEnergyBundleConsumerOffer(x) {
+      const conv = String(x.conv_tipo || '').toLowerCase();
+      return conv.includes('luce_gas') || conv.includes('entrambi') || x.richiede_luce_gas;
+    }
+    function bestMobileFixedBundleNew(customer) {
+      const options = DATA.consumer
+        .filter(x => x.attiva !== 0)
+        .filter(x => !x.richiede_second_sim)
+        .filter(x => isFixedBundleConsumerOffer(x))
+        .filter(x => !isEnergyBundleConsumerOffer(x))
+        .map(x => {
+          const price = x.prezzo_conv || x.prezzo;
+          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb);
+          const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 6 : 2);
+          return { ...x, effectivePrice: price, score };
+        })
+        .sort((a,b) => b.score - a.score || byPriority(a,b));
+      return options[0] || null;
+    }
+    function bestMobileFixedBundleMnp(customer) {
+      const base = DATA.mnp
+        .filter(x => x.attiva !== 0)
+        .filter(x => operatorMatches(x, customer.mobile.operatore));
+      const convFirst = base.filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
+      const source = convFirst.length ? convFirst : base;
+      return source.map(x => {
+        const price = x.prezzo;
+        const gbValue = x.giga_illimitati || x.conv_giga_illimitati ? 9999 : x.gb;
+        const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 8 : 0);
+        return { ...x, effectivePrice: price, score };
+      }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
+    }
+    function bestMobileTripleBundleNew(customer) {
+      const options = DATA.energyMobile
+        .filter(x => x.attiva !== 0)
+        .filter(x => x.richiede_luce_gas)
+        .filter(x => x.richiede_super_fibra)
+        .map(x => {
+          const price = x.prezzo_conv || x.prezzo;
+          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb);
+          const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + 10;
+          return { ...x, effectivePrice: price, score };
+        })
+        .sort((a,b) => b.score - a.score || byPriority(a,b));
+      return options[0] || null;
+    }
+    async function loadRemoteData() {
+      try {
+        const [consumerRows, mnpRows, fixedRows, energyRows, punRows] = await Promise.all([
+          fetchSheet(REMOTE_SHEETS.consumer),
+          fetchSheet(REMOTE_SHEETS.mnp),
+          fetchSheet(REMOTE_SHEETS.fixed),
+          fetchSheet(REMOTE_SHEETS.energyMobile),
+          fetchSheet(REMOTE_SHEETS.pun)
+        ]);
+        const consumer = mapConsumerRows(consumerRows);
+        const mnp = mapMnpRows(mnpRows);
+        const fixed = mapFixedRows(fixedRows);
+        const energyMobile = mapEnergyRows(energyRows);
+        const pun = mapPunRows(punRows);
+        if (consumer.length) DATA.consumer = consumer;
+        if (mnp.length) DATA.mnp = mnp;
+        if (fixed.length) DATA.fixed = fixed;
+        if (energyMobile.length) DATA.energyMobile = energyMobile;
+        if (pun.length) DATA.pun = pun;
+        populateEnergyMonths();
+        const ds = document.getElementById('dataLoadStatus');
+        if (ds) ds.textContent = 'Google Sheets';
+        els.resultAlert.innerHTML = `<div class="inline-alert">Listini caricati automaticamente da Google Sheets. Per energia vengono caricati dal file gli indici PUN/PSV; aggiorna manualmente solo spread e quote fisse se cambiano dal listino.</div>`;
+      } catch (err) {
+        populateEnergyMonths();
+        const ds = document.getElementById('dataLoadStatus');
+        if (ds) ds.textContent = 'Fallback locale';
+        els.resultAlert.innerHTML = `<div class="inline-alert">Caricamento automatico non riuscito. Lo strumento sta usando il listino integrato nel file. Verifica che il foglio Google sia condiviso correttamente.</div>`;
+        console.error(err);
+      }
+    }
+
     function bestMobileStandalone(customer, forcedType = null) {
       const type = forcedType || customer.mobile.tipo;
-      const source = type === 'mnp' ? DATA.mnp : DATA.consumer.filter(x => !x.richiede_fisso);
+      const source = type === 'mnp'
+        ? DATA.mnp.filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso)
+        : DATA.consumer.filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim && !isEnergyBundleConsumerOffer(x));
       const options = source
         .filter(x => x.attiva !== 0)
         .filter(x => type !== 'mnp' || operatorMatches(x, customer.mobile.operatore))
-        .filter(x => type !== 'nuovo' || !x.richiede_fisso)
-        .filter(x => type !== 'nuovo' || x.solo_nuovo_numero !== 0 || true)
         .map(x => {
           const gbValue = x.giga_illimitati ? 9999 : x.gb;
           const score = (customer.mobile.prezzo - x.prezzo) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.fiveg && !customer.mobile.fiveg ? 3 : 0) - (x.attivazione || 0) * 0.2;
@@ -593,9 +789,7 @@
 
       if (mode === 'fixed-mobile-mnp' || mode === 'fixed-mobile-new') {
         const isMnp = mode === 'fixed-mobile-mnp';
-        const mobile = isMnp ?
-          DATA.mnp.filter(x => operatorMatches(x, customer.mobile.operatore)).map(x => ({...x, effectivePrice:x.prezzo, score:(customer.mobile.prezzo-x.prezzo)*12 + (x.giga_illimitati?7:0) + (x.richiede_super_fibra?5:0)})).sort((a,b)=>b.score-a.score || byPriority(a,b))[0]
-          : DATA.consumer.filter(x => !x.solo_nuovo_numero || x.solo_nuovo_numero === 1).map(x => ({...x,effectivePrice:(x.prezzo_conv || x.prezzo), score:(customer.mobile.prezzo-(x.prezzo_conv||x.prezzo))*12 + (x.giga_illimitati_conv?7:0) + (x.richiede_fisso?5:0)})).sort((a,b)=>b.score-a.score || byPriority(a,b))[0];
+        const mobile = isMnp ? bestMobileFixedBundleMnp(customer) : bestMobileFixedBundleNew(customer);
         const fixed = bestFixed(customer, 'conv', false);
         if (!mobile || !fixed) return renderNoResult('Nessuna combinazione fisso + mobile trovata.');
         const mobilePrice = mobile.richiede_super_fibra || mobile.richiede_fisso ? (mobile.prezzo_conv || mobile.prezzo) : mobile.prezzo;
@@ -627,9 +821,7 @@
       if (mode === 'all-mnp' || mode === 'all-new') {
         const isMnp = mode === 'all-mnp';
         const fixed = bestFixed(customer, 'conv', true) || bestFixed(customer, 'conv', false);
-        const mobile = isMnp ?
-          DATA.mnp.filter(x => operatorMatches(x, customer.mobile.operatore)).map(x => ({...x,effectivePrice:x.richiede_super_fibra ? x.prezzo : x.prezzo, score:(customer.mobile.prezzo-x.prezzo)*12 + (x.giga_illimitati?8:0) + (x.richiede_super_fibra?8:0)})).sort((a,b)=>b.score-a.score || byPriority(a,b))[0]
-          : bestEnergyMobile(customer, true) || DATA.consumer.map(x=>({...x,effectivePrice:(x.prezzo_conv||x.prezzo),score:(customer.mobile.prezzo-(x.prezzo_conv||x.prezzo))*12 + (x.giga_illimitati_conv?8:0)})).sort((a,b)=>b.score-a.score || byPriority(a,b))[0];
+        const mobile = isMnp ? bestMobileFixedBundleMnp(customer) : bestMobileTripleBundleNew(customer);
         const energy = estimateEnergy(customer, true);
         if (!fixed || !mobile) return renderNoResult('Nessun pacchetto completo trovato.');
         const mobilePrice = mobile.prezzo_conv || mobile.effectivePrice || mobile.prezzo;
@@ -662,10 +854,12 @@
 
     function renderResult(result, alert='') {
       els.resultModeBadge.textContent = result.title;
+      const monthClass = result.monthlySaving >= 0 ? 'money-positive' : 'money-negative';
+      const yearClass = result.yearlySaving >= 0 ? 'money-positive' : 'money-negative';
       els.resultSummary.innerHTML = `
-        <div class="summary-card"><div class="title">Risparmio mensile</div><div class="big">${euro(result.monthlySaving)}</div><div class="sub">Differenza tra spesa attuale e proposta WindTre.</div></div>
-        <div class="summary-card"><div class="title">Risparmio annuale</div><div class="big">${euro(result.yearlySaving)}</div><div class="sub">Proiezione annua teorica sul canone mensile.</div></div>
-        <div class="summary-card"><div class="title">Vantaggio cliente</div><div class="big" style="font-size:1.15rem; line-height:1.3;">${esc(result.advantage)}</div><div class="sub">Più valore percepito, più semplicità di vendita.</div></div>`;
+        <div class="summary-card good"><div class="title">Risparmio mensile</div><div class="big ${monthClass}">${euro(result.monthlySaving)}</div><div class="sub">Differenza tra spesa attuale e proposta WindTre.</div></div>
+        <div class="summary-card good"><div class="title">Risparmio annuale</div><div class="big ${yearClass}">${euro(result.yearlySaving)}</div><div class="sub">Proiezione annua teorica sul canone mensile.</div></div>
+        <div class="summary-card info"><div class="title">Vantaggio cliente</div><div class="big" style="font-size:1.15rem; line-height:1.3;">${esc(result.advantage)}</div><div class="sub">Più valore percepito, più semplicità di vendita.</div></div>`;
       els.resultAlert.innerHTML = alert ? `<div class="inline-alert">${esc(alert)}</div>` : '';
       els.resultOffers.innerHTML = result.offers.map(renderOffer).join('');
       buildPrintArea(result);
@@ -677,7 +871,7 @@
         const price = item.effectivePrice ?? d.effectivePrice ?? d.prezzo;
         const gb = d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (d.gb_conv && d.prezzo_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) + ' GB';
         return `
-          <article class="offer">
+          <article class="offer offer-mobile">
             <div class="offer-head">
               <div>
                 <span class="badge orange">Mobile</span>
@@ -707,7 +901,7 @@
       if (item.type === 'fixed') {
         const d = item.data;
         return `
-          <article class="offer">
+          <article class="offer offer-fixed">
             <div class="offer-head">
               <div>
                 <span class="badge">Fisso</span>
@@ -737,7 +931,7 @@
       if (item.type === 'energy') {
         const d = item.data;
         return `
-          <article class="offer">
+          <article class="offer offer-energy">
             <div class="offer-head">
               <div>
                 <span class="badge green">Luce / Gas</span>
@@ -845,21 +1039,15 @@
       renderResult(best, 'Proposta automatica: il sistema ha selezionato il pacchetto con risparmio annuo teorico più alto rispetto ai dati inseriti.');
     }
 
-    function init() {
-      DATA.pun.forEach(row => {
-        const opt = document.createElement('option');
-        opt.value = row.mese;
-        opt.textContent = row.mese;
-        els.energyMonth.appendChild(opt);
-      });
-      els.energyMonth.value = DATA.pun[0].mese;
-
+    async function init() {
+      populateEnergyMonths();
       document.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', () => compare(btn.dataset.action));
       });
       document.getElementById('analyzeBestBtn').addEventListener('click', bestAutomatic);
       document.getElementById('printBtn').addEventListener('click', () => window.print());
       document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+      await loadRemoteData();
     }
     init();
   </script>
