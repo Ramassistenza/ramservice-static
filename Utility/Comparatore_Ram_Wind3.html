@@ -103,6 +103,11 @@
     }
     .quick-btn strong { display: block; font-size: 1rem; margin-bottom: 6px; }
     .quick-btn span { color: var(--muted); font-size: .88rem; }
+    .quick-btn.is-active {
+      border-color: var(--accent-2);
+      background: linear-gradient(180deg,#f4f8ff 0%,#ffffff 100%);
+      box-shadow: 0 0 0 3px rgba(15,98,254,.12);
+    }
     .summary-cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
     .summary-card {
       border-radius: 18px; padding: 16px; background: linear-gradient(180deg, #ffffff, #f8fbff); border: 1px solid var(--line);
@@ -127,9 +132,7 @@
       display: flex; justify-content: space-between; gap: 14px; align-items: start; padding: 18px 18px 10px;
     }
     .offer-head h4 { margin: 0; font-size: 1.15rem; }
-    .price-box {
-      text-align: right; min-width: 180px;
-    }
+    .price-box { text-align: right; min-width: 180px; }
     .price-box .price { font-size: 2rem; font-weight: 900; }
     .price-box .after { color: var(--muted); font-size: .9rem; margin-top: 3px; }
     .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -144,30 +147,18 @@
     .mini .l { color: var(--muted); font-size: .8rem; font-weight: 700; }
     .mini .v { font-size: 1rem; font-weight: 800; margin-top: 4px; }
     .note { color: var(--muted); font-size: .9rem; }
-    .highlight { color: var(--accent); font-weight: 900; }
     .muted { color: var(--muted); }
     .print-box { background: linear-gradient(180deg, #fffefc, #fff); border: 1px dashed #ffb784; }
-    .hidden { display: none !important; }
     .small { font-size: .82rem; }
     .table-like { width: 100%; border-collapse: collapse; }
     .table-like th, .table-like td { border-bottom: 1px solid var(--line); text-align: left; padding: 10px 8px; }
     .table-like th { color: var(--muted); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
     .inline-alert { padding: 12px 14px; border-radius: 14px; background: var(--soft-accent); color: #8a4100; font-weight: 700; }
-    .status-board {
-      display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin-top:14px;
-    }
-    .status-chip{
-      border-radius:16px; padding:14px; border:1px solid var(--line); background:#fff;
-    }
+    .status-board { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin-top:14px; }
+    .status-chip{ border-radius:16px; padding:14px; border:1px solid var(--line); background:#fff; }
     .status-chip strong{display:block; font-size:1.05rem; margin-top:4px;}
     .status-ok{background:linear-gradient(180deg,#f1fcf6,#fff); border-color:#cdeedb;}
     .status-fallback{background:linear-gradient(180deg,#fff8f2,#fff); border-color:#ffd9bf;}
-    .subtle-box{
-      border:1px solid var(--line); background:#f9fbfe; border-radius:16px; padding:14px; color:var(--muted);
-    }
-    .alt-list{display:grid; gap:10px; margin-top:14px;}
-    .alt-item{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff;}
-    .alt-item strong{display:block;}
     .alt-select{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; text-align:left; background:#fff; border:1px solid #e6edf5; border-radius:12px; padding:10px 12px; box-shadow:none;}
     .alt-select:hover{transform:none; border-color:#bfd4ea; background:#f8fbff;}
 
@@ -192,7 +183,6 @@
       .wrap { max-width: 100%; padding: 0; }
       .panel, .hero, .offer { box-shadow: none; }
       .panel { border: 1px solid #bbb; }
-      .print-only { display: block !important; }
     }
   </style>
 </head>
@@ -201,7 +191,7 @@
     <section class="hero no-print">
       <h1>Comparatore WindTre Negozio</h1>
       <p>Raccoglie i dati del cliente, analizza le offerte del mese e confronta singoli servizi o pacchetti. Evidenzia risparmio mensile, annuo, vantaggi tecnici e genera un riepilogo A4 stampabile.</p>
-      <p class="small">I dati vengono caricati in automatico dai fogli <strong>CONSUMER, MNP, FISSO, ENERGY, PUN</strong>. Per <strong>Luce/Gas</strong> vengono caricati in automatico dal file gli indici PUN/PSV del mese, mentre i campi di <strong>spread e quote fisse</strong> restano manuali perché non compaiono nel tracciato condiviso.</p>
+      <p class="small">I dati vengono caricati in automatico dai fogli <strong>CONSUMER, MNP, FISSO, ENERGY, PUN</strong>. Per <strong>Luce/Gas</strong> vengono caricati in automatico gli indici PUN/PSV del mese, mentre i campi di <strong>spread e quote fisse</strong> restano manuali.</p>
       <div class="kpi-row">
         <div class="kpi"><div class="label">Confronti disponibili</div><div class="value">8</div></div>
         <div class="kpi"><div class="label">Print A4</div><div class="value">SI</div></div>
@@ -209,7 +199,6 @@
         <div class="kpi"><div class="label">Aggiornamento listino</div><div class="value" id="dataLoadStatus">Auto</div></div>
       </div>
     </section>
-
 
     <section class="panel no-print" style="padding:12px 16px;">
       <details id="sheetStatusDetails">
@@ -257,11 +246,9 @@
                 <div class="field span-6"><label>Sconto multiservizio gas €/mese</label><input id="cfgGasBundleDiscount" type="number" step="0.01" value="2.00" /></div>
                 <div class="field span-12"><label>Extra servizi energia €/mese</label><input id="cfgEnergyExtra" type="number" step="0.01" value="0.00" /></div>
               </div>
-              <p class="note" style="margin:10px 0 0;">Compila questi campi solo quando il listino interno del negozio cambia o devi fare una stima più precisa.</p>
             </details>
           </div>
         </div>
-        <p class="note">Il mese PUN/PSV viene caricato dal file. I parametri manuali restano nascosti finché non servono.</p>
       </section>
     </div>
 
@@ -329,20 +316,20 @@
         <h2>3. Confronti disponibili</h2>
         <span class="badge orange">Seleziona cosa mostrare al cliente</span>
       </div>
-      <div class="quick-actions">
-        <button class="quick-btn" data-action="mobile-only"><strong>Solo Mobile</strong><span>Migliore tariffa mobile in base a MNP o nuovo numero.</span></button>
-        <button class="quick-btn" data-action="fixed-only"><strong>Solo Fisso</strong><span>Miglior fibra in base a tecnologia e preferenza Netflix.</span></button>
-        <button class="quick-btn" data-action="energy-only"><strong>Solo Luce/Gas</strong><span>Stima bolletta WindTre con indice PUN/PSV del mese.</span></button>
-        <button class="quick-btn" data-action="fixed-mobile-mnp"><strong>Fisso + Mobile MNP</strong><span>Pacchetto convergente per portabilità.</span></button>
-        <button class="quick-btn" data-action="fixed-mobile-new"><strong>Fisso + Mobile Nuovo</strong><span>Pacchetto convergente per nuovo numero.</span></button>
-        <button class="quick-btn" data-action="fixed-energy"><strong>Fisso + Luce/Gas</strong><span>Confronto combinato casa + utility.</span></button>
-        <button class="quick-btn" data-action="all-mnp"><strong>Tutti e 3 con MNP</strong><span>Pacchetto completo con sconto massimo.</span></button>
-        <button class="quick-btn" data-action="all-new"><strong>Tutti e 3 nuovo numero</strong><span>Pacchetto completo senza portabilità.</span></button>
+      <div class="quick-actions" id="quickActions">
+        <button type="button" class="quick-btn" data-action="mobile-only"><strong>Solo Mobile</strong><span>Migliore tariffa mobile in base a MNP o nuovo numero.</span></button>
+        <button type="button" class="quick-btn" data-action="fixed-only"><strong>Solo Fisso</strong><span>Miglior fibra in base a tecnologia e preferenza Netflix.</span></button>
+        <button type="button" class="quick-btn" data-action="energy-only"><strong>Solo Luce/Gas</strong><span>Stima bolletta WindTre con indice PUN/PSV del mese.</span></button>
+        <button type="button" class="quick-btn" data-action="fixed-mobile-mnp"><strong>Fisso + Mobile MNP</strong><span>Pacchetto convergente per portabilità.</span></button>
+        <button type="button" class="quick-btn" data-action="fixed-mobile-new"><strong>Fisso + Mobile Nuovo</strong><span>Pacchetto convergente per nuovo numero.</span></button>
+        <button type="button" class="quick-btn" data-action="fixed-energy"><strong>Fisso + Luce/Gas</strong><span>Confronto combinato casa + utility.</span></button>
+        <button type="button" class="quick-btn" data-action="all-mnp"><strong>Tutti e 3 con MNP</strong><span>Pacchetto completo con sconto massimo.</span></button>
+        <button type="button" class="quick-btn" data-action="all-new"><strong>Tutti e 3 nuovo numero</strong><span>Pacchetto completo senza portabilità.</span></button>
       </div>
       <div class="actions" style="margin-top:14px;">
-        <button class="btn-primary" id="analyzeBestBtn">Trova miglior proposta automatica</button>
-        <button class="btn-secondary" id="printBtn">Stampa preventivo A4</button>
-        <button class="btn-light" id="resetBtn">Azzera dati demo</button>
+        <button class="btn-primary" id="analyzeBestBtn" type="button">Trova miglior proposta automatica</button>
+        <button class="btn-secondary" id="printBtn" type="button">Stampa preventivo A4</button>
+        <button class="btn-light" id="resetBtn" type="button">Azzera dati demo</button>
       </div>
     </section>
 
@@ -387,40 +374,40 @@
         {id:'family_superfibra',attiva:1,nome:'FAMILY SUPER FIBRA',prezzo:7.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:9999,giga_illimitati:1,full_speed_gb:9999,fiveg:1,minuti:'illimitati',sms:200,gb_ue:10.1,prezzo_conv:7.99,prezzo_conv_dopo:0,mesi_conv:0,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:9999,richiede_fisso:1,richiede_super_fibra:1,richiede_second_sim:1,solo_nuovo_numero:0,conv_giga_illimitati:1,conv_tipo:'super_fibra',applica_sconto_fisso:1,telefono_incluso:0,note:'Second SIM in convergenza',priorita:130}
       ],
       mnp: [
-        {id:'go_200_xxl_5g_all',nome:'GO 200 XXL 5G',prezzo:10.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP tutti operatori escluso Very',priorita:10},
-        {id:'go_200_xxl_5g_virtuali',nome:'GO 200 XXL 5G',prezzo:10.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'vodafone;ho mobile;1mobile;lycamobile;optima;rabona',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP operatori virtuali',priorita:20},
-        {id:'go_200_l_5g_fastweb',nome:'GO 200 L 5G',prezzo:8.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'fastweb;lycamobile;italia power',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP virtuali minori',priorita:30},
-        {id:'go_200_l_5g_fastweb_easy',nome:'GO 200 L 5G EASY PAY',prezzo:8.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'fastweb;lycamobile;italia power',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:40},
-        {id:'go_150_xs_5g_lyca',nome:'GO 150 XS 5G',prezzo:5.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:150,giga_illimitati:0,full_speed_gb:150,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'lycamobile',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP Lycamobile',priorita:50},
-        {id:'go_150_xs_5g_easy',nome:'GO 150 XS 5G EASY PAY',prezzo:5.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:150,giga_illimitati:0,full_speed_gb:150,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'lycamobile',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:60},
-        {id:'go_250_s_5g_iliad',nome:'GO 250 S 5G',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:250,giga_illimitati:0,full_speed_gb:250,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;coop voce;poste mobile',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP Iliad CoopVoce PosteMobile',priorita:70},
-        {id:'go_250_s_5g_easy',nome:'GO 250 S 5G EASY PAY',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:250,giga_illimitati:0,full_speed_gb:250,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;coop voce;poste mobile',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:80},
-        {id:'go_unlimited_100_5g',nome:'GO UNLIMITED 100 5G',prezzo:9.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:100,giga_illimitati:1,full_speed_gb:100,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;fastweb;coop voce;poste mobile;lycamobile;rabona;virtuali minori',excluded:'kena;ho;very',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Illimitati 10Mbps oltre 100GB',priorita:90},
-        {id:'go_unlimited_200_5g_easy',nome:'GO UNLIMITED 200 5G EASY PAY',prezzo:9.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;fastweb;coop voce;poste mobile;lycamobile;rabona;virtuali minori',excluded:'kena;ho;very',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'200GB full speed',priorita:100},
-        {id:'go_unlimited_fire_5g',nome:'GO UNLIMITED FIRE 5G',prezzo:7.99,prezzo_dopo:0,mesi:0,attivazione:0,gb:9999,giga_illimitati:1,full_speed_gb:9999,fiveg:1,minuti:'illimitati',sms:200,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:1,conv_giga_illimitati:1,conv_tipo:'super_fibra',applica_sconto_fisso:1,telefono_incluso:0,note:'Illimitati con Super Fibra',priorita:110},
-        {id:'go_unlimited_fire_plus',nome:'GO UNLIMITED FIRE+',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:0,gb:9999,giga_illimitati:1,full_speed_gb:9999,fiveg:1,minuti:'illimitati',sms:200,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:1,conv_giga_illimitati:1,conv_tipo:'super_fibra',applica_sconto_fisso:1,telefono_incluso:0,note:'Versione convergenza Super Fibra',priorita:120}
+        {id:'go_200_xxl_5g_all',attiva:1,nome:'GO 200 XXL 5G',prezzo:10.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP tutti operatori escluso Very',priorita:10},
+        {id:'go_200_xxl_5g_virtuali',attiva:1,nome:'GO 200 XXL 5G',prezzo:10.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'vodafone;ho mobile;1mobile;lycamobile;optima;rabona',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP operatori virtuali',priorita:20},
+        {id:'go_200_l_5g_fastweb',attiva:1,nome:'GO 200 L 5G',prezzo:8.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'fastweb;lycamobile;italia power',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP virtuali minori',priorita:30},
+        {id:'go_200_l_5g_fastweb_easy',attiva:1,nome:'GO 200 L 5G EASY PAY',prezzo:8.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'fastweb;lycamobile;italia power',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:40},
+        {id:'go_150_xs_5g_lyca',attiva:1,nome:'GO 150 XS 5G',prezzo:5.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:150,giga_illimitati:0,full_speed_gb:150,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'lycamobile',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP Lycamobile',priorita:50},
+        {id:'go_150_xs_5g_easy',attiva:1,nome:'GO 150 XS 5G EASY PAY',prezzo:5.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:150,giga_illimitati:0,full_speed_gb:150,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'lycamobile',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:60},
+        {id:'go_250_s_5g_iliad',attiva:1,nome:'GO 250 S 5G',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:250,giga_illimitati:0,full_speed_gb:250,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;coop voce;poste mobile',excluded:'',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'MNP Iliad CoopVoce PosteMobile',priorita:70},
+        {id:'go_250_s_5g_easy',attiva:1,nome:'GO 250 S 5G EASY PAY',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:6.99,gb:250,giga_illimitati:0,full_speed_gb:250,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;coop voce;poste mobile',excluded:'',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Versione Easy Pay',priorita:80},
+        {id:'go_unlimited_100_5g',attiva:1,nome:'GO UNLIMITED 100 5G',prezzo:9.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:100,giga_illimitati:1,full_speed_gb:100,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;fastweb;coop voce;poste mobile;lycamobile;rabona;virtuali minori',excluded:'kena;ho;very',easy_pay:0,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'Illimitati 10Mbps oltre 100GB',priorita:90},
+        {id:'go_unlimited_200_5g_easy',attiva:1,nome:'GO UNLIMITED 200 5G EASY PAY',prezzo:9.99,prezzo_dopo:0,mesi:0,attivazione:9.99,gb:200,giga_illimitati:0,full_speed_gb:200,fiveg:1,minuti:'illimitati',sms:50,gb_ue:0,allowed:'iliad;fastweb;coop voce;poste mobile;lycamobile;rabona;virtuali minori',excluded:'kena;ho;very',easy_pay:1,richiede_super_fibra:0,conv_giga_illimitati:0,conv_tipo:'nessuna',applica_sconto_fisso:0,telefono_incluso:0,note:'200GB full speed',priorita:100},
+        {id:'go_unlimited_fire_5g',attiva:1,nome:'GO UNLIMITED FIRE 5G',prezzo:7.99,prezzo_dopo:0,mesi:0,attivazione:0,gb:9999,giga_illimitati:1,full_speed_gb:9999,fiveg:1,minuti:'illimitati',sms:200,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:1,conv_giga_illimitati:1,conv_tipo:'super_fibra',applica_sconto_fisso:1,telefono_incluso:0,note:'Illimitati con Super Fibra',priorita:110},
+        {id:'go_unlimited_fire_plus',attiva:1,nome:'GO UNLIMITED FIRE+',prezzo:6.99,prezzo_dopo:0,mesi:0,attivazione:0,gb:9999,giga_illimitati:1,full_speed_gb:9999,fiveg:1,minuti:'illimitati',sms:200,gb_ue:0,allowed:'tutti gli operatori',excluded:'very',easy_pay:0,richiede_super_fibra:1,conv_giga_illimitati:1,conv_tipo:'super_fibra',applica_sconto_fisso:1,telefono_incluso:0,note:'Versione convergenza Super Fibra',priorita:120}
       ],
       fixed: [
-        {id:'ftth_open_fiber_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH OPEN FIBER',variante:'standard',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:0,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,metodi:'carta di credito;conto corrente;bollettino postale',deposito:100,note:'Amazon Prime compreso per 12 mesi',priorita:10},
-        {id:'ftth_aree_bianche_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH AREE BIANCHE',variante:'standard',scenario:'standard',tecnologia:'FTTH Aree Bianche',down:'Fino a 1 Gigabit',up:'300 MB/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:0,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,metodi:'carta di credito;conto corrente;bollettino postale',deposito:100,note:'Amazon Prime compreso per 12 mesi',priorita:20},
-        {id:'ftth_extra_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH EXTRA',variante:'standard',scenario:'standard',tecnologia:'FTTH Extra',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:28.99,prezzo_conv:24.99,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:0,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:30},
-        {id:'fttc_100_200_extra_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTC 100/200/EXTRA',variante:'standard',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:28.99,prezzo_conv:24.99,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:0,cop_fttc:1,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:40},
-        {id:'ftth_fttc_multiservice_standard',attiva:1,famiglia:'super_fibra',nome:'FTTH | FTTC MULTISERVICE',variante:'standard',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:28.99,prezzo_conv:19.99,prezzo_conv_dopo:23.99,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:1,cop_fwa:0,richiede_mnp:1,richiede_energia:1,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'19,99 x 12 mesi poi 23,99 in convergenza multiservice',priorita:50},
-        {id:'fttc_nga_standard',attiva:1,famiglia:'super_fibra',nome:'FTTC NGA',variante:'standard',scenario:'standard',tecnologia:'FTTC NGA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:29.99,prezzo_conv:26.99,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:0,cop_fttc:1,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:60},
-        {id:'ftth_open_fiber_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTH OPEN FIBER',variante:'netflix_senza_pubblicita',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:42.49,prezzo_conv:38.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:0,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:70},
-        {id:'fttc_100_200_extra_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC 100/200/EXTRA',variante:'netflix_senza_pubblicita',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:42.49,prezzo_conv:38.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:0,cop_fttc:1,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:100},
-        {id:'ftth_fttc_multiservice_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'FTTH | FTTC MULTISERVICE & NETFLIX',variante:'netflix_senza_pubblicita',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:42.49,prezzo_conv:33.49,prezzo_conv_dopo:37.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:1,cop_fwa:0,richiede_mnp:1,richiede_energia:1,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Valori convergenza letti/inferiti dal listino',priorita:110},
-        {id:'ftth_open_fiber_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTH OPEN FIBER',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:35.49,prezzo_conv:31.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:0,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:130},
-        {id:'fttc_100_200_extra_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC 100/200/EXTRA',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:35.49,prezzo_conv:31.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:0,cop_fttc:1,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:160},
-        {id:'ftth_fttc_multiservice_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'FTTH | FTTC MULTISERVICE & NETFLIX',variante:'netflix_con_pubblicita',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:35.49,prezzo_conv:26.49,prezzo_conv_dopo:30.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:1,cop_fttc:1,cop_fwa:0,richiede_mnp:1,richiede_energia:1,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Valori convergenza letti/inferiti dal listino',priorita:170},
-        {id:'fttc_nga_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC NGA',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTC NGA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:36.49,prezzo_conv:33.49,attivazione_mese:1.99,attivazione_mesi:24,cop_ftth:0,cop_fttc:1,cop_fwa:0,richiede_mnp:0,richiede_energia:0,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Amazon Prime compreso per 12 mesi',priorita:180},
-        {id:'fwa_verifica_manuale',attiva:1,famiglia:'super_fibra',nome:'FWA (verifica manuale)',variante:'standard',scenario:'fwa',tecnologia:'FWA',down:'Da verificare',up:'Da verificare',prezzo:0,prezzo_conv:0,attivazione_mese:0,attivazione_mesi:0,cop_ftth:0,cop_fttc:0,cop_fwa:1,richiede_mnp:0,richiede_energia:0,amazon:0,netflix:0,piano_netflix:'',rata_modem:5.99,dns:15,piu_sicuri:1.99,voce:3,cyc_home:5,note:'Alternativa tecnica da verificare manualmente',priorita:190}
+        {id:'ftth_open_fiber_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH OPEN FIBER',variante:'standard',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'Amazon Prime compreso per 12 mesi',priorita:10},
+        {id:'ftth_aree_bianche_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH AREE BIANCHE',variante:'standard',scenario:'standard',tecnologia:'FTTH Aree Bianche',down:'Fino a 1 Gigabit',up:'300 MB/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'Amazon Prime compreso per 12 mesi',priorita:20},
+        {id:'ftth_extra_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTH EXTRA',variante:'standard',scenario:'standard',tecnologia:'FTTH Extra',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'Amazon Prime compreso per 12 mesi',priorita:30},
+        {id:'fttc_100_200_extra_standard',attiva:1,famiglia:'super_fibra',nome:'SUPER FIBRA FTTC 100/200/EXTRA',variante:'standard',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:24.99,prezzo_conv_dopo:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'Amazon Prime compreso per 12 mesi',priorita:40},
+        {id:'ftth_fttc_multiservice_standard',attiva:1,famiglia:'super_fibra',nome:'FTTH | FTTC MULTISERVICE',variante:'standard',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:28.99,prezzo_dopo:0,mesi:0,prezzo_conv:19.99,prezzo_conv_dopo:23.99,mesi_conv:12,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'19,99 x 12 mesi poi 23,99 in convergenza multiservice',priorita:50},
+        {id:'fttc_nga_standard',attiva:1,famiglia:'super_fibra',nome:'FTTC NGA',variante:'standard',scenario:'standard',tecnologia:'FTTC NGA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:29.99,prezzo_dopo:0,mesi:0,prezzo_conv:26.99,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:0,piano_netflix:'',note:'Amazon Prime compreso per 12 mesi',priorita:60},
+        {id:'ftth_open_fiber_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTH OPEN FIBER',variante:'netflix_senza_pubblicita',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:42.49,prezzo_dopo:0,mesi:0,prezzo_conv:38.49,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',note:'Amazon Prime compreso per 12 mesi',priorita:70},
+        {id:'fttc_100_200_extra_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC 100/200/EXTRA',variante:'netflix_senza_pubblicita',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:42.49,prezzo_dopo:0,mesi:0,prezzo_conv:38.49,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',note:'Amazon Prime compreso per 12 mesi',priorita:100},
+        {id:'ftth_fttc_multiservice_netflix_senza_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'FTTH | FTTC MULTISERVICE & NETFLIX',variante:'netflix_senza_pubblicita',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:42.49,prezzo_dopo:0,mesi:0,prezzo_conv:33.49,prezzo_conv_dopo:37.49,mesi_conv:12,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix senza pubblicità',note:'Valori convergenza letti/inferiti dal listino',priorita:110},
+        {id:'ftth_open_fiber_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTH OPEN FIBER',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTH Open Fiber',down:'Fino a 2,5 Gigabit',up:'500 MB/s',prezzo:35.49,prezzo_dopo:0,mesi:0,prezzo_conv:31.49,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',note:'Amazon Prime compreso per 12 mesi',priorita:130},
+        {id:'fttc_100_200_extra_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC 100/200/EXTRA',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTC 100/200/EXTRA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:35.49,prezzo_dopo:0,mesi:0,prezzo_conv:31.49,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',note:'Amazon Prime compreso per 12 mesi',priorita:160},
+        {id:'ftth_fttc_multiservice_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'FTTH | FTTC MULTISERVICE & NETFLIX',variante:'netflix_con_pubblicita',scenario:'multiservice',tecnologia:'FTTH | FTTC Multiservice',down:'Valore dipendente dalla tecnologia',up:'Valore dipendente dalla tecnologia',prezzo:35.49,prezzo_dopo:0,mesi:0,prezzo_conv:26.49,prezzo_conv_dopo:30.49,mesi_conv:12,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',note:'Valori convergenza letti/inferiti dal listino',priorita:170},
+        {id:'fttc_nga_netflix_con_pub',attiva:1,famiglia:'super_fibra_netflix',nome:'SUPER FIBRA & NETFLIX FTTC NGA',variante:'netflix_con_pubblicita',scenario:'standard',tecnologia:'FTTC NGA',down:'Fino a 200 Mb/s',up:'20 Mb/s',prezzo:36.49,prezzo_dopo:0,mesi:0,prezzo_conv:33.49,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:1.99,attivazione_mesi:24,amazon:12,netflix:1,piano_netflix:'Netflix con pubblicità',note:'Amazon Prime compreso per 12 mesi',priorita:180},
+        {id:'fwa_verifica_manuale',attiva:1,famiglia:'super_fibra',nome:'FWA (verifica manuale)',variante:'standard',scenario:'fwa',tecnologia:'FWA',down:'Da verificare',up:'Da verificare',prezzo:0,prezzo_dopo:0,mesi:0,prezzo_conv:0,prezzo_conv_dopo:0,mesi_conv:0,attivazione_mese:0,attivazione_mesi:0,amazon:0,netflix:0,piano_netflix:'',note:'Alternativa tecnica da verificare manualmente',priorita:190}
       ],
       energyMobile: [
-        {id:'multiservice_energia_super_fibra',nome:'MULTISERVICE Energia con Super Fibra',prezzo:9.99,attivazione:9.99,gb:100,fiveg:1,minuti:'illimitati',sms:200,gb_ue:12.6,prezzo_conv:7.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:100,richiede_super_fibra:1,richiede_luce_gas:0,conv_tipo:'entrambi',applica_sconto_fisso:1,telefono_incluso:1,note:'Sconto di 2€ dopo chiusura convergenza',priorita:10},
-        {id:'multiservice_energia',nome:'MULTISERVICE Energia',prezzo:9.99,attivazione:9.99,gb:100,fiveg:1,minuti:'illimitati',sms:200,gb_ue:12.6,prezzo_conv:9.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:100,richiede_super_fibra:0,richiede_luce_gas:1,conv_tipo:'luce_gas',applica_sconto_fisso:1,telefono_incluso:1,note:'Convergente clienti Luce&Gas',priorita:20},
-        {id:'cyc_multiservice_energia_super_fibra',nome:'CYC MULTISERVICE Energia con Super Fibra',prezzo:9.99,attivazione:0,gb:150,fiveg:1,minuti:'300 verso 53 paesi',sms:200,gb_ue:12.6,prezzo_conv:7.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:150,richiede_super_fibra:1,richiede_luce_gas:0,conv_tipo:'entrambi',applica_sconto_fisso:1,telefono_incluso:1,note:'Attivazione gratuita',priorita:30},
-        {id:'cyc_multiservice_energia',nome:'CYC MULTISERVICE Energia',prezzo:9.99,attivazione:0,gb:150,fiveg:1,minuti:'300 verso 53 paesi',sms:200,gb_ue:12.6,prezzo_conv:9.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:150,richiede_super_fibra:0,richiede_luce_gas:1,conv_tipo:'luce_gas',applica_sconto_fisso:1,telefono_incluso:1,note:'Attivazione gratuita',priorita:40}
+        {id:'multiservice_energia_super_fibra',attiva:1,nome:'MULTISERVICE Energia con Super Fibra',prezzo:9.99,attivazione:9.99,gb:100,fiveg:1,minuti:'illimitati',sms:200,gb_ue:12.6,prezzo_conv:7.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:100,richiede_super_fibra:1,richiede_luce_gas:0,conv_tipo:'entrambi',applica_sconto_fisso:1,telefono_incluso:1,note:'Sconto di 2€ dopo chiusura convergenza',priorita:10},
+        {id:'multiservice_energia',attiva:1,nome:'MULTISERVICE Energia',prezzo:9.99,attivazione:9.99,gb:100,fiveg:1,minuti:'illimitati',sms:200,gb_ue:12.6,prezzo_conv:9.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:100,richiede_super_fibra:0,richiede_luce_gas:1,conv_tipo:'luce_gas',applica_sconto_fisso:1,telefono_incluso:1,note:'Convergente clienti Luce&Gas',priorita:20},
+        {id:'cyc_multiservice_energia_super_fibra',attiva:1,nome:'CYC MULTISERVICE Energia con Super Fibra',prezzo:9.99,attivazione:0,gb:150,fiveg:1,minuti:'300 verso 53 paesi',sms:200,gb_ue:12.6,prezzo_conv:7.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:150,richiede_super_fibra:1,richiede_luce_gas:0,conv_tipo:'entrambi',applica_sconto_fisso:1,telefono_incluso:1,note:'Attivazione gratuita',priorita:30},
+        {id:'cyc_multiservice_energia',attiva:1,nome:'CYC MULTISERVICE Energia',prezzo:9.99,attivazione:0,gb:150,fiveg:1,minuti:'300 verso 53 paesi',sms:200,gb_ue:12.6,prezzo_conv:9.99,gb_conv:9999,giga_illimitati_conv:1,full_speed_gb_conv:150,richiede_super_fibra:0,richiede_luce_gas:1,conv_tipo:'luce_gas',applica_sconto_fisso:1,telefono_incluso:1,note:'Attivazione gratuita',priorita:40}
       ],
       pun: [
         {mese:'Febbraio 2026',pun_avg:0.1158,pun_with_losses:0.1274,psv:0.3768},
@@ -445,7 +432,8 @@
       printArea: document.getElementById('printArea'),
       sheetStatusBadge: document.getElementById('sheetStatusBadge'),
       sheetStatusMessage: document.getElementById('sheetStatusMessage'),
-      sheetStatusBoard: document.getElementById('sheetStatusBoard')
+      sheetStatusBoard: document.getElementById('sheetStatusBoard'),
+      quickActions: document.getElementById('quickActions')
     };
 
     function setSheetStatus(type, msg, meta = {}) {
@@ -467,30 +455,16 @@
       }
     }
 
-    function sanitizeText(v='') {
-      return String(v).replace(/^['"]|['"]$/g, '').trim();
-    }
-
-    function euro(n) {
-      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Number(n || 0));
-    }
-    function num(n, d=0) {
-      return new Intl.NumberFormat('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }).format(Number(n || 0));
-    }
-    function esc(s='') {
-      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
+    function sanitizeText(v='') { return String(v).replace(/^['"]|['"]$/g, '').trim(); }
+    function euro(n) { return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Number(n || 0)); }
+    function num(n, d=0) { return new Intl.NumberFormat('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }).format(Number(n || 0)); }
+    function esc(s='') { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function byPriority(a,b) { return (a.priorita || 999) - (b.priorita || 999); }
     function getValue(id) { return document.getElementById(id).value; }
     function getNum(id) { return Number(String(getValue(id)).replace(',', '.')) || 0; }
-    function containsWord(input, candidate) {
-      const a = String(input || '').trim().toLowerCase();
-      const b = String(candidate || '').trim().toLowerCase();
-      return a && b && (a.includes(b) || b.includes(a));
-    }
     function normalizeOperatorName(v='') {
       return String(v || '').toLowerCase()
-        .normalize('NFD').replace(/[̀-ͯ]/g,'')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
         .replace(/[^a-z0-9]+/g,' ')
         .replace(/\s+/g,' ')
         .trim();
@@ -499,6 +473,8 @@
       const s = normalizeOperatorName(v);
       if (!s) return '';
       if (s === 'tim') return 'tim';
+      if (s.includes('windtre') || s === 'wind tre') return 'windtre';
+      if (s === 'wind') return 'wind';
       if (s.includes('vodafone')) return 'vodafone';
       if (s.includes('iliad')) return 'iliad';
       if (s.includes('fastweb')) return 'fastweb';
@@ -517,15 +493,14 @@
       if (s.includes('altro')) return 'virtuali minori';
       return s;
     }
+    function operatorKey(v='') { return canonicalOperator(v); }
     function operatorFamily(v='') {
       const op = canonicalOperator(v);
-      const majors = ['tim','vodafone','iliad','fastweb','kena','ho mobile','very'];
+      const majors = ['tim','vodafone','iliad','fastweb','kena','ho mobile','very','wind','windtre'];
       if (!op) return '';
       return majors.includes(op) ? 'major' : 'virtuali minori';
     }
-    function splitList(v='') {
-      return String(v).toLowerCase().split(';').map(s => canonicalOperator(s) || normalizeOperatorName(s)).filter(Boolean);
-    }
+    function splitList(v='') { return String(v).toLowerCase().split(';').map(s => canonicalOperator(s) || normalizeOperatorName(s)).filter(Boolean); }
     function operatorMatches(offer, operator) {
       const op = canonicalOperator(operator);
       const family = operatorFamily(operator);
@@ -603,32 +578,15 @@
       };
     }
 
-
     const SHEET_ID = '1clgRiENuqoJkRwXrcA4LHX4eBWhH2wAaTkvSwQ_SA_Y';
-    const REMOTE_SHEETS = {
-      consumer: 'CONSUMER',
-      mnp: 'MNP',
-      fixed: 'FISSO',
-      energyMobile: 'ENERGY',
-      pun: 'PUN'
-    };
+    const REMOTE_SHEETS = { consumer: 'CONSUMER', mnp: 'MNP', fixed: 'FISSO', energyMobile: 'ENERGY', pun: 'PUN' };
+    const SHEET_GIDS = { consumer: '0', mnp: '1065110294', fixed: '1189307099', energyMobile: '1828808671', pun: '40707594' };
 
     function normHeader(v='') {
-      return String(v).trim().toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-        .replace(/[^\w]+/g, '_')
-        .replace(/^_+|_+$/g,'');
+      return String(v).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w]+/g, '_').replace(/^_+|_+$/g,'');
     }
-    function val(c) {
-      if (!c) return '';
-      if (typeof c.v === 'number') return c.v;
-      return c.v ?? c.f ?? '';
-    }
-    function numv(v) {
-      if (v === '' || v === null || v === undefined) return 0;
-      const n = Number(String(v).replace(',', '.'));
-      return Number.isFinite(n) ? n : 0;
-    }
+    function val(c) { if (!c) return ''; if (typeof c.v === 'number') return c.v; return c.v ?? c.f ?? ''; }
+    function numv(v) { if (v === '' || v === null || v === undefined) return 0; const n = Number(String(v).replace(',', '.')); return Number.isFinite(n) ? n : 0; }
     function parseGviz(text) {
       const cleaned = String(text).trim();
       const start = cleaned.indexOf('{');
@@ -672,7 +630,6 @@
         return obj;
       });
     }
-    const SHEET_GIDS = { consumer: '0', mnp: '1065110294', fixed: '1189307099', energyMobile: '1828808671', pun: '40707594' };
     async function fetchSheet(key, sheetName) {
       const gid = SHEET_GIDS[key];
       const attempts = [
@@ -688,82 +645,40 @@
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const rows = a.parser(await res.text());
           if (Array.isArray(rows) && rows.length) return { rows, source: a.source };
-        } catch (err) {
-          lastErr = err;
-        }
+        } catch (err) { lastErr = err; }
       }
       throw lastErr || new Error(`Errore caricamento ${sheetName}`);
     }
     function mapConsumerRows(rows) {
       return rows.map(r => ({
-        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo),
-        mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati),
-        full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue),
-        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza),
-        gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza),
-        richiede_fisso:numv(r.richiede_fisso), richiede_super_fibra:numv(r.richiede_super_fibra), richiede_second_sim:numv(r.richiede_second_sim),
-        solo_nuovo_numero:numv(r.solo_nuovo_numero), conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna',
-        applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati), full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue), prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza), gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza), richiede_fisso:numv(r.richiede_fisso), richiede_super_fibra:numv(r.richiede_super_fibra), richiede_second_sim:numv(r.richiede_second_sim), solo_nuovo_numero:numv(r.solo_nuovo_numero), conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
       }));
     }
     function mapMnpRows(rows) {
       return rows.map(r => ({
-        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo),
-        attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati), full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg),
-        minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue), operatori_ammessi:r.operatori_ammessi || '', operatori_esclusi:r.operatori_esclusi || '',
-        easy_pay:numv(r.easy_pay), richiede_super_fibra:numv(r.richiede_super_fibra), conv_giga_illimitati:numv(r.convergenza_giga_illimitati),
-        conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso),
-        note:r.note || '', priorita:numv(r.priorita)
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati), full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue), operatori_ammessi:r.operatori_ammessi || '', operatori_esclusi:r.operatori_esclusi || '', easy_pay:numv(r.easy_pay), richiede_super_fibra:numv(r.richiede_super_fibra), conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
       }));
     }
     function mapFixedRows(rows) {
       return rows.map(r => ({
-        id:r.id, attiva:numv(r.attiva), famiglia:r.famiglia_offerta, nome:r.nome_promo, variante:r.variante, scenario:r.scenario,
-        tecnologia:r.tecnologia, down:r.velocita_download, up:r.velocita_upload, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo),
-        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), attivazione_mese:numv(r.attivazione_mese), attivazione_mesi:numv(r.attivazione_mesi),
-        copertura_ftth:numv(r.copertura_ftth), copertura_fttc:numv(r.copertura_fttc), copertura_fwa:numv(r.copertura_fwa),
-        richiede_mnp:numv(r.richiede_mnp), richiede_energia:numv(r.richiede_energia), amazon:numv(r.include_amazon_prime_mesi),
-        netflix:numv(r.include_netflix), piano_netflix:r.piano_netflix || '', rata_modem_mese:numv(r.rata_modem_mese), dns_dinamico_una_tantum:numv(r.dns_dinamico_una_tantum),
-        piu_sicuri_mese:numv(r.piu_sicuri_mese), voce_unlimited_mese:numv(r.voce_unlimited_mese), cyc_home_mese:numv(r.cyc_home_mese),
-        metodi_pagamento:r.metodi_pagamento || '', deposito_bollettino_postale:numv(r.deposito_bollettino_postale), note:r.note || '', priorita:numv(r.priorita)
+        id:r.id, attiva:numv(r.attiva), famiglia:r.famiglia_offerta, nome:r.nome_promo, variante:r.variante, scenario:r.scenario, tecnologia:r.tecnologia, down:r.velocita_download, up:r.velocita_upload, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo), prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza), attivazione_mese:numv(r.attivazione_mese), attivazione_mesi:numv(r.attivazione_mesi), amazon:numv(r.include_amazon_prime_mesi), netflix:numv(r.include_netflix), piano_netflix:r.piano_netflix || '', note:r.note || '', priorita:numv(r.priorita)
       }));
     }
     function mapEnergyRows(rows) {
       return rows.map(r => ({
-        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo),
-        mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati),
-        full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue),
-        prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza),
-        gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza),
-        richiede_super_fibra:numv(r.richiede_super_fibra), richiede_luce_gas:numv(r.richiede_luce_gas), richiede_second_sim:numv(r.richiede_second_sim),
-        conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso),
-        telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
+        id:r.id, attiva:numv(r.attiva), nome:r.nome_promo, prezzo:numv(r.prezzo), prezzo_dopo:numv(r.prezzo_dopo), mesi:numv(r.mesi_promo), attivazione:numv(r.attivazione), gb:numv(r.gb), giga_illimitati:numv(r.giga_illimitati), full_speed_gb:numv(r.full_speed_gb), fiveg:numv(r.fiveg), minuti:r.minuti, sms:r.sms, gb_ue:numv(r.gb_ue), prezzo_conv:numv(r.prezzo_convergenza), prezzo_conv_dopo:numv(r.prezzo_convergenza_dopo), mesi_conv:numv(r.mesi_promo_convergenza), gb_conv:numv(r.gb_convergenza), giga_illimitati_conv:numv(r.giga_illimitati_convergenza), full_speed_gb_conv:numv(r.full_speed_gb_convergenza), richiede_super_fibra:numv(r.richiede_super_fibra), richiede_luce_gas:numv(r.richiede_luce_gas), richiede_second_sim:numv(r.richiede_second_sim), conv_giga_illimitati:numv(r.convergenza_giga_illimitati), conv_tipo:r.convergenza_tipo || 'nessuna', applica_sconto_fisso:numv(r.applica_sconto_fisso), telefono_incluso:numv(r.telefono_incluso), note:r.note || '', priorita:numv(r.priorita)
       }));
     }
-    function mapPunRows(rows) {
-      return rows.map(r => ({
-        mese:r.mese, f1:numv(r.f1), f2:numv(r.f2), f3:numv(r.f3), pun_avg:numv(r.pun_avg), pun_with_losses:numv(r.pun_with_losses), psv:numv(r.psv), note:r.note || ''
-      })).filter(r => r.mese);
-    }
+    function mapPunRows(rows) { return rows.map(r => ({ mese:r.mese, pun_avg:numv(r.pun_avg), pun_with_losses:numv(r.pun_with_losses), psv:numv(r.psv), note:r.note || '' })).filter(r => r.mese); }
     function validateLoadedRows(key, rows) {
       if (!Array.isArray(rows) || !rows.length) return false;
       const sample = rows.slice(0, 5);
       if (key === 'consumer') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0));
-      if (key === 'mnp') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0) && (r.operatori_ammessi || r.allowed || r.note));
+      if (key === 'mnp') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0));
       if (key === 'fixed') return sample.some(r => r.nome && (r.tecnologia || r.scenario));
       if (key === 'energyMobile') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0));
       if (key === 'pun') return sample.some(r => r.mese && (r.pun_with_losses || r.pun_avg || r.psv));
       return true;
-    }
-    function debugLogDataQuality() {
-      const msg = {
-        consumer: DATA.consumer.slice(0,2),
-        mnp: DATA.mnp.slice(0,2),
-        fixed: DATA.fixed.slice(0,2),
-        energyMobile: DATA.energyMobile.slice(0,2),
-        pun: DATA.pun.slice(0,2)
-      };
-      console.log('WindTre data quality', msg);
     }
     function populateEnergyMonths() {
       els.energyMonth.innerHTML = '';
@@ -784,24 +699,17 @@
       return conv.includes('luce_gas') || conv.includes('entrambi') || x.richiede_luce_gas;
     }
     function bestMobileFixedBundleNew(customer) {
-      let options = DATA.consumer
-        .filter(x => x.attiva !== 0)
-        .filter(x => !x.richiede_second_sim)
-        .filter(x => isFixedBundleConsumerOffer(x))
-        .filter(x => !isEnergyBundleConsumerOffer(x));
+      let options = DATA.consumer.filter(x => x.attiva !== 0).filter(x => !x.richiede_second_sim).filter(x => isFixedBundleConsumerOffer(x)).filter(x => !isEnergyBundleConsumerOffer(x));
       if (!options.length) return null;
       return options.map(x => {
-          const price = x.prezzo_conv || x.prezzo;
-          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
-          const score = mobileScore(x, customer, price, gbValue, x.richiede_super_fibra ? 6 : 2);
-          return { ...x, effectivePrice: price, score };
-        })
-        .sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
+        const price = x.prezzo_conv || x.prezzo;
+        const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
+        const score = mobileScore(x, customer, price, gbValue, x.richiede_super_fibra ? 6 : 2);
+        return { ...x, effectivePrice: price, score };
+      }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
     function bestMobileFixedBundleMnp(customer) {
-      let base = DATA.mnp
-        .filter(x => x.attiva !== 0)
-        .filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
+      let base = DATA.mnp.filter(x => x.attiva !== 0).filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
       const strict = base.filter(x => operatorMatches(x, customer.mobile.operatore));
       if (strict.length) base = strict;
       else {
@@ -818,16 +726,13 @@
       return bestMobileFixedBundleNew(customer);
     }
     function bestMobileTripleBundleAny(customer) {
-      let options = DATA.energyMobile
-        .filter(x => x.attiva !== 0)
-        .filter(x => String(x.conv_tipo || '').toLowerCase().includes('entrambi') || x.richiede_super_fibra || x.richiede_luce_gas);
+      let options = DATA.energyMobile.filter(x => x.attiva !== 0).filter(x => String(x.conv_tipo || '').toLowerCase().includes('entrambi') || x.richiede_super_fibra || x.richiede_luce_gas);
       return options.map(x => {
-          const price = x.prezzo_conv || x.prezzo;
-          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
-          const score = mobileScore(x, customer, price, gbValue, 10);
-          return { ...x, effectivePrice: price, score };
-        })
-        .sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
+        const price = x.prezzo_conv || x.prezzo;
+        const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
+        const score = mobileScore(x, customer, price, gbValue, 10);
+        return { ...x, effectivePrice: price, score };
+      }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
     async function loadRemoteData() {
       const meta = {};
@@ -839,13 +744,7 @@
           fetchSheet('energyMobile', REMOTE_SHEETS.energyMobile),
           fetchSheet('pun', REMOTE_SHEETS.pun)
         ]);
-        const mapped = {
-          consumer: mapConsumerRows(consumerPack.rows),
-          mnp: mapMnpRows(mnpPack.rows),
-          fixed: mapFixedRows(fixedPack.rows),
-          energyMobile: mapEnergyRows(energyPack.rows),
-          pun: mapPunRows(punPack.rows)
-        };
+        const mapped = { consumer: mapConsumerRows(consumerPack.rows), mnp: mapMnpRows(mnpPack.rows), fixed: mapFixedRows(fixedPack.rows), energyMobile: mapEnergyRows(energyPack.rows), pun: mapPunRows(punPack.rows) };
         const packs = {consumer:consumerPack,mnp:mnpPack,fixed:fixedPack,energyMobile:energyPack,pun:punPack};
         Object.keys(mapped).forEach(key => {
           const ok = validateLoadedRows(key, mapped[key]);
@@ -856,40 +755,24 @@
         const ds = document.getElementById('dataLoadStatus');
         if (ds) ds.textContent = 'Google Sheets OK';
         const allOk = Object.values(meta).every(x => x.loaded);
-        const msg = allOk
-          ? `Listini online sincronizzati. <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`
-          : `Listini online caricati con controllo qualità. Alcune sezioni non perfette sono rimaste sul listino integrato del file per evitare confronti errati.`;
+        const msg = allOk ? `Listini online sincronizzati. <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.` : `Listini online caricati con controllo qualità. Alcune sezioni non perfette sono rimaste sul listino integrato del file.`;
         setSheetStatus(allOk ? 'ok' : 'fallback', msg, meta);
-        const details = document.getElementById('sheetStatusDetails'); if (details) details.open = false;
-        els.resultAlert.innerHTML = `<div class="inline-alert">Listini online attivi. Se un foglio remoto ha dati incompleti, il sistema usa automaticamente il listino interno corretto.</div>`;
-        debugLogDataQuality();
+        const details = document.getElementById('sheetStatusDetails');
+        if (details) details.open = false;
       } catch (err) {
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
         if (ds) ds.textContent = 'Fallback locale';
-        meta.consumer = { loaded:false, count:DATA.consumer.length, source:'listino integrato' };
-        meta.mnp = { loaded:false, count:DATA.mnp.length, source:'listino integrato' };
-        meta.fixed = { loaded:false, count:DATA.fixed.length, source:'listino integrato' };
-        meta.energyMobile = { loaded:false, count:DATA.energyMobile.length, source:'listino integrato' };
-        meta.pun = { loaded:false, count:DATA.pun.length, source:'listino integrato' };
+        ['consumer','mnp','fixed','energyMobile','pun'].forEach(k => meta[k] = { loaded:false, count:DATA[k].length, source:'listino integrato' });
         setSheetStatus('fallback', 'Caricamento automatico non riuscito: lo strumento sta usando il listino integrato nel file.', meta);
-        els.resultAlert.innerHTML = `<div class="inline-alert">Caricamento automatico non riuscito. Lo strumento usa il listino integrato nel file.</div>`;
         console.error(err);
       }
     }
 
     function getMobileStandaloneBaseOptions(type) {
-      if (type === 'mnp') {
-        return DATA.mnp
-          .filter(x => x.attiva !== 0)
-          .filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso);
-      }
-      return DATA.consumer
-        .filter(x => x.attiva !== 0)
-        .filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim)
-        .filter(x => !isEnergyBundleConsumerOffer(x));
+      if (type === 'mnp') return DATA.mnp.filter(x => x.attiva !== 0).filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso);
+      return DATA.consumer.filter(x => x.attiva !== 0).filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim).filter(x => !isEnergyBundleConsumerOffer(x));
     }
-
     function mobileNeedTier(offer, customer) {
       const gbValue = offer.giga_illimitati ? 9999 : (offer.gb || 0);
       const hasEnoughGb = gbValue >= Math.max(1, customer.mobile.gb || 0);
@@ -899,7 +782,17 @@
       if (hasNeeded5g) return 1;
       return 0;
     }
-
+    function annualCostWithPromo(price, afterPrice=0, promoMonths=0) {
+      const base = Number(price || 0);
+      const after = Number(afterPrice || 0);
+      const months = Math.max(0, Math.min(12, Number(promoMonths || 0)));
+      if (after > 0 && months > 0) return (base * months) + (after * (12 - months));
+      return base * 12;
+    }
+    function pricingLabel(price, afterPrice=0, promoMonths=0) {
+      if (Number(afterPrice || 0) > 0 && Number(promoMonths || 0) > 0) return `${euro(price)} / mese per ${promoMonths} mesi, poi ${euro(afterPrice)} / mese`;
+      return `${euro(price)} / mese`;
+    }
     function rankMobileStandaloneOffer(offer, customer, type) {
       const gbValue = offer.giga_illimitati ? 9999 : (offer.gb || 0);
       const needTier = mobileNeedTier(offer, customer);
@@ -909,70 +802,33 @@
       const annualCurrent = annualCostWithPromo(customer.mobile.prezzo, 0, 0);
       const annualWind = annualCostWithPromo(effectivePrice, effectivePriceAfter, effectivePromoMonths);
       const extraGb = Math.max(0, gbValue - (customer.mobile.gb || 0));
-      return {
-        ...offer,
-        kind: type === 'mnp' ? 'mnp' : 'consumer',
-        effectivePrice,
-        effectivePriceAfter,
-        effectivePromoMonths,
-        gbValue,
-        needTier,
-        monthlyDelta: customer.mobile.prezzo - effectivePrice,
-        score: (needTier * 100000) + ((annualCurrent - annualWind) * 100) + Math.min(extraGb, 500)
-      };
+      return { ...offer, kind: type === 'mnp' ? 'mnp' : 'consumer', effectivePrice, effectivePriceAfter, effectivePromoMonths, gbValue, needTier, score: (needTier * 100000) + ((annualCurrent - annualWind) * 100) + Math.min(extraGb, 500) };
     }
-
     function rankedMobileStandaloneOptions(customer, forcedType = null) {
       const type = forcedType || customer.mobile.tipo;
       let options = getMobileStandaloneBaseOptions(type);
       if (type === 'mnp') {
         const strict = options.filter(x => operatorMatches(x, customer.mobile.operatore));
-        if (strict.length) {
-          options = strict;
-        } else {
+        if (strict.length) options = strict;
+        else {
           const relaxed = options.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
           if (relaxed.length) options = relaxed;
         }
       } else {
         options = options.filter(x => !x.solo_nuovo_numero || Number(x.solo_nuovo_numero) === 1 || true);
       }
-      return options
-        .map(x => rankMobileStandaloneOffer(x, customer, type))
-        .sort((a,b) => {
-          if (b.needTier !== a.needTier) return b.needTier - a.needTier;
-          if ((a.effectivePrice || 0) !== (b.effectivePrice || 0)) return (a.effectivePrice || 0) - (b.effectivePrice || 0);
-          if ((b.gbValue || 0) !== (a.gbValue || 0)) return (b.gbValue || 0) - (a.gbValue || 0);
-          return byPriority(a,b);
-        });
+      return options.map(x => rankMobileStandaloneOffer(x, customer, type)).sort((a,b) => {
+        if (b.needTier !== a.needTier) return b.needTier - a.needTier;
+        if ((a.effectivePrice || 0) !== (b.effectivePrice || 0)) return (a.effectivePrice || 0) - (b.effectivePrice || 0);
+        if ((b.gbValue || 0) !== (a.gbValue || 0)) return (b.gbValue || 0) - (a.gbValue || 0);
+        return byPriority(a,b);
+      });
     }
-
-    function bestMobileStandalone(customer, forcedType = null) {
-      return rankedMobileStandaloneOptions(customer, forcedType)[0] || null;
-    }
-
-    function annualCostWithPromo(price, afterPrice=0, promoMonths=0) {
-      const base = Number(price || 0);
-      const after = Number(afterPrice || 0);
-      const months = Math.max(0, Math.min(12, Number(promoMonths || 0)));
-      if (after > 0 && months > 0) {
-        return (base * months) + (after * (12 - months));
-      }
-      return base * 12;
-    }
-
-    function pricingLabel(price, afterPrice=0, promoMonths=0) {
-      if (Number(afterPrice || 0) > 0 && Number(promoMonths || 0) > 0) {
-        return `${euro(price)} / mese per ${promoMonths} mesi, poi ${euro(afterPrice)} / mese`;
-      }
-      return `${euro(price)} / mese`;
-    }
-
     function isWindCustomer(customer) {
       const mobileOp = operatorKey(customer.mobile.operatore || '');
       const fixedOp = operatorKey(customer.fixed.operatore || '');
       return ['wind','windtre'].includes(mobileOp) || ['wind','windtre'].includes(fixedOp);
     }
-
     function getFixedEffectivePricing(offer, customer, mode='solo') {
       const windCustomer = isWindCustomer(customer);
       const useConv = mode !== 'solo' || windCustomer;
@@ -981,7 +837,6 @@
       const promoMonths = useConv && Number(offer.mesi_conv || 0) > 0 ? Number(offer.mesi_conv) : Number(offer.mesi || 0);
       return { price, afterPrice, promoMonths, useConv, windCustomer };
     }
-
     function rankedFixedOptions(customer, mode='solo', requireMulti=false) {
       const wantsNetflix = customer.fixed.netflix;
       let options = DATA.fixed.filter(x => x.attiva !== 0).filter(x => fixedTechMatches(x, customer.fixed.tech));
@@ -1001,7 +856,6 @@
         const solo = options.filter(x => x.scenario !== 'multiservice');
         if (solo.length) options = solo;
       }
-
       return options.map(x => {
         const pricing = getFixedEffectivePricing(x, customer, mode);
         const annualCurrent = annualCostWithPromo(customer.fixed.prezzo, 0, 0);
@@ -1010,11 +864,7 @@
         return { ...x, effectivePrice: pricing.price, effectivePriceAfter: pricing.afterPrice, effectivePromoMonths: pricing.promoMonths, effectiveUseConv: pricing.useConv, windCustomer: pricing.windCustomer, score };
       }).sort((a,b) => b.score - a.score || byPriority(a,b));
     }
-
-    function bestFixed(customer, mode='solo', requireMulti=false) {
-      return rankedFixedOptions(customer, mode, requireMulti)[0] || null;
-    }
-
+    function bestFixed(customer, mode='solo', requireMulti=false) { return rankedFixedOptions(customer, mode, requireMulti)[0] || null; }
     function estimateEnergy(customer, bundle=false) {
       const month = DATA.pun.find(x => x.mese === customer.energy.month) || DATA.pun[0];
       const factor = customer.energy.factor;
@@ -1025,70 +875,38 @@
       const windGasMonthly = ((customer.energy.smc * (month.psv + cfg.gasSpread)) * factor) + Math.max(0, cfg.gasFixed - (bundle ? cfg.gasBundleDiscount : 0));
       const totalCurrent = currentLightMonthly + currentGasMonthly;
       const totalWind = windLightMonthly + windGasMonthly;
-      return {
-        month,
-        currentLightMonthly,
-        currentGasMonthly,
-        totalCurrent,
-        windLightMonthly,
-        windGasMonthly,
-        totalWind,
-        monthlySaving: totalCurrent - totalWind,
-        yearlySaving: (totalCurrent - totalWind) * 12
-      };
+      return { month, currentLightMonthly, currentGasMonthly, totalCurrent, windLightMonthly, windGasMonthly, totalWind, monthlySaving: totalCurrent - totalWind, yearlySaving: (totalCurrent - totalWind) * 12 };
     }
 
-    function bestEnergyMobile(customer, requireSuperFibra=false) {
-      const options = DATA.energyMobile.filter(x => !requireSuperFibra || x.richiede_super_fibra)
-        .map(x => {
-          const effective = (requireSuperFibra && x.prezzo_conv) ? x.prezzo_conv : x.prezzo;
-          const gbValue = x.giga_illimitati_conv ? 9999 : (requireSuperFibra ? x.gb_conv : x.gb);
-          const score = (customer.mobile.prezzo - effective) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.fiveg ? 2 : 0);
-          return { ...x, effectivePrice: effective, gbValue, score };
-        })
-        .sort((a,b) => b.score - a.score || byPriority(a,b));
-      return options[0] || null;
+    function setActiveMode(mode) {
+      document.querySelectorAll('.quick-btn[data-action]').forEach(btn => btn.classList.toggle('is-active', btn.dataset.action === mode));
     }
 
-    function compare(mode) {
+    function compare(mode, selectedAlternative = null) {
       const customer = readCustomer();
       let result = { mode, title:'', offers:[], monthlySaving:0, yearlySaving:0, advantage:'' };
       let alert = '';
 
       if (mode === 'mobile-only') {
         const ranked = rankedMobileStandaloneOptions(customer);
-        const mobile = ranked[0];
+        const mobile = selectedAlternative?.type === 'mobile' ? selectedAlternative.data : ranked[0];
         if (!mobile) return renderNoResult('Nessuna offerta mobile compatibile trovata.');
-        const alternatives = ranked.slice(1, 5).map(x => ({
-          id: x.id,
-          source: x.kind === 'mnp' ? 'mnp' : 'consumer',
-          nome: x.nome,
-          gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`,
-          prezzo: x.effectivePrice || x.prezzo || 0,
-          prezzo_dopo: x.effectivePriceAfter || x.prezzo_dopo || 0,
-          mesi: x.effectivePromoMonths || x.mesi || 0,
-          note: x.note || ''
-        }));
+        const alternatives = ranked.filter(x => !(x.id === mobile.id && x.kind === mobile.kind)).slice(0, 4).map(x => ({ id: x.id, source: x.kind === 'mnp' ? 'mnp' : 'consumer', nome: x.nome, gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`, prezzo: x.effectivePrice || x.prezzo || 0, prezzo_dopo: x.effectivePriceAfter || x.prezzo_dopo || 0, mesi: x.effectivePromoMonths || x.mesi || 0, note: x.note || '' }));
         result.title = customer.mobile.tipo === 'mnp' ? 'Solo Mobile MNP' : 'Solo Mobile nuovo numero';
         result.offers = [{ type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobile.effectivePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo, 0, 0) - annualCostWithPromo(mobile.effectivePrice, mobile.effectivePriceAfter, mobile.effectivePromoMonths), alternatives }];
         result.monthlySaving = customer.mobile.prezzo - mobile.effectivePrice;
         result.yearlySaving = annualCostWithPromo(customer.mobile.prezzo, 0, 0) - annualCostWithPromo(mobile.effectivePrice, mobile.effectivePriceAfter, mobile.effectivePromoMonths);
         result.advantage = mobile.giga_illimitati ? 'Giga illimitati' : `${mobile.gb || 0} GB${mobile.fiveg ? ' con 5G' : ''}`;
-        if (customer.mobile.tipo === 'mnp') {
-          alert = `Confronto MNP eseguito sulla tabella MNP in base all'operatore selezionato: ${customer.mobile.operatore || 'operatore non indicato'}.`;
-        } else {
-          alert = 'Confronto nuovo numero eseguito sulla tabella CONSUMER.';
-        }
+        alert = customer.mobile.tipo === 'mnp' ? `Confronto MNP eseguito sulla tabella MNP in base all'operatore selezionato: ${customer.mobile.operatore || 'operatore non indicato'}.` : 'Confronto nuovo numero eseguito sulla tabella CONSUMER.';
       }
 
       if (mode === 'fixed-only') {
-        const fixed = bestFixed(customer, 'solo', false);
+        const ranked = rankedFixedOptions(customer, 'solo', false);
+        const fixed = selectedAlternative?.type === 'fixed' ? selectedAlternative.data : ranked[0];
         if (!fixed) return renderNoResult('Nessuna offerta fisso compatibile trovata.');
+        const alternatives = ranked.filter(x => x.id !== fixed.id).slice(0,5).map(x => ({ id: x.id, source:'fixed', nome:x.nome, gb:x.tecnologia || '', prezzo:x.effectivePrice || x.prezzo || 0, prezzo_dopo:x.effectivePriceAfter || x.prezzo_dopo || 0, mesi:x.effectivePromoMonths || x.mesi || 0, note:x.note || '' }));
         result.title = 'Solo Fisso';
-        const fixedAlternatives = rankedFixedOptions(customer, 'solo', false).slice(1,5).map(x => ({
-          id: x.id, source:'fixed', nome:x.nome, gb:x.tecnologia || '', prezzo:x.effectivePrice || x.prezzo || 0, prezzo_dopo:x.effectivePriceAfter || x.prezzo_dopo || 0, mesi:x.effectivePromoMonths || x.mesi || 0, note:x.note || ''
-        }));
-        result.offers = [{ type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths), alternatives: fixedAlternatives }];
+        result.offers = [{ type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths), alternatives }];
         result.monthlySaving = customer.fixed.prezzo - fixed.effectivePrice;
         result.yearlySaving = annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths);
         result.advantage = (fixed.windCustomer ? 'Prezzo cliente Wind ' : '') + (fixed.piano_netflix || fixed.down || '');
@@ -1113,11 +931,11 @@
         const mobilePrice = mobile.richiede_super_fibra || mobile.richiede_fisso ? (mobile.prezzo_conv || mobile.prezzo) : mobile.prezzo;
         result.title = isMnp ? 'Fisso + Mobile MNP' : 'Fisso + Mobile nuovo numero';
         result.offers = [
-          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice },
-          { type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobilePrice, effectivePrice: mobilePrice }
+          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths) },
+          { type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobilePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(mobilePrice, 0, 0), effectivePrice: mobilePrice }
         ];
         result.monthlySaving = (customer.fixed.prezzo - fixed.effectivePrice) + (customer.mobile.prezzo - mobilePrice);
-        result.yearlySaving = result.monthlySaving * 12;
+        result.yearlySaving = result.offers.reduce((acc, x) => acc + (x.yearlySaving || 0), 0);
         result.advantage = `${mobile.giga_illimitati || mobile.giga_illimitati_conv ? 'Giga illimitati' : mobile.gb + ' GB'} + ${fixed.down}`;
       }
 
@@ -1127,11 +945,11 @@
         if (!fixed) return renderNoResult('Nessuna combinazione fisso + energia trovata.');
         result.title = 'Fisso + Luce/Gas';
         result.offers = [
-          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice },
+          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths) },
           { type:'energy', data: energy }
         ];
         result.monthlySaving = (customer.fixed.prezzo - fixed.effectivePrice) + energy.monthlySaving;
-        result.yearlySaving = result.monthlySaving * 12;
+        result.yearlySaving = (annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths)) + energy.yearlySaving;
         result.advantage = `${fixed.down} + sconto utility multi-servizio`;
         alert = 'Per il bundle fisso + luce/gas la parte utility è una stima basata sui parametri impostati.';
       }
@@ -1145,19 +963,21 @@
         const mobilePrice = mobile.prezzo_conv || mobile.effectivePrice || mobile.prezzo;
         result.title = isMnp ? 'Tutti e 3 con MNP' : 'Tutti e 3 nuovo numero';
         result.offers = [
-          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice },
-          { type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobilePrice, effectivePrice: mobilePrice },
+          { type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths) },
+          { type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobilePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(mobilePrice,0,0), effectivePrice: mobilePrice },
           { type:'energy', data: energy }
         ];
         result.monthlySaving = (customer.fixed.prezzo - fixed.effectivePrice) + (customer.mobile.prezzo - mobilePrice) + energy.monthlySaving;
-        result.yearlySaving = result.monthlySaving * 12;
+        result.yearlySaving = result.offers.reduce((acc, x) => acc + (x.yearlySaving || 0), 0) + energy.yearlySaving;
         result.advantage = 'Pacchetto completo con convergenza massima';
         alert = 'Nel pacchetto completo il sistema privilegia le righe multiservice quando presenti; se non compatibili, usa la migliore convergenza standard.';
       }
 
       state.lastResult = result;
       state.lastMode = mode;
-      renderResult(result, alert);
+      setActiveMode(mode);
+      renderResult(result, alert || (selectedAlternative ? 'Alternativa selezionata e applicata al preventivo.' : ''));
+      return result;
     }
 
     function renderNoResult(msg) {
@@ -1189,7 +1009,7 @@
         const price = item.effectivePrice ?? d.effectivePrice ?? d.prezzo;
         const priceAfter = d.effectivePriceAfter ?? d.prezzo_dopo ?? 0;
         const promoMonths = d.effectivePromoMonths ?? d.mesi ?? 0;
-        const gb = d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (d.gb_conv && d.prezzo_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) + ' GB';
+        const gb = d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (((d.gb_conv && d.prezzo_conv && price === d.prezzo_conv) ? d.gb_conv : d.gb) + ' GB');
         return `
           <article class="offer offer-mobile">
             <div class="offer-head">
@@ -1213,15 +1033,15 @@
                 <div class="mini"><div class="l">Prezzo attuale</div><div class="v">${euro(item.currentPrice || 0)}</div></div>
                 <div class="mini"><div class="l">Prezzo WindTre</div><div class="v">${pricingLabel(price, priceAfter, promoMonths)}</div></div>
                 <div class="mini"><div class="l">Risparmio annuo</div><div class="v money-positive">${euro(item.yearlySaving ?? 0)}</div></div>
-                <div class="mini"><div class="l">GB rispetto ad oggi</div><div class="v">${d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (Math.max(0, (d.gb_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) - readCustomer().mobile.gb)) + ' GB in più'}</div></div>
+                <div class="mini"><div class="l">GB rispetto ad oggi</div><div class="v">${d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (Math.max(0, (((d.gb_conv && price === d.prezzo_conv) ? d.gb_conv : d.gb) || 0) - readCustomer().mobile.gb)) + ' GB in più'}</div></div>
               </div>
               <div class="note" style="margin-bottom:8px;">${priceAfter > 0 && promoMonths > 0 ? `Prezzo promo <strong>${euro(price)}</strong> per <strong>${promoMonths} mesi</strong>, poi <strong>${euro(priceAfter)}</strong> / mese.` : `Prezzo mensile WindTre: <strong>${euro(price)}</strong>.`}</div>
               <div class="note">${esc(d.note || '')}</div>
               ${Array.isArray(item.alternatives) && item.alternatives.length ? `
-                <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed;">
+                <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed; padding:12px; border-radius:14px;">
                   <strong>Alternative attivabili</strong>
                   <div style="margin-top:8px; display:grid; gap:8px;">
-                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="mobile" data-source="${esc(alt.source || '')}" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(alt.mesi) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
+                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="mobile" data-source="${esc(alt.source || '')}" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(String(alt.mesi)) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
                   </div>
                 </div>` : ''}
             </div>
@@ -1259,10 +1079,10 @@
               </div>
               <div class="note">${d.windCustomer ? 'Cliente già Wind/WindTre: prezzo convergenza applicabile e possibilità di giga illimitati sulle SIM Wind compatibili. ' : ''}${esc(d.note || '')}</div>
               ${Array.isArray(item.alternatives) && item.alternatives.length ? `
-                <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed;">
+                <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed; padding:12px; border-radius:14px;">
                   <strong>Alternative attivabili</strong>
                   <div style="margin-top:8px; display:grid; gap:8px;">
-                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="fixed" data-source="fixed" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(alt.mesi) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
+                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="fixed" data-source="fixed" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(String(alt.mesi)) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
                   </div>
                 </div>` : ''}
             </div>
@@ -1303,19 +1123,6 @@
       return '';
     }
 
-
-    function findOfferBySelection(type, source, id, customer) {
-      if (type === 'mobile') {
-        const ranked = rankedMobileStandaloneOptions(customer, customer.mobile.tipo);
-        return ranked.find(x => x.id === id && (source ? x.kind === source : true)) || null;
-      }
-      if (type === 'fixed') {
-        const ranked = rankedFixedOptions(customer, 'solo', false);
-        return ranked.find(x => x.id === id) || null;
-      }
-      return null;
-    }
-
     function applyAlternativeSelection(type, source, id) {
       if (!state.lastMode) return;
       const customer = readCustomer();
@@ -1323,44 +1130,13 @@
         const ranked = rankedMobileStandaloneOptions(customer, customer.mobile.tipo);
         const selected = ranked.find(x => x.id === id && (source ? x.kind === source : true));
         if (!selected) return;
-        const alternatives = ranked.filter(x => !(x.id === id && x.kind === selected.kind)).slice(0, 4).map(x => ({
-          id: x.id,
-          source: x.kind === 'mnp' ? 'mnp' : 'consumer',
-          nome: x.nome,
-          gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`,
-          prezzo: x.effectivePrice || x.prezzo || 0,
-          prezzo_dopo: x.effectivePriceAfter || x.prezzo_dopo || 0,
-          mesi: x.effectivePromoMonths || x.mesi || 0,
-          note: x.note || ''
-        }));
-        const result = {
-          mode: state.lastMode,
-          title: customer.mobile.tipo === 'mnp' ? 'Solo Mobile MNP' : 'Solo Mobile nuovo numero',
-          offers: [{ type:'mobile', data:selected, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - selected.effectivePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths), alternatives }],
-          monthlySaving: customer.mobile.prezzo - selected.effectivePrice,
-          yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths),
-          advantage: selected.giga_illimitati ? 'Giga illimitati' : `${selected.gb || 0} GB${selected.fiveg ? ' con 5G' : ''}`
-        };
-        state.lastResult = result;
-        renderResult(result, 'Offerta alternativa mobile selezionata e inserita nel preventivo.');
+        compare('mobile-only', { type: 'mobile', data: selected });
       }
       if (state.lastMode === 'fixed-only' && type === 'fixed') {
         const ranked = rankedFixedOptions(customer, 'solo', false);
         const selected = ranked.find(x => x.id === id);
         if (!selected) return;
-        const alternatives = ranked.filter(x => x.id !== id).slice(0,4).map(x => ({
-          id:x.id, source:'fixed', nome:x.nome, gb:x.tecnologia || '', prezzo:x.effectivePrice || x.prezzo || 0, prezzo_dopo:x.effectivePriceAfter || x.prezzo_dopo || 0, mesi:x.effectivePromoMonths || x.mesi || 0, note:x.note || ''
-        }));
-        const result = {
-          mode: state.lastMode,
-          title: 'Solo Fisso',
-          offers: [{ type:'fixed', data:selected, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - selected.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths), alternatives }],
-          monthlySaving: customer.fixed.prezzo - selected.effectivePrice,
-          yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths),
-          advantage: (selected.windCustomer ? 'Prezzo cliente Wind ' : '') + (selected.piano_netflix || selected.down || '')
-        };
-        state.lastResult = result;
-        renderResult(result, 'Offerta alternativa fisso selezionata e inserita nel preventivo.');
+        compare('fixed-only', { type: 'fixed', data: selected });
       }
     }
 
@@ -1371,7 +1147,7 @@
         if (item.type === 'mobile') {
           const d = item.data;
           const price = item.effectivePrice ?? d.effectivePrice ?? d.prezzo;
-          return `<tr><td>Mobile</td><td>${esc(d.nome)}</td><td>${euro(price)}</td><td>${esc(d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : ((d.gb_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) + ' GB'))}</td></tr>`;
+          return `<tr><td>Mobile</td><td>${esc(d.nome)}</td><td>${euro(price)}</td><td>${esc(d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (((d.gb_conv && price === d.prezzo_conv) ? d.gb_conv : d.gb) + ' GB'))}</td></tr>`;
         }
         if (item.type === 'fixed') {
           const d = item.data;
@@ -1383,7 +1159,6 @@
         }
         return '';
       }).join('');
-
       els.printArea.innerHTML = `
         <div style="padding:8px 0 2px;">
           <h2 style="margin:0 0 6px;">Preventivo commerciale WindTre</h2>
@@ -1425,18 +1200,18 @@
 
     function bestAutomatic() {
       const modes = ['mobile-only','fixed-only','energy-only','fixed-mobile-mnp','fixed-mobile-new','fixed-energy','all-mnp','all-new'];
-      const customer = readCustomer();
       const results = [];
       for (const m of modes) {
         try {
-          compare(m);
-          if (state.lastResult) results.push(structuredClone(state.lastResult));
-        } catch (e) {}
+          const result = compare(m);
+          if (result) results.push(JSON.parse(JSON.stringify(result)));
+        } catch (e) { console.error(e); }
       }
       if (!results.length) return renderNoResult('Nessuna proposta disponibile.');
       const best = results.sort((a,b) => b.yearlySaving - a.yearlySaving)[0];
       state.lastResult = best;
       state.lastMode = best.mode;
+      setActiveMode(best.mode);
       renderResult(best, 'Proposta automatica: il sistema ha selezionato il pacchetto con risparmio annuo teorico più alto rispetto ai dati inseriti.');
     }
 
