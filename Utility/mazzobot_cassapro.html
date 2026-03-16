@@ -387,9 +387,9 @@
   }
 
   function calcStake(bank,pct){
-    const val = round2(bank * pct / 100);
-    return Math.max(0, Math.min(val, bank));
-  }
+	  const val = Math.floor((bank * pct) / 100);
+	  return Math.max(0, Math.min(val, Math.floor(bank)));
+	}
 
   function defaultState(){
     return {
@@ -466,12 +466,12 @@
   }
 
   function exposure1(){
-    return round2(state.day.openSignals.reduce((s,x) => s + (x.stake1 || 0), 0));
-  }
+	  return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake1 || 0), 0));
+	}
 
-  function exposure2(){
-    return round2(state.day.openSignals.reduce((s,x) => s + (x.stake2 || 0), 0));
-  }
+	function exposure2(){
+	  return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake2 || 0), 0));
+	}
 
   function nextStake1(){
     return calcStake(state.bank1.current, state.config.bank1StakePct);
@@ -494,14 +494,15 @@
   }
 
   function bank2AllowedStake(){
-    const base = nextStake2Base();
-    const remaining = remainingExposure2();
+	  const base = nextStake2Base();
+	  const remaining = Math.floor(remainingExposure2());
 
-    if(state.config.bank2Mode === "skip"){
-      return remaining >= base ? base : 0;
-    }
-    return round2(Math.min(base, remaining));
-  }
+	  if(state.config.bank2Mode === "skip"){
+	    return remaining >= base ? base : 0;
+	  }
+
+	  return Math.max(0, Math.floor(Math.min(base, remaining)));
+	}
 
   function bank1DayPnl(){
     return round2(state.bank1.current - state.day.bank1Start);
