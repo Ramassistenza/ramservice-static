@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MazzoBotOVER Bankroll Mobile v3</title>
+  <meta name="theme-color" content="#0b1220" />
+  <style>
+    :root{
+      --bg:#09111e;
+      --card:#121d31;
+      --line:rgba(255,255,255,.08);
+      --text:#edf4ff;
+      --muted:#9db0d0;
+      --green:#19c37d;
+      --red:#ff6170;
+      --orange:#ff7a18;
+      --yellow:#f4b740;
+      --blue:#4ea1ff;
+      --shadow:0 14px 34px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;padding:0;
+      background:radial-gradient(circle at top, #162745 0%, #09111e 42%, #050b14 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+    }
+    body{min-height:100vh;padding:14px 14px 100px}
+    .app{max-width:760px;margin:0 auto}
+    .hero{
+      background:linear-gradient(135deg, rgba(255,122,24,.18), rgba(78,161,255,.16));
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:24px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+    }
+    .hero h1{margin:0;font-size:25px;line-height:1.05}
+    .hero p{margin:8px 0 0;color:var(--muted);font-size:13px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .sub{font-size:12px;color:var(--muted);margin:-2px 0 10px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    @media(max-width:680px){
+      .grid2,.grid3{grid-template-columns:1fr}
+      .hero h1{font-size:22px}
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      margin:0 0 6px;
+    }
+    input,select{
+      width:100%;
+      background:#0b1527;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:14px 12px;
+      font-size:16px;
+      outline:none;
+    }
+    input:focus,select:focus{
+      border-color:rgba(255,122,24,.55);
+      box-shadow:0 0 0 3px rgba(255,122,24,.14);
+    }
+    button{
+      border:none;
+      cursor:pointer;
+      width:100%;
+      padding:14px;
+      border-radius:16px;
+      font-size:15px;
+      font-weight:800;
+      color:#fff;
+      background:linear-gradient(135deg,var(--orange),#ff9640);
+      box-shadow:0 10px 22px rgba(255,122,24,.22);
+    }
+    button.secondary{
+      background:#0d182b;
+      box-shadow:none;
+      border:1px solid rgba(255,255,255,.08);
+      color:#dce8ff;
+    }
+    button.green{
+      background:linear-gradient(135deg,#1cc883,#149d67);
+      box-shadow:0 10px 22px rgba(25,195,125,.22);
+    }
+    button.red{
+      background:linear-gradient(135deg,#ff6876,#eb4b5c);
+      box-shadow:0 10px 22px rgba(255,97,112,.22);
+    }
+    .btns2,.btns3{display:grid;gap:10px;margin-top:10px}
+    .btns2{grid-template-columns:1fr 1fr}
+    .btns3{grid-template-columns:1fr 1fr 1fr}
+    @media(max-width:680px){
+      .btns2,.btns3{grid-template-columns:1fr}
+    }
+    .big-status{
+      padding:14px;
+      border-radius:18px;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid rgba(255,255,255,.08);
+      margin-top:10px;
+    }
+    .status-ok{background:rgba(25,195,125,.12);color:#cdfbe5;border-color:rgba(25,195,125,.32)}
+    .status-stop{background:rgba(255,97,112,.12);color:#ffd7dc;border-color:rgba(255,97,112,.32)}
+    .status-warn{background:rgba(244,183,64,.12);color:#ffefc1;border-color:rgba(244,183,64,.32)}
+    .status-wait{background:rgba(78,161,255,.12);color:#d8eaff;border-color:rgba(78,161,255,.32)}
+    .bankCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:680px){.bankCards{grid-template-columns:1fr}}
+    .bank{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    }
+    .bank h3{margin:0 0 10px;font-size:15px}
+    .stat{
+      display:flex;justify-content:space-between;gap:10px;
+      padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:14px;
+    }
+    .stat:last-child{border-bottom:none;padding-bottom:0}
+    .val{font-weight:800}
+    .good{color:#c6fae1}
+    .bad{color:#ffd7dc}
+    .blue{color:#cfe6ff}
+    .warn{color:#ffefc1}
+    .pillRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 11px;border-radius:999px;
+      background:#0c1526;border:1px solid rgba(255,255,255,.08);
+      font-size:12px;font-weight:800;color:#dce8ff;
+    }
+    .signalCard{
+      border:1px solid rgba(255,255,255,.08);
+      background:#0d1728;
+      border-radius:16px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .signalTop{
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+      margin-bottom:8px;
+    }
+    .signalName{font-size:14px;font-weight:800}
+    .tag{
+      display:inline-block;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800
+    }
+    .tag.open{background:rgba(78,161,255,.12);color:#d8eaff}
+    .tag.win{background:rgba(25,195,125,.12);color:#cdfbe5}
+    .tag.loss{background:rgba(255,97,112,.12);color:#ffd7dc}
+    .signalMeta{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;
+      font-size:13px;color:#dce8ff
+    }
+    @media(max-width:520px){.signalMeta{grid-template-columns:1fr}}
+    .signalButtons{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px
+    }
+    .historyWrap{overflow:auto;border-radius:14px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{
+      padding:10px 9px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:13px;
+    }
+    th{background:#0b1526;color:#d9e7ff;position:sticky;top:0}
+    tr:last-child td{border-bottom:none}
+    .right{text-align:right}
+    .footer{text-align:center;color:var(--muted);font-size:12px;margin-top:12px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <h1>📊 MazzoBotOVER<br>Bankroll Mobile v3</h1>
+    <p>Cassa aggressiva + cassa prudente con gestione automatica multi-segnale, esposizione massima, stop loss e take profit.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Configurazione</h2>
+    <div class="sub">La Cassa 2 riduce o salta automaticamente i segnali quando supera il rischio massimo contemporaneo.</div>
+
+    <div class="grid2">
+      <div>
+        <label for="bank1Start">Cassa 1 iniziale (€)</label>
+        <input id="bank1Start" type="number" step="0.01" value="300">
+      </div>
+      <div>
+        <label for="bank2Start">Cassa 2 iniziale (€)</label>
+        <input id="bank2Start" type="number" step="0.01" value="1000">
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <label for="bank1StakePct">Stake Cassa 1 (% cassa)</label>
+        <input id="bank1StakePct" type="number" step="0.1" value="5">
+      </div>
+      <div>
+        <label for="bank2StakePct">Stake Cassa 2 (% cassa)</label>
+        <input id="bank2StakePct" type="number" step="0.1" value="4">
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div>
+        <label for="bank2TakeProfit">Take profit Cassa 2 (% giorno)</label>
+        <input id="bank2TakeProfit" type="number" step="0.1" value="5">
+      </div>
+      <div>
+        <label for="bank2StopLoss">Stop loss Cassa 2 (% giorno)</label>
+        <input id="bank2StopLoss" type="number" step="0.1" value="8">
+      </div>
+      <div>
+        <label for="bank1MaxExposurePct">Esposizione max Cassa 1 (% aperta)</label>
+        <input id="bank1MaxExposurePct" type="number" step="1" value="20">
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <label for="bank2MaxExposurePct">Esposizione max Cassa 2 prudente (% aperta)</label>
+        <input id="bank2MaxExposurePct" type="number" step="1" value="12">
+      </div>
+      <div>
+        <label for="bank2Mode">Modalità Cassa 2</label>
+        <select id="bank2Mode">
+          <option value="reduce">Riduci stake automaticamente</option>
+          <option value="skip">Salta se non c’è spazio pieno</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btns2">
+      <button id="saveConfigBtn">Salva configurazione</button>
+      <button class="secondary" id="newDayBtn">Nuova giornata</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>➕ Apri nuovo segnale</h2>
+    <div class="sub">La Cassa 2 decide da sola se aprire pieno, ridotto o saltare il segnale in base al rischio aperto.</div>
+
+    <div class="grid2">
+      <div>
+        <label for="matchInput">Match / nota</label>
+        <input id="matchInput" type="text" placeholder="Es. Twente vs Utrecht">
+      </div>
+      <div>
+        <label for="quotaInput">Quota</label>
+        <input id="quotaInput" type="number" step="0.01" value="1.63">
+      </div>
+    </div>
+
+    <div class="btns2">
+      <button id="openSignalBtn">Apri segnale</button>
+      <button class="secondary" id="simulateStakeBtn">Simula stake</button>
+    </div>
+
+    <div id="stakePreview" class="big-status status-wait">Inserisci i dati e premi “Simula stake” oppure apri direttamente il segnale.</div>
+  </div>
+
+  <div class="card">
+    <h2>📌 Azione consigliata</h2>
+    <div class="pillRow">
+      <div class="pill">📅 <span id="todayLabel"></span></div>
+      <div class="pill">🎯 Segnali aperti: <span id="openCountLabel"></span></div>
+      <div class="pill">📋 Chiusi oggi: <span id="closedCountLabel"></span></div>
+    </div>
+    <div id="advice1" class="big-status status-ok">Cassa 1 pronta.</div>
+    <div id="advice2" class="big-status status-ok">Cassa 2 pronta.</div>
+  </div>
+
+  <div class="card">
+    <h2>💰 Stato casse</h2>
+    <div class="bankCards">
+      <div class="bank">
+        <h3>💵 Cassa 1 — Aggressiva</h3>
+        <div class="stat"><span>Banca attuale</span><span id="b1Current" class="val">€0,00</span></div>
+        <div class="stat"><span>Stake prossimo</span><span id="b1StakeNext" class="val blue">€0,00</span></div>
+        <div class="stat"><span>Esposizione aperta</span><span id="b1Exposure" class="val warn">€0,00</span></div>
+        <div class="stat"><span>Profitto oggi</span><span id="b1DayPnl" class="val">€0,00</span></div>
+        <div class="stat"><span>Profitto totale</span><span id="b1TotalPnl" class="val">€0,00</span></div>
+        <div class="stat"><span>WIN / LOSS oggi</span><span id="b1WL" class="val">0 / 0</span></div>
+      </div>
+
+      <div class="bank">
+        <h3>🏦 Cassa 2 — Prudente</h3>
+        <div class="stat"><span>Banca attuale</span><span id="b2Current" class="val">€0,00</span></div>
+        <div class="stat"><span>Stake base prossimo</span><span id="b2StakeNext" class="val blue">€0,00</span></div>
+        <div class="stat"><span>Esposizione aperta</span><span id="b2Exposure" class="val warn">€0,00</span></div>
+        <div class="stat"><span>Spazio residuo aperto</span><span id="b2RemainingExposure" class="val warn">€0,00</span></div>
+        <div class="stat"><span>Profitto oggi</span><span id="b2DayPnl" class="val">€0,00</span></div>
+        <div class="stat"><span>Profitto totale</span><span id="b2TotalPnl" class="val">€0,00</span></div>
+        <div class="stat"><span>Take / Stop</span><span id="b2Targets" class="val warn">€0,00 / €0,00</span></div>
+        <div class="stat"><span>WIN / LOSS oggi</span><span id="b2WL" class="val">0 / 0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🟦 Segnali aperti</h2>
+    <div class="sub">Ogni segnale memorizza lo stake deciso al momento di apertura.</div>
+    <div id="openSignalsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Storico chiuso di oggi</h2>
+    <div class="historyWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ora</th>
+            <th>Match</th>
+            <th>Quota</th>
+            <th>Esito</th>
+            <th class="right">Stake C1</th>
+            <th class="right">Stake C2</th>
+            <th class="right">Cassa 1</th>
+            <th class="right">Cassa 2</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable"></tbody>
+      </table>
+    </div>
+
+    <div class="btns3">
+      <button class="secondary" id="undoBtn">Annulla ultima chiusura</button>
+      <button class="secondary" id="exportCsvBtn">Esporta CSV</button>
+      <button class="red" id="resetAllBtn">Reset totale</button>
+    </div>
+  </div>
+
+  <div class="footer">Salvataggio automatico attivo su questo dispositivo.</div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = "mazzobotover_bankroll_mobile_v3";
+
+  function todayString(){
+    return new Date().toLocaleDateString("it-IT");
+  }
+  function nowTime(){
+    return new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+  }
+  function money(v){
+    return new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(v || 0);
+  }
+  function round2(v){
+    return Math.round((v || 0) * 100) / 100;
+  }
+  function calcStake(bank,pct){
+    const val = round2(bank * pct / 100);
+    return Math.max(0, Math.min(val, bank));
+  }
+
+  function defaultState(){
+    return {
+      config:{
+        bank1StakePct:5,
+        bank2StakePct:4,
+        bank2TakeProfit:5,
+        bank2StopLoss:8,
+        bank1MaxExposurePct:20,
+        bank2MaxExposurePct:12,
+        bank2Mode:"reduce"
+      },
+      bank1:{start:300,current:300},
+      bank2:{start:1000,current:1000},
+      day:{
+        date:todayString(),
+        bank1Start:300,
+        bank2Start:1000,
+        bank1Wins:0,
+        bank1Losses:0,
+        bank2Wins:0,
+        bank2Losses:0,
+        openSignals:[],
+        history:[]
+      }
+    };
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : defaultState();
+    }catch(e){
+      return defaultState();
+    }
+  }
+
+  const state = load();
+
+  function save(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function ensureDay(){
+    const t = todayString();
+    if(state.day.date !== t){
+      state.day = {
+        date:t,
+        bank1Start:state.bank1.current,
+        bank2Start:state.bank2.current,
+        bank1Wins:0,
+        bank1Losses:0,
+        bank2Wins:0,
+        bank2Losses:0,
+        openSignals:[],
+        history:[]
+      };
+      save();
+    }
+  }
+
+  ensureDay();
+
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHtml(str){
+    return String(str || "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[s]));
+  }
+
+  function exposure1(){
+    return round2(state.day.openSignals.reduce((s,x) => s + (x.stake1 || 0), 0));
+  }
+
+  function exposure2(){
+    return round2(state.day.openSignals.reduce((s,x) => s + (x.stake2 || 0), 0));
+  }
+
+  function nextStake1(){
+    return calcStake(state.bank1.current, state.config.bank1StakePct);
+  }
+
+  function nextStake2Base(){
+    return calcStake(state.bank2.current, state.config.bank2StakePct);
+  }
+
+  function maxExposureValue1(){
+    return round2(state.bank1.current * state.config.bank1MaxExposurePct / 100);
+  }
+
+  function maxExposureValue2(){
+    return round2(state.bank2.current * state.config.bank2MaxExposurePct / 100);
+  }
+
+  function remainingExposure2(){
+    return round2(Math.max(0, maxExposureValue2() - exposure2()));
+  }
+
+  function bank2AllowedStake(){
+    const base = nextStake2Base();
+    const remaining = remainingExposure2();
+
+    if(state.config.bank2Mode === "skip"){
+      return remaining >= base ? base : 0;
+    }
+
+    return round2(Math.min(base, remaining));
+  }
+
+  function bank1DayPnl(){
+    return round2(state.bank1.current - state.day.bank1Start);
+  }
+
+  function bank2DayPnl(){
+    return round2(state.bank2.current - state.day.bank2Start);
+  }
+
+  function bank1TotalPnl(){
+    return round2(state.bank1.current - state.bank1.start);
+  }
+
+  function bank2TotalPnl(){
+    return round2(state.bank2.current - state.bank2.start);
+  }
+
+  function bank2TakeValue(){
+    return round2(state.day.bank2Start * state.config.bank2TakeProfit / 100);
+  }
+
+  function bank2StopValue(){
+    return round2(state.day.bank2Start * state.config.bank2StopLoss / 100);
+  }
+
+  function render(){
+    ensureDay();
+
+    $("todayLabel").textContent = state.day.date;
+    $("openCountLabel").textContent = state.day.openSignals.length;
+    $("closedCountLabel").textContent = state.day.history.length;
+
+    $("bank1Start").value = state.bank1.start;
+    $("bank2Start").value = state.bank2.start;
+    $("bank1StakePct").value = state.config.bank1StakePct;
+    $("bank2StakePct").value = state.config.bank2StakePct;
+    $("bank2TakeProfit").value = state.config.bank2TakeProfit;
+    $("bank2StopLoss").value = state.config.bank2StopLoss;
+    $("bank1MaxExposurePct").value = state.config.bank1MaxExposurePct;
+    $("bank2MaxExposurePct").value = state.config.bank2MaxExposurePct;
+    $("bank2Mode").value = state.config.bank2Mode;
+
+    $("b1Current").textContent = money(state.bank1.current);
+    $("b1StakeNext").textContent = money(nextStake1());
+    $("b1Exposure").textContent = money(exposure1());
+    $("b1DayPnl").textContent = money(bank1DayPnl());
+    $("b1DayPnl").className = "val " + (bank1DayPnl() >= 0 ? "good" : "bad");
+    $("b1TotalPnl").textContent = money(bank1TotalPnl());
+    $("b1TotalPnl").className = "val " + (bank1TotalPnl() >= 0 ? "good" : "bad");
+    $("b1WL").textContent = `${state.day.bank1Wins} / ${state.day.bank1Losses}`;
+
+    $("b2Current").textContent = money(state.bank2.current);
+    $("b2StakeNext").textContent = money(nextStake2Base());
+    $("b2Exposure").textContent = money(exposure2());
+    $("b2RemainingExposure").textContent = money(remainingExposure2());
+    $("b2DayPnl").textContent = money(bank2DayPnl());
+    $("b2DayPnl").className = "val " + (bank2DayPnl() >= 0 ? "good" : "bad");
+    $("b2TotalPnl").textContent = money(bank2TotalPnl());
+    $("b2TotalPnl").className = "val " + (bank2TotalPnl() >= 0 ? "good" : "bad");
+    $("b2Targets").textContent = `${money(bank2TakeValue())} / ${money(bank2StopValue())}`;
+    $("b2WL").textContent = `${state.day.bank2Wins} / ${state.day.bank2Losses}`;
+
+    renderAdvice();
+    renderOpenSignals();
+    renderHistory();
+  }
+
+  function renderAdvice(){
+    let a1Class = "status-ok";
+    let a1Text = `✅ Cassa 1 pronta. Stake prossimo ${money(nextStake1())}.`;
+
+    if(exposure1() > maxExposureValue1()){
+      a1Class = "status-warn";
+      a1Text = `⚠️ Cassa 1 oltre esposizione consigliata. Aperto ${money(exposure1())} su max ${money(maxExposureValue1())}.`;
+    }
+
+    let a2Class = "status-ok";
+    let a2Text = `✅ Cassa 2 pronta. Stake base ${money(nextStake2Base())}.`;
+
+    const pnl2 = bank2DayPnl();
+    const take = bank2TakeValue();
+    const stop = bank2StopValue();
+    const allowed = bank2AllowedStake();
+
+    if(pnl2 >= take){
+      a2Class = "status-stop";
+      a2Text = `🎯 Take profit Cassa 2 raggiunto: ${money(pnl2)}. Fermati per oggi.`;
+    } else if(pnl2 <= -stop){
+      a2Class = "status-stop";
+      a2Text = `🛑 Stop loss Cassa 2 raggiunto: ${money(pnl2)}. Stop giornata.`;
+    } else if(allowed <= 0){
+      a2Class = "status-warn";
+      a2Text = `⚠️ Cassa 2 senza spazio residuo. Nuovi segnali prudente: skip automatico.`;
+    } else if(allowed < nextStake2Base()){
+      a2Class = "status-warn";
+      a2Text = `⚠️ Cassa 2 apre ridotto. Stake prudente disponibile ${money(allowed)} su base ${money(nextStake2Base())}.`;
+    } else {
+      a2Class = "status-wait";
+      a2Text = `▶️ Cassa 2 può continuare. Spazio residuo ${money(remainingExposure2())}.`;
+    }
+
+    $("advice1").className = "big-status " + a1Class;
+    $("advice1").textContent = a1Text;
+    $("advice2").className = "big-status " + a2Class;
+    $("advice2").textContent = a2Text;
+  }
+
+  function renderOpenSignals(){
+    const box = $("openSignalsList");
+    const list = state.day.openSignals;
+
+    if(!list.length){
+      box.innerHTML = `<div class="big-status status-wait">Nessun segnale aperto.</div>`;
+      return;
+    }
+
+    box.innerHTML = list.map(sig => `
+      <div class="signalCard">
+        <div class="signalTop">
+          <div>
+            <div class="signalName">${escapeHtml(sig.match || "Segnale")}</div>
+            <div style="font-size:12px;color:#9db0d0;margin-top:4px">Aperto alle ${sig.openTime}</div>
+          </div>
+          <span class="tag open">APERTO</span>
+        </div>
+
+        <div class="signalMeta">
+          <div>Quota: <strong>${Number(sig.quota).toFixed(2)}</strong></div>
+          <div>Stake C1: <strong>${money(sig.stake1)}</strong></div>
+          <div>Stake C2: <strong>${money(sig.stake2)}</strong></div>
+          <div>Modalità C2: <strong>${escapeHtml(sig.bank2Note || "Pieno")}</strong></div>
+        </div>
+
+        <div class="signalButtons">
+          <button class="green" onclick="closeSignal('${sig.id}','win')">Chiudi WIN</button>
+          <button class="red" onclick="closeSignal('${sig.id}','loss')">Chiudi LOSS</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderHistory(){
+    const tbody = $("historyTable");
+    const list = state.day.history;
+
+    if(!list.length){
+      tbody.innerHTML = `<tr><td colspan="8" style="color:#9db0d0">Nessuna giocata chiusa oggi.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(h => `
+      <tr>
+        <td>${h.closeTime}</td>
+        <td>${escapeHtml(h.match || "—")}</td>
+        <td>${Number(h.quota).toFixed(2)}</td>
+        <td><span class="tag ${h.result}">${h.result.toUpperCase()}</span></td>
+        <td class="right">${money(h.stake1)}</td>
+        <td class="right">${money(h.stake2)}</td>
+        <td class="right">${money(h.bank1After)}</td>
+        <td class="right">${money(h.bank2After)}</td>
+      </tr>
+    `).join("");
+  }
+
+  function saveConfig(){
+    const oldStart1 = state.bank1.start;
+    const oldStart2 = state.bank2.start;
+
+    state.bank1.start = parseFloat($("bank1Start").value) || 300;
+    state.bank2.start = parseFloat($("bank2Start").value) || 1000;
+    state.config.bank1StakePct = parseFloat($("bank1StakePct").value) || 5;
+    state.config.bank2StakePct = parseFloat($("bank2StakePct").value) || 4;
+    state.config.bank2TakeProfit = parseFloat($("bank2TakeProfit").value) || 5;
+    state.config.bank2StopLoss = parseFloat($("bank2StopLoss").value) || 8;
+    state.config.bank1MaxExposurePct = parseFloat($("bank1MaxExposurePct").value) || 20;
+    state.config.bank2MaxExposurePct = parseFloat($("bank2MaxExposurePct").value) || 12;
+    state.config.bank2Mode = $("bank2Mode").value || "reduce";
+
+    if(state.bank1.current === oldStart1) state.bank1.current = state.bank1.start;
+    if(state.bank2.current === oldStart2) state.bank2.current = state.bank2.start;
+
+    save();
+    render();
+  }
+
+  function previewStake(){
+    const quota = parseFloat($("quotaInput").value);
+    if(!quota || quota <= 1){
+      $("stakePreview").className = "big-status status-warn";
+      $("stakePreview").textContent = "Inserisci una quota valida maggiore di 1.00.";
+      return;
+    }
+
+    const s1 = nextStake1();
+    const s2Base = nextStake2Base();
+    const s2Allowed = bank2AllowedStake();
+
+    let bank2ModeText = "Pieno";
+    if(s2Allowed <= 0){
+      bank2ModeText = "Skip automatico";
+    } else if(s2Allowed < s2Base){
+      bank2ModeText = "Ridotto automatico";
+    }
+
+    const p1 = round2(s1 * (quota - 1));
+    const p2 = round2(s2Allowed * (quota - 1));
+
+    let cls = "status-wait";
+    if(s2Allowed <= 0) cls = "status-stop";
+    else if(s2Allowed < s2Base) cls = "status-warn";
+
+    $("stakePreview").className = "big-status " + cls;
+    $("stakePreview").textContent =
+      `Nuovo segnale → C1 ${money(s1)}. C2 base ${money(s2Base)}, C2 consentito ${money(s2Allowed)} (${bank2ModeText}). ` +
+      `Se WIN → profitto C1 ${money(p1)} | C2 ${money(p2)}. ` +
+      `Esposizione aperta C2 dopo apertura: ${money(exposure2() + s2Allowed)} su max ${money(maxExposureValue2())}.`;
+  }
+
+  function openSignal(){
+    ensureDay();
+
+    const match = $("matchInput").value.trim();
+    const quota = parseFloat($("quotaInput").value);
+
+    if(!quota || quota <= 1){
+      alert("Inserisci una quota valida maggiore di 1.00");
+      return;
+    }
+
+    const stake1 = nextStake1();
+    const stake2Base = nextStake2Base();
+    const stake2 = bank2AllowedStake();
+
+    let bank2Note = "Pieno";
+    if(stake2 <= 0){
+      bank2Note = "Skip prudente";
+    } else if(stake2 < stake2Base){
+      bank2Note = "Ridotto prudente";
+    }
+
+    const sig = {
+      id: String(Date.now()) + Math.random().toString(16).slice(2),
+      match: match || "Segnale",
+      quota: round2(quota),
+      openTime: nowTime(),
+      stake1: stake1,
+      stake2: stake2,
+      bank2Note: bank2Note
+    };
+
+    state.day.openSignals.unshift(sig);
+    $("matchInput").value = "";
+    save();
+    render();
+  }
+
+  window.closeSignal = function(id, result){
+    ensureDay();
+
+    const idx = state.day.openSignals.findIndex(x => x.id === id);
+    if(idx === -1) return;
+
+    const sig = state.day.openSignals[idx];
+
+    let pnl1 = 0;
+    let pnl2 = 0;
+
+    if(result === "win"){
+      pnl1 = round2(sig.stake1 * (sig.quota - 1));
+      pnl2 = round2(sig.stake2 * (sig.quota - 1));
+      state.day.bank1Wins += 1;
+      if(sig.stake2 > 0) state.day.bank2Wins += 1;
+    } else {
+      pnl1 = -sig.stake1;
+      pnl2 = -sig.stake2;
+      state.day.bank1Losses += 1;
+      if(sig.stake2 > 0) state.day.bank2Losses += 1;
+    }
+
+    state.bank1.current = Math.max(0, round2(state.bank1.current + pnl1));
+    state.bank2.current = Math.max(0, round2(state.bank2.current + pnl2));
+
+    state.day.openSignals.splice(idx,1);
+
+    state.day.history.unshift({
+      id:sig.id,
+      closeTime:nowTime(),
+      match:sig.match,
+      quota:sig.quota,
+      result:result,
+      stake1:sig.stake1,
+      stake2:sig.stake2,
+      bank1After:state.bank1.current,
+      bank2After:state.bank2.current,
+      undoPnl1:pnl1,
+      undoPnl2:pnl2,
+      bank2Note:sig.bank2Note
+    });
+
+    save();
+    render();
+  };
+
+  function undoLast(){
+    ensureDay();
+
+    if(!state.day.history.length){
+      alert("Nessuna chiusura da annullare.");
+      return;
+    }
+
+    const last = state.day.history.shift();
+
+    state.bank1.current = Math.max(0, round2(state.bank1.current - last.undoPnl1));
+    state.bank2.current = Math.max(0, round2(state.bank2.current - last.undoPnl2));
+
+    if(last.result === "win"){
+      state.day.bank1Wins -= 1;
+      if(last.stake2 > 0) state.day.bank2Wins -= 1;
+    } else {
+      state.day.bank1Losses -= 1;
+      if(last.stake2 > 0) state.day.bank2Losses -= 1;
+    }
+
+    state.day.openSignals.unshift({
+      id:last.id,
+      match:last.match,
+      quota:last.quota,
+      openTime:last.closeTime,
+      stake1:last.stake1,
+      stake2:last.stake2,
+      bank2Note:last.bank2Note || "Ripristinato"
+    });
+
+    save();
+    render();
+  }
+
+  function newDay(){
+    if(!confirm("Vuoi iniziare una nuova giornata? I segnali aperti verranno azzerati.")) return;
+
+    state.day = {
+      date:todayString(),
+      bank1Start:state.bank1.current,
+      bank2Start:state.bank2.current,
+      bank1Wins:0,
+      bank1Losses:0,
+      bank2Wins:0,
+      bank2Losses:0,
+      openSignals:[],
+      history:[]
+    };
+
+    save();
+    render();
+  }
+
+  function resetAll(){
+    if(!confirm("Reset totale? Verranno cancellati casse, storico e segnali aperti.")) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState()));
+    location.reload();
+  }
+
+  function exportCsv(){
+    ensureDay();
+
+    const rows = [
+      ["Data","Ora","Match","Quota","Esito","Stake C1","Stake C2","Nota C2","Cassa1 Dopo","Cassa2 Dopo"]
+    ];
+
+    [...state.day.history].reverse().forEach(r => {
+      rows.push([
+        state.day.date,
+        r.closeTime,
+        r.match,
+        r.quota,
+        r.result.toUpperCase(),
+        r.stake1,
+        r.stake2,
+        r.bank2Note || "",
+        r.bank1After,
+        r.bank2After
+      ]);
+    });
+
+    const csv = rows.map(row => row.map(csvCell).join(";")).join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `mazzobotover-storico-${safeDate()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function csvCell(v){
+    return `"${String(v ?? "").replace(/"/g,'""')}"`;
+  }
+
+  function safeDate(){
+    const d = new Date();
+    const p = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  }
+
+  $("saveConfigBtn").addEventListener("click", saveConfig);
+  $("newDayBtn").addEventListener("click", newDay);
+  $("simulateStakeBtn").addEventListener("click", previewStake);
+  $("openSignalBtn").addEventListener("click", openSignal);
+  $("undoBtn").addEventListener("click", undoLast);
+  $("exportCsvBtn").addEventListener("click", exportCsv);
+  $("resetAllBtn").addEventListener("click", resetAll);
+
+  render();
+})();
+</script>
+</body>
+</html>
