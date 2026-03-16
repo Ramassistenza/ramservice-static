@@ -153,13 +153,29 @@
     .table-like th, .table-like td { border-bottom: 1px solid var(--line); text-align: left; padding: 10px 8px; }
     .table-like th { color: var(--muted); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
     .inline-alert { padding: 12px 14px; border-radius: 14px; background: var(--soft-accent); color: #8a4100; font-weight: 700; }
+    .status-board {
+      display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; margin-top:14px;
+    }
+    .status-chip{
+      border-radius:16px; padding:14px; border:1px solid var(--line); background:#fff;
+    }
+    .status-chip strong{display:block; font-size:1.05rem; margin-top:4px;}
+    .status-ok{background:linear-gradient(180deg,#f1fcf6,#fff); border-color:#cdeedb;}
+    .status-fallback{background:linear-gradient(180deg,#fff8f2,#fff); border-color:#ffd9bf;}
+    .subtle-box{
+      border:1px solid var(--line); background:#f9fbfe; border-radius:16px; padding:14px; color:var(--muted);
+    }
+    .alt-list{display:grid; gap:10px; margin-top:14px;}
+    .alt-item{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff;}
+    .alt-item strong{display:block;}
+
     @media (max-width: 1100px) {
-      .grid-2, .grid-3, .summary-cards, .quick-actions, .kpi-row { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-3, .summary-cards, .quick-actions, .kpi-row, .status-board { grid-template-columns: 1fr 1fr; }
       .field, .field.span-4 { grid-column: span 6; }
       .offer-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
     @media (max-width: 760px) {
-      .grid-2, .grid-3, .summary-cards, .quick-actions, .kpi-row { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .summary-cards, .quick-actions, .kpi-row, .status-board { grid-template-columns: 1fr; }
       .fields { grid-template-columns: repeat(6, minmax(0,1fr)); }
       .field, .field.span-4, .field.span-6 { grid-column: span 6; }
       .offer-head { flex-direction: column; }
@@ -189,6 +205,20 @@
         <div class="kpi"><div class="label">Print A4</div><div class="value">SI</div></div>
         <div class="kpi"><div class="label">Modalità</div><div class="value">Negozio</div></div>
         <div class="kpi"><div class="label">Aggiornamento listino</div><div class="value" id="dataLoadStatus">Auto</div></div>
+      </div>
+    </section>
+
+
+    <section class="panel no-print">
+      <div class="section-title">
+        <h2>Stato caricamento listini</h2>
+        <span class="badge green" id="sheetStatusBadge">In attesa</span>
+      </div>
+      <div id="sheetStatusMessage" class="inline-alert">Sto preparando il caricamento automatico dei fogli Google.</div>
+      <div id="sheetStatusBoard" class="status-board" style="margin-top:14px;"></div>
+      <div class="subtle-box" style="margin-top:14px;">
+        <strong>Istruzioni energia:</strong> gli indici <strong>PUN/PSV</strong> vengono caricati automaticamente dal foglio.
+        Compila manualmente solo gli eventuali campi <strong>spread</strong>, <strong>quote fisse</strong> o altri costi commerciali se il listino interno del negozio cambia.
       </div>
     </section>
 
@@ -401,8 +431,34 @@
       resultOffers: document.getElementById('resultOffers'),
       resultAlert: document.getElementById('resultAlert'),
       resultModeBadge: document.getElementById('resultModeBadge'),
-      printArea: document.getElementById('printArea')
+      printArea: document.getElementById('printArea'),
+      sheetStatusBadge: document.getElementById('sheetStatusBadge'),
+      sheetStatusMessage: document.getElementById('sheetStatusMessage'),
+      sheetStatusBoard: document.getElementById('sheetStatusBoard')
     };
+
+    function setSheetStatus(type, msg, meta = {}) {
+      if (els.sheetStatusBadge) {
+        els.sheetStatusBadge.textContent = type === 'ok' ? 'Caricato correttamente' : 'Fallback locale';
+        els.sheetStatusBadge.className = `badge ${type === 'ok' ? 'green' : 'orange'}`;
+      }
+      if (els.sheetStatusMessage) els.sheetStatusMessage.innerHTML = msg;
+      if (els.sheetStatusBoard) {
+        const keys = ['consumer','mnp','fixed','energyMobile','pun'];
+        const labels = {consumer:'CONSUMER', mnp:'MNP', fixed:'FISSO', energyMobile:'ENERGY', pun:'PUN'};
+        els.sheetStatusBoard.innerHTML = keys.map(k => {
+          const v = meta[k];
+          const ok = !!v && v.loaded;
+          const count = v?.count ?? (Array.isArray(DATA[k]) ? DATA[k].length : 0);
+          const source = v?.source || (type === 'ok' ? 'Google Sheets' : 'Interno');
+          return `<div class="status-chip ${ok ? 'status-ok' : 'status-fallback'}"><div>${labels[k]}</div><strong>${count}</strong><div class="small">${source}</div></div>`;
+        }).join('');
+      }
+    }
+
+    function sanitizeText(v='') {
+      return String(v).replace(/^['"]|['"]$/g, '').trim();
+    }
 
     function euro(n) {
       return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Number(n || 0));
@@ -506,22 +562,68 @@
       return Number.isFinite(n) ? n : 0;
     }
     function parseGviz(text) {
-      const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\);?$/);
-      if (!match) throw new Error('Formato risposta Google non valido');
-      const payload = JSON.parse(match[1]);
+      const cleaned = String(text).trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error('Formato risposta Google non valido');
+      const payload = JSON.parse(cleaned.slice(start, end + 1));
       const table = payload.table;
       const headers = table.cols.map(c => normHeader(c.label || c.id || ''));
       return table.rows.map(r => {
         const obj = {};
-        headers.forEach((h, i) => obj[h] = val((r.c || [])[i]));
+        headers.forEach((h, i) => obj[h] = sanitizeText(val((r.c || [])[i])));
         return obj;
       });
     }
-    async function fetchSheet(sheetName) {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`;
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`Errore caricamento ${sheetName}`);
-      return parseGviz(await res.text());
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], cell = '', inside = false;
+      const flushCell = () => { row.push(cell); cell = ''; };
+      const flushRow = () => { rows.push(row); row = []; };
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i], nx = text[i+1];
+        if (ch === '"') {
+          if (inside && nx === '"') { cell += '"'; i++; }
+          else inside = !inside;
+        } else if (ch === ',' && !inside) {
+          flushCell();
+        } else if ((ch === '\n' || ch === '\r') && !inside) {
+          if (ch === '\r' && nx === '\n') i++;
+          flushCell();
+          flushRow();
+        } else {
+          cell += ch;
+        }
+      }
+      if (cell.length || row.length) { flushCell(); flushRow(); }
+      const [head, ...body] = rows.filter(r => r.some(c => String(c).trim() !== ''));
+      const headers = (head || []).map(h => normHeader(sanitizeText(h)));
+      return body.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = sanitizeText(r[i] ?? ''));
+        return obj;
+      });
+    }
+    const SHEET_GIDS = { consumer: '0', mnp: '1065110294', fixed: '1189307099', energyMobile: '1828808671', pun: '40707594' };
+    async function fetchSheet(key, sheetName) {
+      const gid = SHEET_GIDS[key];
+      const attempts = [
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`, parser: parseGviz, source: 'gviz nome foglio' },
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${gid}&tqx=out:json`, parser: parseGviz, source: 'gviz gid' },
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`, parser: parseCsv, source: 'csv export' }
+      ];
+      let lastErr;
+      for (const a of attempts) {
+        try {
+          const res = await fetch(a.url, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const rows = a.parser(await res.text());
+          if (Array.isArray(rows) && rows.length) return { rows, source: a.source };
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      throw lastErr || new Error(`Errore caricamento ${sheetName}`);
     }
     function mapConsumerRows(rows) {
       return rows.map(r => ({
@@ -610,17 +712,16 @@
     function bestMobileFixedBundleMnp(customer) {
       const base = DATA.mnp
         .filter(x => x.attiva !== 0)
-        .filter(x => operatorMatches(x, customer.mobile.operatore));
-      const convFirst = base.filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
-      const source = convFirst.length ? convFirst : base;
-      return source.map(x => {
+        .filter(x => operatorMatches(x, customer.mobile.operatore))
+        .filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
+      return base.map(x => {
         const price = x.prezzo;
         const gbValue = x.giga_illimitati || x.conv_giga_illimitati ? 9999 : x.gb;
-        const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 8 : 0);
+        const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 8 : 2);
         return { ...x, effectivePrice: price, score };
       }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
-    function bestMobileTripleBundleNew(customer) {
+    function bestMobileTripleBundleAny(customer) {
       const options = DATA.energyMobile
         .filter(x => x.attiva !== 0)
         .filter(x => x.richiede_luce_gas)
@@ -635,33 +736,47 @@
       return options[0] || null;
     }
     async function loadRemoteData() {
+      const meta = {};
       try {
-        const [consumerRows, mnpRows, fixedRows, energyRows, punRows] = await Promise.all([
-          fetchSheet(REMOTE_SHEETS.consumer),
-          fetchSheet(REMOTE_SHEETS.mnp),
-          fetchSheet(REMOTE_SHEETS.fixed),
-          fetchSheet(REMOTE_SHEETS.energyMobile),
-          fetchSheet(REMOTE_SHEETS.pun)
+        const [consumerPack, mnpPack, fixedPack, energyPack, punPack] = await Promise.all([
+          fetchSheet('consumer', REMOTE_SHEETS.consumer),
+          fetchSheet('mnp', REMOTE_SHEETS.mnp),
+          fetchSheet('fixed', REMOTE_SHEETS.fixed),
+          fetchSheet('energyMobile', REMOTE_SHEETS.energyMobile),
+          fetchSheet('pun', REMOTE_SHEETS.pun)
         ]);
-        const consumer = mapConsumerRows(consumerRows);
-        const mnp = mapMnpRows(mnpRows);
-        const fixed = mapFixedRows(fixedRows);
-        const energyMobile = mapEnergyRows(energyRows);
-        const pun = mapPunRows(punRows);
+        const consumer = mapConsumerRows(consumerPack.rows);
+        const mnp = mapMnpRows(mnpPack.rows);
+        const fixed = mapFixedRows(fixedPack.rows);
+        const energyMobile = mapEnergyRows(energyPack.rows);
+        const pun = mapPunRows(punPack.rows);
         if (consumer.length) DATA.consumer = consumer;
         if (mnp.length) DATA.mnp = mnp;
         if (fixed.length) DATA.fixed = fixed;
         if (energyMobile.length) DATA.energyMobile = energyMobile;
         if (pun.length) DATA.pun = pun;
+        meta.consumer = { loaded:true, count:DATA.consumer.length, source:consumerPack.source };
+        meta.mnp = { loaded:true, count:DATA.mnp.length, source:mnpPack.source };
+        meta.fixed = { loaded:true, count:DATA.fixed.length, source:fixedPack.source };
+        meta.energyMobile = { loaded:true, count:DATA.energyMobile.length, source:energyPack.source };
+        meta.pun = { loaded:true, count:DATA.pun.length, source:punPack.source };
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
-        if (ds) ds.textContent = 'Google Sheets';
-        els.resultAlert.innerHTML = `<div class="inline-alert">Listini caricati automaticamente da Google Sheets. Per energia vengono caricati dal file gli indici PUN/PSV; aggiorna manualmente solo spread e quote fisse se cambiano dal listino.</div>`;
+        if (ds) ds.textContent = 'Google Sheets OK';
+        const msg = `Foglio Google caricato correttamente. Righe trovate: <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`;
+        setSheetStatus('ok', msg, meta);
+        els.resultAlert.innerHTML = `<div class="inline-alert">Listini caricati correttamente da Google Sheets. Ora il comparatore usa i dati aggiornati del foglio condiviso.</div>`;
       } catch (err) {
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
         if (ds) ds.textContent = 'Fallback locale';
-        els.resultAlert.innerHTML = `<div class="inline-alert">Caricamento automatico non riuscito. Lo strumento sta usando il listino integrato nel file. Verifica che il foglio Google sia condiviso correttamente.</div>`;
+        meta.consumer = { loaded:false, count:DATA.consumer.length, source:'listino integrato' };
+        meta.mnp = { loaded:false, count:DATA.mnp.length, source:'listino integrato' };
+        meta.fixed = { loaded:false, count:DATA.fixed.length, source:'listino integrato' };
+        meta.energyMobile = { loaded:false, count:DATA.energyMobile.length, source:'listino integrato' };
+        meta.pun = { loaded:false, count:DATA.pun.length, source:'listino integrato' };
+        setSheetStatus('fallback', 'Caricamento automatico non riuscito. Lo strumento sta usando il listino integrato nel file. Verifica condivisione del foglio Google o eventuali blocchi del browser.', meta);
+        els.resultAlert.innerHTML = `<div class="inline-alert">Caricamento automatico non riuscito. Lo strumento usa il listino integrato nel file.</div>`;
         console.error(err);
       }
     }
@@ -821,7 +936,7 @@
       if (mode === 'all-mnp' || mode === 'all-new') {
         const isMnp = mode === 'all-mnp';
         const fixed = bestFixed(customer, 'conv', true) || bestFixed(customer, 'conv', false);
-        const mobile = isMnp ? bestMobileFixedBundleMnp(customer) : bestMobileTripleBundleNew(customer);
+        const mobile = bestMobileTripleBundleAny(customer);
         const energy = estimateEnergy(customer, true);
         if (!fixed || !mobile) return renderNoResult('Nessun pacchetto completo trovato.');
         const mobilePrice = mobile.prezzo_conv || mobile.effectivePrice || mobile.prezzo;
