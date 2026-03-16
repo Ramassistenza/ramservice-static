@@ -1,252 +1,762 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MazzoBotOVER • Gestione Cassa PRO</title>
+  <style>
+    :root{
+      --bg:#08111f;
+      --panel:#101b2d;
+      --panel-2:#13213a;
+      --card:#162540;
+      --line:rgba(255,255,255,.08);
+      --text:#eef4ff;
+      --muted:#9bb0cf;
+      --accent:#ff7a18;
+      --accent-2:#19c37d;
+      --danger:#ff5d6c;
+      --warn:#f4b740;
+      --blue:#4ea1ff;
+      --shadow:0 16px 40px rgba(0,0,0,.28);
+      --radius:18px;
+      --radius-sm:12px;
+    }
 
-<title>Gestione Cassa MazzoBotOVER</title>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:
+      radial-gradient(circle at top, #142544 0%, #08111f 42%, #050b16 100%);
+      color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif}
+    body{min-height:100vh;padding:16px 14px 120px}
+    .app{max-width:760px;margin:0 auto}
+    .hero{
+      padding:18px 16px;
+      border-radius:24px;
+      background:linear-gradient(135deg, rgba(255,122,24,.2), rgba(78,161,255,.18));
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    .hero h1{margin:0;font-size:28px;line-height:1.05}
+    .hero p{margin:8px 0 0;color:var(--muted);font-size:14px}
 
-<style>
+    .grid{display:grid;gap:12px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      backdrop-filter: blur(8px);
+    }
+    .card h2{
+      margin:0 0 12px;
+      font-size:16px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .sub{color:var(--muted);font-size:12px;margin-top:-3px;margin-bottom:10px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    @media(max-width:620px){
+      .row,.row-3{grid-template-columns:1fr}
+      .hero h1{font-size:24px}
+    }
 
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-padding:20px;
-}
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    input, select {
+      width:100%;
+      background:#0c1628;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:14px 12px;
+      font-size:16px;
+      outline:none;
+      transition:.18s ease;
+    }
+    input:focus, select:focus{border-color:rgba(255,122,24,.6); box-shadow:0 0 0 3px rgba(255,122,24,.13)}
+    .inline-toggle{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      flex:1 1 auto;
+      min-width:120px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#0c1628;
+      color:var(--text);
+      padding:12px 10px;
+      border-radius:14px;
+      text-align:center;
+      font-weight:700;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.active.win{background:rgba(25,195,125,.12); border-color:rgba(25,195,125,.45); color:#bff6dd}
+    .chip.active.loss{background:rgba(255,93,108,.12); border-color:rgba(255,93,108,.45); color:#ffd0d6}
 
-h1{
-text-align:center;
-}
+    .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .btns-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+    @media(max-width:620px){.btns,.btns-3{grid-template-columns:1fr}}
+    button{
+      border:none;cursor:pointer;
+      border-radius:16px;padding:14px 14px;font-size:15px;font-weight:800;
+      color:white;background:linear-gradient(135deg,var(--accent),#ff963f);
+      box-shadow:0 10px 22px rgba(255,122,24,.22);
+    }
+    button.secondary{
+      background:#0d182c; color:#dce8ff; box-shadow:none; border:1px solid rgba(255,255,255,.08)
+    }
+    button.green{
+      background:linear-gradient(135deg,#18b977,#17a266);
+      box-shadow:0 10px 22px rgba(25,195,125,.22);
+    }
+    button.red{
+      background:linear-gradient(135deg,#ff6573,#f04b5b);
+      box-shadow:0 10px 22px rgba(255,93,108,.22);
+    }
 
-.container{
-max-width:900px;
-margin:auto;
-}
+    .bank-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:620px){.bank-cards{grid-template-columns:1fr}}
+    .bank{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+    .bank h3{margin:0 0 10px;font-size:15px}
+    .stat{
+      display:flex;justify-content:space-between;gap:10px;
+      padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px
+    }
+    .stat:last-child{border-bottom:none;padding-bottom:0}
+    .val{font-weight:800}
+    .good{color:#bff6dd}
+    .bad{color:#ffd0d6}
+    .warn{color:#ffe6ad}
+    .blue{color:#cbe4ff}
+    .muted{color:var(--muted)}
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-margin-bottom:20px;
-}
+    .banner{
+      margin-top:10px;padding:12px 14px;border-radius:16px;font-weight:800;font-size:14px;
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .banner.ok{background:rgba(25,195,125,.12); color:#c9fbe3; border-color:rgba(25,195,125,.3)}
+    .banner.stop{background:rgba(255,93,108,.12); color:#ffd7dc; border-color:rgba(255,93,108,.3)}
+    .banner.take{background:rgba(244,183,64,.12); color:#ffecbb; border-color:rgba(244,183,64,.3)}
+    .banner.wait{background:rgba(78,161,255,.12); color:#d8eaff; border-color:rgba(78,161,255,.3)}
 
-input,select,button{
-padding:10px;
-border-radius:6px;
-border:none;
-margin:5px;
-}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 10px;border-radius:999px;background:#0c1628;border:1px solid rgba(255,255,255,.08);
+      font-size:12px;color:#d8e4fb;font-weight:700
+    }
 
-button{
-background:#22c55e;
-color:white;
-cursor:pointer;
-}
+    .history-wrap{overflow:auto;border-radius:14px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;min-width:780px;background:rgba(0,0,0,.08)}
+    th,td{padding:11px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+    th{position:sticky;top:0;background:#0b1628;color:#d7e5ff}
+    tr:last-child td{border-bottom:none}
+    .right{text-align:right}
+    .tag{
+      display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800
+    }
+    .tag.win{background:rgba(25,195,125,.12); color:#c9fbe3}
+    .tag.loss{background:rgba(255,93,108,.12); color:#ffd7dc}
 
-button:hover{
-background:#16a34a;
-}
-
-.result{
-font-size:20px;
-margin-top:10px;
-}
-
-.table{
-width:100%;
-margin-top:10px;
-border-collapse:collapse;
-}
-
-.table td{
-border-bottom:1px solid #334155;
-padding:8px;
-}
-
-.win{
-color:#22c55e;
-}
-
-.loss{
-color:#ef4444;
-}
-
-.stop{
-color:#f59e0b;
-font-weight:bold;
-}
-
-</style>
+    .footer-note{color:var(--muted);text-align:center;font-size:12px;margin-top:14px}
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <div class="hero">
+      <h1>📊 MazzoBotOVER<br>Gestione Cassa PRO</h1>
+      <p>Ottimizzata per smartphone, con salvataggio automatico, storico giornaliero, stop loss, take profit e indicazioni sulla prossima giocata.</p>
+    </div>
 
-<div class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>⚙️ Configurazione iniziale</h2>
+        <div class="sub">Imposta le 2 casse e le regole operative. I dati vengono salvati automaticamente sul dispositivo.</div>
+        <div class="row">
+          <div>
+            <label for="bank1Start">Cassa 1 iniziale (€)</label>
+            <input id="bank1Start" type="number" min="1" step="0.01" value="300">
+          </div>
+          <div>
+            <label for="bank2Start">Cassa 2 iniziale (€)</label>
+            <input id="bank2Start" type="number" min="1" step="0.01" value="1000">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="bank1StakePct">Stake Cassa 1 (% cassa)</label>
+            <input id="bank1StakePct" type="number" min="0.5" step="0.1" value="5">
+          </div>
+          <div>
+            <label for="bank2StakePct">Stake Cassa 2 (% cassa)</label>
+            <input id="bank2StakePct" type="number" min="0.5" step="0.1" value="4">
+          </div>
+        </div>
+        <div class="row-3">
+          <div>
+            <label for="bank2TakeProfit">Take profit Cassa 2 (% giornaliero)</label>
+            <input id="bank2TakeProfit" type="number" min="0" step="0.1" value="5">
+          </div>
+          <div>
+            <label for="bank2StopLoss">Stop loss Cassa 2 (% giornaliero)</label>
+            <input id="bank2StopLoss" type="number" min="0" step="0.1" value="8">
+          </div>
+          <div>
+            <label for="maxConcurrentPct">Rischio max contemporaneo (% indicativo)</label>
+            <input id="maxConcurrentPct" type="number" min="1" step="1" value="15">
+          </div>
+        </div>
+        <div class="btns">
+          <button id="saveConfigBtn">Salva / Aggiorna configurazione</button>
+          <button class="secondary" id="newDayBtn">Nuova giornata</button>
+        </div>
+      </div>
 
-<h1>📊 Gestione Cassa MazzoBotOVER</h1>
+      <div class="card">
+        <h2>🎯 Registra giocata</h2>
+        <div class="sub">Inserisci quota ed esito. Il pannello aggiorna banca, stake successivo, andamento giornaliero e ti dice se fermarti.</div>
+        <div class="row">
+          <div>
+            <label for="matchLabel">Match / nota</label>
+            <input id="matchLabel" type="text" placeholder="Es. Twente vs Utrecht">
+          </div>
+          <div>
+            <label for="quota">Quota giocata</label>
+            <input id="quota" type="number" min="1.01" step="0.01" value="1.63">
+          </div>
+        </div>
+        <div>
+          <label>Esito</label>
+          <div class="inline-toggle">
+            <div id="winChip" class="chip win active">✅ WIN</div>
+            <div id="lossChip" class="chip loss">❌ LOSS</div>
+          </div>
+        </div>
+        <div class="btns">
+          <button id="registerBtn">Registra giocata</button>
+          <button class="secondary" id="undoBtn">Annulla ultima</button>
+        </div>
+      </div>
 
-<div class="card">
+      <div class="card">
+        <h2>📌 Azione consigliata adesso</h2>
+        <div class="row">
+          <div>
+            <span class="pill">📅 Giornata: <span id="todayLabel" style="margin-left:6px"></span></span>
+          </div>
+          <div style="text-align:right">
+            <span class="pill">🎲 Giocate oggi: <span id="betsTodayBadge" style="margin-left:6px"></span></span>
+          </div>
+        </div>
+        <div id="adviceBank1" class="banner wait">Cassa 1: pronta a giocare.</div>
+        <div id="adviceBank2" class="banner wait">Cassa 2: pronta a giocare.</div>
+      </div>
 
-<h3>⚙️ Impostazioni</h3>
+      <div class="card">
+        <h2>💰 Stato casse</h2>
+        <div class="bank-cards">
+          <div class="bank">
+            <h3>💵 Cassa 1 — Aggressiva</h3>
+            <div class="stat"><span>Banca attuale</span><span class="val" id="b1Current">0€</span></div>
+            <div class="stat"><span>Stake prossimo</span><span class="val blue" id="b1StakeNext">0€</span></div>
+            <div class="stat"><span>Profitto oggi</span><span class="val" id="b1DayPnl">0€</span></div>
+            <div class="stat"><span>Profitto totale</span><span class="val" id="b1TotalPnl">0€</span></div>
+            <div class="stat"><span>WIN / LOSS oggi</span><span class="val" id="b1TodayWl">0 / 0</span></div>
+            <div class="stat"><span>Win rate oggi</span><span class="val" id="b1TodayStrike">0%</span></div>
+          </div>
 
-Cassa 1
-<input id="bank1" type="number" value="300">
+          <div class="bank">
+            <h3>🏦 Cassa 2 — Protetta</h3>
+            <div class="stat"><span>Banca attuale</span><span class="val" id="b2Current">0€</span></div>
+            <div class="stat"><span>Stake prossimo</span><span class="val blue" id="b2StakeNext">0€</span></div>
+            <div class="stat"><span>Profitto oggi</span><span class="val" id="b2DayPnl">0€</span></div>
+            <div class="stat"><span>Profitto totale</span><span class="val" id="b2TotalPnl">0€</span></div>
+            <div class="stat"><span>Take / Stop giorno</span><span class="val warn" id="b2Targets">0€ / 0€</span></div>
+            <div class="stat"><span>WIN / LOSS oggi</span><span class="val" id="b2TodayWl">0 / 0</span></div>
+            <div class="stat"><span>Win rate oggi</span><span class="val" id="b2TodayStrike">0%</span></div>
+          </div>
+        </div>
+      </div>
 
-Cassa 2
-<input id="bank2" type="number" value="1000">
+      <div class="card">
+        <h2>📋 Storico giornaliero</h2>
+        <div class="history-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ora</th>
+                <th>Match / nota</th>
+                <th>Quota</th>
+                <th>Esito</th>
+                <th class="right">Stake C1</th>
+                <th class="right">Stake C2</th>
+                <th class="right">Cassa 1</th>
+                <th class="right">Cassa 2</th>
+              </tr>
+            </thead>
+            <tbody id="historyTable"></tbody>
+          </table>
+        </div>
+        <div class="btns-3">
+          <button class="secondary" id="exportJsonBtn">Esporta backup JSON</button>
+          <button class="secondary" id="exportCsvBtn">Esporta storico CSV</button>
+          <button class="red" id="resetAllBtn">Reset totale</button>
+        </div>
+      </div>
+    </div>
 
-Take Profit %
-<input id="take" type="number" value="5">
-
-Stop Loss %
-<input id="stop" type="number" value="8">
-
-<button onclick="init()">Inizia Sessione</button>
-
-</div>
-
-<div class="card">
-
-<h3>🎯 Inserisci Giocata</h3>
-
-Quota
-<input id="quota" type="number" step="0.01" value="1.63">
-
-Esito
-
-<select id="esito">
-<option value="win">WIN</option>
-<option value="loss">LOSS</option>
-</select>
-
-<button onclick="giocata()">Registra</button>
-
-<div class="result" id="status"></div>
-
-</div>
-
-<div class="card">
-
-<h3>💰 Stato Casse</h3>
-
-<div id="bankstatus"></div>
-
-</div>
-
-<div class="card">
-
-<h3>📋 Cronologia</h3>
-
-<table class="table" id="log"></table>
-
-</div>
-
-</div>
+    <div class="footer-note">
+      Salvataggio automatico attivo. I dati restano memorizzati sul browser del dispositivo fino a reset manuale.
+    </div>
+  </div>
 
 <script>
+(function(){
+  const KEY = "mazzobotover_pro_v1";
 
-let bank1
-let bank2
-let start1
-let start2
+  const defaultState = () => {
+    const today = getToday();
+    return {
+      config: {
+        bank1StakePct: 5,
+        bank2StakePct: 4,
+        bank2TakeProfit: 5,
+        bank2StopLoss: 8,
+        maxConcurrentPct: 15
+      },
+      bank1: { start: 300, current: 300 },
+      bank2: { start: 1000, current: 1000 },
+      day: {
+        date: today,
+        bank1Start: 300,
+        bank2Start: 1000,
+        bank1Wins: 0,
+        bank1Losses: 0,
+        bank2Wins: 0,
+        bank2Losses: 0,
+        history: []
+      }
+    };
+  };
 
-function init(){
+  let state = loadState() || defaultState();
+  let selectedResult = "win";
 
-bank1=parseFloat(document.getElementById("bank1").value)
-bank2=parseFloat(document.getElementById("bank2").value)
+  const el = (id) => document.getElementById(id);
 
-start1=bank1
-start2=bank2
+  function getToday(){
+    const d = new Date();
+    return d.toLocaleDateString("it-IT");
+  }
 
-update()
+  function getNowTime(){
+    return new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+  }
 
-}
+  function money(v){
+    return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(v || 0);
+  }
 
-function stake(bank){
+  function pct(v){
+    return `${(v || 0).toFixed(1)}%`;
+  }
 
-return (bank*0.05)
+  function strike(w, l){
+    const tot = w + l;
+    if(!tot) return 0;
+    return (w / tot) * 100;
+  }
 
-}
+  function clampStake(val, bank){
+    const rounded = Math.round(val * 100) / 100;
+    return Math.max(0, Math.min(rounded, bank));
+  }
 
-function giocata(){
+  function calcStake(bank, stakePct){
+    return clampStake(bank * (stakePct / 100), bank);
+  }
 
-let quota=parseFloat(document.getElementById("quota").value)
-let esito=document.getElementById("esito").value
+  function ensureDay(){
+    const today = getToday();
+    if(state.day.date !== today){
+      state.day = {
+        date: today,
+        bank1Start: state.bank1.current,
+        bank2Start: state.bank2.current,
+        bank1Wins: 0,
+        bank1Losses: 0,
+        bank2Wins: 0,
+        bank2Losses: 0,
+        history: []
+      };
+      saveState();
+    }
+  }
 
-let stake1=stake(bank1)
-let stake2=stake(bank2)
+  function saveState(){
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
 
-let profit1=stake1*(quota-1)
-let profit2=stake2*(quota-1)
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      return null;
+    }
+  }
 
-if(esito=="win"){
+  function syncInputsFromState(){
+    el("bank1Start").value = state.bank1.start;
+    el("bank2Start").value = state.bank2.start;
+    el("bank1StakePct").value = state.config.bank1StakePct;
+    el("bank2StakePct").value = state.config.bank2StakePct;
+    el("bank2TakeProfit").value = state.config.bank2TakeProfit;
+    el("bank2StopLoss").value = state.config.bank2StopLoss;
+    el("maxConcurrentPct").value = state.config.maxConcurrentPct;
+  }
 
-bank1+=profit1
-bank2+=profit2
+  function saveConfig(applyResetIfNeeded=false){
+    const oldB1Start = state.bank1.start;
+    const oldB2Start = state.bank2.start;
 
-}else{
+    state.bank1.start = parseFloat(el("bank1Start").value) || 300;
+    state.bank2.start = parseFloat(el("bank2Start").value) || 1000;
+    state.config.bank1StakePct = parseFloat(el("bank1StakePct").value) || 5;
+    state.config.bank2StakePct = parseFloat(el("bank2StakePct").value) || 4;
+    state.config.bank2TakeProfit = parseFloat(el("bank2TakeProfit").value) || 5;
+    state.config.bank2StopLoss = parseFloat(el("bank2StopLoss").value) || 8;
+    state.config.maxConcurrentPct = parseFloat(el("maxConcurrentPct").value) || 15;
 
-bank1-=stake1
-bank2-=stake2
+    if(applyResetIfNeeded || state.bank1.current === oldB1Start){
+      state.bank1.current = state.bank1.start;
+    }
+    if(applyResetIfNeeded || state.bank2.current === oldB2Start){
+      state.bank2.current = state.bank2.start;
+    }
 
-}
+    if(applyResetIfNeeded){
+      state.day = {
+        date: getToday(),
+        bank1Start: state.bank1.current,
+        bank2Start: state.bank2.current,
+        bank1Wins: 0,
+        bank1Losses: 0,
+        bank2Wins: 0,
+        bank2Losses: 0,
+        history: []
+      };
+    }
 
-let row=document.createElement("tr")
+    saveState();
+    render();
+  }
 
-row.innerHTML=`
-<td>${quota}</td>
-<td class="${esito}">${esito.toUpperCase()}</td>
-<td>${bank1.toFixed(2)}€</td>
-<td>${bank2.toFixed(2)}€</td>
-`
+  function registerBet(){
+    ensureDay();
 
-document.getElementById("log").prepend(row)
+    const quota = parseFloat(el("quota").value);
+    const note = (el("matchLabel").value || "").trim();
 
-checkStop()
+    if(!quota || quota <= 1){
+      alert("Inserisci una quota valida maggiore di 1.00");
+      return;
+    }
 
-update()
+    const stake1 = calcStake(state.bank1.current, state.config.bank1StakePct);
+    const stake2 = calcStake(state.bank2.current, state.config.bank2StakePct);
 
-}
+    const pnl1 = selectedResult === "win" ? stake1 * (quota - 1) : -stake1;
+    const pnl2 = selectedResult === "win" ? stake2 * (quota - 1) : -stake2;
 
-function checkStop(){
+    state.bank1.current = Math.max(0, round2(state.bank1.current + pnl1));
+    state.bank2.current = Math.max(0, round2(state.bank2.current + pnl2));
 
-let take=document.getElementById("take").value/100
-let stop=document.getElementById("stop").value/100
+    if(selectedResult === "win"){
+      state.day.bank1Wins += 1;
+      state.day.bank2Wins += 1;
+    } else {
+      state.day.bank1Losses += 1;
+      state.day.bank2Losses += 1;
+    }
 
-let status=""
+    state.day.history.unshift({
+      time: getNowTime(),
+      note,
+      quota: round2(quota),
+      result: selectedResult,
+      stake1: round2(stake1),
+      stake2: round2(stake2),
+      bank1After: state.bank1.current,
+      bank2After: state.bank2.current
+    });
 
-if(bank2 >= start2*(1+take)){
+    el("matchLabel").value = "";
+    saveState();
+    render();
+  }
 
-status="🎯 TAKE PROFIT raggiunto - fermati oggi"
+  function undoLast(){
+    ensureDay();
+    if(!state.day.history.length){
+      alert("Nessuna giocata da annullare.");
+      return;
+    }
 
-}
+    const last = state.day.history.shift();
+    const quota = last.quota;
+    const stake1 = last.stake1;
+    const stake2 = last.stake2;
 
-if(bank2 <= start2*(1-stop)){
+    if(last.result === "win"){
+      state.bank1.current = round2(state.bank1.current - (stake1 * (quota - 1)));
+      state.bank2.current = round2(state.bank2.current - (stake2 * (quota - 1)));
+      state.day.bank1Wins -= 1;
+      state.day.bank2Wins -= 1;
+    } else {
+      state.bank1.current = round2(state.bank1.current + stake1);
+      state.bank2.current = round2(state.bank2.current + stake2);
+      state.day.bank1Losses -= 1;
+      state.day.bank2Losses -= 1;
+    }
 
-status="🛑 STOP LOSS raggiunto - fermati oggi"
+    saveState();
+    render();
+  }
 
-}
+  function round2(v){
+    return Math.round(v * 100) / 100;
+  }
 
-document.getElementById("status").innerHTML=status
+  function dayPnl1(){
+    return round2(state.bank1.current - state.day.bank1Start);
+  }
 
-}
+  function dayPnl2(){
+    return round2(state.bank2.current - state.day.bank2Start);
+  }
 
-function update(){
+  function totalPnl1(){
+    return round2(state.bank1.current - state.bank1.start);
+  }
 
-let s1=stake(bank1)
-let s2=stake(bank2)
+  function totalPnl2(){
+    return round2(state.bank2.current - state.bank2.start);
+  }
 
-document.getElementById("bankstatus").innerHTML=
+  function c2TakeValue(){
+    return round2(state.day.bank2Start * (state.config.bank2TakeProfit / 100));
+  }
 
-`
-Cassa 300 → ${bank1.toFixed(2)}€ | Stake prossimo: ${s1.toFixed(2)}€ <br><br>
-Cassa 1000 → ${bank2.toFixed(2)}€ | Stake prossimo: ${s2.toFixed(2)}€
-`
+  function c2StopValue(){
+    return round2(state.day.bank2Start * (state.config.bank2StopLoss / 100));
+  }
 
-}
+  function bank2Status(){
+    const pnl = dayPnl2();
+    const take = c2TakeValue();
+    const stop = c2StopValue();
 
+    if(pnl >= take){
+      return { cls:"take", text:`🎯 Cassa 2: take profit raggiunto (${money(pnl)}). Fermati per oggi.` };
+    }
+    if(pnl <= -stop){
+      return { cls:"stop", text:`🛑 Cassa 2: stop loss raggiunto (${money(pnl)}). Stop giornata.` };
+    }
+
+    const remainingTake = round2(take - pnl);
+    const remainingStop = round2(stop + pnl); // pnl negative reduces this
+    const nextStake = calcStake(state.bank2.current, state.config.bank2StakePct);
+
+    if(nextStake > 0 && nextStake >= remainingStop && pnl < 0){
+      return { cls:"stop", text:`⚠️ Cassa 2: vicina allo stop. Alla prossima LOSS rischi di chiudere la giornata.` };
+    }
+    return { cls:"wait", text:`▶️ Cassa 2: puoi continuare. Mancano ${money(Math.max(0, remainingTake))} al take profit.` };
+  }
+
+  function bank1Status(){
+    const pnl = dayPnl1();
+    const nextStake = calcStake(state.bank1.current, state.config.bank1StakePct);
+    if(state.bank1.current <= 0){
+      return { cls:"stop", text:"🛑 Cassa 1: banca esaurita." };
+    }
+    if(state.day.bank1Losses >= 4 && pnl < 0){
+      return { cls:"wait", text:`⚠️ Cassa 1: giornata pesante. Puoi continuare, ma con prudenza. Stake prossimo ${money(nextStake)}.` };
+    }
+    return { cls:"ok", text:`✅ Cassa 1: pronta a giocare. Stake prossimo ${money(nextStake)}.` };
+  }
+
+  function render(){
+    ensureDay();
+    syncInputsFromState();
+
+    const s1 = calcStake(state.bank1.current, state.config.bank1StakePct);
+    const s2 = calcStake(state.bank2.current, state.config.bank2StakePct);
+
+    el("todayLabel").textContent = state.day.date;
+    el("betsTodayBadge").textContent = state.day.history.length;
+
+    el("b1Current").textContent = money(state.bank1.current);
+    el("b1StakeNext").textContent = money(s1);
+    el("b1DayPnl").textContent = money(dayPnl1());
+    el("b1DayPnl").className = "val " + (dayPnl1() >= 0 ? "good" : "bad");
+    el("b1TotalPnl").textContent = money(totalPnl1());
+    el("b1TotalPnl").className = "val " + (totalPnl1() >= 0 ? "good" : "bad");
+    el("b1TodayWl").textContent = `${state.day.bank1Wins} / ${state.day.bank1Losses}`;
+    el("b1TodayStrike").textContent = pct(strike(state.day.bank1Wins, state.day.bank1Losses));
+
+    el("b2Current").textContent = money(state.bank2.current);
+    el("b2StakeNext").textContent = money(s2);
+    el("b2DayPnl").textContent = money(dayPnl2());
+    el("b2DayPnl").className = "val " + (dayPnl2() >= 0 ? "good" : "bad");
+    el("b2TotalPnl").textContent = money(totalPnl2());
+    el("b2TotalPnl").className = "val " + (totalPnl2() >= 0 ? "good" : "bad");
+    el("b2Targets").textContent = `${money(c2TakeValue())} / ${money(c2StopValue())}`;
+    el("b2TodayWl").textContent = `${state.day.bank2Wins} / ${state.day.bank2Losses}`;
+    el("b2TodayStrike").textContent = pct(strike(state.day.bank2Wins, state.day.bank2Losses));
+
+    const a1 = bank1Status();
+    const a2 = bank2Status();
+    const b1 = el("adviceBank1");
+    const b2 = el("adviceBank2");
+    b1.className = "banner " + a1.cls;
+    b2.className = "banner " + a2.cls;
+    b1.textContent = a1.text;
+    b2.textContent = a2.text;
+
+    renderHistory();
+  }
+
+  function renderHistory(){
+    const tbody = el("historyTable");
+    if(!state.day.history.length){
+      tbody.innerHTML = `<tr><td colspan="8" class="muted">Nessuna giocata registrata oggi.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = state.day.history.map(item => `
+      <tr>
+        <td>${item.time}</td>
+        <td>${escapeHtml(item.note || "—")}</td>
+        <td>${item.quota.toFixed(2)}</td>
+        <td><span class="tag ${item.result}">${item.result.toUpperCase()}</span></td>
+        <td class="right">${money(item.stake1)}</td>
+        <td class="right">${money(item.stake2)}</td>
+        <td class="right">${money(item.bank1After)}</td>
+        <td class="right">${money(item.bank2After)}</td>
+      </tr>
+    `).join("");
+  }
+
+  function escapeHtml(str){
+    return str.replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m]));
+  }
+
+  function newDay(){
+    if(!confirm("Vuoi chiudere la giornata corrente e iniziarne una nuova? Le casse attuali rimangono salvate.")) return;
+    state.day = {
+      date: getToday(),
+      bank1Start: state.bank1.current,
+      bank2Start: state.bank2.current,
+      bank1Wins: 0,
+      bank1Losses: 0,
+      bank2Wins: 0,
+      bank2Losses: 0,
+      history: []
+    };
+    saveState();
+    render();
+  }
+
+  function resetAll(){
+    if(!confirm("Reset totale? Verranno cancellati casse, storico e configurazione salvata.")) return;
+    state = defaultState();
+    saveState();
+    render();
+  }
+
+  function exportJson(){
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+    downloadBlob(blob, `mazzobotover-backup-${safeDate()}.json`);
+  }
+
+  function exportCsv(){
+    ensureDay();
+    const rows = [
+      ["Data", "Ora", "Match", "Quota", "Esito", "Stake Cassa 1", "Stake Cassa 2", "Cassa 1 Dopo", "Cassa 2 Dopo"]
+    ];
+    state.day.history.slice().reverse().forEach(item => {
+      rows.push([
+        state.day.date,
+        item.time,
+        item.note || "",
+        item.quota,
+        item.result.toUpperCase(),
+        item.stake1,
+        item.stake2,
+        item.bank1After,
+        item.bank2After
+      ]);
+    });
+    const csv = rows.map(r => r.map(csvCell).join(";")).join("\n");
+    const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+    downloadBlob(blob, `mazzobotover-storico-${safeDate()}.csv`);
+  }
+
+  function csvCell(v){
+    const s = String(v ?? "");
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+
+  function safeDate(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function setResult(result){
+    selectedResult = result;
+    el("winChip").classList.toggle("active", result === "win");
+    el("lossChip").classList.toggle("active", result === "loss");
+  }
+
+  el("saveConfigBtn").addEventListener("click", () => saveConfig(false));
+  el("newDayBtn").addEventListener("click", newDay);
+  el("registerBtn").addEventListener("click", registerBet);
+  el("undoBtn").addEventListener("click", undoLast);
+  el("resetAllBtn").addEventListener("click", resetAll);
+  el("exportJsonBtn").addEventListener("click", exportJson);
+  el("exportCsvBtn").addEventListener("click", exportCsv);
+  el("winChip").addEventListener("click", () => setResult("win"));
+  el("lossChip").addEventListener("click", () => setResult("loss"));
+
+  ensureDay();
+  render();
+})();
 </script>
-
 </body>
 </html>
