@@ -168,6 +168,8 @@
     .alt-list{display:grid; gap:10px; margin-top:14px;}
     .alt-item{border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff;}
     .alt-item strong{display:block;}
+    .alt-select{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; text-align:left; background:#fff; border:1px solid #e6edf5; border-radius:12px; padding:10px 12px; box-shadow:none;}
+    .alt-select:hover{transform:none; border-color:#bfd4ea; background:#f8fbff;}
 
     @media (max-width: 1100px) {
       .grid-2, .grid-3, .summary-cards, .quick-actions, .kpi-row, .status-board { grid-template-columns: 1fr 1fr; }
@@ -273,7 +275,7 @@
           <h3>Mobile attuale</h3>
           <div class="fields">
             <div class="field span-6"><label>Operatore attuale</label><select id="mobileOperatore"><option value="">Seleziona operatore</option>
-                <option value="TIM">TIM</option><option value="Vodafone">Vodafone</option><option value="Iliad">Iliad</option><option value="Fastweb">Fastweb</option><option value="Kena">Kena</option><option value="ho mobile">ho. mobile</option><option value="Very Mobile">Very Mobile</option><option value="Poste Mobile">PosteMobile</option><option value="Coop Voce">CoopVoce</option><option value="1Mobile">1Mobile</option><option value="LycaMobile">LycaMobile</option><option value="Optima">Optima</option><option value="Rabona">Rabona</option><option value="Tiscali">Tiscali</option><option value="Spusu">Spusu</option><option value="Altro operatore virtuale">Altro operatore virtuale</option><option value="Altro">Altro</option>
+                <option value="WindTre">WindTre</option><option value="WIND">WIND</option><option value="TIM">TIM</option><option value="Vodafone">Vodafone</option><option value="Iliad">Iliad</option><option value="Fastweb">Fastweb</option><option value="Kena">Kena</option><option value="ho mobile">ho. mobile</option><option value="Very Mobile">Very Mobile</option><option value="Poste Mobile">PosteMobile</option><option value="Coop Voce">CoopVoce</option><option value="1Mobile">1Mobile</option><option value="LycaMobile">LycaMobile</option><option value="Optima">Optima</option><option value="Rabona">Rabona</option><option value="Tiscali">Tiscali</option><option value="Spusu">Spusu</option><option value="Altro operatore virtuale">Altro operatore virtuale</option><option value="Altro">Altro</option>
               </select></div>
             <div class="field span-6"><label>Tipologia linea</label>
               <select id="mobileTipo"><option value="mnp">Portabilità / MNP</option><option value="nuovo">Nuovo numero</option></select>
@@ -901,16 +903,22 @@
     function rankMobileStandaloneOffer(offer, customer, type) {
       const gbValue = offer.giga_illimitati ? 9999 : (offer.gb || 0);
       const needTier = mobileNeedTier(offer, customer);
-      const monthlyDelta = customer.mobile.prezzo - (offer.prezzo || 0);
+      const effectivePrice = Number(offer.prezzo || 0);
+      const effectivePriceAfter = Number(offer.prezzo_dopo || 0);
+      const effectivePromoMonths = Number(offer.mesi || 0);
+      const annualCurrent = annualCostWithPromo(customer.mobile.prezzo, 0, 0);
+      const annualWind = annualCostWithPromo(effectivePrice, effectivePriceAfter, effectivePromoMonths);
       const extraGb = Math.max(0, gbValue - (customer.mobile.gb || 0));
       return {
         ...offer,
         kind: type === 'mnp' ? 'mnp' : 'consumer',
-        effectivePrice: offer.prezzo || 0,
+        effectivePrice,
+        effectivePriceAfter,
+        effectivePromoMonths,
         gbValue,
         needTier,
-        monthlyDelta,
-        score: (needTier * 100000) + ((customer.mobile.prezzo - (offer.prezzo || 0)) * 1000) + Math.min(extraGb, 500)
+        monthlyDelta: customer.mobile.prezzo - effectivePrice,
+        score: (needTier * 100000) + ((annualCurrent - annualWind) * 100) + Math.min(extraGb, 500)
       };
     }
 
@@ -942,7 +950,39 @@
       return rankedMobileStandaloneOptions(customer, forcedType)[0] || null;
     }
 
-    function bestFixed(customer, mode='solo', requireMulti=false) {
+    function annualCostWithPromo(price, afterPrice=0, promoMonths=0) {
+      const base = Number(price || 0);
+      const after = Number(afterPrice || 0);
+      const months = Math.max(0, Math.min(12, Number(promoMonths || 0)));
+      if (after > 0 && months > 0) {
+        return (base * months) + (after * (12 - months));
+      }
+      return base * 12;
+    }
+
+    function pricingLabel(price, afterPrice=0, promoMonths=0) {
+      if (Number(afterPrice || 0) > 0 && Number(promoMonths || 0) > 0) {
+        return `${euro(price)} / mese per ${promoMonths} mesi, poi ${euro(afterPrice)} / mese`;
+      }
+      return `${euro(price)} / mese`;
+    }
+
+    function isWindCustomer(customer) {
+      const mobileOp = operatorKey(customer.mobile.operatore || '');
+      const fixedOp = operatorKey(customer.fixed.operatore || '');
+      return ['wind','windtre'].includes(mobileOp) || ['wind','windtre'].includes(fixedOp);
+    }
+
+    function getFixedEffectivePricing(offer, customer, mode='solo') {
+      const windCustomer = isWindCustomer(customer);
+      const useConv = mode !== 'solo' || windCustomer;
+      const price = useConv && Number(offer.prezzo_conv || 0) > 0 ? Number(offer.prezzo_conv) : Number(offer.prezzo || 0);
+      const afterPrice = useConv && Number(offer.prezzo_conv_dopo || 0) > 0 ? Number(offer.prezzo_conv_dopo) : Number(offer.prezzo_dopo || 0);
+      const promoMonths = useConv && Number(offer.mesi_conv || 0) > 0 ? Number(offer.mesi_conv) : Number(offer.mesi || 0);
+      return { price, afterPrice, promoMonths, useConv, windCustomer };
+    }
+
+    function rankedFixedOptions(customer, mode='solo', requireMulti=false) {
       const wantsNetflix = customer.fixed.netflix;
       let options = DATA.fixed.filter(x => x.attiva !== 0).filter(x => fixedTechMatches(x, customer.fixed.tech));
       if (!options.length) options = DATA.fixed.filter(x => x.attiva !== 0);
@@ -957,16 +997,22 @@
       if (requireMulti) {
         const multi = options.filter(x => x.scenario === 'multiservice');
         if (multi.length) options = multi;
-      } else if (mode === 'solo') {
+      } else if (mode === 'solo' && !isWindCustomer(customer)) {
         const solo = options.filter(x => x.scenario !== 'multiservice');
         if (solo.length) options = solo;
       }
-      options = options.map(x => ({
-        ...x,
-        effectivePrice: mode === 'solo' ? (x.prezzo || 0) : (x.prezzo_conv || x.prezzo || 0),
-        score: ((customer.fixed.prezzo - (mode === 'solo' ? (x.prezzo || 0) : (x.prezzo_conv || x.prezzo || 0))) * 12) + (x.netflix ? 3 : 0) + (x.amazon ? 2 : 0) - (x.attivazione_mese || 0)
-      })).sort((a,b) => b.score - a.score || byPriority(a,b));
-      return options[0] || null;
+
+      return options.map(x => {
+        const pricing = getFixedEffectivePricing(x, customer, mode);
+        const annualCurrent = annualCostWithPromo(customer.fixed.prezzo, 0, 0);
+        const annualWind = annualCostWithPromo(pricing.price, pricing.afterPrice, pricing.promoMonths);
+        const score = (annualCurrent - annualWind) + (x.netflix ? 3 : 0) + (x.amazon ? 2 : 0) - (x.attivazione_mese || 0);
+        return { ...x, effectivePrice: pricing.price, effectivePriceAfter: pricing.afterPrice, effectivePromoMonths: pricing.promoMonths, effectiveUseConv: pricing.useConv, windCustomer: pricing.windCustomer, score };
+      }).sort((a,b) => b.score - a.score || byPriority(a,b));
+    }
+
+    function bestFixed(customer, mode='solo', requireMulti=false) {
+      return rankedFixedOptions(customer, mode, requireMulti)[0] || null;
     }
 
     function estimateEnergy(customer, bundle=false) {
@@ -1014,15 +1060,19 @@
         const mobile = ranked[0];
         if (!mobile) return renderNoResult('Nessuna offerta mobile compatibile trovata.');
         const alternatives = ranked.slice(1, 5).map(x => ({
+          id: x.id,
+          source: x.kind === 'mnp' ? 'mnp' : 'consumer',
           nome: x.nome,
           gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`,
           prezzo: x.effectivePrice || x.prezzo || 0,
+          prezzo_dopo: x.effectivePriceAfter || x.prezzo_dopo || 0,
+          mesi: x.effectivePromoMonths || x.mesi || 0,
           note: x.note || ''
         }));
         result.title = customer.mobile.tipo === 'mnp' ? 'Solo Mobile MNP' : 'Solo Mobile nuovo numero';
-        result.offers = [{ type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobile.effectivePrice, alternatives }];
+        result.offers = [{ type:'mobile', data: mobile, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - mobile.effectivePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo, 0, 0) - annualCostWithPromo(mobile.effectivePrice, mobile.effectivePriceAfter, mobile.effectivePromoMonths), alternatives }];
         result.monthlySaving = customer.mobile.prezzo - mobile.effectivePrice;
-        result.yearlySaving = result.monthlySaving * 12;
+        result.yearlySaving = annualCostWithPromo(customer.mobile.prezzo, 0, 0) - annualCostWithPromo(mobile.effectivePrice, mobile.effectivePriceAfter, mobile.effectivePromoMonths);
         result.advantage = mobile.giga_illimitati ? 'Giga illimitati' : `${mobile.gb || 0} GB${mobile.fiveg ? ' con 5G' : ''}`;
         if (customer.mobile.tipo === 'mnp') {
           alert = `Confronto MNP eseguito sulla tabella MNP in base all'operatore selezionato: ${customer.mobile.operatore || 'operatore non indicato'}.`;
@@ -1035,10 +1085,14 @@
         const fixed = bestFixed(customer, 'solo', false);
         if (!fixed) return renderNoResult('Nessuna offerta fisso compatibile trovata.');
         result.title = 'Solo Fisso';
-        result.offers = [{ type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice }];
+        const fixedAlternatives = rankedFixedOptions(customer, 'solo', false).slice(1,5).map(x => ({
+          id: x.id, source:'fixed', nome:x.nome, gb:x.tecnologia || '', prezzo:x.effectivePrice || x.prezzo || 0, prezzo_dopo:x.effectivePriceAfter || x.prezzo_dopo || 0, mesi:x.effectivePromoMonths || x.mesi || 0, note:x.note || ''
+        }));
+        result.offers = [{ type:'fixed', data: fixed, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - fixed.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths), alternatives: fixedAlternatives }];
         result.monthlySaving = customer.fixed.prezzo - fixed.effectivePrice;
-        result.yearlySaving = result.monthlySaving * 12;
-        result.advantage = fixed.piano_netflix || fixed.down;
+        result.yearlySaving = annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(fixed.effectivePrice, fixed.effectivePriceAfter, fixed.effectivePromoMonths);
+        result.advantage = (fixed.windCustomer ? 'Prezzo cliente Wind ' : '') + (fixed.piano_netflix || fixed.down || '');
+        if (fixed.windCustomer) alert = 'Cliente già Wind/WindTre: il fisso può usare il prezzo convergenza e giga illimitati sulle SIM già Wind compatibili.';
       }
 
       if (mode === 'energy-only') {
@@ -1133,6 +1187,8 @@
       if (item.type === 'mobile') {
         const d = item.data;
         const price = item.effectivePrice ?? d.effectivePrice ?? d.prezzo;
+        const priceAfter = d.effectivePriceAfter ?? d.prezzo_dopo ?? 0;
+        const promoMonths = d.effectivePromoMonths ?? d.mesi ?? 0;
         const gb = d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (d.gb_conv && d.prezzo_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) + ' GB';
         return `
           <article class="offer offer-mobile">
@@ -1144,26 +1200,28 @@
                   <span class="pill">${esc(gb)}</span>
                   <span class="pill">${d.fiveg ? '5G incluso' : '4G'}</span>
                   <span class="pill">Attivazione ${euro(d.attivazione || 0)}</span>
+                  ${priceAfter > 0 && promoMonths > 0 ? `<span class="pill">Promo ${promoMonths} mesi</span>` : ''}
                 </div>
               </div>
               <div class="price-box">
                 <div class="price">${euro(price)}</div>
-                <div class="after">Risparmio cliente: <strong>${euro(item.monthlySaving)}</strong> / mese</div>
+                <div class="after">${priceAfter > 0 && promoMonths > 0 ? `Poi <strong>${euro(priceAfter)}</strong> / mese` : `Risparmio cliente: <strong>${euro(item.monthlySaving)}</strong> / mese`}</div>
               </div>
             </div>
             <div class="offer-body">
               <div class="offer-grid">
                 <div class="mini"><div class="l">Prezzo attuale</div><div class="v">${euro(item.currentPrice || 0)}</div></div>
-                <div class="mini"><div class="l">Prezzo WindTre</div><div class="v">${euro(price)}</div></div>
+                <div class="mini"><div class="l">Prezzo WindTre</div><div class="v">${pricingLabel(price, priceAfter, promoMonths)}</div></div>
+                <div class="mini"><div class="l">Risparmio annuo</div><div class="v money-positive">${euro(item.yearlySaving ?? 0)}</div></div>
                 <div class="mini"><div class="l">GB rispetto ad oggi</div><div class="v">${d.giga_illimitati || d.giga_illimitati_conv ? 'Illimitati' : (Math.max(0, (d.gb_conv && price === d.prezzo_conv ? d.gb_conv : d.gb) - readCustomer().mobile.gb)) + ' GB in più'}</div></div>
-                <div class="mini"><div class="l">Voce / SMS</div><div class="v">${esc(String(d.minuti))} · ${esc(String(d.sms))}</div></div>
               </div>
+              <div class="note" style="margin-bottom:8px;">${priceAfter > 0 && promoMonths > 0 ? `Prezzo promo <strong>${euro(price)}</strong> per <strong>${promoMonths} mesi</strong>, poi <strong>${euro(priceAfter)}</strong> / mese.` : `Prezzo mensile WindTre: <strong>${euro(price)}</strong>.`}</div>
               <div class="note">${esc(d.note || '')}</div>
               ${Array.isArray(item.alternatives) && item.alternatives.length ? `
                 <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed;">
                   <strong>Alternative attivabili</strong>
                   <div style="margin-top:8px; display:grid; gap:8px;">
-                    ${item.alternatives.map(alt => `<div style="display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; background:#fff; border:1px solid #e6edf5;"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${euro(alt.prezzo)}</div></div>`).join('')}
+                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="mobile" data-source="${esc(alt.source || '')}" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(alt.mesi) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
                   </div>
                 </div>` : ''}
             </div>
@@ -1171,6 +1229,9 @@
       }
       if (item.type === 'fixed') {
         const d = item.data;
+        const price = d.effectivePrice || d.prezzo || 0;
+        const priceAfter = d.effectivePriceAfter || d.prezzo_dopo || 0;
+        const promoMonths = d.effectivePromoMonths || d.mesi || 0;
         return `
           <article class="offer offer-fixed">
             <div class="offer-head">
@@ -1181,26 +1242,27 @@
                   <span class="pill">${esc(d.tecnologia)}</span>
                   <span class="pill">${esc(d.down || '')}</span>
                   ${d.piano_netflix ? `<span class="pill">${esc(d.piano_netflix)}</span>` : ''}
+                  ${d.windCustomer ? `<span class="pill">Cliente già Wind</span>` : ''}
                 </div>
               </div>
               <div class="price-box">
-                <div class="price">${euro(d.effectivePrice || d.prezzo)}</div>
-                <div class="after">Risparmio cliente: <strong>${euro(item.monthlySaving)}</strong> / mese</div>
+                <div class="price">${euro(price)}</div>
+                <div class="after">${priceAfter > 0 && promoMonths > 0 ? `Poi <strong>${euro(priceAfter)}</strong> / mese` : `Risparmio cliente: <strong>${euro(item.monthlySaving)}</strong> / mese`}</div>
               </div>
             </div>
             <div class="offer-body">
               <div class="offer-grid">
                 <div class="mini"><div class="l">Prezzo attuale</div><div class="v">${euro(item.currentPrice || 0)}</div></div>
-                <div class="mini"><div class="l">Prezzo WindTre</div><div class="v">${euro(d.effectivePrice || d.prezzo)}</div></div>
+                <div class="mini"><div class="l">Prezzo WindTre</div><div class="v">${pricingLabel(price, priceAfter, promoMonths)}</div></div>
                 <div class="mini"><div class="l">Amazon Prime</div><div class="v">${d.amazon ? d.amazon + ' mesi' : 'No'}</div></div>
                 <div class="mini"><div class="l">Attivazione</div><div class="v">${d.attivazione_mese ? euro(d.attivazione_mese) + ' x ' + d.attivazione_mesi : 'Da verificare'}</div></div>
               </div>
-              <div class="note">${esc(d.note || '')}</div>
+              <div class="note">${d.windCustomer ? 'Cliente già Wind/WindTre: prezzo convergenza applicabile e possibilità di giga illimitati sulle SIM Wind compatibili. ' : ''}${esc(d.note || '')}</div>
               ${Array.isArray(item.alternatives) && item.alternatives.length ? `
                 <div class="note" style="margin-top:12px; background:#f7fafc; border:1px solid #d7e2ed;">
                   <strong>Alternative attivabili</strong>
                   <div style="margin-top:8px; display:grid; gap:8px;">
-                    ${item.alternatives.map(alt => `<div style="display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; background:#fff; border:1px solid #e6edf5;"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${euro(alt.prezzo)}</div></div>`).join('')}
+                    ${item.alternatives.map(alt => `<button type="button" class="alt-select js-select-offer" data-type="fixed" data-source="fixed" data-id="${esc(alt.id || '')}"><div><strong>${esc(alt.nome)}</strong><div style="font-size:.92rem; color:#6c7a8d;">${esc(alt.gb)}${alt.note ? ' · ' + esc(alt.note) : ''}${alt.prezzo_dopo > 0 && alt.mesi > 0 ? ' · ' + esc(alt.mesi) + ' mesi promo' : ''}</div></div><div style="font-weight:800; color:#0f172a; white-space:nowrap;">${pricingLabel(alt.prezzo, alt.prezzo_dopo, alt.mesi)}</div></button>`).join('')}
                   </div>
                 </div>` : ''}
             </div>
@@ -1239,6 +1301,67 @@
           </article>`;
       }
       return '';
+    }
+
+
+    function findOfferBySelection(type, source, id, customer) {
+      if (type === 'mobile') {
+        const ranked = rankedMobileStandaloneOptions(customer, customer.mobile.tipo);
+        return ranked.find(x => x.id === id && (source ? x.kind === source : true)) || null;
+      }
+      if (type === 'fixed') {
+        const ranked = rankedFixedOptions(customer, 'solo', false);
+        return ranked.find(x => x.id === id) || null;
+      }
+      return null;
+    }
+
+    function applyAlternativeSelection(type, source, id) {
+      if (!state.lastMode) return;
+      const customer = readCustomer();
+      if (state.lastMode === 'mobile-only' && type === 'mobile') {
+        const ranked = rankedMobileStandaloneOptions(customer, customer.mobile.tipo);
+        const selected = ranked.find(x => x.id === id && (source ? x.kind === source : true));
+        if (!selected) return;
+        const alternatives = ranked.filter(x => !(x.id === id && x.kind === selected.kind)).slice(0, 4).map(x => ({
+          id: x.id,
+          source: x.kind === 'mnp' ? 'mnp' : 'consumer',
+          nome: x.nome,
+          gb: x.giga_illimitati ? 'Giga illimitati' : `${x.gb || 0} GB${x.fiveg ? ' · 5G' : ''}`,
+          prezzo: x.effectivePrice || x.prezzo || 0,
+          prezzo_dopo: x.effectivePriceAfter || x.prezzo_dopo || 0,
+          mesi: x.effectivePromoMonths || x.mesi || 0,
+          note: x.note || ''
+        }));
+        const result = {
+          mode: state.lastMode,
+          title: customer.mobile.tipo === 'mnp' ? 'Solo Mobile MNP' : 'Solo Mobile nuovo numero',
+          offers: [{ type:'mobile', data:selected, currentPrice: customer.mobile.prezzo, monthlySaving: customer.mobile.prezzo - selected.effectivePrice, yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths), alternatives }],
+          monthlySaving: customer.mobile.prezzo - selected.effectivePrice,
+          yearlySaving: annualCostWithPromo(customer.mobile.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths),
+          advantage: selected.giga_illimitati ? 'Giga illimitati' : `${selected.gb || 0} GB${selected.fiveg ? ' con 5G' : ''}`
+        };
+        state.lastResult = result;
+        renderResult(result, 'Offerta alternativa mobile selezionata e inserita nel preventivo.');
+      }
+      if (state.lastMode === 'fixed-only' && type === 'fixed') {
+        const ranked = rankedFixedOptions(customer, 'solo', false);
+        const selected = ranked.find(x => x.id === id);
+        if (!selected) return;
+        const alternatives = ranked.filter(x => x.id !== id).slice(0,4).map(x => ({
+          id:x.id, source:'fixed', nome:x.nome, gb:x.tecnologia || '', prezzo:x.effectivePrice || x.prezzo || 0, prezzo_dopo:x.effectivePriceAfter || x.prezzo_dopo || 0, mesi:x.effectivePromoMonths || x.mesi || 0, note:x.note || ''
+        }));
+        const result = {
+          mode: state.lastMode,
+          title: 'Solo Fisso',
+          offers: [{ type:'fixed', data:selected, currentPrice: customer.fixed.prezzo, monthlySaving: customer.fixed.prezzo - selected.effectivePrice, yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths), alternatives }],
+          monthlySaving: customer.fixed.prezzo - selected.effectivePrice,
+          yearlySaving: annualCostWithPromo(customer.fixed.prezzo,0,0) - annualCostWithPromo(selected.effectivePrice, selected.effectivePriceAfter, selected.effectivePromoMonths),
+          advantage: (selected.windCustomer ? 'Prezzo cliente Wind ' : '') + (selected.piano_netflix || selected.down || '')
+        };
+        state.lastResult = result;
+        renderResult(result, 'Offerta alternativa fisso selezionata e inserita nel preventivo.');
+      }
     }
 
     function buildPrintArea(result) {
@@ -1321,6 +1444,11 @@
       populateEnergyMonths();
       document.querySelectorAll('[data-action]').forEach(btn => {
         btn.addEventListener('click', () => compare(btn.dataset.action));
+      });
+      els.resultOffers.addEventListener('click', (e) => {
+        const btn = e.target.closest('.js-select-offer');
+        if (!btn) return;
+        applyAlternativeSelection(btn.dataset.type, btn.dataset.source, btn.dataset.id);
       });
       document.getElementById('analyzeBestBtn').addEventListener('click', bestAutomatic);
       document.getElementById('printBtn').addEventListener('click', () => window.print());
