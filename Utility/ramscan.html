@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Dashboard Documenti → PDF Compresso</title>
+
+  <!-- Cropper.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #16202a;
+      --muted: #6c7a89;
+      --line: #dfe6ef;
+      --primary: #1366ff;
+      --primary-dark: #0d4fc6;
+      --success: #11a36a;
+      --danger: #d63c3c;
+      --shadow: 0 10px 30px rgba(18, 38, 63, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .hero {
+      margin-bottom: 18px;
+      padding: 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #0f5eff 0%, #4b8bff 100%);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.92;
+      max-width: 780px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .card p.sub {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 16px 0 10px;
+    }
+
+    .dropzone {
+      border: 2px dashed #bad0f7;
+      background: #f7faff;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      transition: 0.2s ease;
+    }
+
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background: #eef5ff;
+    }
+
+    .dropzone p {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    .actions,
+    .inline-actions,
+    .quality-row,
+    .result-actions,
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .actions { margin-top: 12px; }
+
+    button,
+    .btn,
+    select,
+    input[type="range"] {
+      font: inherit;
+    }
+
+    button,
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-secondary {
+      background: #edf3ff;
+      color: var(--primary);
+    }
+
+    .btn-muted {
+      background: #f2f4f7;
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: #fff1f1;
+      color: var(--danger);
+    }
+
+    .hidden { display: none !important; }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .checkboxes {
+      display: grid;
+      gap: 10px;
+      margin: 10px 0 8px;
+    }
+
+    .check {
+      display: flex;
+      align-items: start;
+      gap: 10px;
+      padding: 12px;
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .check input { margin-top: 3px; }
+
+    .preview-list,
+    .results-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .preview-item,
+    .result-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .preview-head,
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .preview-head strong,
+    .result-head strong {
+      display: block;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .preview-head span,
+    .result-head span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    .thumb {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px;
+      background: #f9fbff;
+      text-align: center;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+      margin-bottom: 8px;
+      background: #eef3fa;
+    }
+
+    .thumb small {
+      display: block;
+      color: var(--muted);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .toolbar {
+      margin: 12px 0;
+    }
+
+    .cropper-shell {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fcfdff;
+    }
+
+    .crop-area {
+      width: 100%;
+      min-height: 280px;
+      max-height: 60vh;
+      overflow: hidden;
+      background: repeating-linear-gradient(
+        45deg,
+        #f6f8fc,
+        #f6f8fc 10px,
+        #eef2f7 10px,
+        #eef2f7 20px
+      );
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .crop-area img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .quality-row {
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .quality-box {
+      flex: 1;
+      min-width: 210px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f9fbff;
+    }
+
+    .quality-box label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .quality-box .value {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+
+    .status.info {
+      background: #eef5ff;
+      color: #1144a8;
+      border-color: #cfe0ff;
+    }
+
+    .status.success {
+      background: #eefaf4;
+      color: #11764d;
+      border-color: #cdeedd;
+    }
+
+    .status.error {
+      background: #fff1f1;
+      color: #ab2d2d;
+      border-color: #ffd2d2;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 14px; }
+      .hero, .card { padding: 16px; }
+      .thumb-grid { grid-template-columns: repeat(2, 1fr); }
+      .preview-head, .result-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Dashboard Documenti → PDF compresso</h1>
+      <p>
+        Scatta o carica documenti, ritaglia l'immagine, unisci fronte/retro nello stesso PDF e comprimi file immagine o PDF già esistenti.
+        Funziona direttamente dal browser su smartphone, tablet e PC.
+      </p>
+    </section>
+
+    <div class="grid">
+      <!-- SCANSIONE -->
+      <section class="card">
+        <h2>1) Scansione documenti con ritaglio</h2>
+        <p class="sub">
+          Ideale per carta d'identità, patente e documenti fronte/retro. Puoi usare fotocamera o galleria, ritagliare ogni immagine e generare un PDF unico compresso.
+        </p>
+
+        <span class="section-label">Tipo documento</span>
+        <div class="checkboxes">
+          <label class="check">
+            <input type="radio" name="docType" value="single" checked />
+            <div>
+              <strong>Documento singolo / solo una facciata</strong>
+              <div class="hint">Genera un PDF con una sola pagina.</div>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="docType" value="double" />
+            <div>
+              <strong>Documento fronte / retro</strong>
+              <div class="hint">Potrai aggiungere 2 immagini e creare un unico PDF multi-pagina.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="dropzone" id="scanDropzone">
+          <p><strong>Aggiungi immagini documento</strong></p>
+          <p>Puoi trascinarle qui, selezionarle dal dispositivo oppure usare la fotocamera.</p>
+          <div class="actions">
+            <label class="btn btn-primary" for="scanFileInput">Sfoglia file</label>
+            <label class="btn btn-secondary" for="scanCameraInput">Fai foto</label>
+          </div>
+          <input id="scanFileInput" type="file" accept="image/*" multiple class="hidden" />
+          <input id="scanCameraInput" type="file" accept="image/*" capture="environment" multiple class="hidden" />
+          <div class="hint">Formati consigliati: JPG, PNG, WEBP. Su smartphone “Fai foto” apre la fotocamera posteriore se supportata.</div>
+        </div>
+
+        <div id="scanQueueBox" class="preview-list hidden"></div>
+
+        <div id="cropperPanel" class="cropper-shell hidden">
+          <div class="preview-head">
+            <div>
+              <strong id="cropperTitle">Ritaglia immagine</strong>
+              <span id="cropperSubtitle">Regola l'area del documento e salva il ritaglio</span>
+            </div>
+            <div class="inline-actions">
+              <button class="btn btn-muted" id="rotateLeftBtn" type="button">↺ Ruota</button>
+              <button class="btn btn-muted" id="rotateRightBtn" type="button">↻ Ruota</button>
+            </div>
+          </div>
+
+          <div class="crop-area">
+            <img id="cropImage" alt="Anteprima ritaglio" />
+          </div>
+
+          <div class="toolbar">
+            <button class="btn btn-secondary" type="button" id="cancelCropBtn">Annulla</button>
+            <button class="btn btn-primary" type="button" id="saveCropBtn">Salva ritaglio</button>
+          </div>
+        </div>
+
+        <div class="quality-row">
+          <div class="quality-box">
+            <label for="scanQualityRange">Compressione PDF</label>
+            <input id="scanQualityRange" type="range" min="35" max="92" step="1" value="68" />
+            <div class="value" id="scanQualityValue">Qualità immagine: 68%</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" type="button" id="buildScanPdfBtn">Crea PDF compresso</button>
+          <button class="btn btn-danger" type="button" id="clearScanBtn">Svuota tutto</button>
+        </div>
+
+        <div id="scanStatus" class="status info hidden"></div>
+        <div id="scanResults" class="results-list"></div>
+      </section>
+
+      <!-- COMPRESSIONE FILE -->
+      <section class="card">
+        <h2>2) Comprimi file esistenti in PDF</h2>
+        <p class="sub">
+          Carica file già pronti e convertili in PDF compresso. Supporta immagini e PDF. I PDF vengono rasterizzati e ricreati in PDF compresso.
+        </p>
+
+        <div class="dropzone" id="compressDropzone">
+          <p><strong>Carica i file da comprimere</strong></p>
+          <p>Trascina i file oppure selezionali dal dispositivo.</p>
+          <div class="actions">
+            <label class="btn btn-primary" for="compressInput">Seleziona file</label>
+          </div>
+          <input id="compressInput" type="file" accept="application/pdf,image/*" multiple class="hidden" />
+          <div class="hint">Supporto diretto: PDF, JPG, JPEG, PNG, WEBP. Altri formati non sono gestibili in modo affidabile solo via browser.</div>
+        </div>
+
+        <div class="quality-row">
+          <div class="quality-box">
+            <label for="compressQualityRange">Compressione output</label>
+            <input id="compressQualityRange" type="range" min="30" max="90" step="1" value="60" />
+            <div class="value" id="compressQualityValue">Qualità immagine: 60%</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" type="button" id="processCompressBtn">Comprimi in PDF</button>
+          <button class="btn btn-danger" type="button" id="clearCompressBtn">Svuota lista</button>
+        </div>
+
+        <div id="compressQueue" class="preview-list"></div>
+        <div id="compressStatus" class="status info hidden"></div>
+        <div id="compressResults" class="results-list"></div>
+      </section>
+    </div>
+
+    <div class="footer-note">
+      Nota: questa soluzione lavora completamente nel browser. Per immagini e documenti di identità funziona molto bene. La “compressione PDF” lato browser non modifica il PDF originale in modo strutturale: per ridurre il peso, le pagine PDF vengono convertite in immagini compresse e poi ricreate in un nuovo PDF.
+    </div>
+  </div>
+
+  <!-- Librerie -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <script type="module">
+    import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
+
+    const { PDFDocument } = PDFLib;
+
+    const $ = (id) => document.getElementById(id);
+
+    const scanFileInput = $('scanFileInput');
+    const scanCameraInput = $('scanCameraInput');
+    const scanDropzone = $('scanDropzone');
+    const scanQueueBox = $('scanQueueBox');
+    const scanStatus = $('scanStatus');
+    const scanResults = $('scanResults');
+    const buildScanPdfBtn = $('buildScanPdfBtn');
+    const clearScanBtn = $('clearScanBtn');
+    const scanQualityRange = $('scanQualityRange');
+    const scanQualityValue = $('scanQualityValue');
+
+    const cropperPanel = $('cropperPanel');
+    const cropImage = $('cropImage');
+    const cropperTitle = $('cropperTitle');
+    const cropperSubtitle = $('cropperSubtitle');
+    const rotateLeftBtn = $('rotateLeftBtn');
+    const rotateRightBtn = $('rotateRightBtn');
+    const cancelCropBtn = $('cancelCropBtn');
+    const saveCropBtn = $('saveCropBtn');
+
+    const compressInput = $('compressInput');
+    const compressDropzone = $('compressDropzone');
+    const compressQueue = $('compressQueue');
+    const compressStatus = $('compressStatus');
+    const compressResults = $('compressResults');
+    const processCompressBtn = $('processCompressBtn');
+    const clearCompressBtn = $('clearCompressBtn');
+    const compressQualityRange = $('compressQualityRange');
+    const compressQualityValue = $('compressQualityValue');
+
+    let scanItems = [];
+    let compressItems = [];
+    let cropper = null;
+    let activeCropIndex = -1;
+
+    function formatBytes(bytes) {
+      if (!bytes && bytes !== 0) return '-';
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      if (bytes === 0) return '0 B';
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+    }
+
+    function sanitizeFileName(name, fallback = 'documento') {
+      return (name || fallback)
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[^a-z0-9\-_]+/gi, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '') || fallback;
+    }
+
+    function showStatus(el, message, type = 'info') {
+      el.className = `status ${type}`;
+      el.textContent = message;
+      el.classList.remove('hidden');
+    }
+
+    function hideStatus(el) {
+      el.classList.add('hidden');
+      el.textContent = '';
+    }
+
+    function getDocType() {
+      return document.querySelector('input[name="docType"]:checked')?.value || 'single';
+    }
+
+    async function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    function dataURLToUint8Array(dataUrl) {
+      const base64 = dataUrl.split(',')[1];
+      const binary = atob(base64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function imageDataUrlToPdfPage(pdfDoc, dataUrl) {
+      const bytes = dataURLToUint8Array(dataUrl);
+      let embedded;
+      if (dataUrl.startsWith('data:image/png')) {
+        embedded = await pdfDoc.embedPng(bytes);
+      } else {
+        embedded = await pdfDoc.embedJpg(bytes);
+      }
+      const { width, height } = embedded.scale(1);
+      const page = pdfDoc.addPage([width, height]);
+      page.drawImage(embedded, { x: 0, y: 0, width, height });
+    }
+
+    async function compressImageFileToDataUrl(file, qualityPercent = 68, maxDimension = 2200) {
+      const src = await fileToDataURL(file);
+      return compressImageDataUrl(src, qualityPercent, maxDimension);
+    }
+
+    async function compressImageDataUrl(src, qualityPercent = 68, maxDimension = 2200) {
+      const img = await loadImage(src);
+      const ratio = Math.min(1, maxDimension / Math.max(img.width, img.height));
+      const w = Math.round(img.width * ratio);
+      const h = Math.round(img.height * ratio);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d', { alpha: false });
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const q = Math.max(0.3, Math.min(0.95, qualityPercent / 100));
+      return canvas.toDataURL('image/jpeg', q);
+    }
+
+    function createDownloadLink(blob, fileName, label = 'Scarica PDF') {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.className = 'btn btn-primary';
+      a.textContent = label;
+      return a;
+    }
+
+    function createDeleteButton(onClick) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-danger';
+      btn.textContent = 'Rimuovi';
+      btn.addEventListener('click', onClick);
+      return btn;
+    }
+
+    function updateRangeLabels() {
+      scanQualityValue.textContent = `Qualità immagine: ${scanQualityRange.value}%`;
+      compressQualityValue.textContent = `Qualità immagine: ${compressQualityRange.value}%`;
+    }
+
+    scanQualityRange.addEventListener('input', updateRangeLabels);
+    compressQualityRange.addEventListener('input', updateRangeLabels);
+    updateRangeLabels();
+
+    async function addScanFiles(files) {
+      const accepted = [...files].filter(f => f.type.startsWith('image/'));
+      if (!accepted.length) {
+        showStatus(scanStatus, 'Seleziona almeno un file immagine valido.', 'error');
+        return;
+      }
+
+      for (const file of accepted) {
+        scanItems.push({
+          id: crypto.randomUUID(),
+          name: file.name,
+          size: file.size,
+          sourceFile: file,
+          originalUrl: await fileToDataURL(file),
+          croppedUrl: null,
+          done: false
+        });
+      }
+
+      hideStatus(scanStatus);
+      renderScanQueue();
+      const firstPendingIndex = scanItems.findIndex(item => !item.done);
+      if (firstPendingIndex !== -1) openCropper(firstPendingIndex);
+    }
+
+    function renderScanQueue() {
+      scanQueueBox.innerHTML = '';
+      if (!scanItems.length) {
+        scanQueueBox.classList.add('hidden');
+        return;
+      }
+      scanQueueBox.classList.remove('hidden');
+
+      const wrap = document.createElement('div');
+      wrap.className = 'preview-item';
+
+      const head = document.createElement('div');
+      head.className = 'preview-head';
+      const targetSides = getDocType() === 'double' ? 2 : 1;
+      const doneCount = scanItems.filter(x => x.done).length;
+      head.innerHTML = `
+        <div>
+          <strong>Documenti acquisiti</strong>
+          <span>${doneCount}/${scanItems.length} ritagliati · Modalità richiesta: ${targetSides === 2 ? 'fronte/retro' : 'singolo'}</span>
+        </div>
+      `;
+      wrap.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'thumb-grid';
+
+      scanItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        const img = document.createElement('img');
+        img.src = item.croppedUrl || item.originalUrl;
+        img.alt = item.name;
+
+        const small = document.createElement('small');
+        small.innerHTML = `${item.name}<br>${item.done ? 'Ritagliato ✅' : 'Da ritagliare'}<br>${formatBytes(item.size)}`;
+
+        const actionRow = document.createElement('div');
+        actionRow.className = 'result-actions';
+        actionRow.style.marginTop = '8px';
+
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'btn btn-secondary';
+        editBtn.textContent = 'Ritaglia';
+        editBtn.addEventListener('click', () => openCropper(index));
+
+        const removeBtn = createDeleteButton(() => {
+          scanItems.splice(index, 1);
+          if (activeCropIndex === index) closeCropper();
+          renderScanQueue();
+        });
+
+        actionRow.appendChild(editBtn);
+        actionRow.appendChild(removeBtn);
+
+        div.appendChild(img);
+        div.appendChild(small);
+        div.appendChild(actionRow);
+        grid.appendChild(div);
+      });
+
+      wrap.appendChild(grid);
+      scanQueueBox.appendChild(wrap);
+    }
+
+    function openCropper(index) {
+      if (!scanItems[index]) return;
+      activeCropIndex = index;
+      const item = scanItems[index];
+      cropperTitle.textContent = `Ritaglia: ${item.name}`;
+      cropperSubtitle.textContent = `Immagine ${index + 1} di ${scanItems.length}`;
+      cropImage.src = item.croppedUrl || item.originalUrl;
+      cropperPanel.classList.remove('hidden');
+
+      if (cropper) cropper.destroy();
+      cropper = new Cropper(cropImage, {
+        viewMode: 1,
+        autoCropArea: 0.95,
+        responsive: true,
+        background: false,
+        movable: true,
+        zoomable: true,
+        scalable: false,
+        rotatable: true,
+      });
+    }
+
+    function closeCropper() {
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+      activeCropIndex = -1;
+      cropperPanel.classList.add('hidden');
+      cropImage.src = '';
+    }
+
+    rotateLeftBtn.addEventListener('click', () => cropper?.rotate(-90));
+    rotateRightBtn.addEventListener('click', () => cropper?.rotate(90));
+    cancelCropBtn.addEventListener('click', closeCropper);
+
+    saveCropBtn.addEventListener('click', async () => {
+      if (!cropper || activeCropIndex < 0) return;
+      const canvas = cropper.getCroppedCanvas({
+        fillColor: '#ffffff',
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high'
+      });
+      const quality = Math.max(0.3, Math.min(0.95, Number(scanQualityRange.value) / 100));
+      const croppedUrl = canvas.toDataURL('image/jpeg', quality);
+      scanItems[activeCropIndex].croppedUrl = croppedUrl;
+      scanItems[activeCropIndex].done = true;
+      renderScanQueue();
+      closeCropper();
+    });
+
+    async function buildScanPdf() {
+      if (!scanItems.length) {
+        showStatus(scanStatus, 'Prima aggiungi almeno una foto documento.', 'error');
+        return;
+      }
+
+      const docType = getDocType();
+      if (docType === 'double' && scanItems.length < 2) {
+        showStatus(scanStatus, 'Hai selezionato fronte/retro: aggiungi almeno 2 immagini.', 'error');
+        return;
+      }
+
+      const allPrepared = scanItems.every(item => item.croppedUrl || item.originalUrl);
+      if (!allPrepared) {
+        showStatus(scanStatus, 'Completa il ritaglio delle immagini prima di creare il PDF.', 'error');
+        return;
+      }
+
+      try {
+        showStatus(scanStatus, 'Sto creando il PDF compresso...', 'info');
+        const pdfDoc = await PDFDocument.create();
+
+        for (const item of scanItems) {
+          const compressed = await compressImageDataUrl(item.croppedUrl || item.originalUrl, Number(scanQualityRange.value), 2000);
+          await imageDataUrlToPdfPage(pdfDoc, compressed);
+        }
+
+        const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const nameRoot = sanitizeFileName(scanItems[0]?.name || 'documento');
+        const finalName = `${nameRoot}_${docType === 'double' ? 'fronte_retro' : 'scansione'}.pdf`;
+
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <div class="result-head">
+            <div>
+              <strong>${finalName}</strong>
+              <span>${scanItems.length} pagina/e · ${formatBytes(blob.size)}</span>
+            </div>
+          </div>
+        `;
+        const actions = document.createElement('div');
+        actions.className = 'result-actions';
+        actions.appendChild(createDownloadLink(blob, finalName, 'Scarica PDF'));
+        item.appendChild(actions);
+        scanResults.prepend(item);
+
+        showStatus(scanStatus, 'PDF creato con successo. Puoi scaricarlo subito.', 'success');
+      } catch (err) {
+        console.error(err);
+        showStatus(scanStatus, 'Errore durante la creazione del PDF. Riprova con immagini più leggere o meno numerose.', 'error');
+      }
+    }
+
+    async function renderPdfToCompressedImages(file, qualityPercent) {
+      const buffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+      const pages = [];
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const q = Math.max(0.3, Math.min(0.95, qualityPercent / 100));
+        pages.push(canvas.toDataURL('image/jpeg', q));
+      }
+
+      return pages;
+    }
+
+    function renderCompressQueue() {
+      compressQueue.innerHTML = '';
+      if (!compressItems.length) return;
+
+      compressItems.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `
+          <div class="preview-head">
+            <div>
+              <strong>${file.name}</strong>
+              <span>${file.type || 'Tipo sconosciuto'} · ${formatBytes(file.size)}</span>
+            </div>
+          </div>
+        `;
+        const actions = document.createElement('div');
+        actions.className = 'result-actions';
+        actions.appendChild(createDeleteButton(() => {
+          compressItems.splice(index, 1);
+          renderCompressQueue();
+        }));
+        item.appendChild(actions);
+        compressQueue.appendChild(item);
+      });
+    }
+
+    async function processCompression() {
+      if (!compressItems.length) {
+        showStatus(compressStatus, 'Carica almeno un file da comprimere.', 'error');
+        return;
+      }
+
+      hideStatus(compressStatus);
+      compressResults.innerHTML = '';
+
+      for (const file of compressItems) {
+        try {
+          showStatus(compressStatus, `Sto elaborando ${file.name}...`, 'info');
+          const pdfDoc = await PDFDocument.create();
+          const quality = Number(compressQualityRange.value);
+
+          if (file.type === 'application/pdf') {
+            const pages = await renderPdfToCompressedImages(file, quality);
+            for (const pageDataUrl of pages) {
+              await imageDataUrlToPdfPage(pdfDoc, pageDataUrl);
+            }
+          } else if (file.type.startsWith('image/')) {
+            const imageData = await compressImageFileToDataUrl(file, quality, 2200);
+            await imageDataUrlToPdfPage(pdfDoc, imageData);
+          } else {
+            throw new Error('Formato non supportato');
+          }
+
+          const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const outputName = `${sanitizeFileName(file.name, 'file')}_compresso.pdf`;
+
+          const result = document.createElement('div');
+          result.className = 'result-item';
+          result.innerHTML = `
+            <div class="result-head">
+              <div>
+                <strong>${outputName}</strong>
+                <span>File originale: ${formatBytes(file.size)} · Output: ${formatBytes(blob.size)}</span>
+              </div>
+            </div>
+          `;
+          const actions = document.createElement('div');
+          actions.className = 'result-actions';
+          actions.appendChild(createDownloadLink(blob, outputName, 'Scarica PDF'));
+          result.appendChild(actions);
+          compressResults.appendChild(result);
+        } catch (err) {
+          console.error(err);
+          const failed = document.createElement('div');
+          failed.className = 'result-item';
+          failed.innerHTML = `
+            <div class="result-head">
+              <div>
+                <strong>${file.name}</strong>
+                <span>Errore elaborazione</span>
+              </div>
+            </div>
+            <div class="hint">Formato non supportato oppure file troppo pesante per il browser.</div>
+          `;
+          compressResults.appendChild(failed);
+        }
+      }
+
+      showStatus(compressStatus, 'Elaborazione completata. Scarica i PDF generati qui sotto.', 'success');
+    }
+
+    function setupDropzone(dropzone, callback) {
+      ['dragenter', 'dragover'].forEach(evt => {
+        dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer?.files;
+        if (files?.length) callback(files);
+      });
+    }
+
+    scanFileInput.addEventListener('change', (e) => {
+      if (e.target.files?.length) addScanFiles(e.target.files);
+      e.target.value = '';
+    });
+
+    scanCameraInput.addEventListener('change', (e) => {
+      if (e.target.files?.length) addScanFiles(e.target.files);
+      e.target.value = '';
+    });
+
+    compressInput.addEventListener('change', (e) => {
+      if (e.target.files?.length) {
+        compressItems.push(...[...e.target.files]);
+        renderCompressQueue();
+      }
+      e.target.value = '';
+    });
+
+    buildScanPdfBtn.addEventListener('click', buildScanPdf);
+    processCompressBtn.addEventListener('click', processCompression);
+
+    clearScanBtn.addEventListener('click', () => {
+      scanItems = [];
+      scanResults.innerHTML = '';
+      hideStatus(scanStatus);
+      renderScanQueue();
+      closeCropper();
+    });
+
+    clearCompressBtn.addEventListener('click', () => {
+      compressItems = [];
+      compressResults.innerHTML = '';
+      compressQueue.innerHTML = '';
+      hideStatus(compressStatus);
+    });
+
+    setupDropzone(scanDropzone, addScanFiles);
+    setupDropzone(compressDropzone, (files) => {
+      compressItems.push(...[...files]);
+      renderCompressQueue();
+    });
+  </script>
+</body>
+</html>
