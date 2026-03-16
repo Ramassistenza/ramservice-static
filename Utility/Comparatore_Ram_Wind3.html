@@ -3,1298 +3,1990 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comparatore WindTre - Premium Pack v3</title>
+  <title>Comparatore Wind3 Professionale</title>
   <style>
-    :root{
-      --bg:#eef4fb; --card:#fff; --ink:#17212b; --muted:#6c7a8d; --line:#d7e2ed;
-      --accent:#ff6a00; --blue:#0f62fe; --green:#10965d; --red:#cf3341; --gold:#ffb400;
-      --soft-blue:#eef5ff; --soft-orange:#fff4ea; --soft-green:#eef9f2; --soft-violet:#f6f1ff;
-      --shadow:0 14px 34px rgba(28,39,58,.08); --r:18px;
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #162033;
+      --muted: #67748a;
+      --line: #d8e1ee;
+      --blue: #2f6bff;
+      --blue-2: #edf3ff;
+      --orange: #ff7b1c;
+      --orange-2: #fff2e8;
+      --green: #13a564;
+      --green-2: #ebfbf3;
+      --red: #e14c4c;
+      --red-2: #fff0f0;
+      --violet: #6f4ef2;
+      --shadow: 0 18px 45px rgba(18, 34, 68, .09);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{background:linear-gradient(180deg,#f8fbff 0%,#eef4fb 100%);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .wrap{max-width:1560px;margin:0 auto;padding:24px}
-    .hero{background:linear-gradient(135deg,#111723 0%,#233247 60%,#8c4e28 130%);color:#fff;border-radius:24px;padding:28px 30px;box-shadow:var(--shadow);margin-bottom:22px}
-    .hero h1{margin:0 0 8px;font-size:31px;line-height:1.08}
-    .hero p{margin:0;color:rgba(255,255,255,.92);max-width:1120px}
-    .layout{display:grid;grid-template-columns:430px minmax(0,1fr);gap:22px;align-items:start}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-    .card-head{padding:18px 20px 8px}
-    .card-head h2,.card-head h3{margin:0;font-size:18px}
-    .card-body{padding:18px 20px 22px}
-    .group{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
-    .group.customer{background:#fffdf5}
-    .group.mobile{background:var(--soft-blue)}
-    .group.fixed{background:var(--soft-orange)}
-    .group.energy{background:var(--soft-green)}
-    .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin:0 0 10px}
-    .double,.triple{display:grid;gap:12px}
-    .double{grid-template-columns:1fr 1fr}
-    .triple{grid-template-columns:1fr 1fr 1fr}
-    label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
-    input,select{width:100%;padding:12px 13px;border-radius:12px;border:1px solid #cfd8e3;background:#fff;color:var(--ink);font:inherit;outline:none}
-    input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(15,98,254,.08)}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    button{border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer}
-    .btn-primary{background:var(--accent);color:#fff}
-    .btn-secondary{background:#eef4ff;color:#2547a8}
-    .btn-dark{background:#1f2835;color:#fff}
-    .status,.note{border-radius:14px;padding:12px 14px;font-size:13px;margin-top:14px}
-    .status.ok{background:#edf9f1;color:#0f9d58}
-    .status.err{background:#fff2f2;color:#cf3341}
-    .status.wait{background:#eef5ff;color:#2547a8}
-    .note{border:1px dashed var(--line);background:#f8fbff;color:var(--muted)}
-    .content{display:grid;gap:18px}
-    .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .metric{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;min-height:120px}
-    .metric small{display:block;color:var(--muted);margin-bottom:8px}
-    .metric strong{display:block;font-size:25px;line-height:1.08}
-    .metric span{display:block;color:var(--muted);font-size:13px;margin-top:6px}
-    .metric.pkg{background:linear-gradient(180deg,#fff 0%,#f7f4ff 100%)}
-    .metric.cur{background:linear-gradient(180deg,#fff 0%,#f5f9ff 100%)}
-    .metric.new{background:linear-gradient(180deg,#fff 0%,#fff6ef 100%)}
-    .metric.save{background:linear-gradient(180deg,#fff 0%,#eefaf2 100%)}
-    .package-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
-    .pkg-btn{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px 12px;box-shadow:var(--shadow);text-align:left;cursor:pointer;transition:.15s}
-    .pkg-btn:hover{transform:translateY(-1px)}
-    .pkg-btn.active{border-color:#ffbf7b;box-shadow:0 16px 36px rgba(255,106,0,.13);background:#fffaf4}
-    .pkg-btn .tag{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#eef4ff;color:#2e53b6}
-    .pkg-btn h4{margin:10px 0 4px;font-size:18px;line-height:1.08}
-    .pkg-btn p{margin:0;color:var(--muted);font-size:13px}
-    .pill-row{display:flex;gap:8px;flex-wrap:wrap}
-    .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:800;background:#f5f8fd;color:#28405c;border:1px solid var(--line)}
-    .service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .offer-panel{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}
-    .offer-panel.mobile{background:#fbfdff}
-    .offer-panel.fixed{background:#fffdfb}
-    .offer-panel.energy{background:#fbfffc}
-    .offer-top{padding:16px 16px 12px;border-bottom:1px solid var(--line)}
-    .offer-kind{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
-    .offer-name{font-size:22px;font-weight:900;line-height:1.12;margin-top:4px;display:flex;gap:8px;align-items:center}
-    .star{color:var(--gold);font-size:20px}
-    .offer-price{font-size:30px;font-weight:900;color:var(--accent);margin-top:8px}
-    .offer-sub{font-size:13px;color:var(--muted);margin-top:4px}
-    .offer-body{padding:14px 16px 16px;display:grid;gap:12px}
-    .detail-box{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 13px}
-    .detail-box strong{display:block;margin-bottom:6px}
-    .bullet{display:grid;gap:8px;padding:0;margin:0;list-style:none}
-    .bullet li{position:relative;padding-left:16px}
-    .bullet li::before{content:"•";position:absolute;left:0;top:0;color:var(--accent);font-weight:900}
-    .alt-list{display:grid;gap:10px}
-    .alt-item{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:#fff;display:grid;gap:6px}
-    .alt-title{font-weight:800}
-    .alt-meta{font-size:13px;color:var(--muted)}
-    .badge{background:#eef4ff;color:#2c4ba3;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;display:inline-block}
-    .res-grid{display:grid;grid-template-columns:1.25fr .95fr;gap:18px}
-    .stack{display:grid;gap:18px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-    .good{color:var(--green)} .bad{color:var(--red)} .muted{color:var(--muted)}
-    .callout{border-radius:14px;padding:12px 14px;font-size:13px}
-    .callout.energy{background:#fff6e9;border:1px solid #ffd7b2}
-    .callout.total{background:#edf9f1;border:1px solid #cfead8}
-    .callout.info{background:#eef5ff;border:1px solid #d0defc}
-    .totals-list{display:grid;gap:12px}
-    .total-line{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:14px}
-    .total-line strong{font-size:24px}
-    .hide{display:none!important}
-    @media (max-width:1280px){.layout,.summary-row,.package-grid,.service-grid,.res-grid,.triple,.double{grid-template-columns:1fr}}
-    @media print{
-      body{background:#fff}.wrap{max-width:none;padding:0}.hero,.actions,.note,#statusBox,.package-grid{display:none!important}
-      .layout,.summary-row,.service-grid,.res-grid,.triple,.double{grid-template-columns:1fr}.card,.metric,.pkg-btn{box-shadow:none}
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(47,107,255,.10), transparent 26%),
+        radial-gradient(circle at top left, rgba(255,123,28,.08), transparent 24%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #12254d 0%, #17336d 54%, #2149a3 100%);
+      color: #fff;
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255,255,255,.22), transparent 60%);
+    }
+
+    .hero-top {
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 880px;
+      color: rgba(255,255,255,.86);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .badge {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid rgba(18,34,68,.06);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 22px 22px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+    }
+
+    .panel-header h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: -.02em;
+    }
+
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .panel-body { padding: 20px 22px 24px; }
+
+    .section-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -.02em;
+    }
+
+    .section-title span {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      background: #f3f6fb;
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    .field textarea { min-height: 90px; resize: vertical; }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(47,107,255,.55);
+      box-shadow: 0 0 0 4px rgba(47,107,255,.11);
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 14px;
+      background: #fff;
+    }
+
+    .checkbox-wrap input { width: 18px; height: 18px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), #4d80ff);
+      color: white;
+      box-shadow: 0 14px 28px rgba(47,107,255,.18);
+    }
+
+    .btn-secondary {
+      background: #eef3fc;
+      color: var(--ink);
+      border: 1px solid #dde6f6;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--green), #28ba78);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(19,165,100,.16);
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .stat .kicker {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+
+    .stat strong {
+      font-size: 22px;
+      letter-spacing: -.03em;
+      display: block;
+    }
+
+    .stat small {
+      color: var(--muted);
+      line-height: 1.4;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .selector-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .selector-chip {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .selector-chip.active {
+      background: linear-gradient(135deg, var(--blue), #5688ff);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 24px rgba(47,107,255,.20);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+    }
+
+    .offer-card,
+    .summary-card,
+    .alt-card,
+    .debug-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      overflow: hidden;
+    }
+
+    .offer-top {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .offer-top h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: -.03em;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--blue-2);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 12px;
+    }
+
+    .price-big {
+      text-align: right;
+    }
+
+    .price-big strong {
+      display: block;
+      font-size: 34px;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .price-big span {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .offer-body {
+      padding: 18px 20px 20px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      background: #f4f7fb;
+      border: 1px solid #e0e8f3;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .info-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .info-box .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 7px;
+    }
+
+    .info-box .value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -.03em;
+    }
+
+    .info-box .sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 5px;
+    }
+
+    .positive .value { color: var(--green); }
+    .negative .value { color: var(--red); }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+    }
+
+    .detail-table th,
+    .detail-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .detail-table tr:last-child td { border-bottom: none; }
+    .detail-table th {
+      background: #f7faff;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+
+    .summary-card { padding: 18px; }
+    .summary-card h4,
+    .alt-card h4,
+    .debug-card h4 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+
+    .list-clean {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .list-item:last-child { border-bottom: none; }
+    .list-item strong { display: block; }
+    .list-item small { color: var(--muted); line-height: 1.45; display: block; margin-top: 4px; }
+
+    .money-pos { color: var(--green); font-weight: 900; }
+    .money-neg { color: var(--red); font-weight: 900; }
+
+    .alt-card { padding: 18px; margin-top: 16px; }
+    .alt-offer {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .alt-offer:last-child { margin-bottom: 0; }
+
+    .status-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .status-pill {
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: #f4f7fb;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid var(--line);
+    }
+
+    .status-pill.ok {
+      background: var(--green-2);
+      color: var(--green);
+      border-color: rgba(19,165,100,.18);
+    }
+
+    .status-pill.warn {
+      background: var(--orange-2);
+      color: var(--orange);
+      border-color: rgba(255,123,28,.16);
+    }
+
+    .empty-state {
+      min-height: 380px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: var(--ink);
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .debug-card {
+      padding: 18px;
+      margin-top: 16px;
+      background: #fcfdff;
+    }
+
+    .debug-pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #41506a;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .print-sheet { display: none; }
+
+    @media (max-width: 1180px) {
+      .layout,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+      .mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 14px; }
+      .hero { padding: 20px; border-radius: 24px; }
+      .panel-header, .panel-body { padding-left: 16px; padding-right: 16px; }
+      .section-card { padding: 14px; }
+      .grid, .grid-3, .breakdown, .mini-stats { grid-template-columns: 1fr; }
+      .offer-top { flex-direction: column; }
+      .price-big { text-align: left; }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      .hero, .layout > .panel:first-child, .selector-bar, .toolbar, .debug-card, .status-bar,
+      #screenResults .alt-card, #screenResults .summary-card .small-note {
+        display: none !important;
+      }
+      .app, .layout, .panel, .panel-body, .panel-header {
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+      }
+      #screenResults { display: none !important; }
+      .print-sheet {
+        display: block !important;
+        padding: 14mm 12mm;
+        color: #111;
+      }
+      .print-head {
+        border-bottom: 2px solid #1c3f8f;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+      }
+      .print-head h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+      .print-head p {
+        margin: 4px 0 0;
+        font-size: 11px;
+        color: #444;
+        line-height: 1.45;
+      }
+      .print-block {
+        border: 1px solid #cfd7e6;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        break-inside: avoid;
+      }
+      .print-block h2 {
+        margin: 0 0 8px;
+        font-size: 15px;
+      }
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5px;
+      }
+      .print-table th,
+      .print-table td {
+        border: 1px solid #dce3f0;
+        padding: 6px 7px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .print-table th { background: #f3f6fb; }
+      .print-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .print-mini {
+        border: 1px solid #dce3f0;
+        border-radius: 8px;
+        padding: 8px;
+        background: #fbfdff;
+      }
+      .print-mini strong {
+        display: block;
+        font-size: 15px;
+        margin-top: 3px;
+      }
+      .print-foot {
+        margin-top: 12px;
+        font-size: 10px;
+        line-height: 1.45;
+        color: #444;
+      }
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <section class="hero">
-    <h1>Comparatore RAMSERVICE 2.0 WindTre - Premium Google Sheets</h1>
-    <p>Confronta prima le singole offerte e poi costruisci il pacchetto. Il comparatore distingue <b>nuova attivazione</b> e <b>MNP</b>, usa le regole dei fogli Google per scegliere le offerte <b>convergenti</b> e calcola il risparmio <b>solo</b> sui servizi inclusi nel pacchetto selezionato.</p>
-  </section>
-
-  <div class="layout">
-    <aside class="card">
-      <div class="card-head"><h2>Dati cliente</h2></div>
-      <div class="card-body">
-        <div id="statusBox" class="status wait">Caricamento dati Google Sheets...</div>
-
-        <div class="group customer">
-          <p class="section-title">Preventivo cliente</p>
-          <div class="triple">
-            <div><label for="customerName">Nome</label><input id="customerName" type="text" placeholder="Es. Andrea"></div>
-            <div><label for="customerSurname">Cognome</label><input id="customerSurname" type="text" placeholder="Es. Mazzei"></div>
-            <div><label for="customerPhone">Cellulare</label><input id="customerPhone" type="text" placeholder="Es. 3480000000"></div>
+  <div class="app">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Comparatore Wind3<br>professionale in negozio</h1>
+          <p>
+            Strumento operativo per confrontare mobile, fisso, energia e convergenze in modo chiaro e trasparente.
+            Carica i dati dal foglio Google, analizza la situazione attuale del cliente e mostra il miglior passaggio
+            singolo o a pacchetto, con risparmio mensile, annuale e preventivo stampabile in formato A4.
+          </p>
+          <div class="hero-badges">
+            <div class="badge">Confronto singolo e bundle</div>
+            <div class="badge">Risparmio mensile e annuo</div>
+            <div class="badge">Preventivo A4 stampabile</div>
+            <div class="badge">Lettura live dal foglio Google</div>
           </div>
         </div>
-
-        <div class="group mobile">
-          <p class="section-title">Mobile attuale</p>
-          <div class="double">
-            <div>
-              <label for="mobileActivationType">Tipo attivazione mobile</label>
-              <select id="mobileActivationType">
-                <option value="new">Nuova attivazione</option>
-                <option value="mnp">Passaggio / MNP</option>
-              </select>
-            </div>
-            <div>
-              <label for="mobileOperator">Operatore mobile di provenienza</label>
-              <select id="mobileOperator"></select>
-            </div>
-          </div>
-          <div class="double">
-            <div><label for="mobileGb">GB inclusi oggi</label><input id="mobileGb" type="number" min="0" step="1" placeholder="Es. 150"></div>
-            <div><label for="mobilePrice">Quanto paga al mese (€)</label><input id="mobilePrice" type="number" min="0" step="0.01" placeholder="Es. 9.99"></div>
-          </div>
-          <div class="double">
-            <div>
-              <label for="mobile5g">Ha il 5G?</label>
-              <select id="mobile5g">
-                <option value="">Non specificato</option>
-                <option value="si">Sì</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-            <div>
-              <label for="mobilePaymentMode">Filtro pagamento mobile</label>
-              <select id="mobilePaymentMode">
-                <option value="any">Qualsiasi</option>
-                <option value="easy">Solo Easy Pay</option>
-                <option value="noeasy">Escludi Easy Pay</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="group fixed">
-          <p class="section-title">Fisso attuale</p>
-          <div class="double">
-            <div><label for="fixedOperator">Operatore fisso</label><input id="fixedOperator" type="text" placeholder="Es. Fastweb"></div>
-            <div><label for="fixedPrice">Quanto paga al mese (€)</label><input id="fixedPrice" type="number" min="0" step="0.01" placeholder="Es. 27.90"></div>
-          </div>
-          <div class="double">
-            <div>
-              <label for="fixedCoverage">Tecnologia desiderata</label>
-              <select id="fixedCoverage">
-                <option value="any">Qualsiasi</option>
-                <option value="ftth">FTTH</option>
-                <option value="fttc">FTTC</option>
-                <option value="fwa">FWA</option>
-              </select>
-            </div>
-            <div>
-              <label for="fixedNetflix">Valuta anche offerte Netflix</label>
-              <select id="fixedNetflix">
-                <option value="no">No</option>
-                <option value="yes">Sì</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="group energy">
-          <p class="section-title">Luce / gas attuale</p>
-          <div class="double">
-            <div><label for="energyAmount">Importo bolletta del periodo (€)</label><input id="energyAmount" type="number" min="0" step="0.01" placeholder="Es. 524"></div>
-            <div><label for="energyCycle">Periodicità bolletta</label><select id="energyCycle"><option value="mensile">Mensile</option><option value="bimestrale">Bimestrale</option></select></div>
-          </div>
-          <div class="triple">
-            <div><label for="energyKwh">Consumo energia del periodo (kWh)</label><input id="energyKwh" type="number" min="0" step="1" placeholder="Es. 1037"></div>
-            <div><label for="customerRateKwh">Costo €/kWh operatore attuale</label><input id="customerRateKwh" type="number" min="0" step="0.001" placeholder="Es. 0.25"></div>
-            <div><label for="billPeriod">Mese / periodo di riferimento</label><select id="billPeriod"></select></div>
-          </div>
-          <div class="double">
-            <div><label for="gasSmc">Consumo gas del periodo (Smc)</label><input id="gasSmc" type="number" min="0" step="1" placeholder="Opzionale"></div>
-            <div><label for="customerRateGas">Costo €/Smc operatore attuale</label><input id="customerRateGas" type="number" min="0" step="0.001" placeholder="Opzionale"></div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn-primary" id="compareBtn">Calcola</button>
-          <button class="btn-secondary" id="demoBtn">Carica esempio</button>
-          <button class="btn-dark" id="printBtn">Stampa preventivo</button>
-        </div>
-
-        <div class="note">Prima scegli il <b>pacchetto</b> da confrontare. Poi il comparatore prende la migliore offerta <b>coerente con quel pacchetto</b> e calcola risparmio e dettagli separati per mobile, fisso ed energia.</div>
       </div>
-    </aside>
+    </section>
 
-    <main class="content">
-      <section class="summary-row">
-        <div class="metric pkg"><small>Pacchetto selezionato</small><strong id="summaryPackage">-</strong><span id="summaryPackageNote">-</span></div>
-        <div class="metric cur"><small>Totale attuale servizi selezionati</small><strong id="summaryCurrent">-</strong><span id="summaryCurrentNote">-</span></div>
-        <div class="metric new"><small>Totale nuovo pacchetto</small><strong id="summaryNew">-</strong><span id="summaryNewNote">-</span></div>
-        <div class="metric save"><small>Risparmio totale</small><strong id="summarySave">-</strong><span id="summarySaveNote">-</span></div>
-      </section>
-
-      <section class="card">
-        <div class="card-head"><h2>Seleziona il pacchetto da confrontare</h2></div>
-        <div class="card-body"><div id="packageGrid" class="package-grid"></div></div>
-      </section>
-
-      <section class="card">
-        <div class="card-head"><h2>Dettaglio offerte del pacchetto</h2></div>
-        <div class="card-body">
-          <div class="pill-row" id="activePills"></div>
-          <div class="service-grid" style="margin-top:14px;">
-            <div class="offer-panel mobile">
-              <div class="offer-top">
-                <div class="offer-kind">Mobile</div>
-                <div class="offer-name" id="mobileOfferName">-</div>
-                <div class="offer-price" id="mobileOfferPrice">-</div>
-                <div class="offer-sub" id="mobileOfferSub">-</div>
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Dati cliente e profilo attuale</h2>
+            <p>Compila i dati anagrafici e la situazione attuale. Il motore confronterà le offerte Wind3 e le convergenze.</p>
+          </div>
+          <div class="status-bar">
+            <div id="dataStatus" class="status-pill">Dati non caricati</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="section-card">
+            <div class="section-title">
+              <h3>Cliente</h3>
+              <span>Anagrafica</span>
+            </div>
+            <div class="grid">
+              <div class="field">
+                <label for="nome">Nome</label>
+                <input id="nome" type="text" placeholder="Nome cliente" />
               </div>
-              <div class="offer-body">
-                <div class="detail-box"><strong>Dettaglio offerta mobile</strong><ul class="bullet" id="mobileOfferDetails"></ul></div>
-                <div><strong style="display:block;margin-bottom:8px;">Alternative attivabili</strong><div class="alt-list" id="mobileAlternatives"></div></div>
+              <div class="field">
+                <label for="cognome">Cognome</label>
+                <input id="cognome" type="text" placeholder="Cognome cliente" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="cliente@email.it" />
+              </div>
+              <div class="field">
+                <label for="telefono">Telefono</label>
+                <input id="telefono" type="text" placeholder="+39 ..." />
               </div>
             </div>
+          </div>
 
-            <div class="offer-panel fixed">
-              <div class="offer-top">
-                <div class="offer-kind">Fisso</div>
-                <div class="offer-name" id="fixedOfferName">-</div>
-                <div class="offer-price" id="fixedOfferPrice">-</div>
-                <div class="offer-sub" id="fixedOfferSub">-</div>
+          <div class="section-card">
+            <div class="section-title">
+              <h3>Offerta attuale mobile</h3>
+              <span>Mobile</span>
+            </div>
+            <div class="grid">
+              <div class="field">
+                <label for="mobileOperatore">Operatore attuale</label>
+                <input id="mobileOperatore" type="text" placeholder="Es. TIM, Vodafone, Iliad" />
               </div>
-              <div class="offer-body">
-                <div class="detail-box"><strong>Dettaglio offerta fisso</strong><ul class="bullet" id="fixedOfferDetails"></ul></div>
-                <div><strong style="display:block;margin-bottom:8px;">Alternative attivabili</strong><div class="alt-list" id="fixedAlternatives"></div></div>
+              <div class="field">
+                <label for="mobileGb">GB utilizzati / desiderati</label>
+                <input id="mobileGb" type="number" min="0" step="1" placeholder="Es. 120" />
+              </div>
+              <div class="field">
+                <label for="mobilePrezzo">Prezzo mensile attuale (€)</label>
+                <input id="mobilePrezzo" type="number" min="0" step="0.01" placeholder="Es. 9.99" />
+              </div>
+              <div class="field">
+                <label for="mobileTipo">Tipo nuova linea mobile</label>
+                <select id="mobileTipo">
+                  <option value="mnp">Portabilità / MNP</option>
+                  <option value="nuovo">Nuovo numero</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Usa il 5G?</label>
+                <div class="checkbox-wrap">
+                  <input id="mobile5g" type="checkbox" />
+                  <span>Il cliente usa o desidera il 5G</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Second SIM / Family?</label>
+                <div class="checkbox-wrap">
+                  <input id="mobileSecondSim" type="checkbox" />
+                  <span>Interessato a seconda SIM / family</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="offer-panel energy">
-              <div class="offer-top">
-                <div class="offer-kind">Luce / Gas</div>
-                <div class="offer-name" id="energyOfferName">-</div>
-                <div class="offer-price" id="energyOfferPrice">-</div>
-                <div class="offer-sub" id="energyOfferSub">-</div>
+          <div class="section-card">
+            <div class="section-title">
+              <h3>Offerta attuale fisso</h3>
+              <span>Casa</span>
+            </div>
+            <div class="grid">
+              <div class="field">
+                <label for="fissoOperatore">Operatore attuale</label>
+                <input id="fissoOperatore" type="text" placeholder="Es. TIM, Fastweb, Vodafone" />
               </div>
-              <div class="offer-body">
-                <div class="detail-box"><strong>Dettaglio confronto energia</strong><ul class="bullet" id="energyOfferDetails"></ul></div>
-                <div><strong style="display:block;margin-bottom:8px;">Note di confronto</strong><div class="alt-list" id="energyAlternatives"></div></div>
+              <div class="field">
+                <label for="fissoTecnologia">Tecnologia attuale</label>
+                <select id="fissoTecnologia">
+                  <option value="">Non specificata</option>
+                  <option value="FTTH">FTTH</option>
+                  <option value="FTTC">FTTC</option>
+                  <option value="FWA">FWA</option>
+                  <option value="ADSL">ADSL</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="fissoPrezzo">Canone mensile attuale (€)</label>
+                <input id="fissoPrezzo" type="number" min="0" step="0.01" placeholder="Es. 27.90" />
+              </div>
+              <div class="field">
+                <label>Super Fibra richiesta?</label>
+                <div class="checkbox-wrap">
+                  <input id="fissoSuperFibra" type="checkbox" />
+                  <span>Preferenza per offerta superiore / premium</span>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title">
+              <h3>Luce e gas attuali</h3>
+              <span>Energia</span>
+            </div>
+            <div class="grid-3">
+              <div class="field">
+                <label for="energiaOperatore">Operatore attuale</label>
+                <input id="energiaOperatore" type="text" placeholder="Es. Enel, Eni, A2A" />
+              </div>
+              <div class="field">
+                <label for="energiaPeriodo">Bolletta</label>
+                <select id="energiaPeriodo">
+                  <option value="mensile">Mensile</option>
+                  <option value="bimestrale">Bimestrale</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="energiaMeseRef">Mese PUN di riferimento</label>
+                <select id="energiaMeseRef"></select>
+              </div>
+              <div class="field">
+                <label for="energiaImporto">Importo bolletta (€)</label>
+                <input id="energiaImporto" type="number" min="0" step="0.01" placeholder="Es. 138.50" />
+              </div>
+              <div class="field">
+                <label for="energiaKwh">kWh consumati nel periodo</label>
+                <input id="energiaKwh" type="number" min="0" step="0.01" placeholder="Es. 420" />
+              </div>
+              <div class="field">
+                <label for="energiaPrezzoKwh">Prezzo attuale €/kWh</label>
+                <input id="energiaPrezzoKwh" type="number" min="0" step="0.0001" placeholder="Es. 0.1890" />
+              </div>
+              <div class="field">
+                <label for="gasSmc">SMC gas nel periodo (opzionale)</label>
+                <input id="gasSmc" type="number" min="0" step="0.01" placeholder="Es. 95" />
+              </div>
+              <div class="field">
+                <label for="gasPrezzoSmc">Prezzo attuale €/SMC (opzionale)</label>
+                <input id="gasPrezzoSmc" type="number" min="0" step="0.0001" placeholder="Es. 0.78" />
+              </div>
+              <div class="field">
+                <label for="energiaNote">Note</label>
+                <input id="energiaNote" type="text" placeholder="Es. mercato libero, offerta indicizzata..." />
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <button class="btn-primary" id="loadDataBtn">Carica / aggiorna offerte dal foglio</button>
+            <button class="btn-secondary" id="analyzeBtn">Analizza e genera confronto</button>
+            <button class="btn-secondary" id="resetBtn">Reset campi</button>
+            <button class="btn-success" id="printBtn">Stampa preventivo A4</button>
+          </div>
+          <div class="small-note">
+            Il comparatore è predisposto per leggere live i fogli <strong>CONSUMER, MNP, FISSO, ENERGY, PUN</strong>.
+            Se un foglio usa intestazioni molto diverse, il pannello debug mostrerà le colonne riconosciute per un eventuale fine tuning rapido.
           </div>
         </div>
       </section>
 
-      <section class="res-grid">
-        <div class="stack">
-          <section class="card">
-            <div class="card-head"><h3>Riepilogo commerciale completo</h3></div>
-            <div class="card-body">
-              <table>
-                <thead><tr><th>Voce</th><th>Situazione attuale</th><th>Nuova proposta</th><th>Vantaggio / motivo</th></tr></thead>
-                <tbody id="selectedSummaryBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-head"><h3>Confronto mobile: GB e 5G</h3></div>
-            <div class="card-body">
-              <table>
-                <thead><tr><th>Parametro</th><th>Attuale</th><th>Nuova offerta</th><th>Vantaggio</th></tr></thead>
-                <tbody id="mobileCompareBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-head"><h3>Dettaglio risparmi per voce</h3></div>
-            <div class="card-body">
-              <table>
-                <thead><tr><th>Voce</th><th>Risparmio mensile</th><th>Risparmio annuale</th><th>Nota</th></tr></thead>
-                <tbody id="savingsBody"></tbody>
-              </table>
-            </div>
-          </section>
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Comparazione e proposta commerciale</h2>
+            <p>Seleziona la modalità di confronto e mostra al cliente la proposta migliore con risparmio chiaro e dettagliato.</p>
+          </div>
         </div>
+        <div class="panel-body">
+          <div class="mini-stats" id="miniStats">
+            <div class="stat">
+              <span class="kicker">Scenario</span>
+              <strong>—</strong>
+              <small>Nessuna analisi eseguita</small>
+            </div>
+            <div class="stat">
+              <span class="kicker">Risparmio mensile</span>
+              <strong>—</strong>
+              <small>Attendi il confronto</small>
+            </div>
+            <div class="stat">
+              <span class="kicker">Risparmio annuale</span>
+              <strong>—</strong>
+              <small>Attendi il confronto</small>
+            </div>
+            <div class="stat">
+              <span class="kicker">Miglior proposta</span>
+              <strong>—</strong>
+              <small>Attendi il confronto</small>
+            </div>
+          </div>
 
-        <div class="stack">
-          <section class="card">
-            <div class="card-head"><h3>Quadro riepilogativo risparmi</h3></div>
-            <div class="card-body">
-              <div class="totals-list">
-                <div class="total-line">
-                  <div><div class="muted">Risparmio mensile</div><div id="monthlyExplain" class="muted" style="font-size:13px;margin-top:4px;">-</div></div>
-                  <strong id="savingMonthly">-</strong>
-                </div>
-                <div class="total-line">
-                  <div><div class="muted">Risparmio annuale</div><div id="yearlyExplain" class="muted" style="font-size:13px;margin-top:4px;">-</div></div>
-                  <strong id="savingYearly">-</strong>
-                </div>
+          <div class="selector-bar" id="scenarioBar">
+            <button class="selector-chip active" data-scenario="mobile">Solo mobile</button>
+            <button class="selector-chip" data-scenario="fisso">Solo fisso</button>
+            <button class="selector-chip" data-scenario="energia">Solo energia</button>
+            <button class="selector-chip" data-scenario="fisso_mobile_mnp">Fisso + mobile MNP</button>
+            <button class="selector-chip" data-scenario="fisso_mobile_nuovo">Fisso + mobile nuovo numero</button>
+            <button class="selector-chip" data-scenario="fisso_energia">Fisso + luce & gas</button>
+            <button class="selector-chip" data-scenario="tutto">Tutti e 3 i servizi</button>
+          </div>
+
+          <div id="screenResults">
+            <div class="empty-state">
+              <div>
+                <strong>Carica le offerte e avvia l’analisi</strong>
+                <div>Il motore confronterà i dati del cliente con il foglio Google e preparerà una proposta commerciale professionale.</div>
               </div>
             </div>
-          </section>
+          </div>
 
-          <section class="card">
-            <div class="card-head"><h3>Spiegazione energia</h3></div>
-            <div class="card-body"><div class="callout energy" id="energyWhy">Inserisci bolletta, consumi e mese di riferimento per ottenere una spiegazione del confronto energia.</div></div>
-          </section>
-
-          <section class="card">
-            <div class="card-head"><h3>Totale servizi selezionati</h3></div>
-            <div class="card-body">
-              <div class="callout total">
-                <div><b>Totale attuale:</b> <span id="currentTotal">-</span></div>
-                <div style="margin-top:8px;"><b>Totale nuovo pacchetto:</b> <span id="newTotalNow">-</span></div>
-                <div style="margin-top:8px;"><b>Totale medio su 12 mesi:</b> <span id="newTotalAnnualized">-</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-head"><h3>Metodo di calcolo energia</h3></div>
-            <div class="card-body"><div class="callout info">Il confronto energia usa il foglio PUN come sorgente degli indici. La quota consumo attuale usa il costo €/kWh del cliente, la quota WindTre usa il campo <b>pun_with_losses</b>. Le spese fisse e tasse vengono mantenute costanti per una stima più realistica.</div></div>
-          </section>
+          <div class="print-sheet" id="printSheet"></div>
         </div>
       </section>
-    </main>
-  </div>
-</div>
-
-<script>
-const SHEET_ID = '1clgRiENuqoJkRwXrcA4LHX4eBWhH2wAaTkvSwQ_SA_Y';
-const SHEETS = {consumer:'0', mnp:'1065110294', fixed:'1189307099', energy:'1828808671', pun:'40707594'};
-const REQUIRED_COLUMNS = {
-  consumer:['id','attiva','nome_promo','prezzo','prezzo_dopo','mesi_promo','attivazione','gb','giga_illimitati','full_speed_gb','fiveg','minuti','sms','gb_ue','prezzo_convergenza','prezzo_convergenza_dopo','mesi_promo_convergenza','gb_convergenza','giga_illimitati_convergenza','full_speed_gb_convergenza','richiede_fisso','richiede_super_fibra','richiede_second_sim','solo_nuovo_numero','convergenza_giga_illimitati','convergenza_tipo','applica_sconto_fisso','telefono_incluso','note','priorita'],
-  mnp:['id','attiva','nome_promo','prezzo','prezzo_dopo','mesi_promo','attivazione','gb','giga_illimitati','full_speed_gb','fiveg','minuti','sms','gb_ue','operatori_ammessi','operatori_esclusi','easy_pay','richiede_super_fibra','convergenza_giga_illimitati','convergenza_tipo','applica_sconto_fisso','telefono_incluso','note','priorita'],
-  fixed:['id','attiva','famiglia_offerta','nome_promo','variante','scenario','tecnologia','velocita_download','velocita_upload','prezzo','prezzo_dopo','mesi_promo','prezzo_convergenza','prezzo_convergenza_dopo','attivazione_mese','attivazione_mesi','copertura_ftth','copertura_fttc','copertura_fwa','richiede_mnp','richiede_energia','include_amazon_prime_mesi','include_netflix','piano_netflix','rata_modem_mese','dns_dinamico_una_tantum','piu_sicuri_mese','voce_unlimited_mese','cyc_home_mese','metodi_pagamento','deposito_bollettino_postale','note','priorita'],
-  energy:['id','attiva','nome_promo','prezzo','prezzo_dopo','mesi_promo','attivazione','gb','giga_illimitati','full_speed_gb','fiveg','minuti','sms','gb_ue','prezzo_convergenza','prezzo_convergenza_dopo','mesi_promo_convergenza','gb_convergenza','giga_illimitati_convergenza','full_speed_gb_convergenza','richiede_super_fibra','richiede_luce_gas','richiede_second_sim','convergenza_giga_illimitati','convergenza_tipo','applica_sconto_fisso','telefono_incluso','note','priorita'],
-  pun:['mese','f1','f2','f3','pun_avg','pun_with_losses','psv','note']
-};
-const DATA = {consumer:[],mnp:[],fixed:[],energy:[],pun:[]};
-const OVERRIDES = {
-  mobileId: null,
-  fixedId: null
-};
-let ACTIVE_PACKAGE = 'mobile';
-
-const PACKAGES = {
-  mobile:{label:'Solo mobile', include:{mobile:true,fixed:false,energy:false}, note:'Confronta soltanto il mobile.'},
-  fixed:{label:'Solo fisso', include:{mobile:false,fixed:true,energy:false}, note:'Confronta soltanto il fisso.'},
-  energy:{label:'Solo energia', include:{mobile:false,fixed:false,energy:true}, note:'Confronta soltanto luce / gas.'},
-  mobile_fixed:{label:'Mobile + fisso', include:{mobile:true,fixed:true,energy:false}, note:'Applica le convergenze mobile + fisso.'},
-  mobile_energy:{label:'Mobile + energia', include:{mobile:true,fixed:false,energy:true}, note:'Applica le convergenze mobile + energia.'},
-  fixed_energy:{label:'Fisso + energia', include:{mobile:false,fixed:true,energy:true}, note:'Applica le convergenze fisso + energia.'},
-  mobile_fixed_energy:{label:'Mobile + fisso + energia', include:{mobile:true,fixed:true,energy:true}, note:'Pacchetto completo con convergenze massime.'}
-};
-
-const els = {
-  statusBox:document.getElementById('statusBox'),
-  customerName:document.getElementById('customerName'),
-  customerSurname:document.getElementById('customerSurname'),
-  customerPhone:document.getElementById('customerPhone'),
-  mobileActivationType:document.getElementById('mobileActivationType'),
-  mobileOperator:document.getElementById('mobileOperator'),
-  mobileGb:document.getElementById('mobileGb'),
-  mobilePrice:document.getElementById('mobilePrice'),
-  mobile5g:document.getElementById('mobile5g'),
-  mobilePaymentMode:document.getElementById('mobilePaymentMode'),
-  fixedOperator:document.getElementById('fixedOperator'),
-  fixedPrice:document.getElementById('fixedPrice'),
-  fixedCoverage:document.getElementById('fixedCoverage'),
-  fixedNetflix:document.getElementById('fixedNetflix'),
-  energyAmount:document.getElementById('energyAmount'),
-  energyCycle:document.getElementById('energyCycle'),
-  energyKwh:document.getElementById('energyKwh'),
-  customerRateKwh:document.getElementById('customerRateKwh'),
-  gasSmc:document.getElementById('gasSmc'),
-  customerRateGas:document.getElementById('customerRateGas'),
-  billPeriod:document.getElementById('billPeriod'),
-  packageGrid:document.getElementById('packageGrid'),
-  activePills:document.getElementById('activePills'),
-  summaryPackage:document.getElementById('summaryPackage'),
-  summaryPackageNote:document.getElementById('summaryPackageNote'),
-  summaryCurrent:document.getElementById('summaryCurrent'),
-  summaryCurrentNote:document.getElementById('summaryCurrentNote'),
-  summaryNew:document.getElementById('summaryNew'),
-  summaryNewNote:document.getElementById('summaryNewNote'),
-  summarySave:document.getElementById('summarySave'),
-  summarySaveNote:document.getElementById('summarySaveNote'),
-  mobileOfferName:document.getElementById('mobileOfferName'),
-  mobileOfferPrice:document.getElementById('mobileOfferPrice'),
-  mobileOfferSub:document.getElementById('mobileOfferSub'),
-  mobileOfferDetails:document.getElementById('mobileOfferDetails'),
-  mobileAlternatives:document.getElementById('mobileAlternatives'),
-  fixedOfferName:document.getElementById('fixedOfferName'),
-  fixedOfferPrice:document.getElementById('fixedOfferPrice'),
-  fixedOfferSub:document.getElementById('fixedOfferSub'),
-  fixedOfferDetails:document.getElementById('fixedOfferDetails'),
-  fixedAlternatives:document.getElementById('fixedAlternatives'),
-  energyOfferName:document.getElementById('energyOfferName'),
-  energyOfferPrice:document.getElementById('energyOfferPrice'),
-  energyOfferSub:document.getElementById('energyOfferSub'),
-  energyOfferDetails:document.getElementById('energyOfferDetails'),
-  energyAlternatives:document.getElementById('energyAlternatives'),
-  selectedSummaryBody:document.getElementById('selectedSummaryBody'),
-  mobileCompareBody:document.getElementById('mobileCompareBody'),
-  savingsBody:document.getElementById('savingsBody'),
-  monthlyExplain:document.getElementById('monthlyExplain'),
-  yearlyExplain:document.getElementById('yearlyExplain'),
-  savingMonthly:document.getElementById('savingMonthly'),
-  savingYearly:document.getElementById('savingYearly'),
-  currentTotal:document.getElementById('currentTotal'),
-  newTotalNow:document.getElementById('newTotalNow'),
-  newTotalAnnualized:document.getElementById('newTotalAnnualized'),
-  energyWhy:document.getElementById('energyWhy')
-};
-
-function safeNumber(v){ const n=parseFloat(String(v).replace(',','.')); return Number.isFinite(n)?n:0; }
-function eur(v){ return (v===null || v===undefined || Number.isNaN(v)) ? '-' : new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(v); }
-function truthy(v){ return ['1','true','si','sì','yes','y','ok'].includes(String(v||'').trim().toLowerCase()); }
-function splitList(v){ return String(v||'').split(/[;,|]/).map(x=>x.trim()).filter(Boolean); }
-function cycleDivisor(c){ return c==='bimestrale' ? 2 : 1; }
-function cls(v){ return v===null ? '' : (v>=0 ? 'good' : 'bad'); }
-function annualizedPrice(base,later,months){ return (later!==null && later!==undefined && months) ? ((base*months)+(later*(12-months)))/12 : base; }
-function packageLabel(key){ return PACKAGES[key]?.label || '-'; }
-function customerLabel(){ const full = `${els.customerName.value||''} ${els.customerSurname.value||''}`.trim(); const phone=(els.customerPhone.value||'').trim(); return `${full || 'Cliente non indicato'}${phone ? ' · '+phone : ''}`; }
-
-function parseCsvLine(line){
-  const result=[]; let current=''; let inQuotes=false;
-  for(let i=0;i<line.length;i++){
-    const char=line[i], next=line[i+1];
-    if(char === '"'){
-      if(inQuotes && next === '"'){ current += '"'; i++; } else inQuotes=!inQuotes;
-    } else if(char === ',' && !inQuotes){ result.push(current); current=''; }
-    else current += char;
-  }
-  result.push(current);
-  return result.map(v=>String(v).trim());
-}
-function parseCsv(text){
-  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(x=>x.trim()!=='');
-  if(!lines.length) return {headers:[], rows:[]};
-  const headers = parseCsvLine(lines[0]).map(h=>h.toLowerCase().trim());
-  const rows = lines.slice(1).map(line=>{
-    const values=parseCsvLine(line); const obj={};
-    headers.forEach((h,i)=>obj[h]=values[i] ?? '');
-    return obj;
-  });
-  return {headers, rows};
-}
-async function loadSheetCsv(gid){
-  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-  const res=await fetch(url);
-  if(!res.ok) throw new Error(`Errore caricamento CSV (${res.status})`);
-  return parseCsv(await res.text());
-}
-function validateColumns(sheetName, headers){
-  const req = REQUIRED_COLUMNS[sheetName] || [];
-  return req.filter(c=>!headers.includes(c));
-}
-function normalizeConvergenceFields(r){
-  return {
-    convergencePrice:r.prezzo_convergenza!==''?safeNumber(r.prezzo_convergenza):null,
-    convergenceLaterPrice:r.prezzo_convergenza_dopo!==''?safeNumber(r.prezzo_convergenza_dopo):null,
-    convergenceIntroMonths:r.mesi_promo_convergenza!==''?safeNumber(r.mesi_promo_convergenza):null,
-    convergenceGb:r.gb_convergenza!==''?safeNumber(r.gb_convergenza):null,
-    convergenceUnlimited:truthy(r.giga_illimitati_convergenza),
-    convergenceFullSpeedGb:r.full_speed_gb_convergenza!==''?safeNumber(r.full_speed_gb_convergenza):null
-  };
-}
-function normalizeConsumer(r){
-  return {
-    id:String(r.id||'').trim(), active:truthy(r.attiva), name:String(r.nome_promo||'').trim(),
-    monthly:safeNumber(r.prezzo), laterMonthly:r.prezzo_dopo!==''?safeNumber(r.prezzo_dopo):null,
-    introMonths:r.mesi_promo!==''?safeNumber(r.mesi_promo):null, activation:r.attivazione!==''?safeNumber(r.attivazione):0,
-    gb:safeNumber(r.gb), unlimited:truthy(r.giga_illimitati), fullSpeedGb:r.full_speed_gb!==''?safeNumber(r.full_speed_gb):null,
-    fiveg:truthy(r.fiveg), minutes:String(r.minuti||''), sms:r.sms!==''?safeNumber(r.sms):null, euGb:String(r.gb_ue||''),
-    onlyNewNumber:truthy(r.solo_nuovo_numero), requiresFixed:truthy(r.richiede_fisso), requiresSuperFibra:truthy(r.richiede_super_fibra),
-    requiresSecondSim:truthy(r.richiede_second_sim), convFlag:truthy(r.convergenza_giga_illimitati),
-    convergenceType:String(r.convergenza_tipo||'nessuna').trim().toLowerCase(), applyFixedDiscount:truthy(r.applica_sconto_fisso),
-    phoneIncluded:truthy(r.telefono_incluso), notes:String(r.note||''), priority:r.priorita!==''?safeNumber(r.priorita):999,
-    category:'consumer', easyPay:/easy pay/i.test(String(r.note||'')) || /easy pay/i.test(String(r.nome_promo||'')), ...normalizeConvergenceFields(r)
-  };
-}
-function normalizeMnp(r){
-  return {
-    id:String(r.id||'').trim(),
-    active:truthy(r.attiva),
-    name:String(r.nome_promo||'').trim(),
-    monthly:r.prezzo!=='' ? safeNumber(r.prezzo) : null,
-    laterMonthly:r.prezzo_dopo!=='' ? safeNumber(r.prezzo_dopo) : null,
-    introMonths:r.mesi_promo!=='' ? safeNumber(r.mesi_promo) : null,
-    activation:r.attivazione!=='' ? safeNumber(r.attivazione) : 0,
-    gb:r.gb!=='' ? safeNumber(r.gb) : null,
-    unlimited:truthy(r.giga_illimitati),
-    fullSpeedGb:r.full_speed_gb!=='' ? safeNumber(r.full_speed_gb) : null,
-    fiveg:truthy(r.fiveg),
-    minutes:String(r.minuti||''),
-    sms:r.sms!=='' ? safeNumber(r.sms) : null,
-    euGb:String(r.gb_ue||''),
-    operatoriAmmessi:splitList(r.operatori_ammessi),
-    operatoriEsclusi:splitList(r.operatori_esclusi),
-    easyPay:truthy(r.easy_pay),
-    requiresSuperFibra:truthy(r.richiede_super_fibra),
-    convFlag:truthy(r.convergenza_giga_illimitati),
-    convergenceType:String(r.convergenza_tipo||'nessuna').trim().toLowerCase(),
-    applyFixedDiscount:truthy(r.applica_sconto_fisso),
-    phoneIncluded:truthy(r.telefono_incluso),
-    notes:String(r.note||''),
-    priority:r.priorita!=='' ? safeNumber(r.priorita) : 999,
-    category:'mnp',
-    ...normalizeConvergenceFields(r)
-  };
-}
-function normalizeFixed(r){
-  return {
-    id:String(r.id||'').trim(), active:truthy(r.attiva), family:String(r.famiglia_offerta||''), name:String(r.nome_promo||'').trim(),
-    variant:String(r.variante||''), scenario:String(r.scenario||'').trim().toLowerCase(), technology:String(r.tecnologia||''),
-    download:String(r.velocita_download||''), upload:String(r.velocita_upload||''), monthly:r.prezzo!==''?safeNumber(r.prezzo):null,
-    laterMonthly:r.prezzo_dopo!==''?safeNumber(r.prezzo_dopo):null, introMonths:r.mesi_promo!==''?safeNumber(r.mesi_promo):null,
-    convergencePrice:r.prezzo_convergenza!==''?safeNumber(r.prezzo_convergenza):null, convergenceLaterPrice:r.prezzo_convergenza_dopo!==''?safeNumber(r.prezzo_convergenza_dopo):null,
-    activationMonthly:r.attivazione_mese!==''?safeNumber(r.attivazione_mese):null, activationMonths:r.attivazione_mesi!==''?safeNumber(r.attivazione_mesi):null,
-    ftth:truthy(r.copertura_ftth), fttc:truthy(r.copertura_fttc), fwa:truthy(r.copertura_fwa), requiresMnp:truthy(r.richiede_mnp),
-    requiresEnergy:truthy(r.richiede_energia), amazonPrimeMonths:r.include_amazon_prime_mesi!==''?safeNumber(r.include_amazon_prime_mesi):null,
-    includeNetflix:truthy(r.include_netflix), netflixPlan:String(r.piano_netflix||''), modemRate:r.rata_modem_mese!==''?safeNumber(r.rata_modem_mese):null,
-    notes:String(r.note||''), priority:r.priorita!==''?safeNumber(r.priorita):999
-  };
-}
-function normalizeEnergy(r){
-  return {
-    id:String(r.id||'').trim(), active:truthy(r.attiva), name:String(r.nome_promo||'').trim(),
-    monthly:safeNumber(r.prezzo), laterMonthly:r.prezzo_dopo!==''?safeNumber(r.prezzo_dopo):null,
-    introMonths:r.mesi_promo!==''?safeNumber(r.mesi_promo):null, activation:r.attivazione!==''?safeNumber(r.attivazione):0,
-    gb:safeNumber(r.gb), unlimited:truthy(r.giga_illimitati), fullSpeedGb:r.full_speed_gb!==''?safeNumber(r.full_speed_gb):null,
-    fiveg:truthy(r.fiveg), minutes:String(r.minuti||''), sms:r.sms!==''?safeNumber(r.sms):null, euGb:String(r.gb_ue||''),
-    requiresSuperFibra:truthy(r.richiede_super_fibra), requiresLuceGas:truthy(r.richiede_luce_gas), requiresSecondSim:truthy(r.richiede_second_sim),
-    convFlag:truthy(r.convergenza_giga_illimitati), convergenceType:String(r.convergenza_tipo||'luce_gas').trim().toLowerCase(),
-    applyFixedDiscount:truthy(r.applica_sconto_fisso), phoneIncluded:truthy(r.telefono_incluso), notes:String(r.note||''), priority:r.priorita!==''?safeNumber(r.priorita):999,
-    category:'energy', easyPay:/easy pay/i.test(String(r.note||'')) || /easy pay/i.test(String(r.nome_promo||'')), ...normalizeConvergenceFields(r)
-  };
-}
-function normalizePun(r){
-  return {month:String(r.mese||'').trim(), f1:safeNumber(r.f1), f2:safeNumber(r.f2), f3:safeNumber(r.f3), punAvg:r.pun_avg!==''?safeNumber(r.pun_avg):null, punWithLosses:r.pun_with_losses!==''?safeNumber(r.pun_with_losses):null, psv:r.psv!==''?safeNumber(r.psv):null, notes:String(r.note||'')};
-}
-
-async function loadAllSheets(){
-  const results={}, errors=[];
-  for(const [name,gid] of Object.entries(SHEETS)){
-    try{
-      const data = await loadSheetCsv(gid);
-      const missing = validateColumns(name, data.headers);
-      if(missing.length) errors.push(`Foglio ${name.toUpperCase()}: colonne mancanti -> ${missing.join(', ')}`);
-      results[name]=data.rows;
-    }catch(err){
-      errors.push(`Foglio ${name.toUpperCase()}: ${err.message}`);
-    }
-  }
-  if(errors.length){ els.statusBox.className='status err'; els.statusBox.innerHTML=errors.join('<br>'); }
-  else { els.statusBox.className='status ok'; els.statusBox.textContent='Google Sheets caricato correttamente.'; }
-
-  DATA.consumer=(results.consumer||[]).map(normalizeConsumer).filter(x=>x.active);
-  DATA.mnp=(results.mnp||[]).map(normalizeMnp).filter(x=>x.active);
-  DATA.fixed=(results.fixed||[]).map(normalizeFixed).filter(x=>x.active);
-  DATA.energy=(results.energy||[]).map(normalizeEnergy).filter(x=>x.active);
-  DATA.pun=(results.pun||[]).map(normalizePun).filter(x=>x.month);
-
-  populateSelectors();
-  renderPackageButtons();
-}
-function populateSelectors(){
-  const ops = new Set(['Iliad','TIM','Vodafone','ho mobile','Fastweb','Kena','Very','Poste Mobile','Coop Voce','Lycamobile','1Mobile','Optima','Rabona','virtuali minori']);
-  DATA.mnp.forEach(x=>x.operatoriAmmessi.forEach(op=>ops.add(op)));
-  els.mobileOperator.innerHTML='<option value="">Seleziona operatore</option>'+Array.from(ops).filter(Boolean).map(x=>`<option value="${x}">${x}</option>`).join('');
-  els.billPeriod.innerHTML='<option value="">Seleziona mese / periodo</option>'+DATA.pun.map(x=>`<option value="${x.month}">${x.month}</option>`).join('');
-  updateActivationUi();
-}
-function updateActivationUi(){
-  const isNew = els.mobileActivationType.value === 'new';
-  els.mobileOperator.disabled = isNew;
-  if(isNew) els.mobileOperator.value = '';
-}
-function renderPackageButtons(){
-  els.packageGrid.innerHTML = Object.entries(PACKAGES).map(([key,p])=>`
-    <div class="pkg-btn ${ACTIVE_PACKAGE===key?'active':''}" data-package="${key}">
-      <span class="tag">Pacchetto</span>
-      <h4>${p.label}</h4>
-      <p>${p.note}</p>
     </div>
-  `).join('');
-  els.packageGrid.querySelectorAll('[data-package]').forEach(el=>{
-    el.addEventListener('click',()=>{
-      ACTIVE_PACKAGE = el.getAttribute('data-package');
-      OVERRIDES.mobileId = null;
-      OVERRIDES.fixedId = null;
-      renderPackageButtons();
-      buildRecommendations();
-    });
-  });
-}
+  </div>
 
-function currentContext(){
-  const include = PACKAGES[ACTIVE_PACKAGE].include;
-  return {
-    packageKey: ACTIVE_PACKAGE,
-    includeMobile: include.mobile,
-    includeFixed: include.fixed,
-    includeEnergy: include.energy,
-    mobileActivationType: els.mobileActivationType.value,
-    mobileOperator: els.mobileOperator.value,
-    mobileGb: safeNumber(els.mobileGb.value),
-    mobilePrice: safeNumber(els.mobilePrice.value),
-    mobile5g: els.mobile5g.value,
-    mobilePaymentMode: els.mobilePaymentMode.value,
-    fixedOperator: els.fixedOperator.value.trim(),
-    fixedPrice: safeNumber(els.fixedPrice.value),
-    fixedCoverage: els.fixedCoverage.value,
-    fixedNetflix: els.fixedNetflix.value === 'yes',
-    energyAmount: safeNumber(els.energyAmount.value),
-    energyCycle: els.energyCycle.value,
-    energyKwh: safeNumber(els.energyKwh.value),
-    customerRateKwh: safeNumber(els.customerRateKwh.value),
-    gasSmc: safeNumber(els.gasSmc.value),
-    customerRateGas: safeNumber(els.customerRateGas.value),
-    billPeriod: els.billPeriod.value
-  };
-}
-
-function hasValue(v){
-  return v !== null && v !== undefined && v !== '';
-}
-
-function operatorMatches(list, operator){
-  const op = String(operator||'').trim().toLowerCase();
-  if(!op) return false;
-  if(list.some(x=>String(x).trim().toLowerCase()==='tutti gli operatori')) return true;
-  return list.some(x=>{
-    const v = String(x).trim().toLowerCase();
-    return v===op || op.includes(v) || v.includes(op);
-  });
-}
-function matchPaymentFilter(offer, mode){
-  const easy = !!offer.easyPay;
-  if(mode==='easy') return easy;
-  if(mode==='noeasy') return !easy;
-  return true;
-}
-
-function baseIsConvergent(offer){
-  return ['super_fibra','luce_gas','entrambi'].includes(String(offer.convergenceType||'').toLowerCase()) ||
-         offer.requiresFixed || offer.requiresSuperFibra || offer.requiresLuceGas || offer.convFlag ||
-         offer.convergencePrice!==null || offer.convergenceGb!==null || offer.convergenceUnlimited;
-}
-function getEffectiveMobileOffer(offer, ctx){
-  const withFixed = ctx.includeFixed;
-  const withEnergy = ctx.includeEnergy;
-  const type = String(offer.convergenceType || 'nessuna').toLowerCase();
-
-  const convActive =
-    (withFixed && type === 'super_fibra') ||
-    (withEnergy && !withFixed && type === 'luce_gas') ||
-    (withFixed && withEnergy && (type === 'entrambi' || type === 'luce_gas' || type === 'super_fibra')) ||
-    (withFixed && !!offer.requiresSuperFibra) ||
-    (withEnergy && !!offer.requiresLuceGas) ||
-    (withFixed && !!offer.requiresFixed) ||
-    ((withFixed || withEnergy) && !!offer.convFlag);
-
-  return {
-    ...offer,
-    effectiveConvergence: convActive,
-    effectiveMonthly: convActive && hasValue(offer.convergencePrice) ? offer.convergencePrice : offer.monthly,
-    effectiveLaterMonthly: convActive && hasValue(offer.convergenceLaterPrice) ? offer.convergenceLaterPrice : offer.laterMonthly,
-    effectiveIntroMonths: convActive && hasValue(offer.convergenceIntroMonths) ? offer.convergenceIntroMonths : offer.introMonths,
-    effectiveGb: convActive && hasValue(offer.convergenceGb) ? offer.convergenceGb : offer.gb,
-    effectiveUnlimited: convActive
-      ? (!!offer.convergenceUnlimited || !!offer.unlimited || !!offer.convFlag)
-      : !!offer.unlimited,
-    effectiveFullSpeedGb: convActive && hasValue(offer.convergenceFullSpeedGb)
-      ? offer.convergenceFullSpeedGb
-      : offer.fullSpeedGb
-  };
-}
-
-function isMnpFixedConvergent(o){
-  return o.category === 'mnp' && (
-    o.requiresSuperFibra ||
-    o.applyFixedDiscount ||
-    o.convFlag ||
-    o.convergenceType === 'super_fibra' ||
-    /fire/i.test(o.name || '') ||
-    hasValue(o.convergencePrice) ||
-    hasValue(o.convergenceGb)
-  );
-}
-
-function isEnergyConvergent(o){
-  return o.category === 'energy' && (
-    o.requiresLuceGas ||
-    o.convergenceType === 'luce_gas' ||
-    o.convergenceType === 'entrambi' ||
-    hasValue(o.convergencePrice) ||
-    hasValue(o.convergenceGb) ||
-    o.convFlag
-  );
-}
-
-function isConsumerFixedConvergent(o){
-  return o.category === 'consumer' && (
-    o.requiresSuperFibra ||
-    o.requiresFixed ||
-    o.convergenceType === 'super_fibra' ||
-    o.convergenceType === 'entrambi' ||
-    hasValue(o.convergencePrice) ||
-    hasValue(o.convergenceGb) ||
-    o.convFlag
-  );
-}
-
-function mobileBaseScore(offer, ctx){
-  let s = 0;
-  const monthly = hasValue(offer.effectiveMonthly) ? offer.effectiveMonthly : offer.monthly;
-
-  if(hasValue(monthly)) s += Math.max(0, 40 - monthly * 2.2);
-  if(ctx.mobilePrice > 0 && hasValue(monthly) && monthly < ctx.mobilePrice){
-    s += Math.min(30, (ctx.mobilePrice - monthly) * 4);
-  }
-
-  if(ctx.mobileGb > 0 && hasValue(offer.effectiveGb) && offer.effectiveGb >= ctx.mobileGb) s += 14;
-  if(ctx.mobileGb > 0 && hasValue(offer.effectiveGb) && offer.effectiveGb > ctx.mobileGb && offer.effectiveGb < 9999){
-    s += Math.min(14, (offer.effectiveGb - ctx.mobileGb) / 12);
-  }
-
-  if(offer.effectiveUnlimited || offer.effectiveGb >= 9999) s += 16;
-  if(ctx.mobile5g === 'no' && offer.fiveg) s += 10;
-
-  s -= (offer.priority || 0) / 3;
-  return s;
-}
-
-function getMobileCandidates(ctx){
-  if(!ctx.includeMobile) return [];
-
-  let candidates = [];
-
-  if(ctx.mobileActivationType === 'new'){
-    candidates = DATA.consumer
-      .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-      .map(o => getEffectiveMobileOffer(o, ctx));
-
-    if(ctx.packageKey === 'mobile'){
-      candidates = candidates.filter(o => !baseIsConvergent(o));
-    }
-
-    if(ctx.packageKey === 'mobile_fixed'){
-      candidates = candidates.filter(o => isConsumerFixedConvergent(o));
-    }
-
-    if(ctx.packageKey === 'mobile_energy'){
-      const energyCandidates = DATA.energy
-        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-        .filter(o => !o.requiresSuperFibra)
-        .map(o => getEffectiveMobileOffer(o, ctx));
-      candidates = energyCandidates;
-    }
-
-    if(ctx.packageKey === 'mobile_fixed_energy'){
-      const energyCandidates = DATA.energy
-        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-        .map(o => getEffectiveMobileOffer(o, ctx))
-        .filter(o => isEnergyConvergent(o));
-
-      const consumerCandidates = DATA.consumer
-        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-        .map(o => getEffectiveMobileOffer(o, ctx))
-        .filter(o => isConsumerFixedConvergent(o));
-
-      candidates = [...energyCandidates, ...consumerCandidates];
-    }
-  }
-
-  if(ctx.mobileActivationType === 'mnp'){
-    const mnpCandidates = DATA.mnp
-      .filter(o => !!ctx.mobileOperator)
-      .filter(o => operatorMatches(o.operatoriAmmessi, ctx.mobileOperator))
-      .filter(o => !o.operatoriEsclusi.some(x => operatorMatches([x], ctx.mobileOperator)))
-      .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-      .map(o => getEffectiveMobileOffer(o, ctx));
-
-    if(ctx.packageKey === 'mobile'){
-      candidates = mnpCandidates.filter(o => !isMnpFixedConvergent(o));
-    }
-
-    if(ctx.packageKey === 'mobile_fixed'){
-      const strong = mnpCandidates.filter(o => isMnpFixedConvergent(o));
-      const fallback = mnpCandidates.filter(o => !isMnpFixedConvergent(o));
-      candidates = strong.length ? [...strong, ...fallback] : fallback;
-    }
-
-    if(ctx.packageKey === 'mobile_energy'){
-      const energyCandidates = DATA.energy
-        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-        .filter(o => !o.requiresSuperFibra)
-        .map(o => getEffectiveMobileOffer(o, ctx))
-        .filter(o => isEnergyConvergent(o));
-
-      candidates = energyCandidates.length ? energyCandidates : mnpCandidates;
-    }
-
-    if(ctx.packageKey === 'mobile_fixed_energy'){
-      const strongMnp = mnpCandidates.filter(o => isMnpFixedConvergent(o));
-      const energyCandidates = DATA.energy
-        .filter(o => matchPaymentFilter(o, ctx.mobilePaymentMode))
-        .map(o => getEffectiveMobileOffer(o, ctx))
-        .filter(o => isEnergyConvergent(o));
-
-      candidates = strongMnp.length ? strongMnp : energyCandidates;
-      if(!candidates.length) candidates = mnpCandidates;
-    }
-  }
-
-  return candidates
-    .map(o => ({ ...o, _score: mobileBaseScore(o, ctx) }))
-    .sort((a, b) => {
-      if (b._score !== a._score) return b._score - a._score;
-      const ap = hasValue(a.effectiveMonthly) ? a.effectiveMonthly : 9999;
-      const bp = hasValue(b.effectiveMonthly) ? b.effectiveMonthly : 9999;
-      return ap - bp;
-    });
-}
-
-
-function fixedCoverageMatch(f, coverage){
-  if(coverage==='any') return true;
-  if(coverage==='ftth') return !!f.ftth;
-  if(coverage==='fttc') return !!f.fttc;
-  if(coverage==='fwa') return !!f.fwa;
-  return true;
-}
-function fixedUseConvergence(f, ctx, bestMobile){
-  if(!ctx.includeFixed) return false;
-  if(ctx.packageKey==='fixed') return false;
-  if(ctx.packageKey==='fixed_energy') return !!f.requiresEnergy || f.scenario==='multiservice';
-  if(ctx.packageKey==='mobile_fixed') {
-    if(ctx.mobileActivationType==='mnp') return (!!f.requiresMnp || f.scenario==='multiservice');
-    return f.scenario==='standard';
-  }
-  if(ctx.packageKey==='mobile_fixed_energy') return (!!f.requiresEnergy || !!f.requiresMnp || f.scenario==='multiservice');
-  return false;
-}
-function getFixedEffectivePrice(f, ctx, bestMobile){
-  if(!f) return null;
-  if(fixedUseConvergence(f, ctx, bestMobile) && f.convergencePrice!==null) return f.convergencePrice;
-  return f.monthly;
-}
-function getFixedEffectiveLaterPrice(f, ctx, bestMobile){
-  if(!f) return null;
-  if(fixedUseConvergence(f, ctx, bestMobile) && f.convergenceLaterPrice!==null) return f.convergenceLaterPrice;
-  return f.laterMonthly;
-}
-function fixedScore(f, ctx, bestMobile){
-  const price = getFixedEffectivePrice(f, ctx, bestMobile);
-  if(price===null) return -9999;
-  let s = 100 - price*2;
-  if(ctx.fixedPrice>0 && price<ctx.fixedPrice) s += Math.min(28,(ctx.fixedPrice-price)*4);
-  if(ctx.fixedCoverage!=='any' && fixedCoverageMatch(f, ctx.fixedCoverage)) s += 10;
-  if(ctx.fixedCoverage!=='any' && !fixedCoverageMatch(f, ctx.fixedCoverage)) s -= 100;
-  if(ctx.fixedNetflix){ if(f.includeNetflix) s += 14; else s -= 10; }
-  else if(f.includeNetflix) s -= 6;
-  if(ctx.packageKey==='fixed') {
-    if(f.scenario!=='standard') s -= 60;
-  }
-  if(ctx.packageKey==='mobile_fixed' && ctx.mobileActivationType==='new'){
-    if(f.scenario==='standard' && f.convergencePrice!==null) s += 35;
-    if(f.scenario==='multiservice') s -= 70;
-  }
-  if(ctx.packageKey==='mobile_fixed' && ctx.mobileActivationType==='mnp'){
-    if(f.scenario==='multiservice') s += 45;
-  }
-  if(ctx.packageKey==='fixed_energy' || ctx.packageKey==='mobile_fixed_energy'){
-    if(f.scenario==='multiservice' && f.requiresEnergy) s += 48;
-  }
-  s -= (f.priority||0)/3;
-  return s;
-}
-function chooseFixed(ctx, bestMobile){
-  if(!ctx.includeFixed) return null;
-  return DATA.fixed
-    .filter(f=>fixedCoverageMatch(f, ctx.fixedCoverage))
-    .filter(f=>ctx.fixedNetflix ? true : !f.includeNetflix)
-    .map(f=>({...f, _score:fixedScore(f, ctx, bestMobile)}))
-    .sort((a,b)=>(b._score-a._score))[0] || null;
-}
-
-function estimateEnergy(ctx){
-  if(!ctx.includeEnergy){
-    return {
-      included:false,
-      hasEnergyBill:false,
-      notes:[]
+  <script>
+    const CONFIG = {
+      spreadsheetId: '1clgRiENuqoJkRwXrcA4LHX4eBWhH2wAaTkvSwQ_SA_Y',
+      sheets: ['CONSUMER', 'MNP', 'FISSO', 'ENERGY', 'PUN'],
+      validDaysQuote: 3,
     };
-  }
 
-  const hasEnergyBill = ctx.energyAmount > 0 || ctx.energyKwh > 0 || ctx.gasSmc > 0;
-  const divisor = cycleDivisor(ctx.energyCycle);
-  const currentPeriodBill = ctx.energyAmount;
-  const currentMonthlyBill = currentPeriodBill > 0 ? currentPeriodBill / divisor : 0;
-  const idx = DATA.pun.find(x => x.month === ctx.billPeriod) || null;
-  const notes = [];
-
-  if(!hasEnergyBill){
-    return {
-      included:true,
-      hasEnergyBill:false,
-      currentMonthlyBill:0,
-      notes
+    const state = {
+      raw: {},
+      parsed: {
+        consumer: [],
+        mnp: [],
+        fixed: [],
+        energy: [],
+        pun: []
+      },
+      loaded: false,
+      selectedScenario: 'mobile',
+      lastResult: null,
+      debug: []
     };
-  }
 
-  const hasCurrentElectricRate = ctx.energyKwh > 0 && ctx.customerRateKwh > 0;
-  const hasCurrentGasRate = ctx.gasSmc > 0 && ctx.customerRateGas > 0;
+    const monthSelect = document.getElementById('energiaMeseRef');
+    const screenResults = document.getElementById('screenResults');
+    const printSheet = document.getElementById('printSheet');
+    const dataStatus = document.getElementById('dataStatus');
+    const miniStats = document.getElementById('miniStats');
 
-  const currentElectricConsumption = hasCurrentElectricRate ? ctx.energyKwh * ctx.customerRateKwh : null;
-  const currentGasConsumption = hasCurrentGasRate ? ctx.gasSmc * ctx.customerRateGas : null;
+    const defaultMonths = [
+      'gennaio','febbraio','marzo','aprile','maggio','giugno',
+      'luglio','agosto','settembre','ottobre','novembre','dicembre'
+    ];
 
-  let currentConsumptionPeriod = null;
-  if(currentElectricConsumption !== null || currentGasConsumption !== null){
-    currentConsumptionPeriod = (currentElectricConsumption || 0) + (currentGasConsumption || 0);
-  }
+    function fillMonths() {
+      monthSelect.innerHTML = defaultMonths.map((m, i) => `<option value="${m}">${capitalize(m)}</option>`).join('');
+      const now = new Date();
+      monthSelect.value = defaultMonths[now.getMonth()];
+    }
 
-  // quota fissa/tasse SOLO informativa, non usata per calcolare WindTre
-  let currentFixedTaxesPeriod = null;
-  if(currentPeriodBill > 0 && currentConsumptionPeriod !== null){
-    currentFixedTaxesPeriod = Math.max(0, currentPeriodBill - currentConsumptionPeriod);
-  }
+    function capitalize(s = '') {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
 
-  const windRateKwh = idx && hasValue(idx.punWithLosses)
-    ? idx.punWithLosses
-    : (idx ? (((idx.f1 + idx.f2 + idx.f3) / 3) * 1.10) : null);
+    function euro(v) {
+      if (v === null || v === undefined || Number.isNaN(Number(v))) return '—';
+      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Number(v));
+    }
 
-  const windRateGas = idx && hasValue(idx.psv) ? idx.psv : null;
+    function num(v) {
+      if (v === null || v === undefined) return 0;
+      if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
+      const n = String(v).replace(/\./g, '#').replace(/,/g, '.').replace(/#/g, '').replace(/[^0-9.\-]/g, '');
+      const parsed = parseFloat(n);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
 
-  const windElectricConsumption = (ctx.energyKwh > 0 && windRateKwh !== null)
-    ? ctx.energyKwh * windRateKwh
-    : null;
+    function toBool(v) {
+      const s = String(v ?? '').trim().toLowerCase();
+      return ['1', 'true', 'vero', 'si', 'sì', 'yes', 'y'].includes(s);
+    }
 
-  const windGasConsumption = (ctx.gasSmc > 0 && windRateGas !== null)
-    ? ctx.gasSmc * windRateGas
-    : null;
+    function avg12(price, priceAfter, promoMonths) {
+      const p = num(price);
+      const pa = num(priceAfter) || p;
+      const m = Math.max(0, Math.min(12, num(promoMonths)));
+      return ((p * m) + (pa * (12 - m))) / 12;
+    }
 
-  let windConsumptionPeriod = null;
-  if(windElectricConsumption !== null || windGasConsumption !== null){
-    windConsumptionPeriod = (windElectricConsumption || 0) + (windGasConsumption || 0);
-  }
+    function normalizeKey(k = '') {
+      return String(k)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
 
-  // STIMA WINDTRE INDIPENDENTE dal costo attuale cliente
-  const windTotalPeriod = windConsumptionPeriod;
-  const windMonthlyTotal = windTotalPeriod !== null ? windTotalPeriod / divisor : null;
+    function aliasValue(obj, aliases = []) {
+      for (const key of aliases) {
+        if (obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key];
+      }
+      return '';
+    }
 
-  if(windRateKwh !== null){
-    notes.push(`Tariffa energia WindTre da foglio PUN (${ctx.billPeriod}): ${windRateKwh.toFixed(4)} €/kWh.`);
-  }
-  if(windRateGas !== null && ctx.gasSmc > 0){
-    notes.push(`Tariffa gas WindTre da foglio PUN (${ctx.billPeriod}): ${windRateGas.toFixed(4)} €/Smc.`);
-  }
-  if(currentConsumptionPeriod !== null){
-    notes.push(`Quota consumo operatore attuale stimata: ${eur(currentConsumptionPeriod)} sul periodo.`);
-  }
-  if(currentFixedTaxesPeriod !== null){
-    notes.push(`Quota fissa + tasse attuali stimata: ${eur(currentFixedTaxesPeriod)} sul periodo.`);
-  }
-  if(currentConsumptionPeriod === null){
-    notes.push('Per confrontare correttamente l’operatore attuale inserisci anche il costo €/kWh o €/Smc attuale.');
-  }
-  notes.push('La stima WindTre è calcolata solo sulla quota consumo usando i valori del foglio PUN; la quota fissa attuale non viene usata per alterare la tariffa WindTre.');
+    function dedupe(arr) {
+      return [...new Set(arr.filter(Boolean))];
+    }
 
-  return {
-    included:true,
-    hasEnergyBill:true,
-    currentPeriodBill,
-    currentMonthlyBill,
-    currentConsumptionPeriod,
-    currentFixedTaxesPeriod,
-    windRateKwh,
-    windRateGas,
-    windConsumptionPeriod,
-    windTotalPeriod,
-    windMonthlyTotal,
-    notes
-  };
-}
+    function scorePrice(current, candidate) {
+      if (!current || !candidate) return 0;
+      return current - candidate;
+    }
 
-function getDisplayedGb(offer){
-  if(!offer) return '-';
-  if(offer.effectiveUnlimited || offer.effectiveGb >= 9999) return 'Giga illimitati';
-  if(!hasValue(offer.effectiveGb)) return '-';
-  return `${offer.effectiveGb} GB`;
-}
+    function monthCountFromPeriod(period) {
+      return period === 'bimestrale' ? 2 : 1;
+    }
 
+    function sanitizeHtml(text = '') {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-function buildPackage(ctx){
-  const mobileCandidates = getMobileCandidates(ctx);
-  let bestMobile = mobileCandidates[0] || null;
-  if(OVERRIDES.mobileId){
-    const forced = mobileCandidates.find(x => x.id === OVERRIDES.mobileId);
-    if(forced) bestMobile = forced;
-  }
+    function gvizToRows(json) {
+      const cols = (json.table?.cols || []).map(c => c.label || c.id || '');
+      const rows = (json.table?.rows || []).map(r => {
+        const out = {};
+        (r.c || []).forEach((cell, i) => {
+          out[cols[i]] = cell ? (cell.f ?? cell.v ?? '') : '';
+        });
+        return out;
+      });
+      return { cols, rows };
+    }
 
-  const fixedPool = ctx.includeFixed
-    ? DATA.fixed
-      .filter(f=>fixedCoverageMatch(f, ctx.fixedCoverage))
-      .filter(f=>ctx.fixedNetflix ? true : !f.includeNetflix)
-      .map(f=>({...f, _score:fixedScore(f, ctx, bestMobile)}))
-      .sort((a,b)=>(b._score-a._score))
-    : [];
+    function loadGoogleSheetJSONP(sheetName) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `sheet_cb_${sheetName}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement('script');
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error(`Timeout caricamento foglio ${sheetName}`));
+        }, 15000);
 
-  let bestFixed = fixedPool[0] || null;
-  if(OVERRIDES.fixedId){
-    const forcedF = fixedPool.find(x => x.id === OVERRIDES.fixedId);
-    if(forcedF) bestFixed = forcedF;
-  }
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+        }
 
-  const energy = estimateEnergy(ctx);
+        window[callbackName] = (response) => {
+          cleanup();
+          resolve(response);
+        };
 
-  const current = {
-    mobile: ctx.includeMobile ? ctx.mobilePrice : 0,
-    fixed: ctx.includeFixed ? ctx.fixedPrice : 0,
-    energy: ctx.includeEnergy ? (energy.currentMonthlyBill || 0) : 0
-  };
-  current.total = current.mobile + current.fixed + current.energy;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error(`Errore caricamento foglio ${sheetName}`));
+        };
 
-  const proposed = {
-    mobileNow: ctx.includeMobile && bestMobile ? (bestMobile.effectiveMonthly || 0) : 0,
-    mobileAnnual: ctx.includeMobile && bestMobile ? annualizedPrice(bestMobile.effectiveMonthly || 0, bestMobile.effectiveLaterMonthly, bestMobile.effectiveIntroMonths) : 0,
-    fixedNow: ctx.includeFixed && bestFixed ? (getFixedEffectivePrice(bestFixed, ctx, bestMobile) || 0) : 0,
-    fixedAnnual: ctx.includeFixed && bestFixed ? annualizedPrice(getFixedEffectivePrice(bestFixed, ctx, bestMobile) || 0, getFixedEffectiveLaterPrice(bestFixed, ctx, bestMobile), bestFixed.introMonths) : 0,
-    energyNow: ctx.includeEnergy ? (energy.windMonthlyTotal || 0) : 0
-  };
-  proposed.totalNow = proposed.mobileNow + proposed.fixedNow + proposed.energyNow;
-  proposed.totalAnnualized = proposed.mobileAnnual + proposed.fixedAnnual + proposed.energyNow;
+        script.src = `https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheetId}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=responseHandler:${callbackName}`;
+        document.body.appendChild(script);
+      });
+    }
 
-  const savings = {
-    mobileMonthly: ctx.includeMobile && current.mobile>0 && bestMobile ? current.mobile - (bestMobile.effectiveMonthly || 0) : null,
-    mobileAnnual: ctx.includeMobile && current.mobile>0 && bestMobile ? (current.mobile - annualizedPrice(bestMobile.effectiveMonthly || 0, bestMobile.effectiveLaterMonthly, bestMobile.effectiveIntroMonths))*12 : null,
-    fixedMonthly: ctx.includeFixed && current.fixed>0 && bestFixed ? current.fixed - (getFixedEffectivePrice(bestFixed, ctx, bestMobile) || 0) : null,
-    fixedAnnual: ctx.includeFixed && current.fixed>0 && bestFixed ? (current.fixed - annualizedPrice(getFixedEffectivePrice(bestFixed, ctx, bestMobile) || 0, getFixedEffectiveLaterPrice(bestFixed, ctx, bestMobile), bestFixed.introMonths))*12 : null,
-    energyMonthly: ctx.includeEnergy && current.energy>0 && energy.windMonthlyTotal ? current.energy - energy.windMonthlyTotal : null,
-    energyAnnual: ctx.includeEnergy && current.energy>0 && energy.windMonthlyTotal ? (current.energy - energy.windMonthlyTotal)*12 : null,
-    totalMonthly: current.total>0 ? current.total - proposed.totalNow : null,
-    totalAnnual: current.total>0 ? (current.total - proposed.totalAnnualized)*12 : null
-  };
+    async function loadAllSheets() {
+      dataStatus.textContent = 'Caricamento dati in corso...';
+      dataStatus.className = 'status-pill warn';
+      state.debug = [];
 
-  return {ctx, mobileCandidates, bestMobile, fixedPool, bestFixed, energy, current, proposed, savings};
-}
+      try {
+        for (const name of CONFIG.sheets) {
+          const json = await loadGoogleSheetJSONP(name);
+          const { cols, rows } = gvizToRows(json);
+          state.raw[name] = { cols, rows };
+          state.debug.push(`Foglio ${name}: ${rows.length} righe lette | colonne: ${cols.join(', ')}`);
+        }
 
+        state.parsed.consumer = parseMobileSheet(state.raw.CONSUMER?.rows || [], 'consumer');
+        state.parsed.mnp = parseMobileSheet(state.raw.MNP?.rows || [], 'mnp');
+        state.parsed.fixed = parseFixedSheet(state.raw.FISSO?.rows || []);
+        state.parsed.energy = parseEnergySheet(state.raw.ENERGY?.rows || []);
+        state.parsed.pun = parsePunSheet(state.raw.PUN?.rows || []);
 
-function setBullets(el, items){
-  el.innerHTML='';
-  items.forEach(t=>{ const li=document.createElement('li'); li.innerHTML=t; el.appendChild(li); });
-}
-function setAlts(el, items, fn){
-  el.innerHTML='';
-  if(!items.length){ el.innerHTML='<div class="alt-item"><div class="alt-meta">Nessuna alternativa disponibile con i dati inseriti.</div></div>'; return; }
-  items.forEach(x=>{ const d=document.createElement('div'); d.className='alt-item'; d.innerHTML=fn(x); el.appendChild(d); });
-}
+        hydratePunMonths();
+        state.loaded = true;
+        dataStatus.textContent = 'Dati caricati correttamente';
+        dataStatus.className = 'status-pill ok';
+      } catch (error) {
+        console.error(error);
+        state.loaded = false;
+        dataStatus.textContent = 'Errore nel caricamento dei dati';
+        dataStatus.className = 'status-pill warn';
+        screenResults.innerHTML = `<div class="empty-state"><div><strong>Non sono riuscito a leggere il foglio Google</strong><div>${sanitizeHtml(error.message)}</div></div></div>`;
+      }
+    }
 
-function renderPackagePills(ctx){
-  const pills = [];
-  if(ctx.includeMobile) pills.push('<span class="pill">Mobile</span>');
-  if(ctx.includeFixed) pills.push('<span class="pill">Fisso</span>');
-  if(ctx.includeEnergy) pills.push('<span class="pill">Energia</span>');
-  if(ctx.includeMobile) pills.push(`<span class="pill">${ctx.mobileActivationType==='new'?'Nuova attivazione':'MNP'}</span>`);
-  els.activePills.innerHTML = pills.join('');
-}
-function renderSummary(pkg){
-  els.summaryPackage.textContent = packageLabel(pkg.ctx.packageKey);
-  els.summaryPackageNote.textContent = `${customerLabel()}${pkg.ctx.includeMobile ? ` · ${pkg.ctx.mobileActivationType==='new'?'nuova attivazione':'passaggio / MNP'}` : ''}`;
-  els.summaryCurrent.textContent = eur(pkg.current.total);
-  els.summaryCurrentNote.textContent = 'Somma dei soli servizi inclusi nel pacchetto';
-  els.summaryNew.textContent = eur(pkg.proposed.totalNow);
-  els.summaryNewNote.textContent = `Media 12 mesi ${eur(pkg.proposed.totalAnnualized)}`;
-  els.summarySave.textContent = pkg.savings.totalMonthly===null ? '-' : eur(pkg.savings.totalMonthly);
-  els.summarySave.className = `metric save ${cls(pkg.savings.totalMonthly)}`;
-  els.summarySaveNote.textContent = pkg.savings.totalAnnual===null ? 'Inserisci i costi attuali per il risparmio totale' : `Annuale ${eur(pkg.savings.totalAnnual)}`;
-}
+    function objectWithNormalizedKeys(row) {
+      const out = {};
+      for (const [k, v] of Object.entries(row || {})) {
+        out[normalizeKey(k)] = v;
+      }
+      return out;
+    }
 
-function renderMobile(pkg){
-  const m = pkg.bestMobile;
-  if(!pkg.ctx.includeMobile){
-    els.mobileOfferName.textContent='-'; els.mobileOfferPrice.textContent='-'; els.mobileOfferSub.textContent='Mobile non incluso nel pacchetto.';
-    setBullets(els.mobileOfferDetails,['Il pacchetto selezionato non include il servizio mobile.']); setAlts(els.mobileAlternatives,[],()=> ''); return;
-  }
-  if(!m){
-    els.mobileOfferName.textContent='-'; els.mobileOfferPrice.textContent='-'; els.mobileOfferSub.textContent='Nessuna offerta mobile compatibile.';
-    setBullets(els.mobileOfferDetails,['Controlla tipo attivazione, operatore di provenienza e filtro Easy Pay.']); setAlts(els.mobileAlternatives,[],()=> ''); return;
-  }
-  els.mobileOfferName.innerHTML=`<span class="star">★</span>${m.name}`;
-  els.mobileOfferPrice.textContent=eur(m.effectiveMonthly);
-  els.mobileOfferSub.textContent = m.effectiveLaterMonthly ? `${eur(m.effectiveMonthly)} per ${m.effectiveIntroMonths||12} mesi, poi ${eur(m.effectiveLaterMonthly)}` : (m.effectiveConvergence ? 'Offerta convergente applicata' : m.category.toUpperCase());
-  setBullets(els.mobileOfferDetails,[
-    `${getDisplayedGb(m)}${m.fiveg?' · 5G':''}.`,
-    m.notes || '',
-    `Attivazione ${eur(m.activation)}.`,
-    pkg.savings.mobileMonthly!==null ? `Risparmio immediato sul mobile: <b>${eur(pkg.savings.mobileMonthly)}</b>/mese.` : 'Inserisci il costo mobile attuale per il risparmio.',
-    (pkg.ctx.mobile5g==='no' && m.fiveg) ? 'Il cliente ottiene anche il <b>5G</b> che prima non aveva.' : '',
-    m.effectiveConvergence ? 'La convergenza è stata applicata in base al pacchetto selezionato.' : ''
-  ].filter(Boolean));
-  
-setAlts(els.mobileAlternatives, pkg.mobileCandidates.filter(x => x.id !== m.id).slice(0,4), x => `
-  <div class="alt-title">${x.name}</div>
-  <div class="alt-meta">${eur(x.effectiveMonthly)}${x.effectiveLaterMonthly?` poi ${eur(x.effectiveLaterMonthly)}`:''} · ${getDisplayedGb(x)}</div>
-  <span class="badge">${x.effectiveConvergence?'CONVERGENZA':x.category.toUpperCase()}</span>
-  <button type="button" class="btn-secondary alt-select" data-service="mobile" data-id="${x.id}">Seleziona questa offerta</button>
-`);
-}
+    function parseMobileSheet(rows, sourceType) {
+      return rows.map(row => {
+        const r = objectWithNormalizedKeys(row);
+        const baseGb = num(aliasValue(r, ['gb', 'giga', 'giga_inclusi', 'giga']) || 0);
+        const convGb = num(aliasValue(r, ['gb_convergenza', 'giga_convergenza', 'full_speed_gb_convergenza']) || 0);
+        return {
+          sourceType,
+          id: aliasValue(r, ['id']) || `${sourceType}_${Math.random().toString(36).slice(2,8)}`,
+          active: aliasValue(r, ['attiva', 'attivo', 'attiva_']) === '' ? true : toBool(aliasValue(r, ['attiva', 'attivo', 'attiva_'])),
+          name: aliasValue(r, ['nome_promo', 'nomepromo', 'nome_offerta', 'promo', 'offerta']) || 'Offerta mobile',
+          price: num(aliasValue(r, ['prezzo', 'prezzo_mensile', 'canone'])),
+          priceAfter: num(aliasValue(r, ['prezzo_dopo', 'prezzo_dopo_promo', 'prezzo_regime'])),
+          promoMonths: num(aliasValue(r, ['mesi_promo', 'durata_promo', 'mesi_promozione'])),
+          activation: num(aliasValue(r, ['attivazione', 'costo_attivazione'])),
+          gb: baseGb || num(aliasValue(r, ['full_speed_gb'])),
+          unlimited: toBool(aliasValue(r, ['giga_illimitati'])) || baseGb >= 9999,
+          fullSpeedGb: num(aliasValue(r, ['full_speed_gb'])),
+          fiveg: toBool(aliasValue(r, ['fiveg', '5g'])),
+          minutes: aliasValue(r, ['minuti']) || 'Illimitati',
+          sms: aliasValue(r, ['sms']) || 'Illimitati',
+          gbEu: num(aliasValue(r, ['gb_ue', 'giga_ue'])),
+          convPrice: num(aliasValue(r, ['prezzo_convergenza', 'prezzo_conv'])),
+          convPriceAfter: num(aliasValue(r, ['prezzo_convergenza_dopo', 'prezzo_conv_dopo'])),
+          convPromoMonths: num(aliasValue(r, ['mesi_promo_convergenza', 'mesi_conv', 'durata_conv'])),
+          convGb: convGb || num(aliasValue(r, ['gb_convergenza', 'giga_convergenza'])),
+          convUnlimited: toBool(aliasValue(r, ['giga_illimitati_convergenza', 'convergenza_giga_illimitati'])) || convGb >= 9999,
+          convFullSpeedGb: num(aliasValue(r, ['full_speed_gb_convergenza'])),
+          requiresFixed: toBool(aliasValue(r, ['richiede_fisso'])),
+          requiresSuperFibra: toBool(aliasValue(r, ['richiede_super_fibra'])),
+          requiresSecondSim: toBool(aliasValue(r, ['richiede_second_sim'])),
+          newNumberOnly: toBool(aliasValue(r, ['solo_nuovo_numero'])),
+          convergenceType: aliasValue(r, ['convergenza_tipo']) || 'nessuna',
+          applyFixedDiscount: toBool(aliasValue(r, ['applica_sconto_fisso'])),
+          phoneIncluded: toBool(aliasValue(r, ['telefono_incluso'])),
+          note: aliasValue(r, ['note', 'descrizione']) || '',
+          priority: num(aliasValue(r, ['priorita', 'priority'])) || 999,
+          raw: r,
+        };
+      }).filter(x => x.active && x.name);
+    }
 
-function renderFixed(pkg){
-  const f = pkg.bestFixed;
-  if(!pkg.ctx.includeFixed){
-    els.fixedOfferName.textContent='-'; els.fixedOfferPrice.textContent='-'; els.fixedOfferSub.textContent='Fisso non incluso nel pacchetto.';
-    setBullets(els.fixedOfferDetails,['Il pacchetto selezionato non include il servizio fisso.']); setAlts(els.fixedAlternatives,[],()=> ''); return;
-  }
-  if(!f){
-    els.fixedOfferName.textContent='-'; els.fixedOfferPrice.textContent='-'; els.fixedOfferSub.textContent='Nessuna offerta fissa compatibile.';
-    setBullets(els.fixedOfferDetails,['Controlla tecnologia desiderata e contenuti del foglio FISSO.']); setAlts(els.fixedAlternatives,[],()=> ''); return;
-  }
-  const p = getFixedEffectivePrice(f, pkg.ctx, pkg.bestMobile);
-  const later = getFixedEffectiveLaterPrice(f, pkg.ctx, pkg.bestMobile);
-  els.fixedOfferName.innerHTML=`<span class="star">★</span>${f.name}`;
-  els.fixedOfferPrice.textContent=p!==null?eur(p):'-';
-  els.fixedOfferSub.textContent = later!==null ? `${eur(p)} per ${f.introMonths||12} mesi, poi ${eur(later)}` : (f.notes || f.scenario || '');
-  setBullets(els.fixedOfferDetails,[
-    f.notes || '',
-    f.technology ? `Tecnologia: <b>${f.technology}</b>.` : '',
-    f.download ? `Velocità download: <b>${f.download}</b>.` : '',
-    f.activationMonthly!==null ? `Attivazione ${eur(f.activationMonthly)}/mese per ${f.activationMonths||0} mesi.` : 'Attivazione da verificare.',
-    f.amazonPrimeMonths ? `Amazon Prime incluso: <b>${f.amazonPrimeMonths} mesi</b>.` : '',
-    f.includeNetflix ? `Netflix incluso: <b>${f.netflixPlan}</b>.` : '',
-    pkg.savings.fixedMonthly!==null ? `Risparmio immediato sul fisso: <b>${eur(pkg.savings.fixedMonthly)}</b>/mese.` : 'Inserisci il costo fisso attuale per il risparmio.'
-  ].filter(Boolean));
+    function parseFixedSheet(rows) {
+      return rows.map(row => {
+        const r = objectWithNormalizedKeys(row);
+        return {
+          id: aliasValue(r, ['id']) || `fixed_${Math.random().toString(36).slice(2,8)}`,
+          active: aliasValue(r, ['attiva', 'attivo']) === '' ? true : toBool(aliasValue(r, ['attiva', 'attivo'])),
+          name: aliasValue(r, ['nome_promo', 'nomepromo', 'offerta', 'promo']) || 'Offerta fisso',
+          technology: String(aliasValue(r, ['tecnologia', 'tipo', 'rete', 'linea']) || '').toUpperCase(),
+          price: num(aliasValue(r, ['prezzo', 'canone', 'prezzo_mensile', 'canone_mensile'])),
+          priceAfter: num(aliasValue(r, ['prezzo_dopo', 'prezzo_regime', 'prezzo_dopo_promo'])),
+          promoMonths: num(aliasValue(r, ['mesi_promo', 'durata_promo'])),
+          activation: num(aliasValue(r, ['attivazione', 'costo_attivazione'])),
+          speed: aliasValue(r, ['velocita', 'speed']) || '',
+          fixedDiscount: num(aliasValue(r, ['sconto', 'sconto_mensile', 'sconto_convergenza', 'sconto_bundle'])),
+          note: aliasValue(r, ['note', 'descrizione']) || '',
+          priority: num(aliasValue(r, ['priorita'])) || 999,
+          raw: r,
+        };
+      }).filter(x => x.active && x.name);
+    }
 
-const alternatives = (pkg.fixedPool || []).filter(x=>x.id!==f.id).slice(0,4);
-setAlts(els.fixedAlternatives, alternatives, x => `
-  <div class="alt-title">${x.name}</div>
-  <div class="alt-meta">${getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)!==null?eur(getFixedEffectivePrice(x,pkg.ctx,pkg.bestMobile)):'Prezzo da verificare'}</div>
-  <div class="alt-meta">${x.technology || x.scenario || ''}</div>
-  <button type="button" class="btn-secondary alt-select" data-service="fixed" data-id="${x.id}">Seleziona questa offerta</button>
-`);
-}
+    function parseEnergySheet(rows) {
+      return rows.map(row => {
+        const r = objectWithNormalizedKeys(row);
+        return {
+          id: aliasValue(r, ['id']) || `energy_${Math.random().toString(36).slice(2,8)}`,
+          active: aliasValue(r, ['attiva', 'attivo']) === '' ? true : toBool(aliasValue(r, ['attiva', 'attivo'])),
+          name: aliasValue(r, ['nome_promo', 'nomepromo', 'offerta', 'promo']) || 'Offerta energia',
+          commodity: String(aliasValue(r, ['commodity', 'tipo', 'servizio']) || 'luce_gas').toLowerCase(),
+          spreadPun: num(aliasValue(r, ['spread_pun', 'spread', 'sovrapprezzo_pun', 'margine_pun', 'prezzo_sopra_pun'])),
+          spreadGas: num(aliasValue(r, ['spread_gas', 'prezzo_sopra_psv', 'margine_gas'])),
+          monthlyFee: num(aliasValue(r, ['quota_fissa', 'quota_mensile', 'ccv', 'commercializzazione', 'canone', 'costo_fisso_mese'])),
+          activation: num(aliasValue(r, ['attivazione', 'costo_attivazione'])),
+          bundleDiscount: num(aliasValue(r, ['sconto', 'sconto_bundle', 'sconto_convergenza', 'sconto_mensile'])),
+          note: aliasValue(r, ['note', 'descrizione']) || '',
+          priority: num(aliasValue(r, ['priorita'])) || 999,
+          raw: r,
+        };
+      }).filter(x => x.active && x.name);
+    }
 
-function renderEnergy(pkg){
-  const e = pkg.energy;
-  if(!pkg.ctx.includeEnergy){
-    els.energyOfferName.textContent='-'; els.energyOfferPrice.textContent='-'; els.energyOfferSub.textContent='Energia non inclusa nel pacchetto.';
-    setBullets(els.energyOfferDetails,['Il pacchetto selezionato non include luce / gas.']); setAlts(els.energyAlternatives,[],()=> ''); els.energyWhy.textContent='Questo pacchetto non include la componente energia.'; return;
-  }
-  els.energyOfferName.innerHTML=`<span class="star">★</span>Stima energia WindTre`;
-  if(!e.hasEnergyBill){
-    els.energyOfferPrice.textContent='-'; els.energyOfferSub.textContent='Inserisci bolletta e consumi per il confronto.';
-    setBullets(els.energyOfferDetails,['Serve almeno importo bolletta o consumi del periodo.']); setAlts(els.energyAlternatives,[],()=> ''); els.energyWhy.textContent='Inserisci bolletta, consumi e mese di riferimento per ottenere una spiegazione del confronto energia.'; return;
-  }
-  els.energyOfferPrice.textContent=e.windMonthlyTotal?eur(e.windMonthlyTotal):'-';
-  els.energyOfferSub.textContent=e.windTotalPeriod?`${eur(e.windTotalPeriod)} sul periodo · ${eur(e.windMonthlyTotal)} media mensile`:'Dati energia incompleti';
-  setBullets(els.energyOfferDetails,[
-    `Bolletta attuale del periodo: <b>${eur(e.currentPeriodBill)}</b>.`,
-    e.currentConsumptionPeriod?`Quota consumo certa operatore attuale: <b>${eur(e.currentConsumptionPeriod)}</b>.`:'Quota consumo attuale non calcolabile.',
-    `Quota fissa + tasse stimate: <b>${eur(e.fixedTaxesPeriod)}</b>.`,
-    e.windConsumptionPeriod?`Quota consumo WindTre: <b>${eur(e.windConsumptionPeriod)}</b>.`:'Quota consumo WindTre non calcolabile.',
-    e.windTotalPeriod?`Totale confronto WindTre: <b>${eur(e.windTotalPeriod)}</b>.`:'Totale confronto WindTre non completo.',
-    pkg.savings.energyMonthly!==null?`Risparmio medio mensile energia: <b>${eur(pkg.savings.energyMonthly)}</b>/mese.`:'Inserisci il costo energia attuale per il risparmio.'
-  ]);
-  setAlts(els.energyAlternatives, e.notes.map(t=>({t})), x => `<div class="alt-meta">${x.t}</div>`);
-  els.energyWhy.textContent = e.windTotalPeriod ? 'Il confronto energia separa quota consumo e quota fissa. I consumi del cliente vengono ricalcolati con l’indice WindTre del mese selezionato, mantenendo costanti spese fisse e tasse per una lettura più realistica del risparmio.' : 'Manca almeno uno dei dati chiave per completare la stima energia.';
-}
+    function parsePunSheet(rows) {
+      const parsed = [];
+      rows.forEach(row => {
+        const r = objectWithNormalizedKeys(row);
+        const values = Object.values(r).map(v => String(v).trim()).filter(Boolean);
+        const joined = values.join(' | ').toLowerCase();
+        const month = values.find(v => defaultMonths.some(m => String(v).toLowerCase().includes(m)));
+        const candidateNumber = values.map(v => num(v)).find(v => v > 0);
+        if (month && candidateNumber) {
+          const monthKey = defaultMonths.find(m => String(month).toLowerCase().includes(m));
+          parsed.push({ month: monthKey, pun: candidateNumber, raw: r });
+        } else {
+          for (const m of defaultMonths) {
+            if (joined.includes(m)) {
+              const n = values.map(v => num(v)).find(v => v > 0);
+              if (n) parsed.push({ month: m, pun: n, raw: r });
+            }
+          }
+        }
+      });
+      const unique = [];
+      const seen = new Set();
+      parsed.forEach(x => {
+        if (!seen.has(x.month)) {
+          seen.add(x.month);
+          unique.push(x);
+        }
+      });
+      return unique;
+    }
 
-function renderBreakdowns(pkg){
-  const m = pkg.bestMobile, f = pkg.bestFixed;
-  const mobileCurrent = pkg.ctx.includeMobile ? (pkg.current.mobile>0 ? eur(pkg.current.mobile) : 'Non indicato') : 'Non incluso';
-  const fixedCurrent = pkg.ctx.includeFixed ? (pkg.current.fixed>0 ? eur(pkg.current.fixed) : 'Non indicato') : 'Non incluso';
-  const energyCurrent = pkg.ctx.includeEnergy ? (pkg.current.energy>0 ? eur(pkg.current.energy) : 'Non indicato') : 'Non inclusa';
+    function hydratePunMonths() {
+      const months = state.parsed.pun.length
+        ? dedupe(state.parsed.pun.map(x => x.month))
+        : defaultMonths;
+      monthSelect.innerHTML = months.map(m => `<option value="${m}">${capitalize(m)}</option>`).join('');
+      if (!months.includes(monthSelect.value)) monthSelect.value = months[0];
+    }
 
-  els.selectedSummaryBody.innerHTML = `
-    <tr><td><b>Cliente</b></td><td colspan="3">${customerLabel()}</td></tr>
-    <tr><td><b>Pacchetto</b></td><td colspan="3">${packageLabel(pkg.ctx.packageKey)}</td></tr>
-    <tr><td><b>Mobile</b></td><td>${mobileCurrent}</td><td>${pkg.ctx.includeMobile ? (m ? `${m.name} · ${eur(m.effectiveMonthly)}${m.effectiveLaterMonthly?` poi ${eur(m.effectiveLaterMonthly)}`:''} · ${getDisplayedGb(m)} · 5G ${m.fiveg?'sì':'no'}` : 'Nessuna offerta compatibile') : 'Non incluso'}</td><td>${pkg.ctx.includeMobile ? (m && m.effectiveConvergence ? 'Promo mobile convergente applicata.' : 'Confronto mobile puro.') : '-'}</td></tr>
-    <tr><td><b>Fisso</b></td><td>${fixedCurrent}</td><td>${pkg.ctx.includeFixed ? (f ? `${f.name} · ${eur(getFixedEffectivePrice(f,pkg.ctx,m))}${getFixedEffectiveLaterPrice(f,pkg.ctx,m)!==null?` poi ${eur(getFixedEffectiveLaterPrice(f,pkg.ctx,m))}`:''}` : 'Nessuna offerta fissa compatibile') : 'Non incluso'}</td><td>${pkg.ctx.includeFixed ? (f && fixedUseConvergence(f,pkg.ctx,m) ? 'Prezzo fisso convergente applicato.' : 'Prezzo fisso standalone.') : '-'}</td></tr>
-    <tr><td><b>Energia</b></td><td>${energyCurrent}</td><td>${pkg.ctx.includeEnergy ? (pkg.energy.hasEnergyBill ? `${eur(pkg.energy.windMonthlyTotal)}/mese medio stimato` : 'Dati energia insufficienti') : 'Non inclusa'}</td><td>${pkg.ctx.includeEnergy ? 'Stima su PUN + quota fissa stimata.' : '-'}</td></tr>
-  `;
+    function getCustomerInput() {
+      return {
+        nome: document.getElementById('nome').value.trim(),
+        cognome: document.getElementById('cognome').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        mobile: {
+          operatore: document.getElementById('mobileOperatore').value.trim(),
+          gb: num(document.getElementById('mobileGb').value),
+          prezzo: num(document.getElementById('mobilePrezzo').value),
+          tipo: document.getElementById('mobileTipo').value,
+          fiveg: document.getElementById('mobile5g').checked,
+          secondSim: document.getElementById('mobileSecondSim').checked,
+        },
+        fisso: {
+          operatore: document.getElementById('fissoOperatore').value.trim(),
+          tecnologia: document.getElementById('fissoTecnologia').value,
+          prezzo: num(document.getElementById('fissoPrezzo').value),
+          superFibra: document.getElementById('fissoSuperFibra').checked,
+        },
+        energia: {
+          operatore: document.getElementById('energiaOperatore').value.trim(),
+          periodo: document.getElementById('energiaPeriodo').value,
+          meseRef: document.getElementById('energiaMeseRef').value,
+          importo: num(document.getElementById('energiaImporto').value),
+          kwh: num(document.getElementById('energiaKwh').value),
+          prezzoKwh: num(document.getElementById('energiaPrezzoKwh').value),
+          gasSmc: num(document.getElementById('gasSmc').value),
+          gasPrezzoSmc: num(document.getElementById('gasPrezzoSmc').value),
+          note: document.getElementById('energiaNote').value.trim(),
+        }
+      };
+    }
 
-  els.mobileCompareBody.innerHTML = `
-    <tr><td><b>GB inclusi</b></td><td>${pkg.ctx.includeMobile ? (pkg.ctx.mobileGb ? `${pkg.ctx.mobileGb} GB` : 'Non indicato') : 'Non incluso'}</td><td>${pkg.ctx.includeMobile && m ? getDisplayedGb(m) : '-'}</td><td>${pkg.ctx.includeMobile && m ? (String(getDisplayedGb(m)).toLowerCase().includes('illimitati') ? 'Passaggio a giga illimitati.' : (pkg.ctx.mobileGb ? `${(m.effectiveGb-pkg.ctx.mobileGb)>=0?'+':''}${m.effectiveGb-pkg.ctx.mobileGb} GB` : 'Nuovo bundle dati.')) : '-'}</td></tr>
-    <tr><td><b>5G</b></td><td>${pkg.ctx.includeMobile ? (pkg.ctx.mobile5g ? (pkg.ctx.mobile5g==='si'?'Sì':'No') : 'Non indicato') : 'Non incluso'}</td><td>${pkg.ctx.includeMobile && m ? (m.fiveg?'Sì':'No') : '-'}</td><td>${pkg.ctx.includeMobile && m ? ((pkg.ctx.mobile5g==='no' && m.fiveg)?'Il cliente ottiene il 5G.':(m.fiveg?'5G presente.':'Nessun 5G aggiuntivo.')) : '-'}</td></tr>
-    <tr><td><b>Canone</b></td><td>${mobileCurrent}</td><td>${pkg.ctx.includeMobile && m ? eur(m.effectiveMonthly) : '-'}</td><td>${pkg.savings.mobileMonthly!==null ? `${pkg.savings.mobileMonthly>=0?'Risparmio':'Differenza'} ${eur(Math.abs(pkg.savings.mobileMonthly))}/mese` : 'Calcolo non disponibile'}</td></tr>
-  `;
+    function currentEnergyMonthly(input) {
+      const months = monthCountFromPeriod(input.periodo);
+      return input.importo ? (input.importo / months) : 0;
+    }
 
-  const rows = [
-    {v:'Mobile',m:pkg.savings.mobileMonthly,a:pkg.savings.mobileAnnual,n:pkg.ctx.includeMobile?'Confronto canone mobile attuale vs nuova offerta.':'Servizio non incluso.'},
-    {v:'Fisso',m:pkg.savings.fixedMonthly,a:pkg.savings.fixedAnnual,n:pkg.ctx.includeFixed?'Confronto canone fisso attuale vs nuova offerta.':'Servizio non incluso.'},
-    {v:'Energia',m:pkg.savings.energyMonthly,a:pkg.savings.energyAnnual,n:pkg.ctx.includeEnergy?'Confronto energia con quota consumo e quota fissa stimata.':'Servizio non incluso.'}
-  ];
-  els.savingsBody.innerHTML = rows.map(r=>`<tr><td><b>${r.v}</b></td><td class="${cls(r.m)}">${r.m===null?'-':eur(r.m)}</td><td class="${cls(r.a)}">${r.a===null?'-':eur(r.a)}</td><td>${r.n}</td></tr>`).join('');
+    function currentEnergyVariableMonthly(input) {
+      const months = monthCountFromPeriod(input.periodo);
+      const electric = input.kwh && input.prezzoKwh ? (input.kwh * input.prezzoKwh) / months : 0;
+      const gas = input.gasSmc && input.gasPrezzoSmc ? (input.gasSmc * input.gasPrezzoSmc) / months : 0;
+      return electric + gas;
+    }
 
-  els.currentTotal.textContent = eur(pkg.current.total);
-  els.newTotalNow.textContent = eur(pkg.proposed.totalNow);
-  els.newTotalAnnualized.textContent = eur(pkg.proposed.totalAnnualized);
-  els.savingMonthly.textContent = pkg.savings.totalMonthly===null?'-':eur(pkg.savings.totalMonthly);
-  els.savingMonthly.className = cls(pkg.savings.totalMonthly);
-  els.savingYearly.textContent = pkg.savings.totalAnnual===null?'-':eur(pkg.savings.totalAnnual);
-  els.savingYearly.className = cls(pkg.savings.totalAnnual);
-  els.monthlyExplain.textContent = pkg.savings.totalMonthly===null?'Inserisci i costi attuali dei servizi selezionati.':`Differenza tra totale attuale ${eur(pkg.current.total)} e nuovo totale ${eur(pkg.proposed.totalNow)}.`;
-  els.yearlyExplain.textContent = pkg.savings.totalAnnual===null?'Calcolo annuale non disponibile.':'Media a 12 mesi considerando eventuali promo con durata limitata.';
-}
+    function punForMonth(month) {
+      const found = state.parsed.pun.find(x => x.month === month);
+      return found ? num(found.pun) : 0;
+    }
 
+    function fixedCandidates(input) {
+      return state.parsed.fixed
+        .filter(o => {
+          if (!input.fisso.prezzo && !input.fisso.tecnologia && !o.technology) return true;
+          if (!input.fisso.tecnologia) return true;
+          if (!o.technology) return true;
+          return o.technology.includes(input.fisso.tecnologia);
+        })
+        .map(o => {
+          const yearlyAvg = avg12(o.price, o.priceAfter, o.promoMonths);
+          const score = scorePrice(input.fisso.prezzo, yearlyAvg) + ((o.technology && o.technology.includes(input.fisso.tecnologia)) ? 2 : 0) - (o.priority / 1000);
+          return {
+            ...o,
+            yearlyAvg,
+            score,
+            currentMonthly: input.fisso.prezzo,
+            monthlySaving: input.fisso.prezzo ? (input.fisso.prezzo - yearlyAvg) : 0,
+          };
+        })
+        .sort((a, b) => b.score - a.score || a.yearlyAvg - b.yearlyAvg || a.priority - b.priority);
+    }
 
-function bindAlternativeSelectors(){
-  document.querySelectorAll('.alt-select').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const service = btn.getAttribute('data-service');
-      const id = btn.getAttribute('data-id');
-      if(service === 'mobile') OVERRIDES.mobileId = id;
-      if(service === 'fixed') OVERRIDES.fixedId = id;
-      buildRecommendations();
+    function mobileCandidates(input, bundleMode = 'single', mobileKindOverride = null) {
+      const mobileType = mobileKindOverride || input.mobile.tipo;
+      const pool = mobileType === 'nuovo' ? state.parsed.consumer : state.parsed.mnp;
+
+      return pool
+        .filter(o => {
+          if (bundleMode !== 'single' && o.requiresFixed === false && (o.convPrice || o.convGb || o.convUnlimited)) {
+            return true;
+          }
+          if (bundleMode === 'single') return !o.newNumberOnly || mobileType === 'nuovo';
+          if (bundleMode.includes('fixed') && o.requiresSuperFibra && !input.fisso.superFibra && input.fisso.tecnologia !== 'FTTH') return false;
+          if (o.requiresSecondSim && !input.mobile.secondSim) return false;
+          if (o.newNumberOnly && mobileType !== 'nuovo') return false;
+          return true;
+        })
+        .map(o => {
+          const inBundle = bundleMode !== 'single';
+          const effectivePrice = inBundle && o.convPrice ? o.convPrice : o.price;
+          const effectiveAfter = inBundle && o.convPrice ? (o.convPriceAfter || o.convPrice || o.priceAfter) : (o.priceAfter || o.price);
+          const effectiveMonths = inBundle && o.convPrice ? (o.convPromoMonths || o.promoMonths) : o.promoMonths;
+          const effectiveGb = inBundle ? (o.convGb || o.gb) : o.gb;
+          const effectiveUnlimited = inBundle ? (o.convUnlimited || o.unlimited) : o.unlimited;
+          const avg = avg12(effectivePrice, effectiveAfter, effectiveMonths);
+          let score = 0;
+          score += scorePrice(input.mobile.prezzo, avg) * 4;
+          score += (effectiveUnlimited ? 50 : 0);
+          score += input.mobile.fiveg && o.fiveg ? 14 : 0;
+          score += input.mobile.gb && (effectiveGb >= input.mobile.gb ? 12 : Math.max(-12, (effectiveGb - input.mobile.gb) / 8));
+          score += inBundle && o.convPrice ? 10 : 0;
+          score += o.phoneIncluded ? -6 : 0;
+          score += (1000 - o.priority) / 100;
+          return {
+            ...o,
+            effectivePrice,
+            effectiveAfter,
+            effectiveMonths,
+            effectiveGb,
+            effectiveUnlimited,
+            yearlyAvg: avg,
+            monthlySaving: input.mobile.prezzo ? (input.mobile.prezzo - avg) : 0,
+            annualSaving: input.mobile.prezzo ? ((input.mobile.prezzo - avg) * 12) : 0,
+            gbDelta: effectiveUnlimited ? 9999 : (effectiveGb - input.mobile.gb),
+            score,
+          };
+        })
+        .sort((a, b) => b.score - a.score || a.yearlyAvg - b.yearlyAvg || a.priority - b.priority);
+    }
+
+    function energyCandidates(input, bundle = false) {
+      const pun = punForMonth(input.energia.meseRef);
+      const currentMonthly = currentEnergyMonthly(input.energia);
+      const currentVariable = currentEnergyVariableMonthly(input.energia);
+      const months = monthCountFromPeriod(input.energia.periodo);
+
+      return state.parsed.energy.map(o => {
+        const lightVariable = input.energia.kwh ? ((input.energia.kwh * (pun + o.spreadPun)) / months) : 0;
+        const gasVariable = input.energia.gasSmc ? ((input.energia.gasSmc * (o.spreadGas || input.energia.gasPrezzoSmc)) / months) : 0;
+        const discount = bundle ? o.bundleDiscount : 0;
+        const estimated = lightVariable + gasVariable + o.monthlyFee - discount;
+        const baseReference = currentMonthly || currentVariable;
+        const score = (baseReference - estimated) * 4 + ((o.monthlyFee < 15) ? 3 : 0) + ((o.priority < 100) ? 2 : 0);
+        return {
+          ...o,
+          punMonth: input.energia.meseRef,
+          punValue: pun,
+          estimatedMonthly: estimated,
+          estimatedAnnual: estimated * 12,
+          currentMonthly: baseReference,
+          monthlySaving: baseReference ? (baseReference - estimated) : 0,
+          annualSaving: baseReference ? ((baseReference - estimated) * 12) : 0,
+          variableLightMonthly: lightVariable,
+          variableGasMonthly: gasVariable,
+          discountApplied: discount,
+          score,
+        };
+      }).sort((a, b) => b.score - a.score || a.estimatedMonthly - b.estimatedMonthly || a.priority - b.priority);
+    }
+
+    function makeScenarioResult(scenario, input) {
+      const fixedBest = fixedCandidates(input)[0] || null;
+      const fixedAlternatives = fixedCandidates(input).slice(1, 4);
+      const mobileBestSingle = mobileCandidates(input, 'single')[0] || null;
+      const mobileAltSingle = mobileCandidates(input, 'single').slice(1, 4);
+      const energyBestSingle = energyCandidates(input, false)[0] || null;
+      const energyAltSingle = energyCandidates(input, false).slice(1, 4);
+
+      if (scenario === 'mobile') {
+        return {
+          scenario,
+          title: 'Solo mobile',
+          best: mobileBestSingle,
+          alternatives: mobileAltSingle,
+          savingsMonthly: mobileBestSingle?.monthlySaving || 0,
+          savingsAnnual: mobileBestSingle?.annualSaving || 0,
+          currentMonthly: input.mobile.prezzo,
+          proposedMonthly: mobileBestSingle?.yearlyAvg || 0,
+          currentLabel: 'Costo attuale mobile',
+          proposedLabel: 'Media primo anno Wind3',
+          notes: buildMobileNotes(mobileBestSingle, input),
+          tableRows: mobileTableRows(mobileBestSingle, input),
+        };
+      }
+
+      if (scenario === 'fisso') {
+        return {
+          scenario,
+          title: 'Solo fisso',
+          best: fixedBest,
+          alternatives: fixedAlternatives,
+          savingsMonthly: fixedBest?.monthlySaving || 0,
+          savingsAnnual: (fixedBest?.monthlySaving || 0) * 12,
+          currentMonthly: input.fisso.prezzo,
+          proposedMonthly: fixedBest?.yearlyAvg || 0,
+          currentLabel: 'Costo attuale fisso',
+          proposedLabel: 'Media primo anno Wind3',
+          notes: buildFixedNotes(fixedBest, input),
+          tableRows: fixedTableRows(fixedBest, input),
+        };
+      }
+
+      if (scenario === 'energia') {
+        return {
+          scenario,
+          title: 'Solo energia',
+          best: energyBestSingle,
+          alternatives: energyAltSingle,
+          savingsMonthly: energyBestSingle?.monthlySaving || 0,
+          savingsAnnual: energyBestSingle?.annualSaving || 0,
+          currentMonthly: energyBestSingle?.currentMonthly || currentEnergyMonthly(input.energia),
+          proposedMonthly: energyBestSingle?.estimatedMonthly || 0,
+          currentLabel: 'Spesa media attuale',
+          proposedLabel: 'Stima media Wind3',
+          notes: buildEnergyNotes(energyBestSingle, input),
+          tableRows: energyTableRows(energyBestSingle, input),
+        };
+      }
+
+      if (scenario === 'fisso_mobile_mnp' || scenario === 'fisso_mobile_nuovo') {
+        const mobileKind = scenario === 'fisso_mobile_nuovo' ? 'nuovo' : 'mnp';
+        const mobileBest = mobileCandidates(input, 'bundle_fixed', mobileKind)[0] || null;
+        const mobileAlts = mobileCandidates(input, 'bundle_fixed', mobileKind).slice(1, 4);
+        const fixed = fixedBest;
+        const currentTotal = input.mobile.prezzo + input.fisso.prezzo;
+        const proposedTotal = (mobileBest?.yearlyAvg || 0) + (fixed?.yearlyAvg || 0) - (fixed?.fixedDiscount || 0) - (mobileBest?.applyFixedDiscount ? 1 : 0);
+        return {
+          scenario,
+          title: scenario === 'fisso_mobile_nuovo' ? 'Fisso + mobile nuovo numero' : 'Fisso + mobile MNP',
+          best: { mobile: mobileBest, fixed },
+          alternatives: mobileAlts.map(m => ({ mobile: m, fixed })),
+          savingsMonthly: currentTotal ? (currentTotal - proposedTotal) : 0,
+          savingsAnnual: currentTotal ? ((currentTotal - proposedTotal) * 12) : 0,
+          currentMonthly: currentTotal,
+          proposedMonthly: proposedTotal,
+          currentLabel: 'Spesa attuale totale',
+          proposedLabel: 'Media primo anno bundle',
+          notes: [...buildFixedNotes(fixed, input), ...buildMobileNotes(mobileBest, input), 'La convergenza usa il profilo mobile più adatto al cliente e il miglior fisso compatibile.'],
+          tableRows: bundleFMTableRows(mobileBest, fixed, input, proposedTotal),
+        };
+      }
+
+      if (scenario === 'fisso_energia') {
+        const energyBest = energyCandidates(input, true)[0] || null;
+        const currentTotal = input.fisso.prezzo + currentEnergyMonthly(input.energia);
+        const proposedTotal = (fixedBest?.yearlyAvg || 0) + (energyBest?.estimatedMonthly || 0) - (fixedBest?.fixedDiscount || 0);
+        return {
+          scenario,
+          title: 'Fisso + luce & gas',
+          best: { fixed: fixedBest, energy: energyBest },
+          alternatives: energyCandidates(input, true).slice(1, 4).map(e => ({ fixed: fixedBest, energy: e })),
+          savingsMonthly: currentTotal ? (currentTotal - proposedTotal) : 0,
+          savingsAnnual: currentTotal ? ((currentTotal - proposedTotal) * 12) : 0,
+          currentMonthly: currentTotal,
+          proposedMonthly: proposedTotal,
+          currentLabel: 'Spesa attuale totale',
+          proposedLabel: 'Stima bundle Wind3',
+          notes: [...buildFixedNotes(fixedBest, input), ...buildEnergyNotes(energyBest, input), 'La stima energia usa il PUN del mese selezionato e i consumi inseriti.'],
+          tableRows: bundleFETableRows(fixedBest, energyBest, input, proposedTotal),
+        };
+      }
+
+      if (scenario === 'tutto') {
+        const mobileKind = input.mobile.tipo === 'nuovo' ? 'nuovo' : 'mnp';
+        const mobileBest = mobileCandidates(input, 'bundle_fixed', mobileKind)[0] || null;
+        const energyBest = energyCandidates(input, true)[0] || null;
+        const currentTotal = input.mobile.prezzo + input.fisso.prezzo + currentEnergyMonthly(input.energia);
+        const proposedTotal = (mobileBest?.yearlyAvg || 0) + (fixedBest?.yearlyAvg || 0) + (energyBest?.estimatedMonthly || 0)
+          - (fixedBest?.fixedDiscount || 0)
+          - (energyBest?.discountApplied || 0)
+          - (mobileBest?.applyFixedDiscount ? 1 : 0);
+        return {
+          scenario,
+          title: 'Tutti e 3 i servizi',
+          best: { mobile: mobileBest, fixed: fixedBest, energy: energyBest },
+          alternatives: mobileCandidates(input, 'bundle_fixed', mobileKind).slice(1, 4).map(m => ({ mobile: m, fixed: fixedBest, energy: energyBest })),
+          savingsMonthly: currentTotal ? (currentTotal - proposedTotal) : 0,
+          savingsAnnual: currentTotal ? ((currentTotal - proposedTotal) * 12) : 0,
+          currentMonthly: currentTotal,
+          proposedMonthly: proposedTotal,
+          currentLabel: 'Spesa attuale complessiva',
+          proposedLabel: 'Stima bundle completo',
+          notes: [
+            ...buildMobileNotes(mobileBest, input),
+            ...buildFixedNotes(fixedBest, input),
+            ...buildEnergyNotes(energyBest, input),
+            'Pacchetto completo consigliato per massimizzare convergenza, chiarezza commerciale e risparmio complessivo.'
+          ],
+          tableRows: bundleAllTableRows(mobileBest, fixedBest, energyBest, input, proposedTotal),
+        };
+      }
+
+      return null;
+    }
+
+    function buildMobileNotes(best, input) {
+      if (!best) return ['Nessuna offerta mobile compatibile trovata con i dati correnti.'];
+      const notes = [];
+      notes.push(`Offerta consigliata: ${best.name}.`);
+      if (best.effectiveUnlimited) notes.push('Include traffico dati illimitato o assimilabile a illimitato.');
+      else if (best.effectiveGb) notes.push(`Include ${best.effectiveGb} GB, con delta di ${best.gbDelta >= 0 ? '+' : ''}${best.gbDelta} GB rispetto alla situazione attuale.`);
+      if (input.mobile.fiveg) notes.push(best.fiveg ? 'Compatibile con esigenza 5G.' : 'Attenzione: il cliente desidera 5G ma questa offerta non lo esplicita chiaramente.');
+      if (best.note) notes.push(best.note);
+      return notes;
+    }
+
+    function buildFixedNotes(best, input) {
+      if (!best) return ['Nessuna offerta fisso compatibile trovata.'];
+      const notes = [`Offerta fisso consigliata: ${best.name}.`];
+      if (best.technology) notes.push(`Tecnologia letta dal foglio: ${best.technology}.`);
+      if (best.speed) notes.push(`Velocità / dettaglio: ${best.speed}.`);
+      if (best.note) notes.push(best.note);
+      return notes;
+    }
+
+    function buildEnergyNotes(best, input) {
+      if (!best) return ['Nessuna offerta energia compatibile trovata.'];
+      const notes = [`Offerta energia consigliata: ${best.name}.`];
+      notes.push(`Stima calcolata sul PUN di ${capitalize(input.energia.meseRef)} e sui consumi inseriti.`);
+      if (best.bundleDiscount) notes.push(`Sconto bundle considerato: ${euro(best.bundleDiscount)} / mese.`);
+      if (best.note) notes.push(best.note);
+      return notes;
+    }
+
+    function mobileTableRows(best, input) {
+      if (!best) return [];
+      return [
+        ['Operatore attuale', input.mobile.operatore || '—'],
+        ['Offerta Wind3', best.name],
+        ['Costo attuale', euro(input.mobile.prezzo)],
+        ['Media primo anno Wind3', euro(best.yearlyAvg)],
+        ['Prezzo promo', euro(best.effectivePrice)],
+        ['Prezzo a regime', euro(best.effectiveAfter || best.effectivePrice)],
+        ['Durata promo', best.effectiveMonths ? `${best.effectiveMonths} mesi` : '—'],
+        ['Giga attuali', input.mobile.gb ? `${input.mobile.gb} GB` : '—'],
+        ['Giga offerta', best.effectiveUnlimited ? 'Illimitati' : `${best.effectiveGb} GB`],
+        ['5G', best.fiveg ? 'Sì' : 'No / non indicato'],
+        ['Risparmio mensile', euro(best.monthlySaving)],
+        ['Risparmio annuale', euro(best.annualSaving)],
+      ];
+    }
+
+    function fixedTableRows(best, input) {
+      if (!best) return [];
+      return [
+        ['Operatore attuale', input.fisso.operatore || '—'],
+        ['Tecnologia attuale', input.fisso.tecnologia || '—'],
+        ['Offerta Wind3', best.name],
+        ['Tecnologia offerta', best.technology || '—'],
+        ['Costo attuale', euro(input.fisso.prezzo)],
+        ['Media primo anno Wind3', euro(best.yearlyAvg)],
+        ['Prezzo promo', euro(best.price)],
+        ['Prezzo a regime', euro(best.priceAfter || best.price)],
+        ['Risparmio mensile', euro(best.monthlySaving)],
+        ['Risparmio annuale', euro((best.monthlySaving || 0) * 12)],
+        ['Attivazione', euro(best.activation)],
+      ];
+    }
+
+    function energyTableRows(best, input) {
+      if (!best) return [];
+      return [
+        ['Operatore attuale', input.energia.operatore || '—'],
+        ['Bolletta attuale media', euro(best.currentMonthly)],
+        ['Offerta Wind3', best.name],
+        ['PUN mese di riferimento', `${capitalize(best.punMonth)} • ${best.punValue}`],
+        ['Consumi inseriti', `${input.energia.kwh || 0} kWh${input.energia.gasSmc ? ` + ${input.energia.gasSmc} SMC` : ''}`],
+        ['Parte variabile luce', euro(best.variableLightMonthly)],
+        ['Parte variabile gas', euro(best.variableGasMonthly)],
+        ['Quota fissa', euro(best.monthlyFee)],
+        ['Sconto bundle', euro(best.discountApplied)],
+        ['Stima media Wind3', euro(best.estimatedMonthly)],
+        ['Risparmio mensile', euro(best.monthlySaving)],
+        ['Risparmio annuale', euro(best.annualSaving)],
+      ];
+    }
+
+    function bundleFMTableRows(mobile, fixed, input, proposedTotal) {
+      return [
+        ['Mobile attuale', `${input.mobile.operatore || '—'} • ${euro(input.mobile.prezzo)}`],
+        ['Fisso attuale', `${input.fisso.operatore || '—'} • ${euro(input.fisso.prezzo)}`],
+        ['Mobile Wind3', mobile ? `${mobile.name} • ${euro(mobile.yearlyAvg)}` : '—'],
+        ['Fisso Wind3', fixed ? `${fixed.name} • ${euro(fixed.yearlyAvg)}` : '—'],
+        ['Totale attuale', euro(input.mobile.prezzo + input.fisso.prezzo)],
+        ['Totale bundle', euro(proposedTotal)],
+        ['Giga mobile bundle', mobile ? (mobile.effectiveUnlimited ? 'Illimitati' : `${mobile.effectiveGb} GB`) : '—'],
+        ['5G', mobile?.fiveg ? 'Sì' : 'No / non indicato'],
+      ];
+    }
+
+    function bundleFETableRows(fixed, energy, input, proposedTotal) {
+      return [
+        ['Fisso attuale', `${input.fisso.operatore || '—'} • ${euro(input.fisso.prezzo)}`],
+        ['Energia attuale', `${input.energia.operatore || '—'} • ${euro(currentEnergyMonthly(input.energia))}`],
+        ['Fisso Wind3', fixed ? `${fixed.name} • ${euro(fixed.yearlyAvg)}` : '—'],
+        ['Energia Wind3', energy ? `${energy.name} • ${euro(energy.estimatedMonthly)}` : '—'],
+        ['Totale attuale', euro(input.fisso.prezzo + currentEnergyMonthly(input.energia))],
+        ['Totale bundle', euro(proposedTotal)],
+        ['PUN riferimento', energy ? `${capitalize(energy.punMonth)} • ${energy.punValue}` : '—'],
+        ['Sconto energia bundle', energy ? euro(energy.discountApplied) : '—'],
+      ];
+    }
+
+    function bundleAllTableRows(mobile, fixed, energy, input, proposedTotal) {
+      return [
+        ['Mobile attuale', `${input.mobile.operatore || '—'} • ${euro(input.mobile.prezzo)}`],
+        ['Fisso attuale', `${input.fisso.operatore || '—'} • ${euro(input.fisso.prezzo)}`],
+        ['Energia attuale', `${input.energia.operatore || '—'} • ${euro(currentEnergyMonthly(input.energia))}`],
+        ['Mobile Wind3', mobile ? `${mobile.name} • ${euro(mobile.yearlyAvg)}` : '—'],
+        ['Fisso Wind3', fixed ? `${fixed.name} • ${euro(fixed.yearlyAvg)}` : '—'],
+        ['Energia Wind3', energy ? `${energy.name} • ${euro(energy.estimatedMonthly)}` : '—'],
+        ['Totale attuale', euro(input.mobile.prezzo + input.fisso.prezzo + currentEnergyMonthly(input.energia))],
+        ['Totale bundle', euro(proposedTotal)],
+        ['Vantaggio dati', mobile ? (mobile.effectiveUnlimited ? 'Dati illimitati' : `${mobile.effectiveGb} GB`) : '—'],
+        ['5G', mobile?.fiveg ? 'Sì' : 'No / non indicato'],
+        ['PUN riferimento', energy ? `${capitalize(energy.punMonth)} • ${energy.punValue}` : '—'],
+      ];
+    }
+
+    function renderScenario(result, input) {
+      state.lastResult = result;
+      updateMiniStats(result);
+      if (!result || !result.best) {
+        screenResults.innerHTML = `<div class="empty-state"><div><strong>Nessuna proposta trovata</strong><div>Controlla i dati inseriti o il mapping delle colonne del foglio Google.</div></div></div>${renderDebugCard()}`;
+        printSheet.innerHTML = '';
+        return;
+      }
+
+      const bestName = typeof result.best.name === 'string'
+        ? result.best.name
+        : (result.best.mobile?.name || result.best.fixed?.name || result.best.energy?.name || 'Proposta bundle');
+
+      const pills = [];
+      if (result.best.mobile) {
+        pills.push(`<span class="pill">Mobile: ${sanitizeHtml(result.best.mobile.name)}</span>`);
+        pills.push(`<span class="pill">Giga: ${sanitizeHtml(result.best.mobile.effectiveUnlimited ? 'Illimitati' : `${result.best.mobile.effectiveGb} GB`)}</span>`);
+        pills.push(`<span class="pill">5G: ${result.best.mobile.fiveg ? 'Sì' : 'No / non indicato'}</span>`);
+      } else if (result.best.gb !== undefined) {
+        pills.push(`<span class="pill">Giga: ${sanitizeHtml(result.best.effectiveUnlimited ? 'Illimitati' : `${result.best.effectiveGb} GB`)}</span>`);
+        pills.push(`<span class="pill">5G: ${result.best.fiveg ? 'Sì' : 'No / non indicato'}</span>`);
+      }
+      if (result.best.fixed) pills.push(`<span class="pill">Fisso: ${sanitizeHtml(result.best.fixed.name)}</span>`);
+      if (result.best.energy) pills.push(`<span class="pill">Energia: ${sanitizeHtml(result.best.energy.name)}</span>`);
+      if (result.best.technology) pills.push(`<span class="pill">Tecnologia: ${sanitizeHtml(result.best.technology || '—')}</span>`);
+      if (result.best.punMonth) pills.push(`<span class="pill">PUN: ${sanitizeHtml(capitalize(result.best.punMonth))}</span>`);
+
+      const notesHtml = (result.notes || []).map(n => `
+        <div class="list-item">
+          <div>
+            <strong>${sanitizeHtml(n)}</strong>
+          </div>
+        </div>
+      `).join('');
+
+      const tableHtml = (result.tableRows || []).map(([label, value]) => `
+        <tr>
+          <td>${sanitizeHtml(label)}</td>
+          <td>${sanitizeHtml(String(value))}</td>
+        </tr>
+      `).join('');
+
+      const alternativesHtml = (result.alternatives || []).length
+        ? `<div class="alt-card">
+            <h4>Alternative valide</h4>
+            ${(result.alternatives || []).map(alt => renderAlternative(alt, result.scenario)).join('')}
+          </div>`
+        : '';
+
+      screenResults.innerHTML = `
+        <div class="results-grid">
+          <div>
+            <article class="offer-card">
+              <div class="offer-top">
+                <div>
+                  <div class="eyebrow">${sanitizeHtml(result.title)}</div>
+                  <h3>${sanitizeHtml(bestName)}</h3>
+                  <div style="color: var(--muted); line-height: 1.55; font-size: 14px;">
+                    Confronto costruito sui dati attuali del cliente e sul foglio offerte live.
+                  </div>
+                </div>
+                <div class="price-big">
+                  <strong>${euro(result.proposedMonthly)}</strong>
+                  <span>${sanitizeHtml(result.proposedLabel)}<br>${result.currentMonthly ? `Attuale: ${euro(result.currentMonthly)}` : ''}</span>
+                </div>
+              </div>
+              <div class="offer-body">
+                <div class="pill-row">${pills.join('')}</div>
+                <div class="breakdown">
+                  <div class="info-box">
+                    <div class="label">Spesa attuale</div>
+                    <div class="value">${euro(result.currentMonthly)}</div>
+                    <div class="sub">${sanitizeHtml(result.currentLabel)}</div>
+                  </div>
+                  <div class="info-box ${result.savingsMonthly >= 0 ? 'positive' : 'negative'}">
+                    <div class="label">Risparmio mensile</div>
+                    <div class="value">${euro(result.savingsMonthly)}</div>
+                    <div class="sub">Differenza tra situazione attuale e proposta</div>
+                  </div>
+                  <div class="info-box ${result.savingsAnnual >= 0 ? 'positive' : 'negative'}">
+                    <div class="label">Risparmio annuale</div>
+                    <div class="value">${euro(result.savingsAnnual)}</div>
+                    <div class="sub">Proiezione su 12 mesi</div>
+                  </div>
+                  <div class="info-box">
+                    <div class="label">Valore proposta</div>
+                    <div class="value">${sanitizeHtml(bestName)}</div>
+                    <div class="sub">Proposta più adatta nello scenario selezionato</div>
+                  </div>
+                </div>
+
+                <table class="detail-table">
+                  <thead>
+                    <tr>
+                      <th>Voce</th>
+                      <th>Dettaglio</th>
+                    </tr>
+                  </thead>
+                  <tbody>${tableHtml}</tbody>
+                </table>
+              </div>
+            </article>
+            ${alternativesHtml}
+          </div>
+
+          <div>
+            <aside class="summary-card">
+              <h4>Perché questa è la proposta consigliata</h4>
+              <div class="list-clean">${notesHtml}</div>
+              <div class="small-note">
+                Il preventivo stampabile riporta la proposta con validità commerciale di <strong>${CONFIG.validDaysQuote} giorni</strong>.
+              </div>
+            </aside>
+            ${renderDebugCard()}
+          </div>
+        </div>
+      `;
+
+      buildPrintSheet(result, input);
+    }
+
+    function renderAlternative(alt, scenario) {
+      let name = 'Alternativa';
+      let monthly = 0;
+      let save = 0;
+      if (scenario === 'mobile') {
+        name = alt.name;
+        monthly = alt.yearlyAvg;
+        save = alt.monthlySaving;
+      } else if (scenario === 'fisso') {
+        name = alt.name;
+        monthly = alt.yearlyAvg;
+        save = alt.monthlySaving;
+      } else if (scenario === 'energia') {
+        name = alt.name;
+        monthly = alt.estimatedMonthly;
+        save = alt.monthlySaving;
+      } else {
+        const pieces = [alt.mobile?.name, alt.fixed?.name, alt.energy?.name].filter(Boolean);
+        name = pieces.join(' + ');
+        monthly = (alt.mobile?.yearlyAvg || 0) + (alt.fixed?.yearlyAvg || 0) + (alt.energy?.estimatedMonthly || 0);
+      }
+      return `
+        <div class="alt-offer">
+          <strong>${sanitizeHtml(name)}</strong>
+          <small>Costo stimato: ${euro(monthly)}${save ? ` • Risparmio: ${euro(save)}/mese` : ''}</small>
+        </div>
+      `;
+    }
+
+    function renderDebugCard() {
+      const recognized = [
+        `CONSUMER: ${state.parsed.consumer.length} offerte`,
+        `MNP: ${state.parsed.mnp.length} offerte`,
+        `FISSO: ${state.parsed.fixed.length} offerte`,
+        `ENERGY: ${state.parsed.energy.length} offerte`,
+        `PUN: ${state.parsed.pun.length} valori`,
+      ].join('\n');
+      const content = `${recognized}\n\n${state.debug.join('\n')}`;
+      return `
+        <div class="debug-card">
+          <h4>Debug dati letti</h4>
+          <pre class="debug-pre">${sanitizeHtml(content)}</pre>
+        </div>
+      `;
+    }
+
+    function updateMiniStats(result) {
+      if (!result) return;
+      const bestLabel = typeof result.best?.name === 'string'
+        ? result.best.name
+        : [result.best?.mobile?.name, result.best?.fixed?.name, result.best?.energy?.name].filter(Boolean).join(' + ');
+      miniStats.innerHTML = `
+        <div class="stat">
+          <span class="kicker">Scenario</span>
+          <strong>${sanitizeHtml(result.title)}</strong>
+          <small>Confronto attivo visualizzato</small>
+        </div>
+        <div class="stat">
+          <span class="kicker">Risparmio mensile</span>
+          <strong class="${result.savingsMonthly >= 0 ? 'money-pos' : 'money-neg'}">${euro(result.savingsMonthly)}</strong>
+          <small>Delta rispetto alla spesa attuale</small>
+        </div>
+        <div class="stat">
+          <span class="kicker">Risparmio annuale</span>
+          <strong class="${result.savingsAnnual >= 0 ? 'money-pos' : 'money-neg'}">${euro(result.savingsAnnual)}</strong>
+          <small>Proiezione su 12 mesi</small>
+        </div>
+        <div class="stat">
+          <span class="kicker">Miglior proposta</span>
+          <strong>${sanitizeHtml(bestLabel || '—')}</strong>
+          <small>Soluzione consigliata nello scenario selezionato</small>
+        </div>
+      `;
+    }
+
+    function buildPrintSheet(result, input) {
+      const fullName = [input.nome, input.cognome].filter(Boolean).join(' ');
+      const now = new Date();
+      const validTo = new Date(now.getTime() + CONFIG.validDaysQuote * 24 * 60 * 60 * 1000);
+      const fmtDate = d => new Intl.DateTimeFormat('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
+      const rows = (result.tableRows || []).map(([label, value]) => `<tr><td>${sanitizeHtml(label)}</td><td>${sanitizeHtml(String(value))}</td></tr>`).join('');
+      const notes = (result.notes || []).map(n => `<li>${sanitizeHtml(n)}</li>`).join('');
+      const offerName = typeof result.best?.name === 'string'
+        ? result.best.name
+        : [result.best?.mobile?.name, result.best?.fixed?.name, result.best?.energy?.name].filter(Boolean).join(' + ');
+
+      printSheet.innerHTML = `
+        <div class="print-head">
+          <h1>Preventivo comparativo Wind3</h1>
+          <p>
+            Cliente: <strong>${sanitizeHtml(fullName || 'Cliente')}</strong>
+            ${input.telefono ? ` • Telefono: <strong>${sanitizeHtml(input.telefono)}</strong>` : ''}
+            ${input.email ? ` • Email: <strong>${sanitizeHtml(input.email)}</strong>` : ''}<br>
+            Data preventivo: <strong>${fmtDate(now)}</strong> • Validità commerciale: <strong>${CONFIG.validDaysQuote} giorni</strong>, fino al <strong>${fmtDate(validTo)}</strong>.
+          </p>
+        </div>
+
+        <div class="print-block">
+          <h2>Scenario consigliato</h2>
+          <div class="print-grid">
+            <div class="print-mini">Scenario<strong>${sanitizeHtml(result.title)}</strong></div>
+            <div class="print-mini">Proposta<strong>${sanitizeHtml(offerName || '—')}</strong></div>
+            <div class="print-mini">Spesa attuale<strong>${euro(result.currentMonthly)}</strong></div>
+            <div class="print-mini">Spesa proposta<strong>${euro(result.proposedMonthly)}</strong></div>
+            <div class="print-mini">Risparmio mensile<strong>${euro(result.savingsMonthly)}</strong></div>
+            <div class="print-mini">Risparmio annuale<strong>${euro(result.savingsAnnual)}</strong></div>
+          </div>
+          <table class="print-table">
+            <thead><tr><th>Voce</th><th>Dettaglio</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+
+        <div class="print-block">
+          <h2>Note di trasparenza commerciale</h2>
+          <ul style="margin:0; padding-left: 18px; line-height:1.5; font-size: 11px;">
+            ${notes}
+          </ul>
+        </div>
+
+        <div class="print-block">
+          <h2>Dati attuali del cliente</h2>
+          <table class="print-table">
+            <thead><tr><th>Area</th><th>Situazione attuale</th></tr></thead>
+            <tbody>
+              <tr><td>Mobile</td><td>${sanitizeHtml(input.mobile.operatore || '—')} • ${euro(input.mobile.prezzo)} • ${input.mobile.gb ? `${sanitizeHtml(String(input.mobile.gb))} GB` : 'GB non indicati'} • 5G: ${input.mobile.fiveg ? 'Sì' : 'No'}</td></tr>
+              <tr><td>Fisso</td><td>${sanitizeHtml(input.fisso.operatore || '—')} • ${sanitizeHtml(input.fisso.tecnologia || 'Tecnologia non indicata')} • ${euro(input.fisso.prezzo)}</td></tr>
+              <tr><td>Energia</td><td>${sanitizeHtml(input.energia.operatore || '—')} • ${euro(currentEnergyMonthly(input.energia))} media • ${sanitizeHtml(capitalize(input.energia.meseRef || ''))} come mese di riferimento PUN</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="print-foot">
+          Il presente prospetto ha finalità informative e commerciali di supporto in negozio. Gli importi energia sono stime basate sui consumi inseriti,
+          sul mese PUN selezionato e sulle condizioni rilevate dal foglio Google. Eventuali costi una tantum, attivazione, rimodulazioni o condizioni contrattuali
+          definitive vanno sempre verificate prima dell’attivazione. Le offerte indicate in questo preventivo restano valide per ${CONFIG.validDaysQuote} giorni.
+        </div>
+      `;
+    }
+
+    function analyzeCurrentScenario() {
+      if (!state.loaded) {
+        screenResults.innerHTML = `<div class="empty-state"><div><strong>Prima carica il foglio offerte</strong><div>Clicca su “Carica / aggiorna offerte dal foglio”.</div></div></div>`;
+        return;
+      }
+      const input = getCustomerInput();
+      const result = makeScenarioResult(state.selectedScenario, input);
+      renderScenario(result, input);
+    }
+
+    function resetFields() {
+      document.querySelectorAll('input').forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+        else el.value = '';
+      });
+      document.querySelectorAll('select').forEach(el => {
+        if (el.id === 'mobileTipo') el.value = 'mnp';
+        else if (el.id === 'energiaPeriodo') el.value = 'mensile';
+        else if (el.id === 'energiaMeseRef') el.value = defaultMonths[new Date().getMonth()];
+        else el.selectedIndex = 0;
+      });
+      screenResults.innerHTML = `<div class="empty-state"><div><strong>Campi resettati</strong><div>Inserisci i nuovi dati del cliente per una nuova comparazione.</div></div></div>`;
+      printSheet.innerHTML = '';
+      miniStats.innerHTML = `
+        <div class="stat"><span class="kicker">Scenario</span><strong>—</strong><small>Nessuna analisi eseguita</small></div>
+        <div class="stat"><span class="kicker">Risparmio mensile</span><strong>—</strong><small>Attendi il confronto</small></div>
+        <div class="stat"><span class="kicker">Risparmio annuale</span><strong>—</strong><small>Attendi il confronto</small></div>
+        <div class="stat"><span class="kicker">Miglior proposta</span><strong>—</strong><small>Attendi il confronto</small></div>
+      `;
+    }
+
+    document.getElementById('loadDataBtn').addEventListener('click', loadAllSheets);
+    document.getElementById('analyzeBtn').addEventListener('click', analyzeCurrentScenario);
+    document.getElementById('printBtn').addEventListener('click', () => {
+      if (!state.lastResult) analyzeCurrentScenario();
+      if (state.lastResult) window.print();
     });
-  });
-}
+    document.getElementById('resetBtn').addEventListener('click', resetFields);
 
-function buildRecommendations(){
-  const ctx = currentContext();
-  const pkg = buildPackage(ctx);
-  renderPackagePills(ctx);
-  renderSummary(pkg);
-  renderMobile(pkg);
-  renderFixed(pkg);
-  renderEnergy(pkg);
-  renderBreakdowns(pkg);
-  bindAlternativeSelectors();
-}
+    document.querySelectorAll('.selector-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.selector-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.selectedScenario = btn.dataset.scenario;
+        if (state.loaded) analyzeCurrentScenario();
+      });
+    });
 
-document.getElementById('compareBtn').addEventListener('click', buildRecommendations);
-document.getElementById('printBtn').addEventListener('click', ()=>window.print());
-document.getElementById('demoBtn').addEventListener('click', ()=>{
-  els.customerName.value='Andrea';
-  els.customerSurname.value='Mazzei';
-  els.customerPhone.value='3480638042';
-  els.mobileActivationType.value='mnp';
-  updateActivationUi();
-  els.mobileOperator.value='Iliad';
-  els.mobileGb.value='150';
-  els.mobilePrice.value='9.99';
-  els.mobile5g.value='si';
-  els.mobilePaymentMode.value='any';
-  els.fixedOperator.value='Fastweb';
-  els.fixedPrice.value='27.90';
-  els.fixedCoverage.value='ftth';
-  els.fixedNetflix.value='no';
-  els.energyAmount.value='524';
-  els.energyCycle.value='bimestrale';
-  els.energyKwh.value='1037';
-  els.customerRateKwh.value='0.25';
-  els.gasSmc.value='';
-  els.customerRateGas.value='';
-  els.billPeriod.value='Dicembre 2025';
-  OVERRIDES.mobileId = null;
-  OVERRIDES.fixedId = null;
-  ACTIVE_PACKAGE='mobile_fixed_energy';
-  renderPackageButtons();
-  buildRecommendations();
-});
-els.mobileActivationType.addEventListener('change', updateActivationUi);
-loadAllSheets();
-</script>
+    fillMonths();
+  </script>
 </body>
 </html>
