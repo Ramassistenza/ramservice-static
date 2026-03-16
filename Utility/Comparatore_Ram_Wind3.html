@@ -209,13 +209,15 @@
     </section>
 
 
-    <section class="panel no-print">
-      <div class="section-title">
-        <h2>Stato caricamento listini</h2>
-        <span class="badge green" id="sheetStatusBadge">In attesa</span>
-      </div>
-      <div id="sheetStatusMessage" class="inline-alert">Sto preparando il caricamento automatico dei fogli Google.</div>
-      <div id="sheetStatusBoard" class="status-board" style="margin-top:14px;"></div>
+    <section class="panel no-print" style="padding:14px 18px;">
+      <details id="sheetStatusDetails">
+        <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800;">
+          <span>Stato caricamento listini</span>
+          <span class="badge green" id="sheetStatusBadge">In attesa</span>
+        </summary>
+        <div id="sheetStatusMessage" class="inline-alert" style="margin-top:12px;">Sto preparando il caricamento automatico dei fogli Google.</div>
+        <div id="sheetStatusBoard" class="status-board" style="margin-top:14px;"></div>
+      </details>
       <div class="subtle-box" style="margin-top:14px;">
         <strong>Istruzioni energia:</strong> gli indici <strong>PUN/PSV</strong> vengono caricati automaticamente dal foglio.
         Compila manualmente solo gli eventuali campi <strong>spread</strong>, <strong>quote fisse</strong> o altri costi commerciali se il listino interno del negozio cambia.
@@ -484,10 +486,30 @@
       const op = String(operator || '').trim().toLowerCase();
       const allowed = splitList(offer.allowed || offer.operatori_ammessi || '');
       const excluded = splitList(offer.excluded || offer.operatori_esclusi || '');
+      if (!op) return !excluded.length;
       if (excluded.some(x => op.includes(x))) return false;
       if (!allowed.length) return true;
       if (allowed.some(x => x.includes('tutti'))) return true;
       return allowed.some(x => op.includes(x) || x.includes(op));
+    }
+    function operatorNotExcluded(offer, operator) {
+      const op = String(operator || '').trim().toLowerCase();
+      const excluded = splitList(offer.excluded || offer.operatori_esclusi || '');
+      if (!op) return true;
+      return !excluded.some(x => op.includes(x));
+    }
+    function fixedTechMatches(offer, tech) {
+      const t = String(tech || '').toLowerCase();
+      const o = String(offer.tecnologia || '').toLowerCase();
+      if (!t) return true;
+      if (t.includes('fwa')) return o.includes('fwa');
+      if (t.includes('nga')) return o.includes('nga') || o.includes('multiservice');
+      if (t.includes('fttc')) return o.includes('fttc') || o.includes('multiservice');
+      if (t.includes('ftth')) return o.includes('ftth') || o.includes('multiservice');
+      return true;
+    }
+    function mobileScore(offer, customer, price, gbValue, bonus = 0) {
+      return ((customer.mobile.prezzo - price) * 12) + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + ((offer.fiveg && !customer.mobile.fiveg) ? 3 : 0) + bonus - (offer.attivazione || 0) * 0.2;
     }
     function readCustomer() {
       const freq = getValue('energiaFreq');
@@ -695,45 +717,45 @@
       return conv.includes('luce_gas') || conv.includes('entrambi') || x.richiede_luce_gas;
     }
     function bestMobileFixedBundleNew(customer) {
-      const options = DATA.consumer
+      let options = DATA.consumer
         .filter(x => x.attiva !== 0)
         .filter(x => !x.richiede_second_sim)
         .filter(x => isFixedBundleConsumerOffer(x))
-        .filter(x => !isEnergyBundleConsumerOffer(x))
-        .map(x => {
+        .filter(x => !isEnergyBundleConsumerOffer(x));
+      if (!options.length) return null;
+      return options.map(x => {
           const price = x.prezzo_conv || x.prezzo;
-          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb);
-          const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 6 : 2);
+          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
+          const score = mobileScore(x, customer, price, gbValue, x.richiede_super_fibra ? 6 : 2);
           return { ...x, effectivePrice: price, score };
         })
-        .sort((a,b) => b.score - a.score || byPriority(a,b));
-      return options[0] || null;
+        .sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
     function bestMobileFixedBundleMnp(customer) {
-      const base = DATA.mnp
+      let base = DATA.mnp
         .filter(x => x.attiva !== 0)
-        .filter(x => operatorMatches(x, customer.mobile.operatore))
         .filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
+      const strict = base.filter(x => operatorMatches(x, customer.mobile.operatore));
+      if (strict.length) base = strict;
+      else base = base.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
       return base.map(x => {
         const price = x.prezzo;
-        const gbValue = x.giga_illimitati || x.conv_giga_illimitati ? 9999 : x.gb;
-        const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.richiede_super_fibra ? 8 : 2);
+        const gbValue = (x.giga_illimitati || x.conv_giga_illimitati) ? 9999 : (x.gb || 0);
+        const score = mobileScore(x, customer, price, gbValue, x.richiede_super_fibra ? 8 : 2);
         return { ...x, effectivePrice: price, score };
       }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
     function bestMobileTripleBundleAny(customer) {
-      const options = DATA.energyMobile
+      let options = DATA.energyMobile
         .filter(x => x.attiva !== 0)
-        .filter(x => x.richiede_luce_gas)
-        .filter(x => x.richiede_super_fibra)
-        .map(x => {
+        .filter(x => String(x.conv_tipo || '').toLowerCase().includes('entrambi') || x.richiede_super_fibra || x.richiede_luce_gas);
+      return options.map(x => {
           const price = x.prezzo_conv || x.prezzo;
-          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb);
-          const score = (customer.mobile.prezzo - price) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + 10;
+          const gbValue = x.giga_illimitati_conv ? 9999 : (x.gb_conv || x.gb || 0);
+          const score = mobileScore(x, customer, price, gbValue, 10);
           return { ...x, effectivePrice: price, score };
         })
-        .sort((a,b) => b.score - a.score || byPriority(a,b));
-      return options[0] || null;
+        .sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
     async function loadRemoteData() {
       const meta = {};
@@ -763,9 +785,10 @@
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
         if (ds) ds.textContent = 'Google Sheets OK';
-        const msg = `Foglio Google caricato correttamente. Righe trovate: <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`;
+        const msg = `Google Sheets collegato: <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`;
         setSheetStatus('ok', msg, meta);
-        els.resultAlert.innerHTML = `<div class="inline-alert">Listini caricati correttamente da Google Sheets. Ora il comparatore usa i dati aggiornati del foglio condiviso.</div>`;
+        const details = document.getElementById('sheetStatusDetails'); if (details) details.open = false;
+        els.resultAlert.innerHTML = `<div class="inline-alert">Listini online attivi e aggiornati. Puoi avviare i confronti della sezione 3.</div>`;
       } catch (err) {
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
@@ -775,7 +798,7 @@
         meta.fixed = { loaded:false, count:DATA.fixed.length, source:'listino integrato' };
         meta.energyMobile = { loaded:false, count:DATA.energyMobile.length, source:'listino integrato' };
         meta.pun = { loaded:false, count:DATA.pun.length, source:'listino integrato' };
-        setSheetStatus('fallback', 'Caricamento automatico non riuscito. Lo strumento sta usando il listino integrato nel file. Verifica condivisione del foglio Google o eventuali blocchi del browser.', meta);
+        setSheetStatus('fallback', 'Caricamento automatico non riuscito: lo strumento sta usando il listino integrato nel file.', meta);
         els.resultAlert.innerHTML = `<div class="inline-alert">Caricamento automatico non riuscito. Lo strumento usa il listino integrato nel file.</div>`;
         console.error(err);
       }
@@ -783,52 +806,47 @@
 
     function bestMobileStandalone(customer, forcedType = null) {
       const type = forcedType || customer.mobile.tipo;
-      const source = type === 'mnp'
-        ? DATA.mnp.filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso)
-        : DATA.consumer.filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim && !isEnergyBundleConsumerOffer(x));
-      const options = source
-        .filter(x => x.attiva !== 0)
-        .filter(x => type !== 'mnp' || operatorMatches(x, customer.mobile.operatore))
-        .map(x => {
-          const gbValue = x.giga_illimitati ? 9999 : x.gb;
-          const score = (customer.mobile.prezzo - x.prezzo) * 12 + Math.max(0, gbValue - customer.mobile.gb) * 0.03 + (x.fiveg && !customer.mobile.fiveg ? 3 : 0) - (x.attivazione || 0) * 0.2;
+      let options = [];
+      if (type === 'mnp') {
+        options = DATA.mnp
+          .filter(x => x.attiva !== 0)
+          .filter(x => !x.richiede_super_fibra && !x.conv_giga_illimitati && !x.applica_sconto_fisso);
+        const strict = options.filter(x => operatorMatches(x, customer.mobile.operatore));
+        if (strict.length) options = strict;
+        else options = options.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
+      } else {
+        options = DATA.consumer
+          .filter(x => x.attiva !== 0)
+          .filter(x => !x.richiede_fisso && !x.richiede_super_fibra && !x.richiede_second_sim)
+          .filter(x => !isEnergyBundleConsumerOffer(x));
+      }
+      return options.map(x => {
+          const gbValue = x.giga_illimitati ? 9999 : (x.gb || 0);
+          const score = mobileScore(x, customer, x.prezzo, gbValue, 0);
           return { ...x, kind: type === 'mnp' ? 'mnp' : 'consumer', effectivePrice: x.prezzo, score };
         })
-        .sort((a,b) => b.score - a.score || byPriority(a,b));
-      return options[0] || null;
+        .sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
     }
 
     function bestFixed(customer, mode='solo', requireMulti=false) {
       const wantsNetflix = customer.fixed.netflix;
-      const tech = customer.fixed.tech;
-      let options = DATA.fixed.filter(x => x.attiva !== 0);
-
-      options = options.filter(x => {
-        if (tech === 'FWA') return x.tecnologia === 'FWA';
-        if (x.tecnologia === 'FWA') return false;
-        if (tech === 'FTTC NGA') return x.tecnologia.includes('FTTC NGA') || x.tecnologia.includes('FTTH | FTTC');
-        if (tech === 'FTTC 100/200/EXTRA') return x.tecnologia.includes('FTTC 100/200/EXTRA') || x.tecnologia.includes('FTTH | FTTC');
-        if (tech === 'FTTH Open Fiber') return x.tecnologia.includes('FTTH') || x.tecnologia.includes('FTTH | FTTC');
-        return true;
-      });
-
-      if (wantsNetflix === 'no') {
-        options = options.filter(x => !x.netflix);
-      } else if (wantsNetflix === 'con') {
-        options = options.filter(x => String(x.variante).includes('con_pub'));
-      } else if (wantsNetflix === 'senza') {
-        options = options.filter(x => String(x.variante).includes('senza_pub'));
+      let options = DATA.fixed.filter(x => x.attiva !== 0).filter(x => fixedTechMatches(x, customer.fixed.tech));
+      if (!options.length) options = DATA.fixed.filter(x => x.attiva !== 0);
+      if (wantsNetflix === 'no') options = options.filter(x => !x.netflix);
+      else if (wantsNetflix === 'con') options = options.filter(x => String(x.variante).includes('con_pub'));
+      else if (wantsNetflix === 'senza') options = options.filter(x => String(x.variante).includes('senza_pub'));
+      if (requireMulti) {
+        const multi = options.filter(x => x.scenario === 'multiservice');
+        if (multi.length) options = multi;
+      } else if (mode === 'solo') {
+        const solo = options.filter(x => x.scenario !== 'multiservice');
+        if (solo.length) options = solo;
       }
-
-      if (requireMulti) options = options.filter(x => x.scenario === 'multiservice');
-      else if (mode === 'solo') options = options.filter(x => x.scenario !== 'multiservice');
-
       options = options.map(x => ({
         ...x,
-        effectivePrice: mode === 'solo' ? x.prezzo : (x.prezzo_conv || x.prezzo),
-        score: ((customer.fixed.prezzo - (mode === 'solo' ? x.prezzo : (x.prezzo_conv || x.prezzo))) * 12) + (x.netflix ? 3 : 0) + (x.amazon ? 2 : 0) - (x.attivazione_mese || 0)
+        effectivePrice: mode === 'solo' ? (x.prezzo || 0) : (x.prezzo_conv || x.prezzo || 0),
+        score: ((customer.fixed.prezzo - (mode === 'solo' ? (x.prezzo || 0) : (x.prezzo_conv || x.prezzo || 0))) * 12) + (x.netflix ? 3 : 0) + (x.amazon ? 2 : 0) - (x.attivazione_mese || 0)
       })).sort((a,b) => b.score - a.score || byPriority(a,b));
-
       return options[0] || null;
     }
 
