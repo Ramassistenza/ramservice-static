@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gestione Cassa MazzoBotOVER</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+input,select,button{
+padding:10px;
+border-radius:6px;
+border:none;
+margin:5px;
+}
+
+button{
+background:#22c55e;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+.result{
+font-size:20px;
+margin-top:10px;
+}
+
+.table{
+width:100%;
+margin-top:10px;
+border-collapse:collapse;
+}
+
+.table td{
+border-bottom:1px solid #334155;
+padding:8px;
+}
+
+.win{
+color:#22c55e;
+}
+
+.loss{
+color:#ef4444;
+}
+
+.stop{
+color:#f59e0b;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📊 Gestione Cassa MazzoBotOVER</h1>
+
+<div class="card">
+
+<h3>⚙️ Impostazioni</h3>
+
+Cassa 1
+<input id="bank1" type="number" value="300">
+
+Cassa 2
+<input id="bank2" type="number" value="1000">
+
+Take Profit %
+<input id="take" type="number" value="5">
+
+Stop Loss %
+<input id="stop" type="number" value="8">
+
+<button onclick="init()">Inizia Sessione</button>
+
+</div>
+
+<div class="card">
+
+<h3>🎯 Inserisci Giocata</h3>
+
+Quota
+<input id="quota" type="number" step="0.01" value="1.63">
+
+Esito
+
+<select id="esito">
+<option value="win">WIN</option>
+<option value="loss">LOSS</option>
+</select>
+
+<button onclick="giocata()">Registra</button>
+
+<div class="result" id="status"></div>
+
+</div>
+
+<div class="card">
+
+<h3>💰 Stato Casse</h3>
+
+<div id="bankstatus"></div>
+
+</div>
+
+<div class="card">
+
+<h3>📋 Cronologia</h3>
+
+<table class="table" id="log"></table>
+
+</div>
+
+</div>
+
+<script>
+
+let bank1
+let bank2
+let start1
+let start2
+
+function init(){
+
+bank1=parseFloat(document.getElementById("bank1").value)
+bank2=parseFloat(document.getElementById("bank2").value)
+
+start1=bank1
+start2=bank2
+
+update()
+
+}
+
+function stake(bank){
+
+return (bank*0.05)
+
+}
+
+function giocata(){
+
+let quota=parseFloat(document.getElementById("quota").value)
+let esito=document.getElementById("esito").value
+
+let stake1=stake(bank1)
+let stake2=stake(bank2)
+
+let profit1=stake1*(quota-1)
+let profit2=stake2*(quota-1)
+
+if(esito=="win"){
+
+bank1+=profit1
+bank2+=profit2
+
+}else{
+
+bank1-=stake1
+bank2-=stake2
+
+}
+
+let row=document.createElement("tr")
+
+row.innerHTML=`
+<td>${quota}</td>
+<td class="${esito}">${esito.toUpperCase()}</td>
+<td>${bank1.toFixed(2)}€</td>
+<td>${bank2.toFixed(2)}€</td>
+`
+
+document.getElementById("log").prepend(row)
+
+checkStop()
+
+update()
+
+}
+
+function checkStop(){
+
+let take=document.getElementById("take").value/100
+let stop=document.getElementById("stop").value/100
+
+let status=""
+
+if(bank2 >= start2*(1+take)){
+
+status="🎯 TAKE PROFIT raggiunto - fermati oggi"
+
+}
+
+if(bank2 <= start2*(1-stop)){
+
+status="🛑 STOP LOSS raggiunto - fermati oggi"
+
+}
+
+document.getElementById("status").innerHTML=status
+
+}
+
+function update(){
+
+let s1=stake(bank1)
+let s2=stake(bank2)
+
+document.getElementById("bankstatus").innerHTML=
+
+`
+Cassa 300 → ${bank1.toFixed(2)}€ | Stake prossimo: ${s1.toFixed(2)}€ <br><br>
+Cassa 1000 → ${bank2.toFixed(2)}€ | Stake prossimo: ${s2.toFixed(2)}€
+`
+
+}
+
+</script>
+
+</body>
+</html>
