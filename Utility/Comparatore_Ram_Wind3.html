@@ -209,19 +209,15 @@
     </section>
 
 
-    <section class="panel no-print" style="padding:14px 18px;">
+    <section class="panel no-print" style="padding:12px 16px;">
       <details id="sheetStatusDetails">
-        <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800;">
-          <span>Stato caricamento listini</span>
+        <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:700; color:var(--muted); font-size:.92rem;">
+          <span>Diagnostica listini</span>
           <span class="badge green" id="sheetStatusBadge">In attesa</span>
         </summary>
         <div id="sheetStatusMessage" class="inline-alert" style="margin-top:12px;">Sto preparando il caricamento automatico dei fogli Google.</div>
         <div id="sheetStatusBoard" class="status-board" style="margin-top:14px;"></div>
       </details>
-      <div class="subtle-box" style="margin-top:14px;">
-        <strong>Istruzioni energia:</strong> gli indici <strong>PUN/PSV</strong> vengono caricati automaticamente dal foglio.
-        Compila manualmente solo gli eventuali campi <strong>spread</strong>, <strong>quote fisse</strong> o altri costi commerciali se il listino interno del negozio cambia.
-      </div>
     </section>
 
     <div class="grid grid-2">
@@ -242,19 +238,28 @@
       <section class="panel">
         <div class="section-title">
           <h2>Parametri energia WindTre</h2>
-          <span class="badge orange">Modificabili dal negozio</span>
+          <span class="badge orange">Mese visibile, resto su richiesta</span>
         </div>
         <div class="fields">
-          <div class="field"><label>Mese indice PUN/PSV</label><select id="energyMonth"></select></div>
-          <div class="field"><label>Spread luce €/kWh</label><input id="cfgPowerSpread" type="number" step="0.0001" value="0.0180" /></div>
-          <div class="field"><label>Quota fissa luce €/mese</label><input id="cfgPowerFixed" type="number" step="0.01" value="10.00" /></div>
-          <div class="field"><label>Sconto multiservizio luce €/mese</label><input id="cfgPowerBundleDiscount" type="number" step="0.01" value="2.00" /></div>
-          <div class="field"><label>Spread gas €/Smc</label><input id="cfgGasSpread" type="number" step="0.0001" value="0.1200" /></div>
-          <div class="field"><label>Quota fissa gas €/mese</label><input id="cfgGasFixed" type="number" step="0.01" value="10.00" /></div>
-          <div class="field"><label>Sconto multiservizio gas €/mese</label><input id="cfgGasBundleDiscount" type="number" step="0.01" value="2.00" /></div>
-          <div class="field"><label>Extra servizi energia €/mese</label><input id="cfgEnergyExtra" type="number" step="0.01" value="0.00" /></div>
+          <div class="field span-6"><label>Mese indice PUN/PSV</label><select id="energyMonth"></select></div>
+          <div class="field span-6">
+            <label>&nbsp;</label>
+            <details id="energyConfigDetails" style="border:1px solid var(--line); border-radius:12px; background:#f9fbfe; padding:10px 12px;">
+              <summary style="cursor:pointer; font-weight:800; color:var(--accent-2);">Apri parametri manuali energia</summary>
+              <div class="fields" style="margin-top:12px;">
+                <div class="field span-6"><label>Spread luce €/kWh</label><input id="cfgPowerSpread" type="number" step="0.0001" value="0.0180" /></div>
+                <div class="field span-6"><label>Quota fissa luce €/mese</label><input id="cfgPowerFixed" type="number" step="0.01" value="10.00" /></div>
+                <div class="field span-6"><label>Sconto multiservizio luce €/mese</label><input id="cfgPowerBundleDiscount" type="number" step="0.01" value="2.00" /></div>
+                <div class="field span-6"><label>Spread gas €/Smc</label><input id="cfgGasSpread" type="number" step="0.0001" value="0.1200" /></div>
+                <div class="field span-6"><label>Quota fissa gas €/mese</label><input id="cfgGasFixed" type="number" step="0.01" value="10.00" /></div>
+                <div class="field span-6"><label>Sconto multiservizio gas €/mese</label><input id="cfgGasBundleDiscount" type="number" step="0.01" value="2.00" /></div>
+                <div class="field span-12"><label>Extra servizi energia €/mese</label><input id="cfgEnergyExtra" type="number" step="0.01" value="0.00" /></div>
+              </div>
+              <p class="note" style="margin:10px 0 0;">Compila questi campi solo quando il listino interno del negozio cambia o devi fare una stima più precisa.</p>
+            </details>
+          </div>
         </div>
-        <p class="note">Questi valori servono per il preventivo luce/gas. Aggiornali quando cambia il listino del mese.</p>
+        <p class="note">Il mese PUN/PSV viene caricato dal file. I parametri manuali restano nascosti finché non servono.</p>
       </section>
     </div>
 
@@ -630,9 +635,10 @@
     async function fetchSheet(key, sheetName) {
       const gid = SHEET_GIDS[key];
       const attempts = [
-        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`, parser: parseGviz, source: 'gviz nome foglio' },
-        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${gid}&tqx=out:json`, parser: parseGviz, source: 'gviz gid' },
-        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`, parser: parseCsv, source: 'csv export' }
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`, parser: parseCsv, source: 'gviz csv nome foglio' },
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`, parser: parseCsv, source: 'csv export gid' },
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json`, parser: parseGviz, source: 'gviz json nome foglio' },
+        { url: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${gid}&tqx=out:json`, parser: parseGviz, source: 'gviz json gid' }
       ];
       let lastErr;
       for (const a of attempts) {
@@ -698,6 +704,26 @@
         mese:r.mese, f1:numv(r.f1), f2:numv(r.f2), f3:numv(r.f3), pun_avg:numv(r.pun_avg), pun_with_losses:numv(r.pun_with_losses), psv:numv(r.psv), note:r.note || ''
       })).filter(r => r.mese);
     }
+    function validateLoadedRows(key, rows) {
+      if (!Array.isArray(rows) || !rows.length) return false;
+      const sample = rows.slice(0, 5);
+      if (key === 'consumer') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0));
+      if (key === 'mnp') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0) && (r.operatori_ammessi || r.allowed || r.note));
+      if (key === 'fixed') return sample.some(r => r.nome && (r.tecnologia || r.scenario));
+      if (key === 'energyMobile') return sample.some(r => r.nome && (r.prezzo || r.prezzo === 0));
+      if (key === 'pun') return sample.some(r => r.mese && (r.pun_with_losses || r.pun_avg || r.psv));
+      return true;
+    }
+    function debugLogDataQuality() {
+      const msg = {
+        consumer: DATA.consumer.slice(0,2),
+        mnp: DATA.mnp.slice(0,2),
+        fixed: DATA.fixed.slice(0,2),
+        energyMobile: DATA.energyMobile.slice(0,2),
+        pun: DATA.pun.slice(0,2)
+      };
+      console.log('WindTre data quality', msg);
+    }
     function populateEnergyMonths() {
       els.energyMonth.innerHTML = '';
       DATA.pun.forEach(row => {
@@ -737,13 +763,18 @@
         .filter(x => x.richiede_super_fibra || x.applica_sconto_fisso || x.conv_giga_illimitati);
       const strict = base.filter(x => operatorMatches(x, customer.mobile.operatore));
       if (strict.length) base = strict;
-      else base = base.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
-      return base.map(x => {
-        const price = x.prezzo;
-        const gbValue = (x.giga_illimitati || x.conv_giga_illimitati) ? 9999 : (x.gb || 0);
+      else {
+        const notExcluded = base.filter(x => operatorNotExcluded(x, customer.mobile.operatore));
+        if (notExcluded.length) base = notExcluded;
+      }
+      let mapped = base.map(x => {
+        const price = x.prezzo_conv || x.prezzo;
+        const gbValue = (x.giga_illimitati || x.conv_giga_illimitati) ? 9999 : (x.gb_conv || x.gb || 0);
         const score = mobileScore(x, customer, price, gbValue, x.richiede_super_fibra ? 8 : 2);
         return { ...x, effectivePrice: price, score };
-      }).sort((a,b) => b.score - a.score || byPriority(a,b))[0] || null;
+      }).sort((a,b) => b.score - a.score || byPriority(a,b));
+      if (mapped.length) return mapped[0];
+      return bestMobileFixedBundleNew(customer);
     }
     function bestMobileTripleBundleAny(customer) {
       let options = DATA.energyMobile
@@ -767,28 +798,30 @@
           fetchSheet('energyMobile', REMOTE_SHEETS.energyMobile),
           fetchSheet('pun', REMOTE_SHEETS.pun)
         ]);
-        const consumer = mapConsumerRows(consumerPack.rows);
-        const mnp = mapMnpRows(mnpPack.rows);
-        const fixed = mapFixedRows(fixedPack.rows);
-        const energyMobile = mapEnergyRows(energyPack.rows);
-        const pun = mapPunRows(punPack.rows);
-        if (consumer.length) DATA.consumer = consumer;
-        if (mnp.length) DATA.mnp = mnp;
-        if (fixed.length) DATA.fixed = fixed;
-        if (energyMobile.length) DATA.energyMobile = energyMobile;
-        if (pun.length) DATA.pun = pun;
-        meta.consumer = { loaded:true, count:DATA.consumer.length, source:consumerPack.source };
-        meta.mnp = { loaded:true, count:DATA.mnp.length, source:mnpPack.source };
-        meta.fixed = { loaded:true, count:DATA.fixed.length, source:fixedPack.source };
-        meta.energyMobile = { loaded:true, count:DATA.energyMobile.length, source:energyPack.source };
-        meta.pun = { loaded:true, count:DATA.pun.length, source:punPack.source };
+        const mapped = {
+          consumer: mapConsumerRows(consumerPack.rows),
+          mnp: mapMnpRows(mnpPack.rows),
+          fixed: mapFixedRows(fixedPack.rows),
+          energyMobile: mapEnergyRows(energyPack.rows),
+          pun: mapPunRows(punPack.rows)
+        };
+        const packs = {consumer:consumerPack,mnp:mnpPack,fixed:fixedPack,energyMobile:energyPack,pun:punPack};
+        Object.keys(mapped).forEach(key => {
+          const ok = validateLoadedRows(key, mapped[key]);
+          if (ok) DATA[key] = mapped[key];
+          meta[key] = { loaded: ok, count: DATA[key].length, source: ok ? packs[key].source : 'listino integrato (fallback qualità)' };
+        });
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
         if (ds) ds.textContent = 'Google Sheets OK';
-        const msg = `Google Sheets collegato: <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`;
-        setSheetStatus('ok', msg, meta);
+        const allOk = Object.values(meta).every(x => x.loaded);
+        const msg = allOk
+          ? `Listini online sincronizzati. <strong>CONSUMER ${DATA.consumer.length}</strong>, <strong>MNP ${DATA.mnp.length}</strong>, <strong>FISSO ${DATA.fixed.length}</strong>, <strong>ENERGY ${DATA.energyMobile.length}</strong>, <strong>PUN ${DATA.pun.length}</strong>.`
+          : `Listini online caricati con controllo qualità. Alcune sezioni non perfette sono rimaste sul listino integrato del file per evitare confronti errati.`;
+        setSheetStatus(allOk ? 'ok' : 'fallback', msg, meta);
         const details = document.getElementById('sheetStatusDetails'); if (details) details.open = false;
-        els.resultAlert.innerHTML = `<div class="inline-alert">Listini online attivi e aggiornati. Puoi avviare i confronti della sezione 3.</div>`;
+        els.resultAlert.innerHTML = `<div class="inline-alert">Listini online attivi. Se un foglio remoto ha dati incompleti, il sistema usa automaticamente il listino interno corretto.</div>`;
+        debugLogDataQuality();
       } catch (err) {
         populateEnergyMonths();
         const ds = document.getElementById('dataLoadStatus');
@@ -833,8 +866,13 @@
       let options = DATA.fixed.filter(x => x.attiva !== 0).filter(x => fixedTechMatches(x, customer.fixed.tech));
       if (!options.length) options = DATA.fixed.filter(x => x.attiva !== 0);
       if (wantsNetflix === 'no') options = options.filter(x => !x.netflix);
-      else if (wantsNetflix === 'con') options = options.filter(x => String(x.variante).includes('con_pub'));
-      else if (wantsNetflix === 'senza') options = options.filter(x => String(x.variante).includes('senza_pub'));
+      else if (wantsNetflix === 'con') {
+        const filtered = options.filter(x => String(x.variante).includes('con_pub'));
+        if (filtered.length) options = filtered;
+      } else if (wantsNetflix === 'senza') {
+        const filtered = options.filter(x => String(x.variante).includes('senza_pub'));
+        if (filtered.length) options = filtered;
+      }
       if (requireMulti) {
         const multi = options.filter(x => x.scenario === 'multiservice');
         if (multi.length) options = multi;
