@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>MazzoBotOVER Bankroll Mobile v3</title>
+  <title>MazzoBotOVER Bankroll Mobile v4</title>
   <meta name="theme-color" content="#0b1220" />
   <style>
     :root{
@@ -121,6 +121,7 @@
       font-size:14px;
       border:1px solid rgba(255,255,255,.08);
       margin-top:10px;
+      line-height:1.45;
     }
     .status-ok{background:rgba(25,195,125,.12);color:#cdfbe5;border-color:rgba(25,195,125,.32)}
     .status-stop{background:rgba(255,97,112,.12);color:#ffd7dc;border-color:rgba(255,97,112,.32)}
@@ -180,12 +181,13 @@
       display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px
     }
     .historyWrap{overflow:auto;border-radius:14px;border:1px solid var(--line)}
-    table{width:100%;border-collapse:collapse;min-width:760px}
+    table{width:100%;border-collapse:collapse;min-width:980px}
     th,td{
       padding:10px 9px;
       text-align:left;
       border-bottom:1px solid rgba(255,255,255,.06);
       font-size:13px;
+      vertical-align:top;
     }
     th{background:#0b1526;color:#d9e7ff;position:sticky;top:0}
     tr:last-child td{border-bottom:none}
@@ -196,13 +198,13 @@
 <body>
 <div class="app">
   <div class="hero">
-    <h1>📊 MazzoBotOVER<br>Bankroll Mobile v3</h1>
-    <p>Cassa aggressiva + cassa prudente con gestione automatica multi-segnale, esposizione massima, stop loss e take profit.</p>
+    <h1>📊 MazzoBotOVER<br>Bankroll Mobile v4</h1>
+    <p>Doppia quota separata per Cassa 1 e Cassa 2, gestione multi-segnale, prudente automatica, stop loss e take profit.</p>
   </div>
 
   <div class="card">
     <h2>⚙️ Configurazione</h2>
-    <div class="sub">La Cassa 2 riduce o salta automaticamente i segnali quando supera il rischio massimo contemporaneo.</div>
+    <div class="sub">La Cassa 2 può aprire pieno, ridotto oppure saltare automaticamente i segnali in base all’esposizione aperta.</div>
 
     <div class="grid2">
       <div>
@@ -263,16 +265,20 @@
 
   <div class="card">
     <h2>➕ Apri nuovo segnale</h2>
-    <div class="sub">La Cassa 2 decide da sola se aprire pieno, ridotto o saltare il segnale in base al rischio aperto.</div>
+    <div class="sub">Puoi inserire una quota diversa per ciascuna cassa.</div>
 
-    <div class="grid2">
+    <div class="grid3">
       <div>
         <label for="matchInput">Match / nota</label>
         <input id="matchInput" type="text" placeholder="Es. Twente vs Utrecht">
       </div>
       <div>
-        <label for="quotaInput">Quota</label>
-        <input id="quotaInput" type="number" step="0.01" value="1.63">
+        <label for="quota1Input">Quota Cassa 1</label>
+        <input id="quota1Input" type="number" step="0.01" value="1.63">
+      </div>
+      <div>
+        <label for="quota2Input">Quota Cassa 2</label>
+        <input id="quota2Input" type="number" step="0.01" value="1.63">
       </div>
     </div>
 
@@ -281,7 +287,7 @@
       <button class="secondary" id="simulateStakeBtn">Simula stake</button>
     </div>
 
-    <div id="stakePreview" class="big-status status-wait">Inserisci i dati e premi “Simula stake” oppure apri direttamente il segnale.</div>
+    <div id="stakePreview" class="big-status status-wait">Inserisci match e doppia quota, poi simula oppure apri direttamente il segnale.</div>
   </div>
 
   <div class="card">
@@ -324,7 +330,7 @@
 
   <div class="card">
     <h2>🟦 Segnali aperti</h2>
-    <div class="sub">Ogni segnale memorizza lo stake deciso al momento di apertura.</div>
+    <div class="sub">Ogni segnale salva stake e quota separati per ciascuna cassa.</div>
     <div id="openSignalsList"></div>
   </div>
 
@@ -336,10 +342,12 @@
           <tr>
             <th>Ora</th>
             <th>Match</th>
-            <th>Quota</th>
+            <th>Quota C1</th>
+            <th>Quota C2</th>
             <th>Esito</th>
             <th class="right">Stake C1</th>
             <th class="right">Stake C2</th>
+            <th>Nota C2</th>
             <th class="right">Cassa 1</th>
             <th class="right">Cassa 2</th>
           </tr>
@@ -360,20 +368,24 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = "mazzobotover_bankroll_mobile_v3";
+  const STORAGE_KEY = "mazzobotover_bankroll_mobile_v4";
 
   function todayString(){
     return new Date().toLocaleDateString("it-IT");
   }
+
   function nowTime(){
     return new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
   }
+
   function money(v){
     return new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(v || 0);
   }
+
   function round2(v){
     return Math.round((v || 0) * 100) / 100;
   }
+
   function calcStake(bank,pct){
     const val = round2(bank * pct / 100);
     return Math.max(0, Math.min(val, bank));
@@ -488,7 +500,6 @@
     if(state.config.bank2Mode === "skip"){
       return remaining >= base ? base : 0;
     }
-
     return round2(Math.min(base, remaining));
   }
 
@@ -618,9 +629,12 @@
         </div>
 
         <div class="signalMeta">
-          <div>Quota: <strong>${Number(sig.quota).toFixed(2)}</strong></div>
+          <div>Quota C1: <strong>${Number(sig.quota1).toFixed(2)}</strong></div>
+          <div>Quota C2: <strong>${Number(sig.quota2).toFixed(2)}</strong></div>
           <div>Stake C1: <strong>${money(sig.stake1)}</strong></div>
           <div>Stake C2: <strong>${money(sig.stake2)}</strong></div>
+          <div>Profitto WIN C1: <strong>${money(sig.stake1 * (sig.quota1 - 1))}</strong></div>
+          <div>Profitto WIN C2: <strong>${money(sig.stake2 * (sig.quota2 - 1))}</strong></div>
           <div>Modalità C2: <strong>${escapeHtml(sig.bank2Note || "Pieno")}</strong></div>
         </div>
 
@@ -637,7 +651,7 @@
     const list = state.day.history;
 
     if(!list.length){
-      tbody.innerHTML = `<tr><td colspan="8" style="color:#9db0d0">Nessuna giocata chiusa oggi.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" style="color:#9db0d0">Nessuna giocata chiusa oggi.</td></tr>`;
       return;
     }
 
@@ -645,10 +659,12 @@
       <tr>
         <td>${h.closeTime}</td>
         <td>${escapeHtml(h.match || "—")}</td>
-        <td>${Number(h.quota).toFixed(2)}</td>
+        <td>${Number(h.quota1).toFixed(2)}</td>
+        <td>${Number(h.quota2).toFixed(2)}</td>
         <td><span class="tag ${h.result}">${h.result.toUpperCase()}</span></td>
         <td class="right">${money(h.stake1)}</td>
         <td class="right">${money(h.stake2)}</td>
+        <td>${escapeHtml(h.bank2Note || "")}</td>
         <td class="right">${money(h.bank1After)}</td>
         <td class="right">${money(h.bank2After)}</td>
       </tr>
@@ -677,10 +693,12 @@
   }
 
   function previewStake(){
-    const quota = parseFloat($("quotaInput").value);
-    if(!quota || quota <= 1){
+    const quota1 = parseFloat($("quota1Input").value);
+    const quota2 = parseFloat($("quota2Input").value);
+
+    if(!quota1 || quota1 <= 1 || !quota2 || quota2 <= 1){
       $("stakePreview").className = "big-status status-warn";
-      $("stakePreview").textContent = "Inserisci una quota valida maggiore di 1.00.";
+      $("stakePreview").textContent = "Inserisci due quote valide maggiori di 1.00.";
       return;
     }
 
@@ -695,8 +713,8 @@
       bank2ModeText = "Ridotto automatico";
     }
 
-    const p1 = round2(s1 * (quota - 1));
-    const p2 = round2(s2Allowed * (quota - 1));
+    const p1 = round2(s1 * (quota1 - 1));
+    const p2 = round2(s2Allowed * (quota2 - 1));
 
     let cls = "status-wait";
     if(s2Allowed <= 0) cls = "status-stop";
@@ -704,7 +722,8 @@
 
     $("stakePreview").className = "big-status " + cls;
     $("stakePreview").textContent =
-      `Nuovo segnale → C1 ${money(s1)}. C2 base ${money(s2Base)}, C2 consentito ${money(s2Allowed)} (${bank2ModeText}). ` +
+      `Nuovo segnale → C1 stake ${money(s1)} a quota ${quota1.toFixed(2)}. ` +
+      `C2 base ${money(s2Base)}, consentito ${money(s2Allowed)} a quota ${quota2.toFixed(2)} (${bank2ModeText}). ` +
       `Se WIN → profitto C1 ${money(p1)} | C2 ${money(p2)}. ` +
       `Esposizione aperta C2 dopo apertura: ${money(exposure2() + s2Allowed)} su max ${money(maxExposureValue2())}.`;
   }
@@ -713,10 +732,11 @@
     ensureDay();
 
     const match = $("matchInput").value.trim();
-    const quota = parseFloat($("quotaInput").value);
+    const quota1 = parseFloat($("quota1Input").value);
+    const quota2 = parseFloat($("quota2Input").value);
 
-    if(!quota || quota <= 1){
-      alert("Inserisci una quota valida maggiore di 1.00");
+    if(!quota1 || quota1 <= 1 || !quota2 || quota2 <= 1){
+      alert("Inserisci due quote valide maggiori di 1.00");
       return;
     }
 
@@ -734,7 +754,8 @@
     const sig = {
       id: String(Date.now()) + Math.random().toString(16).slice(2),
       match: match || "Segnale",
-      quota: round2(quota),
+      quota1: round2(quota1),
+      quota2: round2(quota2),
       openTime: nowTime(),
       stake1: stake1,
       stake2: stake2,
@@ -759,8 +780,8 @@
     let pnl2 = 0;
 
     if(result === "win"){
-      pnl1 = round2(sig.stake1 * (sig.quota - 1));
-      pnl2 = round2(sig.stake2 * (sig.quota - 1));
+      pnl1 = round2(sig.stake1 * (sig.quota1 - 1));
+      pnl2 = round2(sig.stake2 * (sig.quota2 - 1));
       state.day.bank1Wins += 1;
       if(sig.stake2 > 0) state.day.bank2Wins += 1;
     } else {
@@ -779,7 +800,8 @@
       id:sig.id,
       closeTime:nowTime(),
       match:sig.match,
-      quota:sig.quota,
+      quota1:sig.quota1,
+      quota2:sig.quota2,
       result:result,
       stake1:sig.stake1,
       stake2:sig.stake2,
@@ -818,7 +840,8 @@
     state.day.openSignals.unshift({
       id:last.id,
       match:last.match,
-      quota:last.quota,
+      quota1:last.quota1,
+      quota2:last.quota2,
       openTime:last.closeTime,
       stake1:last.stake1,
       stake2:last.stake2,
@@ -858,7 +881,7 @@
     ensureDay();
 
     const rows = [
-      ["Data","Ora","Match","Quota","Esito","Stake C1","Stake C2","Nota C2","Cassa1 Dopo","Cassa2 Dopo"]
+      ["Data","Ora","Match","Quota C1","Quota C2","Esito","Stake C1","Stake C2","Nota C2","Cassa1 Dopo","Cassa2 Dopo"]
     ];
 
     [...state.day.history].reverse().forEach(r => {
@@ -866,7 +889,8 @@
         state.day.date,
         r.closeTime,
         r.match,
-        r.quota,
+        r.quota1,
+        r.quota2,
         r.result.toUpperCase(),
         r.stake1,
         r.stake2,
