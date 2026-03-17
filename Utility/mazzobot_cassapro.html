@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>MazzoBotOVER Bankroll Mobile v4</title>
+  <title>MazzoBotOVER Bankroll Mobile v5</title>
   <meta name="theme-color" content="#0b1220" />
   <style>
     :root{
@@ -198,8 +198,8 @@
 <body>
 <div class="app">
   <div class="hero">
-    <h1>📊 MazzoBotOVER<br>Bankroll Mobile v4</h1>
-    <p>Doppia quota separata per Cassa 1 e Cassa 2, gestione multi-segnale, prudente automatica, stop loss e take profit.</p>
+    <h1>📊 MazzoBotOVER<br>Bankroll Mobile v5</h1>
+    <p>Doppia quota separata, stake interi, quota 0 ignorata per singola cassa, multi-segnale, prudente automatica, stop loss e take profit.</p>
   </div>
 
   <div class="card">
@@ -265,7 +265,7 @@
 
   <div class="card">
     <h2>➕ Apri nuovo segnale</h2>
-    <div class="sub">Puoi inserire una quota diversa per ciascuna cassa.</div>
+    <div class="sub">Metti quota 0 su una cassa se vuoi ignorare quel segnale solo per quella cassa.</div>
 
     <div class="grid3">
       <div>
@@ -287,7 +287,7 @@
       <button class="secondary" id="simulateStakeBtn">Simula stake</button>
     </div>
 
-    <div id="stakePreview" class="big-status status-wait">Inserisci match e doppia quota, poi simula oppure apri direttamente il segnale.</div>
+    <div id="stakePreview" class="big-status status-wait">Inserisci match e le due quote. Se metti 0 su una cassa, quella cassa ignora il segnale.</div>
   </div>
 
   <div class="card">
@@ -368,7 +368,7 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = "mazzobotover_bankroll_mobile_v4";
+  const STORAGE_KEY = "mazzobotover_bankroll_mobile_v5";
 
   function todayString(){
     return new Date().toLocaleDateString("it-IT");
@@ -387,9 +387,9 @@
   }
 
   function calcStake(bank,pct){
-	  const val = Math.floor((bank * pct) / 100);
-	  return Math.max(0, Math.min(val, Math.floor(bank)));
-	}
+    const val = Math.floor((bank * pct) / 100);
+    return Math.max(0, Math.min(val, Math.floor(bank)));
+  }
 
   function defaultState(){
     return {
@@ -466,12 +466,12 @@
   }
 
   function exposure1(){
-	  return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake1 || 0), 0));
-	}
+    return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake1 || 0), 0));
+  }
 
-	function exposure2(){
-	  return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake2 || 0), 0));
-	}
+  function exposure2(){
+    return Math.floor(state.day.openSignals.reduce((s,x) => s + (x.stake2 || 0), 0));
+  }
 
   function nextStake1(){
     return calcStake(state.bank1.current, state.config.bank1StakePct);
@@ -494,15 +494,15 @@
   }
 
   function bank2AllowedStake(){
-	  const base = nextStake2Base();
-	  const remaining = Math.floor(remainingExposure2());
+    const base = nextStake2Base();
+    const remaining = Math.floor(remainingExposure2());
 
-	  if(state.config.bank2Mode === "skip"){
-	    return remaining >= base ? base : 0;
-	  }
+    if(state.config.bank2Mode === "skip"){
+      return remaining >= base ? base : 0;
+    }
 
-	  return Math.max(0, Math.floor(Math.min(base, remaining)));
-	}
+    return Math.max(0, Math.floor(Math.min(base, remaining)));
+  }
 
   function bank1DayPnl(){
     return round2(state.bank1.current - state.day.bank1Start);
@@ -630,12 +630,12 @@
         </div>
 
         <div class="signalMeta">
-          <div>Quota C1: <strong>${Number(sig.quota1).toFixed(2)}</strong></div>
-          <div>Quota C2: <strong>${Number(sig.quota2).toFixed(2)}</strong></div>
+          <div>Quota C1: <strong>${sig.quota1 > 0 ? Number(sig.quota1).toFixed(2) : "Non giocata"}</strong></div>
+          <div>Quota C2: <strong>${sig.quota2 > 0 ? Number(sig.quota2).toFixed(2) : "Non giocata"}</strong></div>
           <div>Stake C1: <strong>${money(sig.stake1)}</strong></div>
           <div>Stake C2: <strong>${money(sig.stake2)}</strong></div>
-          <div>Profitto WIN C1: <strong>${money(sig.stake1 * (sig.quota1 - 1))}</strong></div>
-          <div>Profitto WIN C2: <strong>${money(sig.stake2 * (sig.quota2 - 1))}</strong></div>
+          <div>Profitto WIN C1: <strong>${sig.quota1 > 1 && sig.stake1 > 0 ? money(sig.stake1 * (sig.quota1 - 1)) : money(0)}</strong></div>
+          <div>Profitto WIN C2: <strong>${sig.quota2 > 1 && sig.stake2 > 0 ? money(sig.stake2 * (sig.quota2 - 1)) : money(0)}</strong></div>
           <div>Modalità C2: <strong>${escapeHtml(sig.bank2Note || "Pieno")}</strong></div>
         </div>
 
@@ -660,8 +660,8 @@
       <tr>
         <td>${h.closeTime}</td>
         <td>${escapeHtml(h.match || "—")}</td>
-        <td>${Number(h.quota1).toFixed(2)}</td>
-        <td>${Number(h.quota2).toFixed(2)}</td>
+        <td>${h.quota1 > 0 ? Number(h.quota1).toFixed(2) : "—"}</td>
+        <td>${h.quota2 > 0 ? Number(h.quota2).toFixed(2) : "—"}</td>
         <td><span class="tag ${h.result}">${h.result.toUpperCase()}</span></td>
         <td class="right">${money(h.stake1)}</td>
         <td class="right">${money(h.stake2)}</td>
@@ -694,69 +694,84 @@
   }
 
   function previewStake(){
-    const quota1 = parseFloat($("quota1Input").value);
-    const quota2 = parseFloat($("quota2Input").value);
+    const quota1 = parseFloat($("quota1Input").value) || 0;
+    const quota2 = parseFloat($("quota2Input").value) || 0;
 
-    if(!quota1 || quota1 <= 1 || !quota2 || quota2 <= 1){
+    const useBank1 = quota1 > 1;
+    const useBank2 = quota2 > 1;
+
+    if(!useBank1 && !useBank2){
       $("stakePreview").className = "big-status status-warn";
-      $("stakePreview").textContent = "Inserisci due quote valide maggiori di 1.00.";
+      $("stakePreview").textContent = "Inserisci almeno una quota valida maggiore di 1.00. Se metti 0, quella cassa ignora il segnale.";
       return;
     }
 
-    const s1 = nextStake1();
-    const s2Base = nextStake2Base();
-    const s2Allowed = bank2AllowedStake();
+    const s1 = useBank1 ? nextStake1() : 0;
+    const s2Base = useBank2 ? nextStake2Base() : 0;
+    const s2Allowed = useBank2 ? bank2AllowedStake() : 0;
 
-    let bank2ModeText = "Pieno";
-    if(s2Allowed <= 0){
-      bank2ModeText = "Skip automatico";
-    } else if(s2Allowed < s2Base){
-      bank2ModeText = "Ridotto automatico";
+    let bank2ModeText = "Non giocata";
+    if(useBank2){
+      bank2ModeText = "Pieno";
+      if(s2Allowed <= 0){
+        bank2ModeText = "Skip automatico";
+      } else if(s2Allowed < s2Base){
+        bank2ModeText = "Ridotto automatico";
+      }
     }
 
-    const p1 = round2(s1 * (quota1 - 1));
-    const p2 = round2(s2Allowed * (quota2 - 1));
+    const p1 = useBank1 ? round2(s1 * (quota1 - 1)) : 0;
+    const p2 = useBank2 ? round2(s2Allowed * (quota2 - 1)) : 0;
 
     let cls = "status-wait";
-    if(s2Allowed <= 0) cls = "status-stop";
-    else if(s2Allowed < s2Base) cls = "status-warn";
+    if(useBank2 && s2Allowed <= 0){
+      cls = "status-stop";
+    } else if(useBank2 && s2Allowed < s2Base){
+      cls = "status-warn";
+    }
 
     $("stakePreview").className = "big-status " + cls;
     $("stakePreview").textContent =
-      `Nuovo segnale → C1 stake ${money(s1)} a quota ${quota1.toFixed(2)}. ` +
-      `C2 base ${money(s2Base)}, consentito ${money(s2Allowed)} a quota ${quota2.toFixed(2)} (${bank2ModeText}). ` +
-      `Se WIN → profitto C1 ${money(p1)} | C2 ${money(p2)}. ` +
-      `Esposizione aperta C2 dopo apertura: ${money(exposure2() + s2Allowed)} su max ${money(maxExposureValue2())}.`;
+      `Nuovo segnale → ` +
+      `C1 ${useBank1 ? `stake ${money(s1)} a quota ${quota1.toFixed(2)}` : `non giocata`} | ` +
+      `C2 ${useBank2 ? `stake consentito ${money(s2Allowed)} a quota ${quota2.toFixed(2)} (${bank2ModeText})` : `non giocata`}. ` +
+      `Se WIN → profitto C1 ${money(p1)} | C2 ${money(p2)}.`;
   }
 
   function openSignal(){
     ensureDay();
 
     const match = $("matchInput").value.trim();
-    const quota1 = parseFloat($("quota1Input").value);
-    const quota2 = parseFloat($("quota2Input").value);
+    const quota1 = parseFloat($("quota1Input").value) || 0;
+    const quota2 = parseFloat($("quota2Input").value) || 0;
 
-    if(!quota1 || quota1 <= 1 || !quota2 || quota2 <= 1){
-      alert("Inserisci due quote valide maggiori di 1.00");
+    const useBank1 = quota1 > 1;
+    const useBank2 = quota2 > 1;
+
+    if(!useBank1 && !useBank2){
+      alert("Inserisci almeno una quota valida maggiore di 1.00. Se metti 0, quella cassa ignora il segnale.");
       return;
     }
 
-    const stake1 = nextStake1();
-    const stake2Base = nextStake2Base();
-    const stake2 = bank2AllowedStake();
+    const stake1 = useBank1 ? nextStake1() : 0;
+    const stake2Base = useBank2 ? nextStake2Base() : 0;
+    const stake2 = useBank2 ? bank2AllowedStake() : 0;
 
-    let bank2Note = "Pieno";
-    if(stake2 <= 0){
-      bank2Note = "Skip prudente";
-    } else if(stake2 < stake2Base){
-      bank2Note = "Ridotto prudente";
+    let bank2Note = "Non giocata";
+    if(useBank2){
+      bank2Note = "Pieno";
+      if(stake2 <= 0){
+        bank2Note = "Skip prudente";
+      } else if(stake2 < stake2Base){
+        bank2Note = "Ridotto prudente";
+      }
     }
 
     const sig = {
       id: String(Date.now()) + Math.random().toString(16).slice(2),
       match: match || "Segnale",
-      quota1: round2(quota1),
-      quota2: round2(quota2),
+      quota1: useBank1 ? round2(quota1) : 0,
+      quota2: useBank2 ? round2(quota2) : 0,
       openTime: nowTime(),
       stake1: stake1,
       stake2: stake2,
@@ -777,19 +792,30 @@
 
     const sig = state.day.openSignals[idx];
 
+    const useBank1 = sig.quota1 > 1 && sig.stake1 > 0;
+    const useBank2 = sig.quota2 > 1 && sig.stake2 > 0;
+
     let pnl1 = 0;
     let pnl2 = 0;
 
     if(result === "win"){
-      pnl1 = round2(sig.stake1 * (sig.quota1 - 1));
-      pnl2 = round2(sig.stake2 * (sig.quota2 - 1));
-      state.day.bank1Wins += 1;
-      if(sig.stake2 > 0) state.day.bank2Wins += 1;
+      if(useBank1){
+        pnl1 = round2(sig.stake1 * (sig.quota1 - 1));
+        state.day.bank1Wins += 1;
+      }
+      if(useBank2){
+        pnl2 = round2(sig.stake2 * (sig.quota2 - 1));
+        state.day.bank2Wins += 1;
+      }
     } else {
-      pnl1 = -sig.stake1;
-      pnl2 = -sig.stake2;
-      state.day.bank1Losses += 1;
-      if(sig.stake2 > 0) state.day.bank2Losses += 1;
+      if(useBank1){
+        pnl1 = -sig.stake1;
+        state.day.bank1Losses += 1;
+      }
+      if(useBank2){
+        pnl2 = -sig.stake2;
+        state.day.bank2Losses += 1;
+      }
     }
 
     state.bank1.current = Math.max(0, round2(state.bank1.current + pnl1));
@@ -831,11 +857,11 @@
     state.bank2.current = Math.max(0, round2(state.bank2.current - last.undoPnl2));
 
     if(last.result === "win"){
-      state.day.bank1Wins -= 1;
-      if(last.stake2 > 0) state.day.bank2Wins -= 1;
+      if(last.stake1 > 0 && last.quota1 > 1) state.day.bank1Wins -= 1;
+      if(last.stake2 > 0 && last.quota2 > 1) state.day.bank2Wins -= 1;
     } else {
-      state.day.bank1Losses -= 1;
-      if(last.stake2 > 0) state.day.bank2Losses -= 1;
+      if(last.stake1 > 0 && last.quota1 > 1) state.day.bank1Losses -= 1;
+      if(last.stake2 > 0 && last.quota2 > 1) state.day.bank2Losses -= 1;
     }
 
     state.day.openSignals.unshift({
@@ -890,8 +916,8 @@
         state.day.date,
         r.closeTime,
         r.match,
-        r.quota1,
-        r.quota2,
+        r.quota1 > 0 ? r.quota1 : "",
+        r.quota2 > 0 ? r.quota2 : "",
         r.result.toUpperCase(),
         r.stake1,
         r.stake2,
