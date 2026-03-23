@@ -1,111 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>RAMSERVICE Liquidità Pro Definitiva</title>
+  <title>RAMSERVICE Liquidità Semplice Pro</title>
   <style>
-    :root{
-      --bg:#f5f7fb;
-      --panel:#ffffff;
-      --panel-2:#f9fbff;
-      --line:#dfe6f1;
-      --text:#182435;
-      --muted:#667489;
-      --primary:#2563eb;
-      --primary-soft:#e9f1ff;
-      --good:#0f9f63;
-      --good-soft:#eaf8f1;
-      --warn:#d97706;
-      --warn-soft:#fff4e5;
-      --bad:#dc2626;
-      --bad-soft:#fdeeee;
-      --shadow:0 12px 30px rgba(30,41,59,.08);
-      --r:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f7f9fd,#eef3fb);color:var(--text)}
-    .hidden{display:none !important}
-    .container{max-width:1180px;margin:0 auto;padding:14px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)}
-    h1,h2,h3{margin:0}
-    .subtitle{color:var(--muted);font-size:14px}
-    .grid{display:grid;gap:14px}
-    .g-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .g-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .g-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    @media (max-width:900px){.g-2,.g-3,.g-4{grid-template-columns:1fr}}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
-    .soft{background:var(--panel-2)}
-    .kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--panel)}
-    .kpi .label{font-size:13px;color:var(--muted)}
-    .kpi .value{font-size:28px;font-weight:800;margin-top:6px}
-    .good{background:var(--good-soft);border-color:#caeadb}
-    .warn{background:var(--warn-soft);border-color:#f1d3a7}
-    .bad{background:var(--bad-soft);border-color:#f2c4c4}
-    label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}
-    .hint{font-size:12px;color:var(--muted);line-height:1.4}
-    input,select,textarea,button{
-      width:100%;border-radius:12px;border:1px solid var(--line);padding:12px 12px;background:#fff;
-      font:inherit;color:var(--text)
-    }
-    textarea{min-height:82px;resize:vertical}
-    button{cursor:pointer;font-weight:700}
-    .btn{background:var(--primary);border-color:var(--primary);color:#fff}
-    .btn-secondary{background:#fff;color:var(--text)}
-    .btn-soft{background:var(--primary-soft);border-color:#cfe0ff;color:#1847b7}
-    .btn-good{background:var(--good);border-color:var(--good);color:#fff}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .row > *{flex:1}
-    .pill{display:inline-flex;align-items:center;gap:8px;background:#f2f6fd;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px}
-    .section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-    .accordion summary{list-style:none;cursor:pointer;font-weight:800;padding:2px 0}
-    .accordion summary::-webkit-details-marker{display:none}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
-    table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
-    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-    th{background:#f8fbff}
-    .right{text-align:right}
-    .center{text-align:center}
-    .small{font-size:12px}
-    .alert{padding:12px;border-radius:14px;border:1px solid var(--line);font-size:13px}
-    canvas{width:100%;height:260px;background:#fff;border:1px solid var(--line);border-radius:14px}
-    .login-shell{min-height:100vh;display:grid;place-items:center;padding:16px}
-    .login-card{width:min(420px,100%);background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:20px}
-    .muted{color:var(--muted)}
-    .footer-note{font-size:12px;color:var(--muted);line-height:1.5}
+    :root{--bg:#f5f7fb;--panel:#ffffff;--panel2:#f8fbff;--line:#dfe6f1;--text:#182435;--muted:#667489;--primary:#2563eb;--primarySoft:#e9f1ff;--good:#0f9f63;--goodSoft:#eaf8f1;--warn:#d97706;--warnSoft:#fff4e5;--bad:#dc2626;--badSoft:#fdeeee;--shadow:0 10px 28px rgba(30,41,59,.08);--r:18px}
+    *{box-sizing:border-box} html,body{margin:0;padding:0;background:linear-gradient(180deg,#f7f9fd,#eef3fb);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .hidden{display:none!important}.container{max-width:980px;margin:0 auto;padding:14px}.topbar{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0}.brand{display:flex;gap:10px;align-items:center}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)} h1,h2,h3{margin:0}.subtitle{color:var(--muted);font-size:14px;line-height:1.35}
+    .grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}.soft{background:var(--panel2)}
+    .kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff}.kpi.good{background:var(--goodSoft);border-color:#caeadb}.kpi.warn{background:var(--warnSoft);border-color:#f1d3a7}.kpi.bad{background:var(--badSoft);border-color:#f2c4c4}
+    .label{font-size:13px;color:var(--muted)}.value{font-size:28px;font-weight:800;margin-top:6px}
+    label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+    input,select,textarea,button{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit} textarea{min-height:84px;resize:vertical}
+    button{cursor:pointer;font-weight:700}.btn{background:var(--primary);border-color:var(--primary);color:#fff}.btn-soft{background:var(--primarySoft);color:#1847b7;border-color:#cfe0ff}.btn-good{background:var(--good);border-color:var(--good);color:#fff}.btn-secondary{background:#fff}
+    .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.accordion summary{list-style:none;cursor:pointer;font-weight:800}.accordion summary::-webkit-details-marker{display:none}
+    .hint{font-size:12px;color:var(--muted);line-height:1.5}.footer-note{font-size:12px;color:var(--muted);line-height:1.55}
+    .alert{padding:12px;border-radius:14px;border:1px solid var(--line);font-size:13px}.alert.good{background:var(--goodSoft);border-color:#caeadb}.alert.warn{background:var(--warnSoft);border-color:#f1d3a7}.alert.bad{background:var(--badSoft);border-color:#f2c4c4}
     .tag{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;background:#eef4ff;border:1px solid #d7e4ff}
-    .danger-text{color:var(--bad);font-weight:700}
+    .list{display:grid;gap:10px}.entry{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}.entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.entry-title{font-weight:800}.entry-sub{font-size:12px;color:var(--muted);margin-top:4px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.chip{font-size:12px;padding:7px 10px;border-radius:999px;background:#f4f7fd;border:1px solid var(--line)}
+    canvas{width:100%;height:240px;background:#fff;border:1px solid var(--line);border-radius:14px}.login-shell{min-height:100vh;display:grid;place-items:center;padding:16px}.login-card{width:min(430px,100%);background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:20px}.danger-text{color:var(--bad);font-weight:700}
   </style>
 </head>
 <body>
 <div id="loginView" class="login-shell">
   <div class="login-card">
-    <div class="brand" style="margin-bottom:18px">
-      <div class="logo">R</div>
-      <div>
-        <h2>RAMSERVICE Liquidità Pro</h2>
-        <div class="subtitle">Accesso protetto • dati salvati • sync online opzionale</div>
-      </div>
-    </div>
+    <div class="brand" style="margin-bottom:18px"><div class="logo">R</div><div><h2>RAMSERVICE Liquidità Semplice</h2><div class="subtitle">Versione più facile • mobile friendly • Google Sheets</div></div></div>
     <div class="grid">
-      <div>
-        <label>Nome utente</label>
-        <input id="loginUser" value="admin" autocomplete="username">
-      </div>
-      <div>
-        <label>Password</label>
-        <input id="loginPass" type="password" value="ramservice2026" autocomplete="current-password">
-      </div>
+      <div><label>Nome utente</label><input id="loginUser" value="admin" autocomplete="username"></div>
+      <div><label>Password</label><input id="loginPass" type="password" value="ramservice2026" autocomplete="current-password"></div>
       <button class="btn" id="loginBtn">Accedi</button>
-      <div class="footer-note">
-        Credenziali iniziali: <b>admin</b> / <b>ramservice2026</b>.<br>
-        Cambiale subito dentro <b>Impostazioni</b>.<br><br>
-        Nota importante: per avere <b>sincronizzazione vera tra smartphone, PC e altri dispositivi</b>, attiva il collegamento a <b>Google Sheet</b> nelle impostazioni e usa lo stesso account dati.
-      </div>
+      <div class="footer-note">Credenziali iniziali: <b>admin</b> / <b>ramservice2026</b>.<br>Cambiale subito nelle impostazioni.</div>
       <div id="loginMsg" class="hint"></div>
     </div>
   </div>
@@ -114,138 +41,45 @@
 <div id="appView" class="hidden">
   <div class="container">
     <div class="topbar">
-      <div class="brand">
-        <div class="logo">R</div>
-        <div>
-          <h1>RAMSERVICE Liquidità Pro Definitiva</h1>
-          <div class="subtitle">Chiusura giornaliera semplice • controllo liquidità 90 giorni • gestione AMEX • ricorrenze • sync online</div>
-        </div>
-      </div>
-      <div class="row" style="min-width:min(460px,100%);max-width:620px">
-        <button class="btn-soft" id="syncNowBtn">Sincronizza ora</button>
-        <button class="btn-secondary" id="exportJsonBtn">Backup JSON</button>
-        <button class="btn-secondary" id="exportCsvBtn">Export CSV</button>
-        <button class="btn-secondary" id="logoutBtn">Esci</button>
-      </div>
+      <div class="brand"><div class="logo">R</div><div><h1>RAMSERVICE Liquidità Semplice Pro</h1><div class="subtitle">Ogni sera inserisci solo incasso totale, utile giornata e uscite reali. Il resto viene calcolato automaticamente.</div></div></div>
+      <div class="row" style="min-width:min(420px,100%);max-width:560px"><button class="btn-soft" id="syncNowBtn">Sincronizza</button><button class="btn-secondary" id="exportJsonBtn">Backup JSON</button><button class="btn-secondary" id="logoutBtn">Esci</button></div>
     </div>
 
     <details class="card accordion">
       <summary>⚙️ Impostazioni avanzate</summary>
-      <div class="grid g-3" style="margin-top:12px">
-        <div>
-          <label>Liquidità iniziale conto (€)</label>
-          <input id="cfgCashStart" type="number" step="0.01">
-        </div>
-        <div>
-          <label>Obiettivo liquidità (€)</label>
-          <input id="cfgCashTarget" type="number" step="0.01">
-        </div>
-        <div>
-          <label>Magazzino costo netto (€)</label>
-          <input id="cfgStockNet" type="number" step="0.01">
-        </div>
-        <div>
-          <label>Valore vendita lordo magazzino (€)</label>
-          <input id="cfgStockSellGross" type="number" step="0.01">
-        </div>
-        <div>
-          <label>Margine netto medio per riparazione (€)</label>
-          <input id="cfgRepairNetAvg" type="number" step="0.01">
-        </div>
-        <div>
-          <label>Riparazioni più importanti del business?</label>
-          <select id="cfgRepairsPriority">
-            <option value="true">Sì</option>
-            <option value="false">No</option>
-          </select>
-        </div>
+      <div class="grid g3" style="margin-top:12px">
+        <div><label>Liquidità iniziale conto (€)</label><input id="cfgCashStart" type="number" step="0.01"></div>
+        <div><label>Obiettivo liquidità (€)</label><input id="cfgCashTarget" type="number" step="0.01"></div>
+        <div><label>Magazzino costo netto (€)</label><input id="cfgStockNet" type="number" step="0.01"></div>
+        <div><label>Valore vendita lordo magazzino (€)</label><input id="cfgStockSellGross" type="number" step="0.01"></div>
+        <div><label>Profitto % da accantonare</label><input id="cfgProfitPct" type="number" step="0.01"></div>
+        <div><label>Tasse % da accantonare</label><input id="cfgTaxPct" type="number" step="0.01"></div>
+        <div><label>Budget acquisti % teorico</label><input id="cfgBuyPct" type="number" step="0.01"></div>
+        <div><label>Gestione % teorica</label><input id="cfgOpsPct" type="number" step="0.01"></div>
+        <div><label>Rata mutui + finanziamenti mese (€)</label><input id="cfgLoansMonthly" type="number" step="0.01"></div>
       </div>
-
-      <div class="grid g-4" style="margin-top:12px">
-        <div><label>Profitto %</label><input id="cfgProfitPct" type="number" step="0.01"></div>
-        <div><label>Tasse %</label><input id="cfgTaxPct" type="number" step="0.01"></div>
-        <div><label>Acquisti stock %</label><input id="cfgBuyPct" type="number" step="0.01"></div>
-        <div><label>Gestione %</label><input id="cfgOpsPct" type="number" step="0.01"></div>
+      <div class="grid g2" style="margin-top:12px">
+        <div class="card soft"><h3 style="margin-bottom:10px">🔐 Credenziali app</h3><div class="grid g2"><div><label>Nuovo nome utente</label><input id="cfgAppUser"></div><div><label>Nuova password</label><input id="cfgAppPass" type="password"></div></div></div>
+        <div class="card soft"><h3 style="margin-bottom:10px">📝 Nota metodo</h3><div class="footer-note">In questa versione non devi più dividere riparazioni, telefoni e accessori.<br>Inserisci solo: <b>incasso totale</b>, <b>utile totale giornata</b>, eventuali <b>altri incassi</b> e le <b>uscite pagate davvero oggi</b>.</div></div>
       </div>
-
-      <div class="grid g-4" style="margin-top:12px">
-        <div><label>Affitto mensile (€)</label><input id="cfgRent" type="number" step="0.01"></div>
-        <div><label>Stipendio tuo mensile (€)</label><input id="cfgOwnerPay" type="number" step="0.01"></div>
-        <div><label>Collaboratori mensili (€)</label><input id="cfgStaffPay" type="number" step="0.01"></div>
-        <div><label>Addebiti ricorrenti altri/mese (€)</label><input id="cfgRecurringOther" type="number" step="0.01"></div>
-      </div>
-
-      <div class="grid g-4" style="margin-top:12px">
-        <div><label>Rata mutuo 1 (€)</label><input id="cfgLoan1" type="number" step="0.01"></div>
-        <div><label>Rata mutuo 2 (€)</label><input id="cfgLoan2" type="number" step="0.01"></div>
-        <div><label>Finanziamento socio 1 (€)</label><input id="cfgSocio1" type="number" step="0.01"></div>
-        <div><label>Finanziamento socio 2 (€)</label><input id="cfgSocio2" type="number" step="0.01"></div>
-      </div>
-
-      <div class="grid g-2" style="margin-top:12px">
-        <div class="card soft">
-          <div class="section-title"><h3>🔐 Credenziali app</h3></div>
-          <div class="grid g-2">
-            <div><label>Nuovo nome utente</label><input id="cfgAppUser"></div>
-            <div><label>Nuova password</label><input id="cfgAppPass" type="password"></div>
-          </div>
-          <div class="hint" style="margin-top:8px">Cambia qui le credenziali iniziali.</div>
-        </div>
-
-        <div class="card soft">
-          <div class="section-title"><h3>☁️ Sync online vero (Supabase)</h3><span class="tag">opzionale</span></div>
-          <div class="grid g-2">
-            <div><label>Attiva sync online</label><select id="cfgSyncEnabled"><option value="false">No</option><option value="true">Sì</option></select></div>
-            <div><label>Workspace / Chiave dati</label><input id="cfgWorkspaceId" placeholder="es. ramservice-liquidita"></div>
-            <div><label>Supabase URL</label><input id="cfgSupabaseUrl" placeholder="https://xxxx.supabase.co"></div>
-            <div><label>Supabase Anon Key</label><input id="cfgSupabaseAnon" placeholder="Anon key"></div>
-          </div>
-          <div class="footer-note" style="margin-top:8px">
-            Schema consigliato in Supabase:<br>
-            tabella <b>ramservice_cash_app</b> con colonne:
-            <b>workspace_id</b> text primary key, <b>payload</b> jsonb, <b>updated_at</b> timestamptz default now().<br>
-            Con RLS puoi limitare accesso al tuo workspace. Anche senza backend custom, così avrai sincronizzazione vera tra dispositivi.
-          </div>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <button class="btn-good" id="saveSettingsBtn">Salva impostazioni</button>
-        <button class="btn-secondary" id="seedRecurringBtn">Genera ricorrenze standard</button>
-        <button class="btn-secondary" id="importJsonBtn">Importa backup JSON</button>
-        <input id="importJsonInput" type="file" accept=".json" class="hidden" />
-      </div>
+      <div class="row" style="margin-top:12px"><button class="btn-good" id="saveSettingsBtn">Salva impostazioni</button><button class="btn-secondary" id="seedRecurringBtn">Genera ricorrenze standard</button><button class="btn-secondary" id="importJsonBtn">Importa backup JSON</button><input id="importJsonInput" type="file" accept=".json" class="hidden"></div>
     </details>
 
-    <div class="grid g-4" style="margin-top:14px">
-      <div class="kpi">
-        <div class="label">Liquidità attuale stimata</div>
-        <div class="value" id="kpiCash">€ 0,00</div>
-      </div>
-      <div class="kpi good">
-        <div class="label">Disponibile reale oggi</div>
-        <div class="value" id="kpiFreeCash">€ 0,00</div>
-      </div>
-      <div class="kpi warn">
-        <div class="label">Debito fornitori / carte aperto</div>
-        <div class="value" id="kpiPayables">€ 0,00</div>
-      </div>
-      <div class="kpi bad">
-        <div class="label">Scostamento da target</div>
-        <div class="value" id="kpiGap">€ 0,00</div>
-      </div>
+    <div class="grid g4" style="margin-top:14px">
+      <div class="kpi"><div class="label">Liquidità attuale stimata</div><div class="value" id="kpiCash">€ 0,00</div></div>
+      <div class="kpi good"><div class="label">Disponibile reale oggi</div><div class="value" id="kpiFreeCash">€ 0,00</div></div>
+      <div class="kpi warn"><div class="label">Debito aperto carte / AMEX</div><div class="value" id="kpiPayables">€ 0,00</div></div>
+      <div class="kpi bad"><div class="label">Scostamento da target</div><div class="value" id="kpiGap">€ 0,00</div></div>
     </div>
 
-    <div class="grid g-3" style="margin-top:14px">
+    <div class="grid g2" style="margin-top:14px">
       <div class="card">
-        <div class="section-title"><h3>🧾 Chiusura giornaliera</h3><span class="tag">compila solo qui</span></div>
-        <div class="grid g-2">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><h3>🧾 Chiusura giornaliera semplice</h3><span class="tag">compila solo qui</span></div>
+        <div class="grid g2">
           <div><label>Data</label><input id="dayDate" type="date"></div>
-          <div><label>Numero riparazioni</label><input id="dayRepairsCount" type="number" min="0" step="1" value="0"></div>
-          <div><label>Incasso riparazioni (€ lordo)</label><input id="dayRepairRevenue" type="number" step="0.01" value="0"></div>
-          <div><label>Incasso telefoni/tablet/PC (€ lordo)</label><input id="dayDeviceRevenue" type="number" step="0.01" value="0"></div>
-          <div><label>Incasso accessori (€ lordo)</label><input id="dayAccessoryRevenue" type="number" step="0.01" value="0"></div>
-          <div><label>Altri incassi oggi (€)</label><input id="dayOtherRevenue" type="number" step="0.01" value="0"></div>
+          <div><label>Incasso totale clienti oggi (€)</label><input id="dayCustomerRevenue" type="number" step="0.01" value="0"></div>
+          <div><label>Utile totale generato oggi (€)</label><input id="dayGrossProfit" type="number" step="0.01" value="0"></div>
+          <div><label>Altri incassi oggi non clienti (€)</label><input id="dayOtherRevenue" type="number" step="0.01" value="0"></div>
           <div><label>Fornitori pagati oggi da conto/cassa (€)</label><input id="daySupplierPaidCash" type="number" step="0.01" value="0"></div>
           <div><label>Acquisti fatti oggi con AMEX/carta (€)</label><input id="dayPurchasesCard" type="number" step="0.01" value="0"></div>
           <div><label>Addebito AMEX pagato oggi in banca (€)</label><input id="dayAmexBankDebit" type="number" step="0.01" value="0"></div>
@@ -253,1006 +87,225 @@
           <div><label>Rate/finanziamenti pagati oggi (€)</label><input id="dayLoanPaid" type="number" step="0.01" value="0"></div>
           <div><label>Altre uscite pagate oggi (€)</label><input id="dayOtherExpense" type="number" step="0.01" value="0"></div>
         </div>
-        <div style="margin-top:10px">
-          <label>Note giornata</label>
-          <textarea id="dayNotes" placeholder="Esempio: 2 riparazioni batterie, 1 iPhone venduto, ordine Amazon su AMEX, nessun pagamento fornitore da conto..."></textarea>
-        </div>
-        <div class="card soft" style="margin-top:12px">
-          <div class="small"><b>Come compilare senza dubbi</b></div>
-          <div class="footer-note">
-            • Inserisci sempre gli <b>incassi lordi incassati dal cliente oggi</b>.<br>
-            • Se vendi 2 riparazioni da 40€ e 80€, un telefono da 159€, una pellicola da 20€ e una custodia da 10€, scrivi:
-            <b>Riparazioni 120</b>, <b>Telefoni 159</b>, <b>Accessori 30</b>.<br>
-            • Se fai un ordine da 1.000€ con pagamento a 30 giorni fine mese e lo metti su AMEX: oggi va in <b>Acquisti fatti oggi con AMEX/carta</b>. Quando il 27 la banca addebita AMEX, quel giorno compili <b>Addebito AMEX pagato oggi in banca</b>. Così non conti la spesa due volte: oggi nasce il debito, il 27 esce la cassa.
-          </div>
-        </div>
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="saveDayBtn">Salva giornata</button>
-          <button class="btn-secondary" id="clearDayBtn">Pulisci campi</button>
-        </div>
+        <div style="margin-top:10px"><label>Note giornata</label><textarea id="dayNotes" placeholder="Esempio: incasso totale 980€, utile giornata 310€, acquisto Amazon su AMEX 120€, nessun pagamento fornitore da conto..."></textarea></div>
+        <div class="card soft" style="margin-top:12px"><div style="font-size:13px;font-weight:800">Come compilare ora</div><div class="footer-note">• <b>Incasso totale clienti oggi</b> = tutto quello che hai incassato dai clienti nella giornata.<br>• <b>Utile totale generato oggi</b> = quanto pensi di aver guadagnato davvero oggi, senza dover dividere riparazioni, accessori o telefoni.<br>• <b>Altri incassi</b> = entrate extra, non legate alla vendita normale.<br>• <b>Acquisti fatti oggi con AMEX/carta</b> = debito che nasce oggi ma non esce ancora dal conto.<br>• <b>Addebito AMEX pagato oggi in banca</b> = uscita vera del conto il giorno dell'addebito.</div></div>
+        <div class="row" style="margin-top:12px"><button class="btn" id="saveDayBtn">Salva giornata</button><button class="btn-secondary" id="clearDayBtn">Pulisci campi</button></div>
       </div>
 
       <div class="card">
-        <div class="section-title"><h3>📌 Riepilogo automatico giornata</h3><span class="tag">calcolato</span></div>
-        <div class="grid g-2">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><h3>📌 Riepilogo automatico giornata</h3><span class="tag">calcolato</span></div>
+        <div class="grid g2">
           <div class="kpi"><div class="label">Incasso totale</div><div class="value" id="daySumRevenue">€ 0,00</div></div>
           <div class="kpi"><div class="label">Uscite cassa oggi</div><div class="value" id="daySumCashOut">€ 0,00</div></div>
           <div class="kpi good"><div class="label">Netto cassa giornata</div><div class="value" id="dayNetCash">€ 0,00</div></div>
-          <div class="kpi warn"><div class="label">Nuovo debito aperto oggi</div><div class="value" id="dayNewPayable">€ 0,00</div></div>
+          <div class="kpi warn"><div class="label">Nuovo debito carta oggi</div><div class="value" id="dayNewPayable">€ 0,00</div></div>
         </div>
-        <div class="grid g-2" style="margin-top:10px">
-          <div class="kpi"><div class="label">Profitto da accantonare</div><div class="value" id="dayAllocProfit">€ 0,00</div></div>
-          <div class="kpi"><div class="label">Tasse da accantonare</div><div class="value" id="dayAllocTax">€ 0,00</div></div>
+        <div class="grid g2" style="margin-top:10px">
+          <div class="kpi"><div class="label">Accantonamento profitto</div><div class="value" id="dayAllocProfit">€ 0,00</div></div>
+          <div class="kpi"><div class="label">Accantonamento tasse</div><div class="value" id="dayAllocTax">€ 0,00</div></div>
           <div class="kpi"><div class="label">Budget acquisti teorico</div><div class="value" id="dayAllocBuy">€ 0,00</div></div>
-          <div class="kpi"><div class="label">Gestione operativa</div><div class="value" id="dayAllocOps">€ 0,00</div></div>
+          <div class="kpi"><div class="label">Gestione teorica</div><div class="value" id="dayAllocOps">€ 0,00</div></div>
         </div>
-        <div id="alertsBox" class="grid" style="margin-top:12px"></div>
-      </div>
-
-      <div class="card">
-        <div class="section-title"><h3>🔁 Ricorrenze e promemoria interni</h3><span class="tag">utile</span></div>
-        <div class="grid g-2">
-          <div>
-            <label>Voce ricorrente</label>
-            <input id="recName" placeholder="es. Mutuo 2">
-          </div>
-          <div>
-            <label>Importo (€)</label>
-            <input id="recAmount" type="number" step="0.01">
-          </div>
-          <div>
-            <label>Categoria</label>
-            <select id="recCategory">
-              <option value="loan">Rata / finanziamento</option>
-              <option value="tax">Tasse / F24</option>
-              <option value="expense">Altra uscita ricorrente</option>
-              <option value="rent">Affitto</option>
-            </select>
-          </div>
-          <div>
-            <label>Giorno del mese</label>
-            <input id="recDay" type="number" min="1" max="31" step="1">
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn-secondary" id="addRecurringBtn">Aggiungi ricorrenza</button>
-        </div>
-        <div class="table-wrap" style="margin-top:10px">
-          <table id="recurringTable">
-            <thead><tr><th>Voce</th><th>Categoria</th><th>Giorno</th><th class="right">Importo</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+        <div class="list" id="alertsBox" style="margin-top:12px"></div>
       </div>
     </div>
 
-    <div class="grid g-3" style="margin-top:14px">
-      <div class="card">
-        <div class="section-title"><h3>📅 Sintesi settimanale</h3></div>
-        <div id="weeklySummary" class="grid"></div>
-      </div>
-      <div class="card">
-        <div class="section-title"><h3>🗓️ Sintesi mensile</h3></div>
-        <div id="monthlySummary" class="grid"></div>
-      </div>
-      <div class="card">
-        <div class="section-title"><h3>📦 Magazzino e margine</h3></div>
-        <div class="grid">
-          <div class="pill">Costo netto stock: <b id="stockNetLbl">€ 0,00</b></div>
-          <div class="pill">Vendita potenziale: <b id="stockSellLbl">€ 0,00</b></div>
-          <div class="pill">Margine teorico stock: <b id="stockMarginLbl">€ 0,00</b></div>
-          <div class="pill">Margine % su costo: <b id="stockMarginPctLbl">0%</b></div>
-        </div>
-      </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3 style="margin-bottom:10px">📅 Sintesi periodi</h3><div class="list" id="weeklySummary"></div><div class="list" id="monthlySummary" style="margin-top:12px"></div></div>
+      <div class="card"><h3 style="margin-bottom:10px">📦 Magazzino e margine</h3><div class="list"><div class="alert">Costo netto stock: <b id="stockNetLbl">€ 0,00</b></div><div class="alert">Vendita potenziale: <b id="stockSellLbl">€ 0,00</b></div><div class="alert">Margine teorico stock: <b id="stockMarginLbl">€ 0,00</b></div><div class="alert">Margine % su costo: <b id="stockMarginPctLbl">0%</b></div></div></div>
     </div>
 
-    <div class="grid g-2" style="margin-top:14px">
-      <div class="card">
-        <div class="section-title"><h3>📈 Andamento liquidità</h3></div>
-        <canvas id="cashChart" width="900" height="260"></canvas>
-      </div>
-      <div class="card">
-        <div class="section-title"><h3>📉 Netto cassa giornaliero</h3></div>
-        <canvas id="netChart" width="900" height="260"></canvas>
-      </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3 style="margin-bottom:10px">📈 Andamento liquidità</h3><canvas id="cashChart" width="900" height="240"></canvas></div>
+      <div class="card"><h3 style="margin-bottom:10px">📉 Netto cassa giornaliero</h3><canvas id="netChart" width="900" height="240"></canvas></div>
     </div>
 
-    <div class="grid g-2" style="margin-top:14px">
-      <div class="card">
-        <div class="section-title"><h3>⏳ Debiti aperti / carte da pagare</h3></div>
-        <div class="table-wrap">
-          <table id="payablesTable">
-            <thead><tr><th>Tipo</th><th>Data</th><th>Note</th><th class="right">Importo</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="section-title"><h3>📚 Registro giornaliero</h3></div>
-        <div class="table-wrap">
-          <table id="daysTable">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th class="right">Incassi</th>
-                <th class="right">Uscite cassa</th>
-                <th class="right">Netto</th>
-                <th class="right">Nuovo debito</th>
-                <th class="right">Liquidità</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3 style="margin-bottom:10px">⏳ Debiti aperti carte / AMEX</h3><div class="list" id="payablesList"></div></div>
+      <div class="card"><h3 style="margin-bottom:10px">📚 Registro giornaliero</h3><div class="list" id="daysList"></div></div>
     </div>
 
-    <div class="footer-note" style="margin:16px 0 26px">
-      Suggerimento operativo definitivo:
-      registra ogni sera solo quello che hai <b>incassato davvero</b> e quello che hai <b>pagato davvero</b>.
-      Gli acquisti a debito o con AMEX vanno segnati quando li fai per vedere il carico che stai creando, ma l'uscita di liquidità arriva il giorno dell'addebito banca.
-    </div>
+    <div class="footer-note" style="margin:18px 0 26px">Metodo consigliato da oggi: a fine giornata inserisci soltanto il totale incassato, l'utile totale che ritieni di aver generato e le uscite pagate davvero oggi. Questa versione è pensata per essere veloce anche da smartphone.</div>
   </div>
 </div>
 
 <script>
 (function(){
   const API_URL = "https://script.google.com/macros/s/AKfycbzYAYVYv7HrIJ0SQjX-zu6zDJ5v45z1kH3Pxpm66rSYuv3VGwFA7wYzCwucnH3wqgaFRQ/exec";
-
-  const LS = "ramservice_liquidita_pro_google_v1";
-  const SESSION = "ramservice_liquidita_session_v1";
+  const LS = "ramservice_liquidita_google_simple_v1";
+  const SESSION = "ramservice_liquidita_session_simple_v1";
   const fmt = new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"});
-  const q = s => document.querySelector(s);
-  const qa = s => Array.from(document.querySelectorAll(s));
-  const todayIso = () => new Date().toISOString().slice(0,10);
-  const clampNum = v => isFinite(parseFloat(v)) ? parseFloat(v) : 0;
-  const id = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-
-  const startOfWeek = (d) => {
-    const x = new Date(d);
-    const day = (x.getDay() + 6) % 7;
-    x.setDate(x.getDate() - day);
-    x.setHours(0,0,0,0);
-    return x;
-  };
-
-  const monthKey = iso => (iso || "").slice(0,7);
-  const weekKey = iso => startOfWeek(new Date(iso)).toISOString().slice(0,10);
-  const byDateAsc = (a,b) => a.date.localeCompare(b.date);
-
-  const defaults = {
-    auth:{ user:"admin", pass:"ramservice2026" },
-    config:{
-      cashStart:5439.27,
-      cashTarget:10000,
-      stockNet:19324.73,
-      stockSellGross:40271.38,
-      repairNetAvg:40,
-      repairsPriority:true,
-      profitPct:10,
-      taxPct:20,
-      buyPct:20,
-      opsPct:50,
-      rent:1200,
-      ownerPay:1016,
-      staffPay:583,
-      recurringOther:0,
-      loan1:85.48,
-      loan2:596.73,
-      socio1:500,
-      socio2:416.67
-    },
-    days:[],
-    recurring:[],
-    meta:{ updatedAt:null, lastSyncAt:null }
-  };
-
+  const q = s => document.querySelector(s), qa = s => Array.from(document.querySelectorAll(s));
+  const todayIso = () => new Date().toISOString().slice(0,10), clampNum = v => isFinite(parseFloat(v)) ? parseFloat(v) : 0, id = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+  const startOfWeek = d => { const x=new Date(d); const day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x; };
+  const monthKey = iso => (iso||"").slice(0,7), weekKey = iso => startOfWeek(new Date(iso)).toISOString().slice(0,10), byDateAsc = (a,b)=>a.date.localeCompare(b.date);
+  const defaults = {auth:{user:"admin",pass:"ramservice2026"},config:{cashStart:5439.27,cashTarget:10000,stockNet:19324.73,stockSellGross:40271.38,profitPct:10,taxPct:20,buyPct:20,opsPct:50,loansMonthly:1598.88},recurring:[],days:[],meta:{updatedAt:null,lastSyncAt:null}};
   let state = loadState();
 
-  function loadState(){
-    try{
-      const raw = localStorage.getItem(LS);
-      if(!raw) return structuredClone(defaults);
-      const parsed = JSON.parse(raw);
-      return {
-        ...structuredClone(defaults),
-        ...parsed,
-        auth:{ ...defaults.auth, ...(parsed.auth || {}) },
-        config:{ ...defaults.config, ...(parsed.config || {}) },
-        days:[ ...(parsed.days || []) ],
-        recurring:[ ...(parsed.recurring || []) ],
-        meta:{ ...defaults.meta, ...(parsed.meta || {}) }
-      };
-    }catch(e){
-      return structuredClone(defaults);
-    }
-  }
-
-  function saveState(){
-    state.meta.updatedAt = new Date().toISOString();
-    localStorage.setItem(LS, JSON.stringify(state));
-  }
-
-  function isLogged(){
-    return sessionStorage.getItem(SESSION) === "1";
-  }
-
-  function showApp(flag){
-    q("#loginView").classList.toggle("hidden", flag);
-    q("#appView").classList.toggle("hidden", !flag);
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[m]));
-  }
+  function loadState(){ try{ const raw=localStorage.getItem(LS); if(!raw) return structuredClone(defaults); const parsed=JSON.parse(raw); return {...structuredClone(defaults),...parsed,auth:{...defaults.auth,...(parsed.auth||{})},config:{...defaults.config,...(parsed.config||{})},recurring:[...(parsed.recurring||[])],days:[...(parsed.days||[])],meta:{...defaults.meta,...(parsed.meta||{})}};}catch(e){ return structuredClone(defaults);} }
+  function saveState(){ state.meta.updatedAt = new Date().toISOString(); localStorage.setItem(LS, JSON.stringify(state)); }
+  function isLogged(){ return sessionStorage.getItem(SESSION)==="1"; }
+  function showApp(flag){ q("#loginView").classList.toggle("hidden", flag); q("#appView").classList.toggle("hidden", !flag); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 
   async function syncLoadGoogle(){
-    try{
-      const res = await fetch(API_URL + "?type=getData", { cache:"no-store" });
-      const data = await res.json();
-
-      if (data && data.giornate) {
-        state.days = data.giornate
-          .filter(d => d.json && String(d.json).trim() !== "")
-          .map(d => {
-            try {
-              return JSON.parse(d.json);
-            } catch {
-              return null;
-            }
-          })
-          .filter(Boolean)
-          .sort(byDateAsc);
-      }
-
-      if (data && data.ricorrenze) {
-        state.recurring = data.ricorrenze
-          .filter(r => r && (r.id || r.nome || r.name))
-          .map(r => ({
-            id: r.id || id(),
-            name: r.nome || r.name || "",
-            amount: clampNum(r.importo ?? r.amount),
-            day: parseInt(r.giorno ?? r.day ?? 1, 10),
-            category: r.categoria || r.category || "expense"
-          }));
-      }
-
-      if (data && data.config && data.config.length) {
-        const cfgRows = data.config;
-        const cfgObj = {};
-        cfgRows.forEach(row => {
-          const key = row.key || row.Key;
-          const value = row.value || row.Value;
-          if (key) cfgObj[key] = value;
-        });
-
-        Object.keys(defaults.config).forEach(key => {
-          if (cfgObj[key] !== undefined) {
-            if (typeof defaults.config[key] === "boolean") {
-              state.config[key] = String(cfgObj[key]) === "true";
-            } else if (typeof defaults.config[key] === "number") {
-              state.config[key] = clampNum(cfgObj[key]);
-            } else {
-              state.config[key] = cfgObj[key];
-            }
-          }
-        });
-      }
-
-      state.meta.lastSyncAt = new Date().toISOString();
-      saveState();
-      renderAll();
-      console.log("✅ Dati caricati da Google Sheets");
-      return true;
-    }catch(e){
-      console.log("❌ Errore caricamento Google Sheets", e);
-      throw e;
+    const res = await fetch(API_URL + "?type=getData", {cache:"no-store"});
+    const data = await res.json();
+    if(data && data.giornate){
+      state.days = data.giornate.filter(d => d.json && String(d.json).trim() !== "").map(d => { try{ return JSON.parse(d.json); } catch{ return null; } }).filter(Boolean).sort(byDateAsc);
     }
+    if(data && data.ricorrenze){
+      state.recurring = data.ricorrenze.filter(r => r && (r.id || r.nome || r.name)).map(r => ({id:r.id || id(), name:r.nome || r.name || "", amount:clampNum(r.importo ?? r.amount), day:parseInt(r.giorno ?? r.day ?? 1,10), category:r.categoria || r.category || "expense"}));
+    }
+    if(data && data.config && data.config.length){
+      const cfgObj = {};
+      data.config.forEach(r => { const key=r.key || r.Key; const value=r.value || r.Value; if(key) cfgObj[key]=value; });
+      Object.keys(defaults.config).forEach(key => { if(cfgObj[key] !== undefined) state.config[key] = typeof defaults.config[key] === "number" ? clampNum(cfgObj[key]) : cfgObj[key]; });
+    }
+    state.meta.lastSyncAt = new Date().toISOString();
+    saveState(); renderAll(); return true;
   }
 
   async function syncSaveDayGoogle(day){
-    try{
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type":"text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          type: "saveDay",
-          ...day
-        })
-      });
-      console.log("✅ Salvato su Google Sheets");
-      return true;
-    }catch(e){
-      console.log("❌ Errore salvataggio Google Sheets", e);
-      throw e;
-    }
+    await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"saveDay",...day})});
+    return true;
   }
 
   function computeDayDraft(){
     const cfg = state.config;
-    const revenue =
-      clampNum(q("#dayRepairRevenue").value) +
-      clampNum(q("#dayDeviceRevenue").value) +
-      clampNum(q("#dayAccessoryRevenue").value) +
-      clampNum(q("#dayOtherRevenue").value);
-
-    const outCash =
-      clampNum(q("#daySupplierPaidCash").value) +
-      clampNum(q("#dayAmexBankDebit").value) +
-      clampNum(q("#dayTaxPaid").value) +
-      clampNum(q("#dayLoanPaid").value) +
-      clampNum(q("#dayOtherExpense").value);
-
-    const newPayable = clampNum(q("#dayPurchasesCard").value);
-    const netCash = revenue - outCash;
-    const allocBase = Math.max(netCash, 0);
-
-    return {
-      revenue,
-      outCash,
-      newPayable,
-      netCash,
-      allocProfit: allocBase * cfg.profitPct / 100,
-      allocTax: allocBase * cfg.taxPct / 100,
-      allocBuy: allocBase * cfg.buyPct / 100,
-      allocOps: allocBase * cfg.opsPct / 100
-    };
+    const revenue = clampNum(q("#dayCustomerRevenue").value) + clampNum(q("#dayOtherRevenue").value);
+    const outCash = clampNum(q("#daySupplierPaidCash").value) + clampNum(q("#dayAmexBankDebit").value) + clampNum(q("#dayTaxPaid").value) + clampNum(q("#dayLoanPaid").value) + clampNum(q("#dayOtherExpense").value);
+    const newPayable = clampNum(q("#dayPurchasesCard").value), netCash = revenue - outCash, grossProfit = clampNum(q("#dayGrossProfit").value), allocBase = Math.max(grossProfit, 0);
+    return {revenue,outCash,newPayable,netCash,grossProfit,allocProfit:allocBase*cfg.profitPct/100,allocTax:allocBase*cfg.taxPct/100,allocBuy:allocBase*cfg.buyPct/100,allocOps:allocBase*cfg.opsPct/100};
   }
 
   function currentDerived(){
-    const cfg = state.config;
-    const days = [...state.days].sort(byDateAsc);
-    let cash = clampNum(cfg.cashStart);
-    let openCard = 0;
-
-    for(const d of days){
-      cash += clampNum(d.netCash);
-      if (clampNum(d.purchasesCard) > 0) openCard += clampNum(d.purchasesCard);
-      if (clampNum(d.amexBankDebit) > 0) openCard -= clampNum(d.amexBankDebit);
-    }
-
-    if (openCard < 0) openCard = 0;
-
-    const recurringMonth =
-      cfg.rent + cfg.ownerPay + cfg.staffPay + cfg.recurringOther +
-      cfg.loan1 + cfg.loan2 + cfg.socio1 + cfg.socio2;
-
-    const freeCash = cash - openCard;
-
-    return {
-      cash,
-      openCard,
-      freeCash,
-      gap: cfg.cashTarget - cash,
-      recurringMonth,
-      stockMargin: cfg.stockSellGross - cfg.stockNet,
-      stockMarginPct: cfg.stockNet ? ((cfg.stockSellGross - cfg.stockNet) / cfg.stockNet) * 100 : 0
-    };
+    let cash = clampNum(state.config.cashStart), openCard = 0;
+    [...state.days].sort(byDateAsc).forEach(d => { cash += clampNum(d.netCash); openCard += clampNum(d.purchasesCard); openCard -= clampNum(d.amexBankDebit); });
+    if(openCard < 0) openCard = 0;
+    return {cash, openCard, freeCash:cash-openCard, gap:state.config.cashTarget-cash, stockMargin:state.config.stockSellGross-state.config.stockNet, stockMarginPct:state.config.stockNet ? ((state.config.stockSellGross-state.config.stockNet)/state.config.stockNet)*100 : 0};
   }
 
   function renderKpi(){
     const d = currentDerived();
-    q("#kpiCash").textContent = fmt.format(d.cash);
-    q("#kpiFreeCash").textContent = fmt.format(d.freeCash);
-    q("#kpiPayables").textContent = fmt.format(d.openCard);
-    q("#kpiGap").textContent = fmt.format(d.gap);
-    q("#stockNetLbl").textContent = fmt.format(state.config.stockNet);
-    q("#stockSellLbl").textContent = fmt.format(state.config.stockSellGross);
-    q("#stockMarginLbl").textContent = fmt.format(d.stockMargin);
-    q("#stockMarginPctLbl").textContent = (d.stockMarginPct || 0).toFixed(1) + "%";
+    q("#kpiCash").textContent = fmt.format(d.cash); q("#kpiFreeCash").textContent = fmt.format(d.freeCash); q("#kpiPayables").textContent = fmt.format(d.openCard); q("#kpiGap").textContent = fmt.format(d.gap);
+    q("#stockNetLbl").textContent = fmt.format(state.config.stockNet); q("#stockSellLbl").textContent = fmt.format(state.config.stockSellGross); q("#stockMarginLbl").textContent = fmt.format(d.stockMargin); q("#stockMarginPctLbl").textContent = (d.stockMarginPct||0).toFixed(1)+"%";
   }
 
   function renderDayDraft(){
     const d = computeDayDraft();
-    q("#daySumRevenue").textContent = fmt.format(d.revenue);
-    q("#daySumCashOut").textContent = fmt.format(d.outCash);
-    q("#dayNetCash").textContent = fmt.format(d.netCash);
-    q("#dayNewPayable").textContent = fmt.format(d.newPayable);
-    q("#dayAllocProfit").textContent = fmt.format(d.allocProfit);
-    q("#dayAllocTax").textContent = fmt.format(d.allocTax);
-    q("#dayAllocBuy").textContent = fmt.format(d.allocBuy);
-    q("#dayAllocOps").textContent = fmt.format(d.allocOps);
-
+    q("#daySumRevenue").textContent = fmt.format(d.revenue); q("#daySumCashOut").textContent = fmt.format(d.outCash); q("#dayNetCash").textContent = fmt.format(d.netCash); q("#dayNewPayable").textContent = fmt.format(d.newPayable);
+    q("#dayAllocProfit").textContent = fmt.format(d.allocProfit); q("#dayAllocTax").textContent = fmt.format(d.allocTax); q("#dayAllocBuy").textContent = fmt.format(d.allocBuy); q("#dayAllocOps").textContent = fmt.format(d.allocOps);
     const alerts = [];
-    if (d.newPayable > d.allocBuy && d.newPayable > 0) {
-      alerts.push({
-        cls:"alert bad",
-        txt:"Hai caricato più acquisti su carta del budget acquisti teorico del giorno. Rischio di spostare troppa liquidità futura su magazzino."
-      });
-    }
-    if (d.netCash < 0) {
-      alerts.push({
-        cls:"alert bad",
-        txt:"La giornata chiude con cassa negativa. Controlla uscite pagate oggi e valuta se posticipare acquisti non urgenti."
-      });
-    }
-    if (d.revenue > 0 && clampNum(q("#dayRepairRevenue").value) === 0 && state.config.repairsPriority) {
-      alerts.push({
-        cls:"alert warn",
-        txt:"Nessun incasso riparazioni inserito oggi. Se le riparazioni sono il motore principale, verifica di non averle dimenticate."
-      });
-    }
-    if (clampNum(q("#dayAmexBankDebit").value) > 0 && clampNum(q("#dayPurchasesCard").value) > 0) {
-      alerts.push({
-        cls:"alert",
-        txt:"Oggi stai sia caricando nuovi acquisti su carta sia pagando AMEX. È corretto se il 27 hai l'addebito e continui a comprare."
-      });
-    }
-    if (clampNum(q("#dayTaxPaid").value) > 0) {
-      alerts.push({
-        cls:"alert warn",
-        txt:"Hai registrato un pagamento tasse/F24 oggi. Bene: questa voce riduce cassa oggi ma non va dimenticata nel piano mensile."
-      });
-    }
-
-    q("#alertsBox").innerHTML =
-      alerts.map(a => `<div class="${a.cls}">${a.txt}</div>`).join("") ||
-      `<div class="alert">Nessun alert critico. Compila e salva la giornata.</div>`;
+    if(d.grossProfit <= 0 && d.revenue > 0) alerts.push({cls:"warn", txt:"Hai inserito incassi ma utile giornata zero. Controlla di non aver dimenticato l'utile totale."});
+    if(d.newPayable > d.allocBuy && d.newPayable > 0) alerts.push({cls:"bad", txt:"Gli acquisti su carta superano il budget acquisti teorico calcolato dall'utile di oggi."});
+    if(d.netCash < 0) alerts.push({cls:"bad", txt:"La giornata chiude con cassa negativa: stai pagando più di quanto incassi oggi."});
+    if(clampNum(q("#dayTaxPaid").value) > 0) alerts.push({cls:"warn", txt:"Hai registrato tasse/F24 oggi: bene, così la liquidità reale resta corretta."});
+    if(!alerts.length) alerts.push({cls:"good", txt:"Compilazione coerente. Puoi salvare la giornata."});
+    q("#alertsBox").innerHTML = alerts.map(a => `<div class="alert ${a.cls}">${a.txt}</div>`).join("");
   }
 
-  function renderDaysTable(){
-    const tbody = q("#daysTable tbody");
-    const daysDesc = [...state.days].sort((a,b) => b.date.localeCompare(a.date));
-    const asc = [...state.days].sort(byDateAsc);
-
-    let cash = clampNum(state.config.cashStart);
-    const cashMap = {};
-    for (const d of asc) {
-      cash += clampNum(d.netCash);
-      cashMap[d.id] = cash;
-    }
-
-    tbody.innerHTML = daysDesc.map(d => `
-      <tr>
-        <td>${d.date}</td>
-        <td class="right">${fmt.format(clampNum(d.revenue))}</td>
-        <td class="right">${fmt.format(clampNum(d.outCash))}</td>
-        <td class="right">${fmt.format(clampNum(d.netCash))}</td>
-        <td class="right">${fmt.format(clampNum(d.purchasesCard))}</td>
-        <td class="right">${fmt.format(clampNum(cashMap[d.id] || 0))}</td>
-        <td>${escapeHtml(d.notes || "")}</td>
-      </tr>
-    `).join("");
+  function renderDaysList(){
+    const box = q("#daysList"), desc=[...state.days].sort((a,b)=>b.date.localeCompare(a.date));
+    let cash=clampNum(state.config.cashStart); const cashMap={};
+    [...state.days].sort(byDateAsc).forEach(d => { cash += clampNum(d.netCash); cashMap[d.id]=cash; });
+    box.innerHTML = desc.map(d => `<div class="entry"><div class="entry-head"><div><div class="entry-title">${d.date}</div><div class="entry-sub">${escapeHtml(d.notes || "Nessuna nota")}</div></div><div class="${clampNum(d.netCash)>=0?"":"danger-text"}"><b>${fmt.format(clampNum(d.netCash))}</b></div></div><div class="chips"><div class="chip">Incassi ${fmt.format(clampNum(d.revenue))}</div><div class="chip">Uscite ${fmt.format(clampNum(d.outCash))}</div><div class="chip">Utile ${fmt.format(clampNum(d.grossProfit))}</div><div class="chip">Carta ${fmt.format(clampNum(d.purchasesCard))}</div><div class="chip">Liquidità ${fmt.format(clampNum(cashMap[d.id] || 0))}</div></div></div>`).join("") || `<div class="alert">Nessuna giornata registrata ancora.</div>`;
   }
 
-  function renderRecurring(){
-    const tb = q("#recurringTable tbody");
-    const labels = {
-      loan:"Rata / finanziamento",
-      tax:"Tasse / F24",
-      expense:"Altra uscita",
-      rent:"Affitto"
-    };
-
-    tb.innerHTML = state.recurring.map(r => `
-      <tr>
-        <td>${escapeHtml(r.name)}</td>
-        <td>${labels[r.category] || r.category}</td>
-        <td>${r.day}</td>
-        <td class="right">${fmt.format(clampNum(r.amount))}</td>
-        <td><button data-del-rec="${r.id}" class="btn-secondary small">Elimina</button></td>
-      </tr>
-    `).join("");
-
-    qa("[data-del-rec]").forEach(btn => {
-      btn.onclick = () => {
-        state.recurring = state.recurring.filter(x => x.id !== btn.dataset.delRec);
-        saveState();
-        renderAll();
-      };
-    });
+  function renderPayables(){
+    const box = q("#payablesList"), items = [];
+    [...state.days].sort(byDateAsc).forEach(d => { if(clampNum(d.purchasesCard)>0) items.push({type:"Acquisto carta/AMEX",date:d.date,amount:clampNum(d.purchasesCard),note:d.notes||""}); if(clampNum(d.amexBankDebit)>0) items.push({type:"Pagamento AMEX da banca",date:d.date,amount:-clampNum(d.amexBankDebit),note:d.notes||""}); });
+    box.innerHTML = items.slice().reverse().map(x => `<div class="entry"><div class="entry-head"><div><div class="entry-title">${x.type}</div><div class="entry-sub">${x.date} • ${escapeHtml(x.note || "Senza nota")}</div></div><div class="${x.amount<0?"danger-text":""}"><b>${fmt.format(x.amount)}</b></div></div></div>`).join("") || `<div class="alert">Nessun debito carta o movimento AMEX registrato.</div>`;
   }
 
   function summarizeByPeriod(mode){
     const map = {};
-    for (const d of state.days) {
-      const key = mode === "week" ? weekKey(d.date) : monthKey(d.date);
-      if (!map[key]) {
-        map[key] = {
-          revenue:0,
-          outCash:0,
-          netCash:0,
-          purchasesCard:0,
-          amexBankDebit:0,
-          taxPaid:0,
-          loanPaid:0,
-          days:0
-        };
-      }
-      map[key].revenue += clampNum(d.revenue);
-      map[key].outCash += clampNum(d.outCash);
-      map[key].netCash += clampNum(d.netCash);
-      map[key].purchasesCard += clampNum(d.purchasesCard);
-      map[key].amexBankDebit += clampNum(d.amexBankDebit);
-      map[key].taxPaid += clampNum(d.taxPaid);
-      map[key].loanPaid += clampNum(d.loanPaid);
-      map[key].days += 1;
-    }
-    return Object.entries(map).sort((a,b) => b[0].localeCompare(a[0]));
+    state.days.forEach(d => { const key = mode==="week" ? weekKey(d.date) : monthKey(d.date); if(!map[key]) map[key] = {revenue:0,outCash:0,netCash:0,grossProfit:0,purchasesCard:0}; map[key].revenue += clampNum(d.revenue); map[key].outCash += clampNum(d.outCash); map[key].netCash += clampNum(d.netCash); map[key].grossProfit += clampNum(d.grossProfit); map[key].purchasesCard += clampNum(d.purchasesCard); });
+    return Object.entries(map).sort((a,b)=>b[0].localeCompare(a[0]));
   }
 
   function renderSummaries(){
-    const w = summarizeByPeriod("week").slice(0,6);
-    q("#weeklySummary").innerHTML =
-      w.map(([k,v]) => `
-        <div class="alert">
-          <b>Settimana dal ${k}</b><br>
-          Incassi ${fmt.format(v.revenue)} • Uscite cassa ${fmt.format(v.outCash)}<br>
-          Netto ${fmt.format(v.netCash)} • Nuovi acquisti su carta ${fmt.format(v.purchasesCard)}
-        </div>
-      `).join("") ||
-      `<div class="alert">Nessun dato settimanale ancora.</div>`;
-
-    const m = summarizeByPeriod("month").slice(0,6);
-    q("#monthlySummary").innerHTML =
-      m.map(([k,v]) => `
-        <div class="alert">
-          <b>Mese ${k}</b><br>
-          Incassi ${fmt.format(v.revenue)} • Uscite cassa ${fmt.format(v.outCash)}<br>
-          Netto ${fmt.format(v.netCash)} • Tasse pagate ${fmt.format(v.taxPaid)} • Rate pagate ${fmt.format(v.loanPaid)}
-        </div>
-      `).join("") ||
-      `<div class="alert">Nessun dato mensile ancora.</div>`;
+    const week = summarizeByPeriod("week").slice(0,4), month = summarizeByPeriod("month").slice(0,4);
+    q("#weeklySummary").innerHTML = week.map(([k,v]) => `<div class="alert"><b>Settimana dal ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)}</div>`).join("") || `<div class="alert">Nessun dato settimanale ancora.</div>`;
+    q("#monthlySummary").innerHTML = month.map(([k,v]) => `<div class="alert"><b>Mese ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)} • Acquisti carta ${fmt.format(v.purchasesCard)}</div>`).join("") || `<div class="alert">Nessun dato mensile ancora.</div>`;
   }
 
-  function renderPayables(){
-    const tb = q("#payablesTable tbody");
-    const arr = [];
-
-    [...state.days].sort(byDateAsc).forEach(d => {
-      if (clampNum(d.purchasesCard) > 0) {
-        arr.push({
-          type:"Acquisto carta/AMEX",
-          date:d.date,
-          note:d.notes || "",
-          amount:clampNum(d.purchasesCard)
-        });
-      }
-      if (clampNum(d.amexBankDebit) > 0) {
-        arr.push({
-          type:"Pagamento AMEX da banca",
-          date:d.date,
-          note:d.notes || "",
-          amount:-clampNum(d.amexBankDebit)
-        });
-      }
-    });
-
-    tb.innerHTML =
-      arr.slice().reverse().map(x => `
-        <tr>
-          <td>${x.type}</td>
-          <td>${x.date}</td>
-          <td>${escapeHtml(x.note || "")}</td>
-          <td class="right ${x.amount < 0 ? "danger-text" : ""}">${fmt.format(x.amount)}</td>
-        </tr>
-      `).join("") ||
-      `<tr><td colspan="4" class="center muted">Nessun debito aperto o movimento carta registrato.</td></tr>`;
-  }
-
-  function drawLineChart(canvasId, points, colorStroke){
-    const cv = q(canvasId);
-    const ctx = cv.getContext("2d");
-    const w = cv.width, h = cv.height;
-
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0,0,w,h);
-
-    ctx.strokeStyle = "#dfe6f1";
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 5; i++) {
-      const y = 20 + i * (h - 40) / 4;
-      ctx.beginPath();
-      ctx.moveTo(40, y);
-      ctx.lineTo(w - 10, y);
-      ctx.stroke();
-    }
-
-    if (!points.length) {
-      ctx.fillStyle = "#667489";
-      ctx.font = "14px sans-serif";
-      ctx.fillText("Nessun dato disponibile", 50, h / 2);
-      return;
-    }
-
-    const vals = points.map(p => p.value);
-    let min = Math.min(...vals);
-    let max = Math.max(...vals);
-    if (min === max) { min -= 1; max += 1; }
-
-    const plotW = w - 60;
-    const plotH = h - 40;
-    const step = points.length === 1 ? 0 : plotW / (points.length - 1);
-
-    ctx.strokeStyle = colorStroke;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-
-    points.forEach((p, i) => {
-      const x = 40 + i * step;
-      const y = 20 + (max - p.value) / (max - min) * plotH;
-      if (i === 0) ctx.moveTo(x,y);
-      else ctx.lineTo(x,y);
-    });
-
-    ctx.stroke();
-
-    ctx.fillStyle = colorStroke;
-    points.forEach((p, i) => {
-      const x = 40 + i * step;
-      const y = 20 + (max - p.value) / (max - min) * plotH;
-      ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    ctx.fillStyle = "#667489";
-    ctx.font = "12px sans-serif";
-    ctx.fillText(fmt.format(max), 6, 24);
-    ctx.fillText(fmt.format(min), 6, h - 10);
+  function drawLineChart(canvasId, points, color){
+    const cv=q(canvasId), ctx=cv.getContext("2d"), w=cv.width, h=cv.height;
+    ctx.clearRect(0,0,w,h); ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h); ctx.strokeStyle="#dfe6f1"; ctx.lineWidth=1;
+    for(let i=0;i<5;i++){ const y=20+i*(h-40)/4; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(w-10,y); ctx.stroke(); }
+    if(!points.length){ ctx.fillStyle="#667489"; ctx.font="14px sans-serif"; ctx.fillText("Nessun dato disponibile",50,h/2); return; }
+    const vals=points.map(p=>p.value); let min=Math.min(...vals), max=Math.max(...vals); if(min===max){ min -= 1; max += 1; }
+    const plotW=w-60, plotH=h-40, step=points.length===1?0:plotW/(points.length-1);
+    ctx.strokeStyle=color; ctx.lineWidth=3; ctx.beginPath();
+    points.forEach((p,i)=>{ const x=40+i*step, y=20+(max-p.value)/(max-min)*plotH; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+    ctx.stroke(); ctx.fillStyle=color;
+    points.forEach((p,i)=>{ const x=40+i*step, y=20+(max-p.value)/(max-min)*plotH; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill(); });
+    ctx.fillStyle="#667489"; ctx.font="12px sans-serif"; ctx.fillText(fmt.format(max),6,24); ctx.fillText(fmt.format(min),6,h-10);
   }
 
   function renderCharts(){
-    const asc = [...state.days].sort(byDateAsc);
-    let cash = state.config.cashStart;
-    const cashPts = [];
-    const netPts = [];
-
-    asc.forEach(d => {
-      cash += clampNum(d.netCash);
-      cashPts.push({ label:d.date.slice(5), value:cash });
-      netPts.push({ label:d.date.slice(5), value:clampNum(d.netCash) });
-    });
-
-    drawLineChart("#cashChart", cashPts, "#2563eb");
-    drawLineChart("#netChart", netPts, "#d97706");
+    const asc=[...state.days].sort(byDateAsc); let cash=state.config.cashStart; const cashPts=[], netPts=[];
+    asc.forEach(d=>{ cash += clampNum(d.netCash); cashPts.push({label:d.date.slice(5), value:cash}); netPts.push({label:d.date.slice(5), value:clampNum(d.netCash)}); });
+    drawLineChart("#cashChart", cashPts, "#2563eb"); drawLineChart("#netChart", netPts, "#d97706");
   }
 
   function bindSettings(){
-    const cfg = state.config;
-    const map = {
-      "#cfgCashStart":"cashStart",
-      "#cfgCashTarget":"cashTarget",
-      "#cfgStockNet":"stockNet",
-      "#cfgStockSellGross":"stockSellGross",
-      "#cfgRepairNetAvg":"repairNetAvg",
-      "#cfgRepairsPriority":"repairsPriority",
-      "#cfgProfitPct":"profitPct",
-      "#cfgTaxPct":"taxPct",
-      "#cfgBuyPct":"buyPct",
-      "#cfgOpsPct":"opsPct",
-      "#cfgRent":"rent",
-      "#cfgOwnerPay":"ownerPay",
-      "#cfgStaffPay":"staffPay",
-      "#cfgRecurringOther":"recurringOther",
-      "#cfgLoan1":"loan1",
-      "#cfgLoan2":"loan2",
-      "#cfgSocio1":"socio1",
-      "#cfgSocio2":"socio2"
-    };
-
-    Object.entries(map).forEach(([sel,key]) => {
-      const el = q(sel);
-      if (!el) return;
-      if (el.tagName === "SELECT") el.value = String(cfg[key]);
-      else el.value = cfg[key];
-    });
-
-    q("#cfgAppUser").value = state.auth.user;
-    q("#cfgAppPass").value = state.auth.pass;
+    const cfg=state.config;
+    q("#cfgCashStart").value=cfg.cashStart; q("#cfgCashTarget").value=cfg.cashTarget; q("#cfgStockNet").value=cfg.stockNet; q("#cfgStockSellGross").value=cfg.stockSellGross; q("#cfgProfitPct").value=cfg.profitPct; q("#cfgTaxPct").value=cfg.taxPct; q("#cfgBuyPct").value=cfg.buyPct; q("#cfgOpsPct").value=cfg.opsPct; q("#cfgLoansMonthly").value=cfg.loansMonthly; q("#cfgAppUser").value=state.auth.user; q("#cfgAppPass").value=state.auth.pass;
   }
 
   function saveSettings(){
-    const fields = [
-      ["cashStart","#cfgCashStart"],
-      ["cashTarget","#cfgCashTarget"],
-      ["stockNet","#cfgStockNet"],
-      ["stockSellGross","#cfgStockSellGross"],
-      ["repairNetAvg","#cfgRepairNetAvg"],
-      ["profitPct","#cfgProfitPct"],
-      ["taxPct","#cfgTaxPct"],
-      ["buyPct","#cfgBuyPct"],
-      ["opsPct","#cfgOpsPct"],
-      ["rent","#cfgRent"],
-      ["ownerPay","#cfgOwnerPay"],
-      ["staffPay","#cfgStaffPay"],
-      ["recurringOther","#cfgRecurringOther"],
-      ["loan1","#cfgLoan1"],
-      ["loan2","#cfgLoan2"],
-      ["socio1","#cfgSocio1"],
-      ["socio2","#cfgSocio2"]
-    ];
-
-    fields.forEach(([key,sel]) => {
-      state.config[key] = clampNum(q(sel).value);
-    });
-
-    state.config.repairsPriority = q("#cfgRepairsPriority").value === "true";
-
-    const newUser = q("#cfgAppUser").value.trim();
-    const newPass = q("#cfgAppPass").value.trim();
-    if (newUser) state.auth.user = newUser;
-    if (newPass) state.auth.pass = newPass;
-
-    saveState();
-    renderAll();
-    alert("Impostazioni salvate.");
+    state.config.cashStart=clampNum(q("#cfgCashStart").value); state.config.cashTarget=clampNum(q("#cfgCashTarget").value); state.config.stockNet=clampNum(q("#cfgStockNet").value); state.config.stockSellGross=clampNum(q("#cfgStockSellGross").value); state.config.profitPct=clampNum(q("#cfgProfitPct").value); state.config.taxPct=clampNum(q("#cfgTaxPct").value); state.config.buyPct=clampNum(q("#cfgBuyPct").value); state.config.opsPct=clampNum(q("#cfgOpsPct").value); state.config.loansMonthly=clampNum(q("#cfgLoansMonthly").value);
+    const newUser=q("#cfgAppUser").value.trim(), newPass=q("#cfgAppPass").value.trim(); if(newUser) state.auth.user=newUser; if(newPass) state.auth.pass=newPass;
+    saveState(); renderAll(); alert("Impostazioni salvate.");
   }
 
   function seedRecurring(){
-    const c = state.config;
-    const base = [
-      { name:"Affitto negozio", category:"rent", day:4, amount:c.rent },
-      { name:"F24 / Tasse", category:"tax", day:16, amount:0 },
-      { name:"Mutuo 1", category:"loan", day:24, amount:c.loan1 },
-      { name:"Mutuo 2", category:"loan", day:22, amount:c.loan2 },
-      { name:"Finanziamento socio 1", category:"loan", day:10, amount:c.socio1 },
-      { name:"Finanziamento socio 2", category:"loan", day:27, amount:c.socio2 },
-      { name:"Addebito AMEX", category:"expense", day:27, amount:0 }
-    ];
-
-    base.forEach(r => {
-      if (!state.recurring.some(x => x.name === r.name)) {
-        state.recurring.push({ ...r, id:id() });
-      }
-    });
-
-    saveState();
-    renderAll();
-    alert("Ricorrenze standard generate.");
-  }
-
-  function addRecurring(){
-    const name = q("#recName").value.trim();
-    const amount = clampNum(q("#recAmount").value);
-    const category = q("#recCategory").value;
-    const day = Math.max(1, Math.min(31, parseInt(q("#recDay").value || "1", 10)));
-
-    if (!name) {
-      alert("Inserisci il nome della ricorrenza.");
-      return;
-    }
-
-    state.recurring.push({ id:id(), name, amount, category, day });
-    saveState();
-    renderAll();
-
-    q("#recName").value = "";
-    q("#recAmount").value = "";
-    q("#recDay").value = "";
+    const c=state.config, base=[{name:"F24 / Tasse", category:"tax", day:16, amount:0},{name:"Addebito AMEX", category:"expense", day:27, amount:0},{name:"Mutui + finanziamenti", category:"loan", day:22, amount:c.loansMonthly}];
+    base.forEach(r=>{ if(!state.recurring.some(x=>x.name===r.name)) state.recurring.push({...r,id:id()}); });
+    saveState(); renderAll(); alert("Ricorrenze standard generate.");
   }
 
   function clearDayForm(){
-    [
-      "#dayRepairsCount",
-      "#dayRepairRevenue",
-      "#dayDeviceRevenue",
-      "#dayAccessoryRevenue",
-      "#dayOtherRevenue",
-      "#daySupplierPaidCash",
-      "#dayPurchasesCard",
-      "#dayAmexBankDebit",
-      "#dayTaxPaid",
-      "#dayLoanPaid",
-      "#dayOtherExpense"
-    ].forEach(sel => q(sel).value = "0");
-
-    q("#dayNotes").value = "";
-    q("#dayDate").value = todayIso();
-    renderDayDraft();
+    q("#dayDate").value=todayIso();
+    ["#dayCustomerRevenue","#dayGrossProfit","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel => q(sel).value="0");
+    q("#dayNotes").value=""; renderDayDraft();
   }
 
   async function saveDay(){
-    const date = q("#dayDate").value || todayIso();
-    const d = computeDayDraft();
-
-    const entry = {
-      id: id(),
-      date,
-      repairsCount: clampNum(q("#dayRepairsCount").value),
-      repairRevenue: clampNum(q("#dayRepairRevenue").value),
-      deviceRevenue: clampNum(q("#dayDeviceRevenue").value),
-      accessoryRevenue: clampNum(q("#dayAccessoryRevenue").value),
-      otherRevenue: clampNum(q("#dayOtherRevenue").value),
-      supplierPaidCash: clampNum(q("#daySupplierPaidCash").value),
-      purchasesCard: clampNum(q("#dayPurchasesCard").value),
-      amexBankDebit: clampNum(q("#dayAmexBankDebit").value),
-      taxPaid: clampNum(q("#dayTaxPaid").value),
-      loanPaid: clampNum(q("#dayLoanPaid").value),
-      otherExpense: clampNum(q("#dayOtherExpense").value),
-      notes: q("#dayNotes").value.trim(),
-      revenue: d.revenue,
-      outCash: d.outCash,
-      netCash: d.netCash,
-      allocProfit: d.allocProfit,
-      allocTax: d.allocTax,
-      allocBuy: d.allocBuy,
-      allocOps: d.allocOps
-    };
-
-    // Locale: sostituisce la giornata stessa se già esiste
-    const existingIndex = state.days.findIndex(x => x.date === date);
-    if (existingIndex >= 0) state.days[existingIndex] = entry;
-    else state.days.push(entry);
-
-    saveState();
-    renderAll();
-
-    try{
-      await syncSaveDayGoogle(entry);
-      alert("Giornata salvata.");
-    }catch(e){
-      alert("Giornata salvata in locale, ma non su Google Sheets.");
-    }
+    const d=computeDayDraft(), date=q("#dayDate").value || todayIso();
+    const entry={id:id(),date,customerRevenue:clampNum(q("#dayCustomerRevenue").value),grossProfit:clampNum(q("#dayGrossProfit").value),otherRevenue:clampNum(q("#dayOtherRevenue").value),supplierPaidCash:clampNum(q("#daySupplierPaidCash").value),purchasesCard:clampNum(q("#dayPurchasesCard").value),amexBankDebit:clampNum(q("#dayAmexBankDebit").value),taxPaid:clampNum(q("#dayTaxPaid").value),loanPaid:clampNum(q("#dayLoanPaid").value),otherExpense:clampNum(q("#dayOtherExpense").value),notes:q("#dayNotes").value.trim(),revenue:d.revenue,outCash:d.outCash,netCash:d.netCash,allocProfit:d.allocProfit,allocTax:d.allocTax,allocBuy:d.allocBuy,allocOps:d.allocOps};
+    const existingIndex=state.days.findIndex(x=>x.date===date); if(existingIndex>=0) state.days[existingIndex]=entry; else state.days.push(entry);
+    saveState(); renderAll();
+    try{ await syncSaveDayGoogle(entry); alert("Giornata salvata."); } catch(e){ alert("Giornata salvata in locale, ma non su Google Sheets."); }
   }
 
   function exportJson(){
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "ramservice_liquidita_backup.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function exportCsv(){
-    const rows = [[
-      "data","riparazioni_num","incasso_riparazioni","incasso_telefoni",
-      "incasso_accessori","altri_incassi","fornitori_pagati_conto",
-      "acquisti_carta","addebito_amex_banca","tasse_pagate","rate_pagate",
-      "altre_uscite","incassi_totali","uscite_cassa","netto_cassa","note"
-    ]];
-
-    [...state.days].sort(byDateAsc).forEach(d => {
-      rows.push([
-        d.date,
-        d.repairsCount,
-        d.repairRevenue,
-        d.deviceRevenue,
-        d.accessoryRevenue,
-        d.otherRevenue,
-        d.supplierPaidCash,
-        d.purchasesCard,
-        d.amexBankDebit,
-        d.taxPaid,
-        d.loanPaid,
-        d.otherExpense,
-        d.revenue,
-        d.outCash,
-        d.netCash,
-        (d.notes || "").replace(/\n/g, " ")
-      ]);
-    });
-
-    const csv = rows
-      .map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";"))
-      .join("\n");
-
-    const blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "ramservice_liquidita_giornate.csv";
-    a.click();
-    URL.revokeObjectURL(a.href);
+    const blob=new Blob([JSON.stringify(state,null,2)], {type:"application/json"}), a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download="ramservice_liquidita_semplice_backup.json"; a.click(); URL.revokeObjectURL(a.href);
   }
 
   function importJsonFile(file){
-    const fr = new FileReader();
-    fr.onload = () => {
-      try{
-        const parsed = JSON.parse(fr.result);
-        state = {
-          ...structuredClone(defaults),
-          ...parsed,
-          auth:{ ...defaults.auth, ...(parsed.auth || {}) },
-          config:{ ...defaults.config, ...(parsed.config || {}) },
-          days:[ ...(parsed.days || []) ],
-          recurring:[ ...(parsed.recurring || []) ],
-          meta:{ ...defaults.meta, ...(parsed.meta || {}) }
-        };
-        saveState();
-        renderAll();
-        alert("Backup importato.");
-      }catch(e){
-        alert("File JSON non valido.");
-      }
-    };
+    const fr=new FileReader();
+    fr.onload=()=>{ try{ const parsed=JSON.parse(fr.result); state={...structuredClone(defaults),...parsed,auth:{...defaults.auth,...(parsed.auth||{})},config:{...defaults.config,...(parsed.config||{})},recurring:[...(parsed.recurring||[])],days:[...(parsed.days||[])],meta:{...defaults.meta,...(parsed.meta||{})}}; saveState(); renderAll(); alert("Backup importato."); }catch(e){ alert("File JSON non valido."); } };
     fr.readAsText(file);
   }
 
-  function renderAll(){
-    bindSettings();
-    renderKpi();
-    renderDayDraft();
-    renderDaysTable();
-    renderRecurring();
-    renderSummaries();
-    renderPayables();
-    renderCharts();
-  }
+  function renderAll(){ bindSettings(); renderKpi(); renderDayDraft(); renderDaysList(); renderPayables(); renderSummaries(); renderCharts(); }
 
   function setupEvents(){
-    q("#loginBtn").onclick = async () => {
-      const u = q("#loginUser").value.trim();
-      const p = q("#loginPass").value;
-
-      if (u === state.auth.user && p === state.auth.pass) {
-        sessionStorage.setItem(SESSION, "1");
-        showApp(true);
-        renderAll();
-
-        try{
-          await syncLoadGoogle();
-        }catch(e){
-          console.log("Avvio senza sync Google");
-        }
-      } else {
-        q("#loginMsg").textContent = "Credenziali non corrette.";
-      }
-    };
-
-    q("#logoutBtn").onclick = () => {
-      sessionStorage.removeItem(SESSION);
-      showApp(false);
-    };
-
-    q("#saveSettingsBtn").onclick = saveSettings;
-    q("#seedRecurringBtn").onclick = seedRecurring;
-    q("#addRecurringBtn").onclick = addRecurring;
-    q("#clearDayBtn").onclick = clearDayForm;
-    q("#saveDayBtn").onclick = saveDay;
-    q("#exportJsonBtn").onclick = exportJson;
-    q("#exportCsvBtn").onclick = exportCsv;
-
-    q("#importJsonBtn").onclick = () => q("#importJsonInput").click();
-    q("#importJsonInput").addEventListener("change", e => {
-      const f = e.target.files && e.target.files[0];
-      if (f) importJsonFile(f);
-    });
-
-    q("#syncNowBtn").onclick = async () => {
-      try{
-        await syncLoadGoogle();
-        alert("Sincronizzazione Google Sheets completata.");
-      }catch(e){
-        alert("Sync Google Sheets non riuscita.");
-      }
-    };
-
-    [
-      "#dayRepairsCount",
-      "#dayRepairRevenue",
-      "#dayDeviceRevenue",
-      "#dayAccessoryRevenue",
-      "#dayOtherRevenue",
-      "#daySupplierPaidCash",
-      "#dayPurchasesCard",
-      "#dayAmexBankDebit",
-      "#dayTaxPaid",
-      "#dayLoanPaid",
-      "#dayOtherExpense"
-    ].forEach(sel => q(sel).addEventListener("input", renderDayDraft));
-
-    q("#dayDate").value = todayIso();
+    q("#loginBtn").onclick=async()=>{ const u=q("#loginUser").value.trim(), p=q("#loginPass").value; if(u===state.auth.user && p===state.auth.pass){ sessionStorage.setItem(SESSION,"1"); showApp(true); renderAll(); try{ await syncLoadGoogle(); }catch(e){} } else q("#loginMsg").textContent="Credenziali non corrette."; };
+    q("#logoutBtn").onclick=()=>{ sessionStorage.removeItem(SESSION); showApp(false); };
+    q("#saveSettingsBtn").onclick=saveSettings; q("#seedRecurringBtn").onclick=seedRecurring; q("#clearDayBtn").onclick=clearDayForm; q("#saveDayBtn").onclick=saveDay; q("#exportJsonBtn").onclick=exportJson;
+    q("#importJsonBtn").onclick=()=>q("#importJsonInput").click(); q("#importJsonInput").addEventListener("change", e=>{ const f=e.target.files && e.target.files[0]; if(f) importJsonFile(f); });
+    q("#syncNowBtn").onclick=async()=>{ try{ await syncLoadGoogle(); alert("Sincronizzazione Google Sheets completata."); }catch(e){ alert("Sync Google Sheets non riuscita."); } };
+    ["#dayCustomerRevenue","#dayGrossProfit","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel=>q(sel).addEventListener("input", renderDayDraft));
+    q("#dayDate").value=todayIso();
   }
 
   setupEvents();
-
-  if (isLogged()) {
-    showApp(true);
-    renderAll();
-    syncLoadGoogle().catch(() => {});
-  } else {
-    showApp(false);
-  }
+  if(isLogged()){ showApp(true); renderAll(); syncLoadGoogle().catch(()=>{}); } else showApp(false);
 })();
 </script>
 </body>
