@@ -3,31 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>RAMSERVICE Liquidità Semplice Pro</title>
+  <title>RAMSERVICE Liquidità Definitiva</title>
   <style>
-    :root{--bg:#f5f7fb;--panel:#ffffff;--panel2:#f8fbff;--line:#dfe6f1;--text:#182435;--muted:#667489;--primary:#2563eb;--primarySoft:#e9f1ff;--good:#0f9f63;--goodSoft:#eaf8f1;--warn:#d97706;--warnSoft:#fff4e5;--bad:#dc2626;--badSoft:#fdeeee;--shadow:0 10px 28px rgba(30,41,59,.08);--r:18px}
-    *{box-sizing:border-box} html,body{margin:0;padding:0;background:linear-gradient(180deg,#f7f9fd,#eef3fb);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .hidden{display:none!important}.container{max-width:980px;margin:0 auto;padding:14px}.topbar{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0}.brand{display:flex;gap:10px;align-items:center}
-    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)} h1,h2,h3{margin:0}.subtitle{color:var(--muted);font-size:14px;line-height:1.35}
-    .grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}@media (max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}.soft{background:var(--panel2)}
-    .kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff}.kpi.good{background:var(--goodSoft);border-color:#caeadb}.kpi.warn{background:var(--warnSoft);border-color:#f1d3a7}.kpi.bad{background:var(--badSoft);border-color:#f2c4c4}
-    .label{font-size:13px;color:var(--muted)}.value{font-size:28px;font-weight:800;margin-top:6px}
+    :root{
+      --bg:#f5f7fb; --panel:#ffffff; --panel2:#f8fbff; --line:#dfe6f1; --text:#182435; --muted:#667489;
+      --primary:#2563eb; --primarySoft:#e9f1ff; --good:#0f9f63; --goodSoft:#eaf8f1; --warn:#d97706; --warnSoft:#fff4e5;
+      --bad:#dc2626; --badSoft:#fdeeee; --shadow:0 10px 28px rgba(30,41,59,.08); --r:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#f7f9fd,#eef3fb);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .hidden{display:none!important}
+    .container{max-width:980px;margin:0 auto;padding:14px}
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0}
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)}
+    h1,h2,h3{margin:0}
+    .subtitle{color:var(--muted);font-size:14px;line-height:1.35}
+    .grid{display:grid;gap:14px}
+    .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    @media (max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
+    .soft{background:var(--panel2)}
+    .kpi{padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff}
+    .kpi.good{background:var(--goodSoft);border-color:#caeadb}
+    .kpi.warn{background:var(--warnSoft);border-color:#f1d3a7}
+    .kpi.bad{background:var(--badSoft);border-color:#f2c4c4}
+    .label{font-size:13px;color:var(--muted)}
+    .value{font-size:28px;font-weight:800;margin-top:6px}
     label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-    input,select,textarea,button{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit} textarea{min-height:84px;resize:vertical}
-    button{cursor:pointer;font-weight:700}.btn{background:var(--primary);border-color:var(--primary);color:#fff}.btn-soft{background:var(--primarySoft);color:#1847b7;border-color:#cfe0ff}.btn-good{background:var(--good);border-color:var(--good);color:#fff}.btn-secondary{background:#fff}
-    .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.accordion summary{list-style:none;cursor:pointer;font-weight:800}.accordion summary::-webkit-details-marker{display:none}
-    .hint{font-size:12px;color:var(--muted);line-height:1.5}.footer-note{font-size:12px;color:var(--muted);line-height:1.55}
-    .alert{padding:12px;border-radius:14px;border:1px solid var(--line);font-size:13px}.alert.good{background:var(--goodSoft);border-color:#caeadb}.alert.warn{background:var(--warnSoft);border-color:#f1d3a7}.alert.bad{background:var(--badSoft);border-color:#f2c4c4}
+    input,select,textarea,button{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit}
+    textarea{min-height:84px;resize:vertical}
+    button{cursor:pointer;font-weight:700}
+    .btn{background:var(--primary);border-color:var(--primary);color:#fff}
+    .btn-soft{background:var(--primarySoft);color:#1847b7;border-color:#cfe0ff}
+    .btn-good{background:var(--good);border-color:var(--good);color:#fff}
+    .btn-secondary{background:#fff}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row>*{flex:1}
+    .accordion summary{list-style:none;cursor:pointer;font-weight:800}
+    .accordion summary::-webkit-details-marker{display:none}
+    .hint{font-size:12px;color:var(--muted);line-height:1.5}
+    .footer-note{font-size:12px;color:var(--muted);line-height:1.55}
+    .alert{padding:12px;border-radius:14px;border:1px solid var(--line);font-size:13px}
+    .alert.good{background:var(--goodSoft);border-color:#caeadb}
+    .alert.warn{background:var(--warnSoft);border-color:#f1d3a7}
+    .alert.bad{background:var(--badSoft);border-color:#f2c4c4}
     .tag{font-size:11px;font-weight:800;padding:6px 9px;border-radius:999px;background:#eef4ff;border:1px solid #d7e4ff}
-    .list{display:grid;gap:10px}.entry{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}.entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.entry-title{font-weight:800}.entry-sub{font-size:12px;color:var(--muted);margin-top:4px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.chip{font-size:12px;padding:7px 10px;border-radius:999px;background:#f4f7fd;border:1px solid var(--line)}
-    canvas{width:100%;height:240px;background:#fff;border:1px solid var(--line);border-radius:14px}.login-shell{min-height:100vh;display:grid;place-items:center;padding:16px}.login-card{width:min(430px,100%);background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:20px}.danger-text{color:var(--bad);font-weight:700}
+    .list{display:grid;gap:10px}
+    .entry{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+    .entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .entry-title{font-weight:800}
+    .entry-sub{font-size:12px;color:var(--muted);margin-top:4px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{font-size:12px;padding:7px 10px;border-radius:999px;background:#f4f7fd;border:1px solid var(--line)}
+    canvas{width:100%;height:240px;background:#fff;border:1px solid var(--line);border-radius:14px}
+    .login-shell{min-height:100vh;display:grid;place-items:center;padding:16px}
+    .login-card{width:min(430px,100%);background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:20px}
+    .danger-text{color:var(--bad);font-weight:700}
   </style>
 </head>
 <body>
 <div id="loginView" class="login-shell">
   <div class="login-card">
-    <div class="brand" style="margin-bottom:18px"><div class="logo">R</div><div><h2>RAMSERVICE Liquidità Semplice</h2><div class="subtitle">Versione più facile • mobile friendly • Google Sheets</div></div></div>
+    <div class="brand" style="margin-bottom:18px"><div class="logo">R</div><div><h2>RAMSERVICE Liquidità</h2><div class="subtitle">Versione definitiva • semplice • Google Sheets</div></div></div>
     <div class="grid">
       <div><label>Nome utente</label><input id="loginUser" value="admin" autocomplete="username"></div>
       <div><label>Password</label><input id="loginPass" type="password" value="ramservice2026" autocomplete="current-password"></div>
@@ -41,8 +81,12 @@
 <div id="appView" class="hidden">
   <div class="container">
     <div class="topbar">
-      <div class="brand"><div class="logo">R</div><div><h1>RAMSERVICE Liquidità Semplice Pro</h1><div class="subtitle">Ogni sera inserisci solo incasso totale, utile giornata e uscite reali. Il resto viene calcolato automaticamente.</div></div></div>
-      <div class="row" style="min-width:min(420px,100%);max-width:560px"><button class="btn-soft" id="syncNowBtn">Sincronizza</button><button class="btn-secondary" id="exportJsonBtn">Backup JSON</button><button class="btn-secondary" id="logoutBtn">Esci</button></div>
+      <div class="brand"><div class="logo">R</div><div><h1>RAMSERVICE Liquidità Definitiva</h1><div class="subtitle">Inserisci incasso giornaliero, scegli il tipo di giornata e registra solo le uscite reali.</div></div></div>
+      <div class="row" style="min-width:min(420px,100%);max-width:560px">
+        <button class="btn-soft" id="syncNowBtn">Sincronizza</button>
+        <button class="btn-secondary" id="exportJsonBtn">Backup JSON</button>
+        <button class="btn-secondary" id="logoutBtn">Esci</button>
+      </div>
     </div>
 
     <details class="card accordion">
@@ -59,10 +103,30 @@
         <div><label>Rata mutui + finanziamenti mese (€)</label><input id="cfgLoansMonthly" type="number" step="0.01"></div>
       </div>
       <div class="grid g2" style="margin-top:12px">
-        <div class="card soft"><h3 style="margin-bottom:10px">🔐 Credenziali app</h3><div class="grid g2"><div><label>Nuovo nome utente</label><input id="cfgAppUser"></div><div><label>Nuova password</label><input id="cfgAppPass" type="password"></div></div></div>
-        <div class="card soft"><h3 style="margin-bottom:10px">📝 Nota metodo</h3><div class="footer-note">In questa versione non devi più dividere riparazioni, telefoni e accessori.<br>Inserisci solo: <b>incasso totale</b>, <b>utile totale giornata</b>, eventuali <b>altri incassi</b> e le <b>uscite pagate davvero oggi</b>.</div></div>
+        <div class="card soft">
+          <h3 style="margin-bottom:10px">🔐 Credenziali app</h3>
+          <div class="grid g2">
+            <div><label>Nuovo nome utente</label><input id="cfgAppUser"></div>
+            <div><label>Nuova password</label><input id="cfgAppPass" type="password"></div>
+          </div>
+        </div>
+        <div class="card soft">
+          <h3 style="margin-bottom:10px">📝 Metodo</h3>
+          <div class="footer-note">
+            Non devi più inserire l’utile manualmente.<br>
+            Seleziona solo il tipo di giornata:<br>
+            <b>Prudente = 25%</b><br>
+            <b>Normale = 30%</b><br>
+            <b>Forte riparazioni/accessori = 35%</b>
+          </div>
+        </div>
       </div>
-      <div class="row" style="margin-top:12px"><button class="btn-good" id="saveSettingsBtn">Salva impostazioni</button><button class="btn-secondary" id="seedRecurringBtn">Genera ricorrenze standard</button><button class="btn-secondary" id="importJsonBtn">Importa backup JSON</button><input id="importJsonInput" type="file" accept=".json" class="hidden"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn-good" id="saveSettingsBtn">Salva impostazioni</button>
+        <button class="btn-secondary" id="seedRecurringBtn">Genera ricorrenze standard</button>
+        <button class="btn-secondary" id="importJsonBtn">Importa backup JSON</button>
+        <input id="importJsonInput" type="file" accept=".json" class="hidden">
+      </div>
     </details>
 
     <div class="grid g4" style="margin-top:14px">
@@ -78,7 +142,14 @@
         <div class="grid g2">
           <div><label>Data</label><input id="dayDate" type="date"></div>
           <div><label>Incasso totale clienti oggi (€)</label><input id="dayCustomerRevenue" type="number" step="0.01" value="0"></div>
-          <div><label>Utile totale generato oggi (€)</label><input id="dayGrossProfit" type="number" step="0.01" value="0"></div>
+          <div>
+            <label>Tipo di giornata</label>
+            <select id="dayMarginMode">
+              <option value="25">Prudente • 25%</option>
+              <option value="30" selected>Normale • 30%</option>
+              <option value="35">Forte riparazioni/accessori • 35%</option>
+            </select>
+          </div>
           <div><label>Altri incassi oggi non clienti (€)</label><input id="dayOtherRevenue" type="number" step="0.01" value="0"></div>
           <div><label>Fornitori pagati oggi da conto/cassa (€)</label><input id="daySupplierPaidCash" type="number" step="0.01" value="0"></div>
           <div><label>Acquisti fatti oggi con AMEX/carta (€)</label><input id="dayPurchasesCard" type="number" step="0.01" value="0"></div>
@@ -87,8 +158,17 @@
           <div><label>Rate/finanziamenti pagati oggi (€)</label><input id="dayLoanPaid" type="number" step="0.01" value="0"></div>
           <div><label>Altre uscite pagate oggi (€)</label><input id="dayOtherExpense" type="number" step="0.01" value="0"></div>
         </div>
-        <div style="margin-top:10px"><label>Note giornata</label><textarea id="dayNotes" placeholder="Esempio: incasso totale 980€, utile giornata 310€, acquisto Amazon su AMEX 120€, nessun pagamento fornitore da conto..."></textarea></div>
-        <div class="card soft" style="margin-top:12px"><div style="font-size:13px;font-weight:800">Come compilare ora</div><div class="footer-note">• <b>Incasso totale clienti oggi</b> = tutto quello che hai incassato dai clienti nella giornata.<br>• <b>Utile totale generato oggi</b> = quanto pensi di aver guadagnato davvero oggi, senza dover dividere riparazioni, accessori o telefoni.<br>• <b>Altri incassi</b> = entrate extra, non legate alla vendita normale.<br>• <b>Acquisti fatti oggi con AMEX/carta</b> = debito che nasce oggi ma non esce ancora dal conto.<br>• <b>Addebito AMEX pagato oggi in banca</b> = uscita vera del conto il giorno dell'addebito.</div></div>
+        <div style="margin-top:10px"><label>Note giornata</label><textarea id="dayNotes" placeholder="Esempio: giornata normale, incasso 980€, Amazon su AMEX 120€, nessun pagamento fornitore da conto..."></textarea></div>
+        <div class="card soft" style="margin-top:12px">
+          <div style="font-size:13px;font-weight:800">Come compilare</div>
+          <div class="footer-note">
+            • <b>Incasso totale clienti oggi</b> = tutto quello che hai incassato dai clienti nella giornata.<br>
+            • <b>Tipo di giornata</b> = il sistema stima l’utile automaticamente:<br>
+            Prudente 25%, Normale 30%, Forte 35%.<br>
+            • <b>Acquisti fatti oggi con AMEX/carta</b> = debito che nasce oggi ma non esce ancora dal conto.<br>
+            • <b>Addebito AMEX pagato oggi in banca</b> = uscita vera del conto il giorno dell'addebito.
+          </div>
+        </div>
         <div class="row" style="margin-top:12px"><button class="btn" id="saveDayBtn">Salva giornata</button><button class="btn-secondary" id="clearDayBtn">Pulisci campi</button></div>
       </div>
 
@@ -101,6 +181,8 @@
           <div class="kpi warn"><div class="label">Nuovo debito carta oggi</div><div class="value" id="dayNewPayable">€ 0,00</div></div>
         </div>
         <div class="grid g2" style="margin-top:10px">
+          <div class="kpi"><div class="label">Utile stimato giornata</div><div class="value" id="dayGrossProfit">€ 0,00</div></div>
+          <div class="kpi"><div class="label">% margine usata</div><div class="value" id="dayMarginPct">30%</div></div>
           <div class="kpi"><div class="label">Accantonamento profitto</div><div class="value" id="dayAllocProfit">€ 0,00</div></div>
           <div class="kpi"><div class="label">Accantonamento tasse</div><div class="value" id="dayAllocTax">€ 0,00</div></div>
           <div class="kpi"><div class="label">Budget acquisti teorico</div><div class="value" id="dayAllocBuy">€ 0,00</div></div>
@@ -125,15 +207,15 @@
       <div class="card"><h3 style="margin-bottom:10px">📚 Registro giornaliero</h3><div class="list" id="daysList"></div></div>
     </div>
 
-    <div class="footer-note" style="margin:18px 0 26px">Metodo consigliato da oggi: a fine giornata inserisci soltanto il totale incassato, l'utile totale che ritieni di aver generato e le uscite pagate davvero oggi. Questa versione è pensata per essere veloce anche da smartphone.</div>
+    <div class="footer-note" style="margin:18px 0 26px">Metodo consigliato: a fine giornata inserisci il totale incassato, scegli il tipo di giornata e registra le uscite pagate davvero oggi. Questa versione è pensata per essere veloce anche da smartphone.</div>
   </div>
 </div>
 
 <script>
 (function(){
   const API_URL = "https://script.google.com/macros/s/AKfycbzYAYVYv7HrIJ0SQjX-zu6zDJ5v45z1kH3Pxpm66rSYuv3VGwFA7wYzCwucnH3wqgaFRQ/exec";
-  const LS = "ramservice_liquidita_google_simple_v1";
-  const SESSION = "ramservice_liquidita_session_simple_v1";
+  const LS = "ramservice_liquidita_google_definitiva_v1";
+  const SESSION = "ramservice_liquidita_session_definitiva_v1";
   const fmt = new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"});
   const q = s => document.querySelector(s), qa = s => Array.from(document.querySelectorAll(s));
   const todayIso = () => new Date().toISOString().slice(0,10), clampNum = v => isFinite(parseFloat(v)) ? parseFloat(v) : 0, id = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36);
@@ -173,10 +255,13 @@
 
   function computeDayDraft(){
     const cfg = state.config;
-    const revenue = clampNum(q("#dayCustomerRevenue").value) + clampNum(q("#dayOtherRevenue").value);
+    const customerRevenue = clampNum(q("#dayCustomerRevenue").value);
+    const marginPct = clampNum(q("#dayMarginMode").value) || 30;
+    const grossProfit = customerRevenue * marginPct / 100;
+    const revenue = customerRevenue + clampNum(q("#dayOtherRevenue").value);
     const outCash = clampNum(q("#daySupplierPaidCash").value) + clampNum(q("#dayAmexBankDebit").value) + clampNum(q("#dayTaxPaid").value) + clampNum(q("#dayLoanPaid").value) + clampNum(q("#dayOtherExpense").value);
-    const newPayable = clampNum(q("#dayPurchasesCard").value), netCash = revenue - outCash, grossProfit = clampNum(q("#dayGrossProfit").value), allocBase = Math.max(grossProfit, 0);
-    return {revenue,outCash,newPayable,netCash,grossProfit,allocProfit:allocBase*cfg.profitPct/100,allocTax:allocBase*cfg.taxPct/100,allocBuy:allocBase*cfg.buyPct/100,allocOps:allocBase*cfg.opsPct/100};
+    const newPayable = clampNum(q("#dayPurchasesCard").value), netCash = revenue - outCash;
+    return {customerRevenue,marginPct,grossProfit,revenue,outCash,newPayable,netCash,allocProfit:grossProfit*cfg.profitPct/100,allocTax:grossProfit*cfg.taxPct/100,allocBuy:grossProfit*cfg.buyPct/100,allocOps:grossProfit*cfg.opsPct/100};
   }
 
   function currentDerived(){
@@ -195,10 +280,12 @@
   function renderDayDraft(){
     const d = computeDayDraft();
     q("#daySumRevenue").textContent = fmt.format(d.revenue); q("#daySumCashOut").textContent = fmt.format(d.outCash); q("#dayNetCash").textContent = fmt.format(d.netCash); q("#dayNewPayable").textContent = fmt.format(d.newPayable);
+    q("#dayGrossProfit").textContent = fmt.format(d.grossProfit); q("#dayMarginPct").textContent = d.marginPct.toFixed(0)+"%";
     q("#dayAllocProfit").textContent = fmt.format(d.allocProfit); q("#dayAllocTax").textContent = fmt.format(d.allocTax); q("#dayAllocBuy").textContent = fmt.format(d.allocBuy); q("#dayAllocOps").textContent = fmt.format(d.allocOps);
     const alerts = [];
-    if(d.grossProfit <= 0 && d.revenue > 0) alerts.push({cls:"warn", txt:"Hai inserito incassi ma utile giornata zero. Controlla di non aver dimenticato l'utile totale."});
-    if(d.newPayable > d.allocBuy && d.newPayable > 0) alerts.push({cls:"bad", txt:"Gli acquisti su carta superano il budget acquisti teorico calcolato dall'utile di oggi."});
+    if(d.customerRevenue > 0 && d.marginPct === 25) alerts.push({cls:"warn", txt:"Giornata prudente: stai usando una stima bassa di utile. Va bene se hai venduto più telefoni nuovi."});
+    if(d.marginPct === 35) alerts.push({cls:"good", txt:"Giornata forte: stai stimando più utile perché pensi di aver fatto più riparazioni/accessori."});
+    if(d.newPayable > d.allocBuy && d.newPayable > 0) alerts.push({cls:"bad", txt:"Gli acquisti su carta superano il budget acquisti teorico calcolato dall’utile stimato di oggi."});
     if(d.netCash < 0) alerts.push({cls:"bad", txt:"La giornata chiude con cassa negativa: stai pagando più di quanto incassi oggi."});
     if(clampNum(q("#dayTaxPaid").value) > 0) alerts.push({cls:"warn", txt:"Hai registrato tasse/F24 oggi: bene, così la liquidità reale resta corretta."});
     if(!alerts.length) alerts.push({cls:"good", txt:"Compilazione coerente. Puoi salvare la giornata."});
@@ -209,7 +296,7 @@
     const box = q("#daysList"), desc=[...state.days].sort((a,b)=>b.date.localeCompare(a.date));
     let cash=clampNum(state.config.cashStart); const cashMap={};
     [...state.days].sort(byDateAsc).forEach(d => { cash += clampNum(d.netCash); cashMap[d.id]=cash; });
-    box.innerHTML = desc.map(d => `<div class="entry"><div class="entry-head"><div><div class="entry-title">${d.date}</div><div class="entry-sub">${escapeHtml(d.notes || "Nessuna nota")}</div></div><div class="${clampNum(d.netCash)>=0?"":"danger-text"}"><b>${fmt.format(clampNum(d.netCash))}</b></div></div><div class="chips"><div class="chip">Incassi ${fmt.format(clampNum(d.revenue))}</div><div class="chip">Uscite ${fmt.format(clampNum(d.outCash))}</div><div class="chip">Utile ${fmt.format(clampNum(d.grossProfit))}</div><div class="chip">Carta ${fmt.format(clampNum(d.purchasesCard))}</div><div class="chip">Liquidità ${fmt.format(clampNum(cashMap[d.id] || 0))}</div></div></div>`).join("") || `<div class="alert">Nessuna giornata registrata ancora.</div>`;
+    box.innerHTML = desc.map(d => `<div class="entry"><div class="entry-head"><div><div class="entry-title">${d.date}</div><div class="entry-sub">${escapeHtml(d.notes || "Nessuna nota")}</div></div><div class="${clampNum(d.netCash)>=0?"":"danger-text"}"><b>${fmt.format(clampNum(d.netCash))}</b></div></div><div class="chips"><div class="chip">Incassi ${fmt.format(clampNum(d.revenue))}</div><div class="chip">Utile stimato ${fmt.format(clampNum(d.grossProfit))}</div><div class="chip">Margine ${clampNum(d.marginPct).toFixed(0)}%</div><div class="chip">Carta ${fmt.format(clampNum(d.purchasesCard))}</div><div class="chip">Liquidità ${fmt.format(clampNum(cashMap[d.id] || 0))}</div></div></div>`).join("") || `<div class="alert">Nessuna giornata registrata ancora.</div>`;
   }
 
   function renderPayables(){
@@ -226,8 +313,8 @@
 
   function renderSummaries(){
     const week = summarizeByPeriod("week").slice(0,4), month = summarizeByPeriod("month").slice(0,4);
-    q("#weeklySummary").innerHTML = week.map(([k,v]) => `<div class="alert"><b>Settimana dal ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)}</div>`).join("") || `<div class="alert">Nessun dato settimanale ancora.</div>`;
-    q("#monthlySummary").innerHTML = month.map(([k,v]) => `<div class="alert"><b>Mese ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)} • Acquisti carta ${fmt.format(v.purchasesCard)}</div>`).join("") || `<div class="alert">Nessun dato mensile ancora.</div>`;
+    q("#weeklySummary").innerHTML = week.map(([k,v]) => `<div class="alert"><b>Settimana dal ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile stimato ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)}</div>`).join("") || `<div class="alert">Nessun dato settimanale ancora.</div>`;
+    q("#monthlySummary").innerHTML = month.map(([k,v]) => `<div class="alert"><b>Mese ${k}</b><br>Incassi ${fmt.format(v.revenue)} • Utile stimato ${fmt.format(v.grossProfit)} • Netto cassa ${fmt.format(v.netCash)} • Acquisti carta ${fmt.format(v.purchasesCard)}</div>`).join("") || `<div class="alert">Nessun dato mensile ancora.</div>`;
   }
 
   function drawLineChart(canvasId, points, color){
@@ -268,14 +355,14 @@
   }
 
   function clearDayForm(){
-    q("#dayDate").value=todayIso();
-    ["#dayCustomerRevenue","#dayGrossProfit","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel => q(sel).value="0");
+    q("#dayDate").value=todayIso(); q("#dayMarginMode").value="30";
+    ["#dayCustomerRevenue","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel => q(sel).value="0");
     q("#dayNotes").value=""; renderDayDraft();
   }
 
   async function saveDay(){
     const d=computeDayDraft(), date=q("#dayDate").value || todayIso();
-    const entry={id:id(),date,customerRevenue:clampNum(q("#dayCustomerRevenue").value),grossProfit:clampNum(q("#dayGrossProfit").value),otherRevenue:clampNum(q("#dayOtherRevenue").value),supplierPaidCash:clampNum(q("#daySupplierPaidCash").value),purchasesCard:clampNum(q("#dayPurchasesCard").value),amexBankDebit:clampNum(q("#dayAmexBankDebit").value),taxPaid:clampNum(q("#dayTaxPaid").value),loanPaid:clampNum(q("#dayLoanPaid").value),otherExpense:clampNum(q("#dayOtherExpense").value),notes:q("#dayNotes").value.trim(),revenue:d.revenue,outCash:d.outCash,netCash:d.netCash,allocProfit:d.allocProfit,allocTax:d.allocTax,allocBuy:d.allocBuy,allocOps:d.allocOps};
+    const entry={id:id(),date,customerRevenue:clampNum(q("#dayCustomerRevenue").value),marginPct:d.marginPct,grossProfit:d.grossProfit,otherRevenue:clampNum(q("#dayOtherRevenue").value),supplierPaidCash:clampNum(q("#daySupplierPaidCash").value),purchasesCard:clampNum(q("#dayPurchasesCard").value),amexBankDebit:clampNum(q("#dayAmexBankDebit").value),taxPaid:clampNum(q("#dayTaxPaid").value),loanPaid:clampNum(q("#dayLoanPaid").value),otherExpense:clampNum(q("#dayOtherExpense").value),notes:q("#dayNotes").value.trim(),revenue:d.revenue,outCash:d.outCash,netCash:d.netCash,allocProfit:d.allocProfit,allocTax:d.allocTax,allocBuy:d.allocBuy,allocOps:d.allocOps};
     const existingIndex=state.days.findIndex(x=>x.date===date); if(existingIndex>=0) state.days[existingIndex]=entry; else state.days.push(entry);
     saveState(); renderAll();
     try{ await syncSaveDayGoogle(entry); alert("Giornata salvata."); } catch(e){ alert("Giornata salvata in locale, ma non su Google Sheets."); }
@@ -283,7 +370,7 @@
 
   function exportJson(){
     const blob=new Blob([JSON.stringify(state,null,2)], {type:"application/json"}), a=document.createElement("a");
-    a.href=URL.createObjectURL(blob); a.download="ramservice_liquidita_semplice_backup.json"; a.click(); URL.revokeObjectURL(a.href);
+    a.href=URL.createObjectURL(blob); a.download="ramservice_liquidita_definitiva_backup.json"; a.click(); URL.revokeObjectURL(a.href);
   }
 
   function importJsonFile(file){
@@ -300,7 +387,7 @@
     q("#saveSettingsBtn").onclick=saveSettings; q("#seedRecurringBtn").onclick=seedRecurring; q("#clearDayBtn").onclick=clearDayForm; q("#saveDayBtn").onclick=saveDay; q("#exportJsonBtn").onclick=exportJson;
     q("#importJsonBtn").onclick=()=>q("#importJsonInput").click(); q("#importJsonInput").addEventListener("change", e=>{ const f=e.target.files && e.target.files[0]; if(f) importJsonFile(f); });
     q("#syncNowBtn").onclick=async()=>{ try{ await syncLoadGoogle(); alert("Sincronizzazione Google Sheets completata."); }catch(e){ alert("Sync Google Sheets non riuscita."); } };
-    ["#dayCustomerRevenue","#dayGrossProfit","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel=>q(sel).addEventListener("input", renderDayDraft));
+    ["#dayCustomerRevenue","#dayMarginMode","#dayOtherRevenue","#daySupplierPaidCash","#dayPurchasesCard","#dayAmexBankDebit","#dayTaxPaid","#dayLoanPaid","#dayOtherExpense"].forEach(sel=>q(sel).addEventListener("input", renderDayDraft));
     q("#dayDate").value=todayIso();
   }
 
