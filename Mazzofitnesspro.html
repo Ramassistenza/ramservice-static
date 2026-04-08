@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dashboard Fitness Pro</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root{
+      --bg:#081120;
+      --bg2:#0f172a;
+      --card:#111c31;
+      --card2:#17243d;
+      --line:rgba(255,255,255,.08);
+      --text:#f8fbff;
+      --muted:#9cb0d1;
+      --accent:#38bdf8;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --ok:#22c55e;
+      --radius:18px;
+      --shadow:0 18px 45px rgba(0,0,0,.28);
+    }
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;padding:0;
+      background:linear-gradient(180deg,#07101e 0%, #0b1629 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+    }
+    body{padding-bottom:100px}
+    .app{max-width:760px;margin:0 auto;padding:14px}
+    h1,h2,h3,h4,p{margin:0}
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin:6px 0 14px;
+    }
+    .logoBox{
+      display:flex;gap:12px;align-items:center;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:16px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;font-size:24px;color:#041018;font-weight:800;
+      box-shadow:var(--shadow);
+    }
+    .sub{color:var(--muted);font-size:13px;margin-top:3px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:14px;
+    }
+    .cardHead{
+      padding:16px 16px 10px;
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+    }
+    .cardBody{padding:16px}
+    .hero{
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,.16), transparent 25%),
+        radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 22%),
+        linear-gradient(135deg,#13213b 0%, #0d182f 100%);
+    }
+    .hero h2{font-size:24px;line-height:1.05;margin-bottom:6px}
+    .btn{
+      border:none;border-radius:14px;padding:12px 14px;font-weight:800;
+      cursor:pointer;
+    }
+    .btnPrimary{background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#05111f}
+    .btnSecondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
+    .btnSuccess{background:linear-gradient(135deg,var(--accent2),#86efac);color:#04130a}
+    .btnDanger{background:linear-gradient(135deg,var(--danger),#fca5a5);color:#210707}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .stat{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+    .stat .label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .stat .value{font-size:24px;font-weight:900}
+    .progress{
+      width:100%;height:12px;background:rgba(255,255,255,.08);
+      border-radius:999px;overflow:hidden;border:1px solid var(--line);
+      margin-top:10px;
+    }
+    .bar{
+      height:100%;width:0%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      transition:width .35s ease;
+    }
+    .field{display:flex;flex-direction:column;gap:8px}
+    .field label{font-size:13px;color:var(--muted);font-weight:700}
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:15px;
+      outline:none;
+    }
+    textarea{min-height:80px;resize:vertical}
+    .tabs{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:12px;width:min(740px,calc(100% - 16px));
+      background:rgba(10,16,30,.92);
+      backdrop-filter:blur(14px);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:8px;
+      display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+      z-index:100;
+    }
+    .tabBtn{
+      border:none;background:transparent;color:var(--muted);
+      border-radius:16px;padding:12px 6px;font-weight:800;font-size:12px;cursor:pointer;
+    }
+    .tabBtn.active{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
+    .view{display:none}
+    .view.active{display:block}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;
+      border:1px solid var(--line);background:rgba(255,255,255,.06)
+    }
+    .badge.ok{background:rgba(34,197,94,.12);color:#a7f3d0}
+    .badge.warn{background:rgba(245,158,11,.12);color:#fde68a}
+    .badge.info{background:rgba(56,189,248,.12);color:#bae6fd}
+    .row{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+    }
+    .list{
+      display:grid;gap:10px;
+    }
+    .item{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+    .checkRow{
+      display:flex;align-items:flex-start;gap:10px;
+    }
+    .checkRow input[type="checkbox"]{
+      width:22px;height:22px;margin-top:2px;
+    }
+    .small{font-size:12px;color:var(--muted)}
+    .mealBox,.relaxBox,.workBox{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+    .pill{
+      display:inline-block;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid var(--line);
+      font-size:12px;font-weight:800;color:#dbeafe;
+    }
+    .workoutCard{
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+    }
+    .workoutInner{
+      display:grid;grid-template-columns:120px 1fr;
+    }
+    .workoutImg{
+      background:#0b1425;
+      min-height:120px;
+      overflow:hidden;
+      border-right:1px solid var(--line);
+    }
+    .workoutImg img{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+    .workoutContent{padding:12px}
+    .switchRow{
+      display:flex;gap:10px;flex-wrap:wrap;
+    }
+    .note{
+      padding:12px 14px;border-radius:14px;
+      background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.18);
+      color:#dff6ff;font-size:13px;line-height:1.45;
+    }
+    .exportBox{
+      display:flex;gap:10px;flex-wrap:wrap
+    }
+    .todayBig{
+      font-size:34px;font-weight:900;line-height:1;
+    }
+    .muted{color:var(--muted)}
+    .danger{color:#fecaca}
+    .okText{color:#bbf7d0}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .waterBar{
+      height:14px;border-radius:999px;background:rgba(255,255,255,.08);
+      overflow:hidden;border:1px solid var(--line);margin-top:8px;
+    }
+    .waterFill{
+      height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#60a5fa);
+    }
+    @media(max-width:560px){
+      .grid2,.grid3{grid-template-columns:1fr}
+      .workoutInner{grid-template-columns:1fr}
+      .workoutImg{border-right:none;border-bottom:1px solid var(--line);min-height:180px}
+      .hero h2{font-size:22px}
+      .todayBig{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top">
+      <div class="logoBox">
+        <div class="logo">⚡</div>
+        <div>
+          <h1>Dashboard Fitness Pro</h1>
+          <div class="sub">Piano personale: alimentazione, allenamento, relax, tracking e reminder</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="view-dashboard" class="view active">
+      <div class="card hero">
+        <div class="cardBody">
+          <h2>La tua giornata conta più della tua motivazione.</h2>
+          <p class="sub" style="font-size:14px;line-height:1.5;margin-top:8px">
+            Inserisci i tuoi dati, genera il piano personalizzato e usa ogni giorno questa dashboard
+            per sapere cosa devi fare per arrivare all’obiettivo.
+          </p>
+          <div class="btnRow" style="margin-top:14px">
+            <button class="btn btnPrimary" onclick="setView('profilo')">Imposta profilo</button>
+            <button class="btn btnSuccess" onclick="setView('oggi')">Vai ad oggi</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Obiettivo principale</h3>
+            <div class="small">Peso, progresso e tempo stimato</div>
+          </div>
+          <span class="badge info" id="etaBadge">--</span>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="stat">
+              <div class="label">Peso iniziale</div>
+              <div class="value" id="dStartWeight">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">Peso attuale</div>
+              <div class="value" id="dCurrentWeight">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">Obiettivo</div>
+              <div class="value" id="dTargetWeight">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">Da perdere</div>
+              <div class="value" id="dToLose">--</div>
+            </div>
+          </div>
+          <div class="progress"><div class="bar" id="goalBar"></div></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h3>Calorie e acqua</h3>
+              <div class="small">Obiettivi giornalieri</div>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="grid2">
+              <div class="stat">
+                <div class="label">Kcal target</div>
+                <div class="value" id="dashCalories">--</div>
+              </div>
+              <div class="stat">
+                <div class="label">Acqua target</div>
+                <div class="value" id="dashWater">--</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="row">
+                <strong>Acqua oggi</strong>
+                <span id="waterTodayText" class="small">0 / 0 L</span>
+              </div>
+              <div class="waterBar"><div class="waterFill" id="waterTodayBar"></div></div>
+              <div class="btnRow" style="margin-top:10px">
+                <button class="btn btnSecondary" onclick="quickWater(0.25)">+250ml</button>
+                <button class="btn btnSecondary" onclick="quickWater(0.5)">+500ml</button>
+                <button class="btn btnSecondary" onclick="quickWater(-0.25)">-250ml</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h3>Allenamento e relax</h3>
+              <div class="small">Stato del giorno</div>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="grid2">
+              <div class="stat">
+                <div class="label">Workout oggi</div>
+                <div class="value" id="dashWorkoutToday">--</div>
+              </div>
+              <div class="stat">
+                <div class="label">Sonno target</div>
+                <div class="value" id="dashSleep">--</div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <span>Allenamento completato</span>
+              <span id="dashWorkoutDone" class="badge warn">No</span>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <span>Routine relax completata</span>
+              <span id="dashRelaxDone" class="badge warn">No</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Checklist di oggi</h3>
+            <div class="small">Le azioni da fare oggi per arrivare al tuo obiettivo</div>
+          </div>
+          <button class="btn btnSecondary" onclick="setView('oggi')">Apri</button>
+        </div>
+        <div class="cardBody">
+          <div id="dashboardChecklist" class="list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILO -->
+    <div id="view-profilo" class="view">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Profilo e obiettivo</h3>
+            <div class="small">Usato per generare piano personalizzato</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="field">
+              <label>Sesso</label>
+              <select id="sex">
+                <option value="male">Uomo</option>
+                <option value="female">Donna</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Età</label>
+              <input id="age" type="number" placeholder="Es. 32">
+            </div>
+            <div class="field">
+              <label>Altezza (cm)</label>
+              <input id="height" type="number" placeholder="Es. 175">
+            </div>
+            <div class="field">
+              <label>Peso attuale (kg)</label>
+              <input id="currentWeight" type="number" step="0.1" placeholder="Es. 89">
+            </div>
+            <div class="field">
+              <label>Peso obiettivo (kg)</label>
+              <input id="targetWeight" type="number" step="0.1" placeholder="Es. 78">
+            </div>
+            <div class="field">
+              <label>Ritmo desiderato</label>
+              <select id="pace">
+                <option value="slow">Lento e sostenibile</option>
+                <option value="medium">Medio</option>
+                <option value="fast">Più rapido</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Attività lavorativa</label>
+              <select id="activity">
+                <option value="1.2">Molto sedentario</option>
+                <option value="1.35">Poco attivo</option>
+                <option value="1.5">Moderatamente attivo</option>
+                <option value="1.65">Abbastanza attivo</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Stress percepito</label>
+              <select id="stress">
+                <option value="low">Basso</option>
+                <option value="medium">Medio</option>
+                <option value="high">Alto</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Ore di sonno attuali</label>
+              <input id="sleepHours" type="number" step="0.5" placeholder="Es. 6.5">
+            </div>
+            <div class="field">
+              <label>Caffè al giorno</label>
+              <input id="coffee" type="number" placeholder="Es. 6">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="note">
+            Le calorie vengono stimate con formula Mifflin-St Jeor + livello attività.
+            Il piano crea un deficit adatto al ritmo scelto e adatta allenamento/relax anche in base a stress, sonno e caffeina.
+          </div>
+
+          <div class="btnRow" style="margin-top:14px">
+            <button class="btn btnPrimary" onclick="saveProfileAndGenerate()">Genera piano personalizzato</button>
+            <button class="btn btnSecondary" onclick="addCurrentWeightLog()">Salva anche il peso di oggi</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Reminders e notifiche</h3>
+            <div class="small">Promemoria per pasti, acqua, allenamento e sonno</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="note" style="margin-bottom:12px">
+            Su browser mobile/GitHub Pages i reminder funzionano bene quando la dashboard è aperta e con permesso notifiche concesso.
+            Per una vera app sempre attiva servirebbe una PWA avanzata o app nativa.
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label>Colazione</label>
+              <input id="remBreakfast" type="time">
+            </div>
+            <div class="field">
+              <label>Spuntino mattina</label>
+              <input id="remSnack1" type="time">
+            </div>
+            <div class="field">
+              <label>Pranzo</label>
+              <input id="remLunch" type="time">
+            </div>
+            <div class="field">
+              <label>Spuntino pomeriggio</label>
+              <input id="remSnack2" type="time">
+            </div>
+            <div class="field">
+              <label>Allenamento</label>
+              <input id="remWorkout" type="time">
+            </div>
+            <div class="field">
+              <label>Cena</label>
+              <input id="remDinner" type="time">
+            </div>
+            <div class="field">
+              <label>Relax / respirazione</label>
+              <input id="remRelax" type="time">
+            </div>
+            <div class="field">
+              <label>Orario sonno</label>
+              <input id="remSleep" type="time">
+            </div>
+          </div>
+          <div class="btnRow" style="margin-top:14px">
+            <button class="btn btnSuccess" onclick="enableNotifications()">Attiva notifiche</button>
+            <button class="btn btnPrimary" onclick="saveReminders()">Salva reminders</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OGGI -->
+    <div id="view-oggi" class="view">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Oggi</h3>
+            <div class="small" id="todayDateLabel">--</div>
+          </div>
+          <div class="todayBig" id="todayStatusBig">0%</div>
+        </div>
+        <div class="cardBody">
+          <div class="list" id="todayChecklist"></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h3>Log rapido giornata</h3>
+              <div class="small">Traccia cosa hai fatto oggi</div>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="grid2">
+              <div class="field">
+                <label>Peso oggi (kg)</label>
+                <input id="dailyWeight" type="number" step="0.1" placeholder="Es. 88.4">
+              </div>
+              <div class="field">
+                <label>Acqua bevuta oggi (L)</label>
+                <input id="dailyWater" type="number" step="0.1" placeholder="Es. 2.5">
+              </div>
+              <div class="field">
+                <label>Ore di sonno</label>
+                <input id="dailySleep" type="number" step="0.5" placeholder="Es. 7.5">
+              </div>
+              <div class="field">
+                <label>Caffè oggi</label>
+                <input id="dailyCoffee" type="number" placeholder="Es. 3">
+              </div>
+            </div>
+            <div class="btnRow" style="margin-top:14px">
+              <button class="btn btnPrimary" onclick="saveTodayQuickLog()">Salva log di oggi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h3>Nota del giorno</h3>
+              <div class="small">Come ti senti, fame, energia, stress</div>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="field">
+              <label>Note</label>
+              <textarea id="dailyNotes" placeholder="Scrivi qui come è andata oggi..."></textarea>
+            </div>
+            <div class="btnRow" style="margin-top:14px">
+              <button class="btn btnSecondary" onclick="saveTodayNotes()">Salva note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIANO -->
+    <div id="view-piano" class="view">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Fase 1 · Alimentazione</h3>
+            <div class="small">Calorie, distribuzione pasti e idratazione</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="mealBox">
+              <div class="pill">Calorie giornaliere</div>
+              <h2 id="planCalories" style="margin-top:8px">--</h2>
+              <div class="small" id="planCaloriesSub">--</div>
+            </div>
+            <div class="mealBox">
+              <div class="pill">Acqua giornaliera</div>
+              <h2 id="planWater" style="margin-top:8px">--</h2>
+              <div class="small">Distribuiscila nella giornata</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="grid2" id="mealPlanList"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Fase 2 · Allenamento</h3>
+            <div class="small">Piano semplice ma avanzato per bruciare grassi</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="note" style="margin-bottom:12px">
+            Le immagini esercizi vengono lette da una cartella GitHub. Inserisci i file qui:
+            <strong>img/fitness/</strong> e usa questi nomi:
+            crunch.jpg, mountain-climber.jpg, plank.jpg, leg-raises.jpg, squat.jpg,
+            push-up.jpg, burpee.jpg, jumping-jack.jpg, high-knees.jpg, walk.jpg
+          </div>
+          <div id="weeklyWorkoutPlan" class="list"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Fase 3 · Relax, sonno, cortisolo</h3>
+            <div class="small">Routine per abbassare stress e migliorare recupero</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div id="relaxPlan" class="list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKING -->
+    <div id="view-tracking" class="view">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Tracking settimana</h3>
+            <div class="small">Tutto registrato giorno per giorno</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div id="weeklyTrackingList" class="list"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Export settimanale</h3>
+            <div class="small">Per inviarmelo e analizzarlo insieme</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="exportBox">
+            <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
+            <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALISI -->
+    <div id="view-analisi" class="view">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h3>Analisi e previsione</h3>
+            <div class="small">Tempo stimato e raccomandazioni</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="grid2">
+            <div class="stat">
+              <div class="label">BMR stimato</div>
+              <div class="value" id="aBmr">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">TDEE stimato</div>
+              <div class="value" id="aTdee">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">Deficit giornaliero</div>
+              <div class="value" id="aDeficit">--</div>
+            </div>
+            <div class="stat">
+              <div class="label">Tempo stimato</div>
+              <div class="value" id="aEta">--</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div id="analysisNotes" class="list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tabBtn active" onclick="setView('dashboard',this)">Home</button>
+    <button class="tabBtn" onclick="setView('profilo',this)">Profilo</button>
+    <button class="tabBtn" onclick="setView('oggi',this)">Oggi</button>
+    <button class="tabBtn" onclick="setView('piano',this)">Piano</button>
+    <button class="tabBtn" onclick="setView('tracking',this)">Tracking</button>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "fitness_dashboard_pro_v1";
+
+    const DEFAULTS = {
+      profile: {
+        sex: "male",
+        age: 32,
+        height: 175,
+        currentWeight: 89,
+        startWeight: 89,
+        targetWeight: 78,
+        pace: "medium",
+        activity: 1.35,
+        stress: "high",
+        sleepHours: 6.5,
+        coffee: 6
+      },
+      reminders: {
+        breakfast: "08:00",
+        snack1: "11:00",
+        lunch: "13:30",
+        snack2: "17:00",
+        workout: "18:30",
+        dinner: "20:30",
+        relax: "22:15",
+        sleep: "23:15"
+      },
+      logs: {}
+    };
+
+    const EXERCISE_IMG_BASE = "img/fitness/";
+
+    const EXERCISE_LIBRARY = {
+      crunch: { name:"Crunch", img:"crunch.jpg", desc:"Addome base. Solleva solo le spalle, non tirare il collo." },
+      mountain: { name:"Mountain Climber", img:"mountain-climber.jpg", desc:"Plank dinamico. Ginocchia al petto alternate." },
+      plank: { name:"Plank", img:"plank.jpg", desc:"Core stabile. Gomiti sotto le spalle, corpo in linea." },
+      legraise: { name:"Leg Raises", img:"leg-raises.jpg", desc:"Addome basso. Gambe tese, schiena aderente." },
+      squat: { name:"Squat", img:"squat.jpg", desc:"Gambe e glutei. Schiena neutra, scendi controllato." },
+      pushup: { name:"Push Up", img:"push-up.jpg", desc:"Petto, spalle, tricipiti. Corpo dritto." },
+      burpee: { name:"Burpee", img:"burpee.jpg", desc:"Metabolico completo. Salto finale controllato." },
+      jumpingjack: { name:"Jumping Jack", img:"jumping-jack.jpg", desc:"Cardio base, attivazione." },
+      highknees: { name:"High Knees", img:"high-knees.jpg", desc:"Corsa sul posto a ginocchia alte." },
+      walk: { name:"Camminata veloce", img:"walk.jpg", desc:"Brucia grassi a basso stress." }
+    };
+
+    let db = loadDB();
+
+    function loadDB(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return structuredClone(DEFAULTS);
+      try{
+        const parsed = JSON.parse(raw);
+        return {
+          profile: {...DEFAULTS.profile, ...(parsed.profile||{})},
+          reminders: {...DEFAULTS.reminders, ...(parsed.reminders||{})},
+          logs: parsed.logs || {}
+        };
+      }catch{
+        return structuredClone(DEFAULTS);
+      }
+    }
+
+    function saveDB(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    function todayKey(){
+      return new Date().toISOString().slice(0,10);
+    }
+
+    function ensureTodayLog(){
+      const k = todayKey();
+      if(!db.logs[k]){
+        db.logs[k] = {
+          date:k,
+          weight:"",
+          water:0,
+          sleep:"",
+          coffee:"",
+          notes:"",
+          checks:{
+            breakfast:false,
+            snack1:false,
+            lunch:false,
+            snack2:false,
+            workout:false,
+            dinner:false,
+            waterTarget:false,
+            relax:false,
+            sleepRoutine:false
+          },
+          workoutDone:false,
+          relaxDone:false
+        };
+      }
+      return db.logs[k];
+    }
+
+    function setView(name, btn){
+      document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+      document.getElementById("view-"+name).classList.add("active");
+      document.querySelectorAll(".tabBtn").forEach(b=>b.classList.remove("active"));
+      if(btn) btn.classList.add("active");
+      else{
+        const map = {
+          dashboard:0, profilo:1, oggi:2, piano:3, tracking:4
+        };
+        const t = document.querySelectorAll(".tabBtn")[map[name]];
+        if(t) t.classList.add("active");
+      }
+      renderAll();
+    }
+
+    function fmtKg(v){
+      return Number(v).toFixed(1)+" kg";
+    }
+
+    function fmtKcal(v){
+      return Math.round(v)+" kcal";
+    }
+
+    function getCurrentWeight(){
+      const t = ensureTodayLog();
+      return t.weight ? Number(t.weight) : Number(db.profile.currentWeight);
+    }
+
+    function calcBMR(){
+      const p = db.profile;
+      const w = getCurrentWeight();
+      if(p.sex === "male") return (10*w) + (6.25*Number(p.height)) - (5*Number(p.age)) + 5;
+      return (10*w) + (6.25*Number(p.height)) - (5*Number(p.age)) - 161;
+    }
+
+    function getPaceDeficit(){
+      switch(db.profile.pace){
+        case "slow": return 350;
+        case "fast": return 650;
+        default: return 500;
+      }
+    }
+
+    function calcPlan(){
+      const p = db.profile;
+      const current = getCurrentWeight();
+      const target = Number(p.targetWeight);
+      const toLose = Math.max(0, current - target);
+      const bmr = calcBMR();
+      const tdee = bmr * Number(p.activity);
+      let deficit = getPaceDeficit();
+
+      if(p.stress === "high") deficit -= 80;
+      if(Number(p.sleepHours) < 6.5) deficit -= 70;
+      if(Number(p.coffee) >= 5) deficit -= 50;
+      deficit = Math.max(250, deficit);
+
+      let calories = Math.round(tdee - deficit);
+      if(p.sex === "male") calories = Math.max(1700, calories);
+      else calories = Math.max(1400, calories);
+
+      const weeklyLoss = (deficit * 7) / 7700;
+      const etaWeeks = weeklyLoss > 0 ? Math.ceil(toLose / weeklyLoss) : 0;
+      const waterLiters = Math.max(2.0, (current * 0.035)).toFixed(1);
+
+      return {
+        bmr,
+        tdee,
+        deficit,
+        calories,
+        toLose,
+        etaWeeks,
+        weeklyLoss,
+        waterLiters
+      };
+    }
+
+    function mealSplit(calories){
+      return {
+        breakfast: Math.round(calories * 0.25),
+        snack1: Math.round(calories * 0.10),
+        lunch: Math.round(calories * 0.30),
+        snack2: Math.round(calories * 0.10),
+        dinner: Math.round(calories * 0.25)
+      };
+    }
+
+    function getWorkoutPlan(){
+      const p = db.profile;
+      const stressHigh = p.stress === "high";
+      const sleepLow = Number(p.sleepHours) < 6.5;
+      const baseWalk = stressHigh || sleepLow ? 30 : 35;
+      const intensity = p.pace === "fast" ? "fast" : p.pace === "slow" ? "slow" : "medium";
+
+      const plan = {
+        monday: {
+          title:"Core + Brucia grassi",
+          items:[
+            ex("crunch",3,"15 rip","30 sec"),
+            ex("mountain",3,"30 sec","30 sec"),
+            ex("plank",3,"30 sec","30 sec"),
+            cardioWalk(baseWalk, "camminata veloce su tapis roulant o fuori")
+          ]
+        },
+        tuesday: {
+          title:"Cardio principale",
+          items:[
+            cardioWalk(baseWalk + 5, "camminata veloce zona 120-135 bpm"),
+            alt("Alternativa","Cyclette moderata 30-35 min se hai gambe pesanti o vuoi meno impatto")
+          ]
+        },
+        wednesday: {
+          title:"Total body base",
+          items:[
+            ex("squat",3,"15 rip","35 sec"),
+            ex("pushup",3,"8-12 rip","40 sec"),
+            ex("plank",3,"35 sec","30 sec"),
+            cardioWalk(20, "defaticamento")
+          ]
+        },
+        thursday: {
+          title:"Recupero attivo",
+          items:[
+            cardioWalk(30, "camminata rilassata o veloce leggera"),
+            relaxItem("10 min stretching + respirazione 4-6")
+          ]
+        },
+        friday: {
+          title:"Core + richiamo metabolico",
+          items:[
+            ex("crunch",3,"20 rip","25 sec"),
+            ex("legraise",3,"12-15 rip","30 sec"),
+            ex("mountain",3,"35 sec","30 sec"),
+            cardioWalk(baseWalk, "camminata veloce")
+          ]
+        },
+        saturday: {
+          title: intensity === "fast" ? "HIIT controllato" : "Cardio avanzato",
+          items: intensity === "fast"
+            ? [
+                ex("jumpingjack",4,"35 sec","20 sec"),
+                ex("highknees",4,"25 sec","20 sec"),
+                ex("burpee",3,"8-10 rip","40 sec"),
+                cardioWalk(20, "camminata finale")
+             
