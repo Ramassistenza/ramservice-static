@@ -936,4 +936,618 @@
                 ex("highknees",4,"25 sec","20 sec"),
                 ex("burpee",3,"8-10 rip","40 sec"),
                 cardioWalk(20, "camminata finale")
-             
+              ]
+            : [
+                cardioWalk(baseWalk + 5, "camminata veloce continua"),
+                alt("Alternativa","Cyclette moderata 35 min")
+              ]
+        },
+        sunday: {
+          title:"Riposo attivo o completo",
+          items:[
+            relaxItem("Passeggiata leggera 20-30 min"),
+            relaxItem("Respirazione serale 5 min")
+          ]
+        }
+      };
+
+      return plan;
+    }
+
+    function ex(key, series, target, rest){
+      const e = EXERCISE_LIBRARY[key];
+      return {
+        type:"exercise",
+        name:e.name,
+        img:EXERCISE_IMG_BASE + e.img,
+        desc:e.desc,
+        details:`${series} serie · ${target} · recupero ${rest}`
+      };
+    }
+
+    function cardioWalk(mins, desc){
+      return {
+        type:"cardio",
+        name:"Camminata veloce",
+        img:EXERCISE_IMG_BASE + EXERCISE_LIBRARY.walk.img,
+        desc: desc,
+        details:`Durata ${mins} minuti · Intensità moderata`
+      };
+    }
+
+    function alt(title, text){
+      return {
+        type:"alt",
+        name:title,
+        img:"",
+        desc:text,
+        details:"Alternativa utile"
+      };
+    }
+
+    function relaxItem(text){
+      return {
+        type:"relax",
+        name:"Relax",
+        img:"",
+        desc:text,
+        details:"Recupero / abbassare stress"
+      };
+    }
+
+    function getRelaxPlan(){
+      const p = db.profile;
+      const list = [];
+
+      list.push({
+        title:"Sonno",
+        text:`Obiettivo minimo: ${Math.max(7, Number(p.sleepHours) < 7 ? 7.5 : Number(p.sleepHours)).toFixed(1)} ore. Cerca di andare a letto entro ${db.reminders.sleep}.`
+      });
+
+      list.push({
+        title:"Respirazione",
+        text:"5 minuti la sera: inspira 4 secondi, espira 6 secondi. Riduce l’attivazione mentale."
+      });
+
+      if(Number(p.coffee) > 3){
+        list.push({
+          title:"Caffeina",
+          text:`Riduci gradualmente il caffè. Obiettivo: passare da ${p.coffee} a 2-3 al giorno. Evita caffeina dopo le 14:00.`
+        });
+      }
+
+      if(p.stress === "high"){
+        list.push({
+          title:"Scarico mentale",
+          text:"Prima di dormire scrivi per 5 minuti cosa devi fare domani e cosa ti pesa mentalmente."
+        });
+      }
+
+      list.push({
+        title:"Schermi",
+        text:"Riduci telefono/social almeno 45 minuti prima di dormire."
+      });
+
+      return list;
+    }
+
+    function renderDashboard(){
+      const plan = calcPlan();
+      const current = getCurrentWeight();
+      const start = Number(db.profile.startWeight || db.profile.currentWeight);
+      const target = Number(db.profile.targetWeight);
+      const progress = start === target ? 100 : Math.max(0, Math.min(100, ((start - current) / (start - target)) * 100));
+
+      document.getElementById("dStartWeight").textContent = fmtKg(start);
+      document.getElementById("dCurrentWeight").textContent = fmtKg(current);
+      document.getElementById("dTargetWeight").textContent = fmtKg(target);
+      document.getElementById("dToLose").textContent = plan.toLose.toFixed(1)+" kg";
+      document.getElementById("goalBar").style.width = progress+"%";
+      document.getElementById("etaBadge").textContent = plan.etaWeeks ? `~ ${plan.etaWeeks} sett.` : "raggiunto";
+      document.getElementById("dashCalories").textContent = fmtKcal(plan.calories);
+      document.getElementById("dashWater").textContent = plan.waterLiters+" L";
+      document.getElementById("dashSleep").textContent = Math.max(7, Number(db.profile.sleepHours) < 7 ? 7.5 : Number(db.profile.sleepHours)).toFixed(1)+" h";
+
+      const log = ensureTodayLog();
+      const workoutToday = getTodayWorkout().title;
+      document.getElementById("dashWorkoutToday").textContent = workoutToday;
+      document.getElementById("dashWorkoutDone").textContent = log.workoutDone ? "Sì" : "No";
+      document.getElementById("dashWorkoutDone").className = log.workoutDone ? "badge ok" : "badge warn";
+      document.getElementById("dashRelaxDone").textContent = log.relaxDone ? "Sì" : "No";
+      document.getElementById("dashRelaxDone").className = log.relaxDone ? "badge ok" : "badge warn";
+
+      const water = Number(log.water || 0);
+      const wTarget = Number(plan.waterLiters);
+      document.getElementById("waterTodayText").textContent = `${water.toFixed(1)} / ${wTarget.toFixed(1)} L`;
+      document.getElementById("waterTodayBar").style.width = Math.min(100, (water / wTarget) * 100) + "%";
+
+      const checklist = buildTodayChecklist();
+      document.getElementById("dashboardChecklist").innerHTML = checklist.slice(0,5).map(x => `
+        <div class="item">
+          <div class="row">
+            <div>
+              <strong>${x.title}</strong>
+              <div class="small">${x.sub}</div>
+            </div>
+            <span class="badge ${x.done ? 'ok':'warn'}">${x.done ? 'Fatto':'Da fare'}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function getTodayWorkout(){
+      const plan = getWorkoutPlan();
+      const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+      const key = days[new Date().getDay()];
+      return plan[key];
+    }
+
+    function buildTodayChecklist(){
+      const plan = calcPlan();
+      const log = ensureTodayLog();
+      const todayWorkout = getTodayWorkout();
+
+      return [
+        { title:"Calorie", sub:`Resta vicino a ${plan.calories} kcal`, done:false },
+        { title:"Colazione", sub:"Completa il primo pasto", done:log.checks.breakfast },
+        { title:"Pranzo", sub:"Pranzo bilanciato e controllato", done:log.checks.lunch },
+        { title:"Cena", sub:"Cena leggera e proteica", done:log.checks.dinner },
+        { title:"Acqua", sub:`Bevi ${plan.waterLiters} litri`, done:log.checks.waterTarget || Number(log.water)>=Number(plan.waterLiters) },
+        { title:"Allenamento", sub:todayWorkout.title, done:log.workoutDone },
+        { title:"Relax", sub:"Respirazione e routine serale", done:log.relaxDone }
+      ];
+    }
+
+    function renderToday(){
+      const log = ensureTodayLog();
+      const checklist = buildTodayChecklist();
+      const done = checklist.filter(x=>x.done).length;
+      const pct = Math.round((done / checklist.length) * 100);
+
+      document.getElementById("todayDateLabel").textContent = new Date().toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long"});
+      document.getElementById("todayStatusBig").textContent = pct+"%";
+
+      document.getElementById("todayChecklist").innerHTML = checklist.map((x, idx) => {
+        const keyMap = {
+          1:"breakfast",
+          2:"lunch",
+          3:"dinner",
+          4:"waterTarget"
+        };
+        let key = null;
+        if(x.title === "Colazione") key = "breakfast";
+        if(x.title === "Pranzo") key = "lunch";
+        if(x.title === "Cena") key = "dinner";
+        if(x.title === "Acqua") key = "waterTarget";
+        if(x.title === "Allenamento") key = "workout";
+        if(x.title === "Relax") key = "relax";
+
+        return `
+          <div class="item">
+            <div class="checkRow">
+              <input type="checkbox" ${x.done ? "checked":""} onchange="toggleTodayCheck('${key}',this.checked)">
+              <div>
+                <strong>${x.title}</strong>
+                <div class="small">${x.sub}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("dailyWeight").value = log.weight || "";
+      document.getElementById("dailyWater").value = log.water || "";
+      document.getElementById("dailySleep").value = log.sleep || "";
+      document.getElementById("dailyCoffee").value = log.coffee || "";
+      document.getElementById("dailyNotes").value = log.notes || "";
+    }
+
+    function toggleTodayCheck(key, value){
+      const log = ensureTodayLog();
+      if(key === "workout"){
+        log.workoutDone = value;
+      } else if(key === "relax"){
+        log.relaxDone = value;
+      } else if(key) {
+        log.checks[key] = value;
+      }
+      saveDB();
+      renderAll();
+    }
+
+    function renderPlan(){
+      const plan = calcPlan();
+      const meals = mealSplit(plan.calories);
+
+      document.getElementById("planCalories").textContent = fmtKcal(plan.calories);
+      document.getElementById("planCaloriesSub").textContent = `TDEE ~ ${Math.round(plan.tdee)} kcal · deficit ~ ${Math.round(plan.deficit)} kcal`;
+      document.getElementById("planWater").textContent = `${plan.waterLiters} L`;
+
+      document.getElementById("mealPlanList").innerHTML = [
+        mealHTML("Colazione", meals.breakfast, "Proteine + carboidrati controllati", [
+          "Yogurt greco / uova / fiocchi di latte",
+          "Frutta o avena o pane integrale",
+          "Caffè limitato"
+        ]),
+        mealHTML("Spuntino mattina", meals.snack1, "Leggero e saziate", [
+          "Frutta",
+          "Yogurt",
+          "10-15 g frutta secca"
+        ]),
+        mealHTML("Pranzo", meals.lunch, "Pasto principale", [
+          "Proteina magra",
+          "Carboidrato controllato",
+          "Verdure abbondanti"
+        ]),
+        mealHTML("Spuntino pomeriggio", meals.snack2, "Anti-fame", [
+          "Yogurt / frutto / bresaola / skyr"
+        ]),
+        mealHTML("Cena", meals.dinner, "Più leggera del pranzo", [
+          "Proteina + verdure",
+          "Carboidrati ridotti o assenti se seduto la sera"
+        ]),
+        mealHTML("Idratazione", `${plan.waterLiters} L`, "Distribuzione consigliata", [
+          "0.5 L entro metà mattina",
+          "1 L entro pranzo",
+          "0.5-1 L pomeriggio/sera"
+        ])
+      ].join("");
+
+      const weekly = getWorkoutPlan();
+      const labels = {
+        monday:"Lunedì", tuesday:"Martedì", wednesday:"Mercoledì",
+        thursday:"Giovedì", friday:"Venerdì", saturday:"Sabato", sunday:"Domenica"
+      };
+
+      document.getElementById("weeklyWorkoutPlan").innerHTML = Object.keys(labels).map(day => {
+        const d = weekly[day];
+        return `
+          <div class="item">
+            <div class="row">
+              <div>
+                <strong>${labels[day]}</strong>
+                <div class="small">${d.title}</div>
+              </div>
+            </div>
+            <div class="list" style="margin-top:10px">
+              ${d.items.map(renderWorkoutItem).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("relaxPlan").innerHTML = getRelaxPlan().map(r => `
+        <div class="relaxBox">
+          <strong>${r.title}</strong>
+          <div class="small" style="margin-top:6px">${r.text}</div>
+        </div>
+      `).join("");
+    }
+
+    function mealHTML(title, kcal, subtitle, bullets){
+      return `
+        <div class="mealBox">
+          <div class="pill">${title}</div>
+          <h3 style="margin-top:8px">${typeof kcal === "number" ? kcal+" kcal" : kcal}</h3>
+          <div class="small" style="margin:6px 0 8px">${subtitle}</div>
+          <ul style="padding-left:18px;margin:0">
+            ${bullets.map(b=>`<li class="small" style="margin-bottom:6px">${b}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function renderWorkoutItem(it){
+      if(it.type === "exercise" || it.type === "cardio"){
+        return `
+          <div class="workoutCard">
+            <div class="workoutInner">
+              <div class="workoutImg">
+                <img src="${it.img}" alt="${it.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=&quot;padding:14px&quot; class=&quot;small&quot;>Inserisci immagine: ${it.name}</div>';">
+              </div>
+              <div class="workoutContent">
+                <strong>${it.name}</strong>
+                <div class="small" style="margin-top:6px">${it.desc}</div>
+                <div class="pill" style="margin-top:8px">${it.details}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="workBox">
+          <strong>${it.name}</strong>
+          <div class="small" style="margin-top:6px">${it.desc}</div>
+          <div class="pill" style="margin-top:8px">${it.details}</div>
+        </div>
+      `;
+    }
+
+    function renderTracking(){
+      const days = getCurrentWeekDays();
+      document.getElementById("weeklyTrackingList").innerHTML = days.map(d => {
+        const log = db.logs[d] || {
+          weight:"", water:"", sleep:"", coffee:"", notes:"",
+          workoutDone:false, relaxDone:false
+        };
+        return `
+          <div class="item">
+            <div class="row">
+              <div>
+                <strong>${new Date(d).toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"2-digit"})}</strong>
+                <div class="small">${d}</div>
+              </div>
+              <span class="badge ${log.workoutDone ? 'ok':'warn'}">${log.workoutDone ? 'Workout ok':'Workout no'}</span>
+            </div>
+            <div class="grid2" style="margin-top:10px">
+              <div class="small">Peso: <strong>${log.weight || '--'}</strong></div>
+              <div class="small">Acqua: <strong>${log.water || 0} L</strong></div>
+              <div class="small">Sonno: <strong>${log.sleep || '--'} h</strong></div>
+              <div class="small">Caffè: <strong>${log.coffee || '--'}</strong></div>
+            </div>
+            ${log.notes ? `<div class="note" style="margin-top:10px">${escapeHTML(log.notes)}</div>` : ''}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAnalysis(){
+      const plan = calcPlan();
+      document.getElementById("aBmr").textContent = fmtKcal(plan.bmr);
+      document.getElementById("aTdee").textContent = fmtKcal(plan.tdee);
+      document.getElementById("aDeficit").textContent = fmtKcal(plan.deficit);
+      document.getElementById("aEta").textContent = plan.etaWeeks ? `${plan.etaWeeks} sett.` : "raggiunto";
+
+      const notes = [];
+      notes.push(noteItem("Perdita stimata", `Con questo piano puoi puntare a circa ${plan.weeklyLoss.toFixed(2)} kg a settimana.`));
+
+      if(db.profile.stress === "high"){
+        notes.push(noteItem("Stress alto", "Priorità a sonno, camminata veloce, respirazione e riduzione graduale della caffeina."));
+      }
+      if(Number(db.profile.coffee) > 4){
+        notes.push(noteItem("Caffeina", `Stai alto di caffeina (${db.profile.coffee}/giorno). Ridurla aiuta fame, sonno e grasso addominale.`));
+      }
+      if(Number(db.profile.sleepHours) < 7){
+        notes.push(noteItem("Sonno", "Con meno di 7 ore sarà più difficile dimagrire bene. Prova ad aumentarlo gradualmente."));
+      }
+      notes.push(noteItem("Consiglio chiave", "Meglio costanza 6 giorni su 7 che perfezione 2 giorni su 7."));
+      document.getElementById("analysisNotes").innerHTML = notes.join("");
+    }
+
+    function noteItem(title, text){
+      return `<div class="item"><strong>${title}</strong><div class="small" style="margin-top:6px">${text}</div></div>`;
+    }
+
+    function saveProfileAndGenerate(){
+      db.profile.sex = document.getElementById("sex").value;
+      db.profile.age = Number(document.getElementById("age").value || db.profile.age);
+      db.profile.height = Number(document.getElementById("height").value || db.profile.height);
+      db.profile.currentWeight = Number(document.getElementById("currentWeight").value || db.profile.currentWeight);
+      if(!db.profile.startWeight) db.profile.startWeight = db.profile.currentWeight;
+      db.profile.targetWeight = Number(document.getElementById("targetWeight").value || db.profile.targetWeight);
+      db.profile.pace = document.getElementById("pace").value;
+      db.profile.activity = Number(document.getElementById("activity").value);
+      db.profile.stress = document.getElementById("stress").value;
+      db.profile.sleepHours = Number(document.getElementById("sleepHours").value || db.profile.sleepHours);
+      db.profile.coffee = Number(document.getElementById("coffee").value || db.profile.coffee);
+
+      saveDB();
+      renderAll();
+      alert("Piano personalizzato generato e salvato.");
+    }
+
+    function addCurrentWeightLog(){
+      const val = Number(document.getElementById("currentWeight").value || db.profile.currentWeight);
+      const log = ensureTodayLog();
+      log.weight = val;
+      db.profile.currentWeight = val;
+      saveDB();
+      renderAll();
+      alert("Peso di oggi salvato.");
+    }
+
+    function saveTodayQuickLog(){
+      const log = ensureTodayLog();
+      const w = document.getElementById("dailyWeight").value;
+      const water = document.getElementById("dailyWater").value;
+      const sleep = document.getElementById("dailySleep").value;
+      const coffee = document.getElementById("dailyCoffee").value;
+
+      if(w !== ""){
+        log.weight = Number(w);
+        db.profile.currentWeight = Number(w);
+      }
+      if(water !== "") log.water = Number(water);
+      if(sleep !== "") log.sleep = Number(sleep);
+      if(coffee !== "") log.coffee = Number(coffee);
+
+      if(Number(log.water) >= Number(calcPlan().waterLiters)){
+        log.checks.waterTarget = true;
+      }
+
+      saveDB();
+      renderAll();
+      alert("Log di oggi salvato.");
+    }
+
+    function saveTodayNotes(){
+      const log = ensureTodayLog();
+      log.notes = document.getElementById("dailyNotes").value.trim();
+      saveDB();
+      renderAll();
+      alert("Note salvate.");
+    }
+
+    function quickWater(delta){
+      const log = ensureTodayLog();
+      log.water = Math.max(0, Number(log.water || 0) + delta);
+      if(Number(log.water) >= Number(calcPlan().waterLiters)){
+        log.checks.waterTarget = true;
+      }
+      saveDB();
+      renderAll();
+    }
+
+    function saveReminders(){
+      db.reminders.breakfast = document.getElementById("remBreakfast").value || db.reminders.breakfast;
+      db.reminders.snack1 = document.getElementById("remSnack1").value || db.reminders.snack1;
+      db.reminders.lunch = document.getElementById("remLunch").value || db.reminders.lunch;
+      db.reminders.snack2 = document.getElementById("remSnack2").value || db.reminders.snack2;
+      db.reminders.workout = document.getElementById("remWorkout").value || db.reminders.workout;
+      db.reminders.dinner = document.getElementById("remDinner").value || db.reminders.dinner;
+      db.reminders.relax = document.getElementById("remRelax").value || db.reminders.relax;
+      db.reminders.sleep = document.getElementById("remSleep").value || db.reminders.sleep;
+      saveDB();
+      alert("Reminders salvati.");
+    }
+
+    async function enableNotifications(){
+      if(!("Notification" in window)){
+        alert("Questo browser non supporta le notifiche.");
+        return;
+      }
+      const result = await Notification.requestPermission();
+      alert(result === "granted" ? "Notifiche attivate." : "Permesso notifiche non concesso.");
+    }
+
+    function maybeNotify(title, body){
+      if("Notification" in window && Notification.permission === "granted"){
+        new Notification(title,{ body });
+      }
+    }
+
+    let reminderMemory = {};
+    function startReminderLoop(){
+      setInterval(() => {
+        const now = new Date();
+        const hhmm = now.toTimeString().slice(0,5);
+        const mapping = [
+          ["breakfast","Colazione","È ora di fare colazione in modo controllato."],
+          ["snack1","Spuntino","Piccolo spuntino, evita fame eccessiva."],
+          ["lunch","Pranzo","Pranzo bilanciato, controlla le porzioni."],
+          ["snack2","Spuntino","Spuntino pomeridiano, resta in controllo."],
+          ["workout","Allenamento","È il momento di allenarti."],
+          ["dinner","Cena","Cena più leggera del pranzo."],
+          ["relax","Relax","Respirazione, scarico mentale, niente telefono."],
+          ["sleep","Sonno","Inizia routine sonno e spegni gli stimoli."]
+        ];
+        const today = todayKey();
+        mapping.forEach(([k,title,text]) => {
+          if(db.reminders[k] === hhmm){
+            const memKey = today + "_" + k;
+            if(!reminderMemory[memKey]){
+              reminderMemory[memKey] = true;
+              maybeNotify(title, text);
+            }
+          }
+        });
+      }, 30000);
+    }
+
+    function getCurrentWeekDays(){
+      const today = new Date();
+      const day = today.getDay() || 7;
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - day + 1);
+      const days = [];
+      for(let i=0;i<7;i++){
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d.toISOString().slice(0,10));
+      }
+      return days;
+    }
+
+    function exportWeeklyJSON(){
+      const week = getCurrentWeekDays();
+      const data = week.map(d => ({date:d, ...(db.logs[d] || {})}));
+      downloadFile(
+        "weekly-report.json",
+        JSON.stringify({
+          profile: db.profile,
+          plan: calcPlan(),
+          week: data
+        }, null, 2),
+        "application/json"
+      );
+    }
+
+    function exportWeeklyCSV(){
+      const week = getCurrentWeekDays();
+      const rows = [
+        ["date","weight","water","sleep","coffee","workoutDone","relaxDone","notes"]
+      ];
+      week.forEach(d => {
+        const x = db.logs[d] || {};
+        rows.push([
+          d,
+          x.weight || "",
+          x.water || "",
+          x.sleep || "",
+          x.coffee || "",
+          x.workoutDone ? "yes":"no",
+          x.relaxDone ? "yes":"no",
+          (x.notes || "").replace(/\n/g," ").replace(/,/g,";")
+        ]);
+      });
+      const csv = rows.map(r => r.join(",")).join("\n");
+      downloadFile("weekly-report.csv", csv, "text/csv");
+    }
+
+    function downloadFile(filename, content, type){
+      const blob = new Blob([content], {type});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function fillInputs(){
+      const p = db.profile;
+      document.getElementById("sex").value = p.sex;
+      document.getElementById("age").value = p.age;
+      document.getElementById("height").value = p.height;
+      document.getElementById("currentWeight").value = getCurrentWeight();
+      document.getElementById("targetWeight").value = p.targetWeight;
+      document.getElementById("pace").value = p.pace;
+      document.getElementById("activity").value = String(p.activity);
+      document.getElementById("stress").value = p.stress;
+      document.getElementById("sleepHours").value = p.sleepHours;
+      document.getElementById("coffee").value = p.coffee;
+
+      document.getElementById("remBreakfast").value = db.reminders.breakfast;
+      document.getElementById("remSnack1").value = db.reminders.snack1;
+      document.getElementById("remLunch").value = db.reminders.lunch;
+      document.getElementById("remSnack2").value = db.reminders.snack2;
+      document.getElementById("remWorkout").value = db.reminders.workout;
+      document.getElementById("remDinner").value = db.reminders.dinner;
+      document.getElementById("remRelax").value = db.reminders.relax;
+      document.getElementById("remSleep").value = db.reminders.sleep;
+    }
+
+    function renderAll(){
+      ensureTodayLog();
+      fillInputs();
+      renderDashboard();
+      renderToday();
+      renderPlan();
+      renderTracking();
+      renderAnalysis();
+    }
+
+    renderAll();
+    startReminderLoop();
+  </script>
+</body>
+</html>
