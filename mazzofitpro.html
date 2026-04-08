@@ -4,1170 +4,181 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0b1220" />
-  <title>Dashboard Fitness Pro</title>
+  <title>Mazzofitpro</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mazzofitpro">
+  <link rel="apple-touch-icon" href="mazzofitpro-icon.png">
   <style>
-    :root{
-      --bg:#09111f;
-      --bg2:#0f1a2f;
-      --card:#121d34;
-      --card2:#172540;
-      --line:rgba(255,255,255,.08);
-      --text:#f8fbff;
-      --muted:#9fb0d1;
-      --accent:#38bdf8;
-      --accent2:#22c55e;
-      --warn:#f59e0b;
-      --danger:#ef4444;
-      --ok:#22c55e;
-      --shadow:0 18px 45px rgba(0,0,0,.28);
-      --radius:18px;
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{
-      margin:0;padding:0;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top right, rgba(56,189,248,.08), transparent 25%),
-        radial-gradient(circle at top left, rgba(34,197,94,.06), transparent 20%),
-        linear-gradient(180deg,#08101d 0%, #0b1426 100%);
-    }
-    body{padding-bottom:96px}
-    .app{max-width:820px;margin:0 auto;padding:14px}
-    h1,h2,h3,h4,p{margin:0}
-    .top{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      margin:4px 0 14px;
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:48px;height:48px;border-radius:16px;
-      display:grid;place-items:center;font-size:24px;font-weight:900;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:#04121a; box-shadow:var(--shadow);
-    }
-    .sub{color:var(--muted);font-size:13px;line-height:1.45}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      margin-bottom:14px;
-    }
-    .hero{
-      background:
-        radial-gradient(circle at 90% 10%, rgba(56,189,248,.18), transparent 20%),
-        radial-gradient(circle at 10% 0%, rgba(34,197,94,.12), transparent 20%),
-        linear-gradient(135deg,#14213f 0%, #0f1930 100%);
-    }
-    .cardHead{
-      padding:16px 16px 10px;
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-    }
-    .cardBody{padding:16px}
-    .btn{
-      border:none;border-radius:14px;padding:12px 14px;font-weight:800;cursor:pointer;
-      font-size:14px;
-    }
-    .btnPrimary{background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#05111a}
-    .btnSecondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}
-    .btnSuccess{background:linear-gradient(135deg,var(--accent2),#86efac);color:#05150a}
-    .btnDanger{background:linear-gradient(135deg,var(--danger),#fca5a5);color:#220707}
-    .btnRow{display:flex;flex-wrap:wrap;gap:10px}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    .stat{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-    }
-    .stat .label{font-size:12px;color:var(--muted);margin-bottom:6px}
-    .stat .value{font-size:24px;font-weight:900}
-    .field{display:flex;flex-direction:column;gap:8px}
-    .field label{font-size:13px;color:var(--muted);font-weight:700}
-    input,select,textarea{
-      width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);
-      color:var(--text);border-radius:14px;padding:12px 14px;font-size:15px;outline:none;
-    }
-    textarea{min-height:84px;resize:vertical}
-    .progress{
-      width:100%;height:12px;border-radius:999px;overflow:hidden;
-      background:rgba(255,255,255,.08);border:1px solid var(--line);
-    }
-    .bar{
-      height:100%;width:0%;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      transition:width .35s ease;
-    }
-    .badge{
-      display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
-      font-size:12px;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.06)
-    }
-    .info{background:rgba(56,189,248,.12);color:#bdeafe}
-    .ok{background:rgba(34,197,94,.12);color:#b8f7d0}
-    .warn{background:rgba(245,158,11,.14);color:#fde68a}
-    .danger{background:rgba(239,68,68,.14);color:#fecaca}
-    .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .list{display:grid;gap:10px}
-    .item{
-      background:rgba(255,255,255,.04);border:1px solid var(--line);
-      border-radius:16px;padding:14px;
-    }
-    .small{font-size:12px;color:var(--muted);line-height:1.45}
-    .divider{height:1px;background:var(--line);margin:12px 0}
-    .mealBox,.relaxBox,.miniBox{
-      background:rgba(255,255,255,.04);border:1px solid var(--line);
-      border-radius:16px;padding:14px;
-    }
-    .pill{
-      display:inline-block;padding:6px 10px;border-radius:999px;
-      background:rgba(255,255,255,.06);border:1px solid var(--line);
-      font-size:12px;font-weight:800;color:#dbeafe;
-    }
-    .workoutCard{
-      border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.04);
-    }
-    .workoutInner{display:grid;grid-template-columns:110px 1fr}
-    .workoutImg{background:#0b1425;min-height:110px;overflow:hidden;border-right:1px solid var(--line)}
-    .workoutImg img{width:100%;height:100%;object-fit:cover;display:block}
-    .workoutContent{padding:12px}
-    .checkRow{display:flex;align-items:flex-start;gap:10px}
-    .checkRow input[type="checkbox"]{width:22px;height:22px;margin-top:2px}
-    .tabs{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:12px;width:min(800px,calc(100% - 16px));
-      background:rgba(9,15,28,.92);backdrop-filter:blur(14px);
-      border:1px solid var(--line);border-radius:22px;padding:8px;
-      display:grid;grid-template-columns:repeat(5,1fr);gap:8px;box-shadow:var(--shadow);z-index:99;
-    }
-    .tabBtn{
-      border:none;background:transparent;color:var(--muted);border-radius:16px;
-      padding:12px 6px;font-size:12px;font-weight:800;cursor:pointer;
-    }
-    .tabBtn.active{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
-    .view{display:none}
-    .view.active{display:block}
-    .waterBar{
-      height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid var(--line)
-    }
-    .waterFill{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#60a5fa)}
-    .todayPct{font-size:34px;font-weight:900;line-height:1}
-    .toast{
-      position:fixed;top:16px;right:16px;z-index:999;
-      background:#12203a;border:1px solid var(--line);color:var(--text);
-      border-radius:16px;padding:12px 14px;display:none;max-width:320px;box-shadow:var(--shadow)
-    }
-    .toast.show{display:block}
-    @media(max-width:600px){
-      .grid2,.grid3{grid-template-columns:1fr}
-      .workoutInner{grid-template-columns:1fr}
-      .workoutImg{border-right:none;border-bottom:1px solid var(--line);min-height:180px}
-      .todayPct{font-size:28px}
-    }
+    :root{--bg:#09111f;--card:#121d34;--line:rgba(255,255,255,.08);--text:#f8fbff;--muted:#9fb0d1;--accent:#38bdf8;--accent2:#22c55e;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--shadow:0 18px 45px rgba(0,0,0,.28);--radius:18px}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top right, rgba(56,189,248,.08), transparent 25%),radial-gradient(circle at top left, rgba(34,197,94,.06), transparent 20%),linear-gradient(180deg,#08101d 0%, #0b1426 100%)} body{padding-bottom:96px} .app{max-width:900px;margin:0 auto;padding:14px}
+    h1,h2,h3,h4,p{margin:0}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 14px}.brand{display:flex;align-items:center;gap:12px}.logo{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121a;box-shadow:var(--shadow)} .sub{color:var(--muted);font-size:13px;line-height:1.45}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}.hero{background:radial-gradient(circle at 90% 10%, rgba(56,189,248,.18), transparent 20%),radial-gradient(circle at 10% 0%, rgba(34,197,94,.12), transparent 20%),linear-gradient(135deg,#14213f 0%, #0f1930 100%)} .cardHead{padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px}.cardBody{padding:16px}
+    .btn{border:none;border-radius:14px;padding:12px 14px;font-weight:800;cursor:pointer;font-size:14px}.btnPrimary{background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#05111a}.btnSecondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}.btnSuccess{background:linear-gradient(135deg,var(--accent2),#86efac);color:#05150a}.btnDanger{background:linear-gradient(135deg,var(--danger),#fca5a5);color:#220707}.btnRow{display:flex;flex-wrap:wrap;gap:10px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}.macroGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+    .stat,.item,.mealBox,.relaxBox,.miniBox{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:14px}.stat .label{font-size:12px;color:var(--muted);margin-bottom:6px}.stat .value{font-size:24px;font-weight:900}.field{display:flex;flex-direction:column;gap:8px}.field label{font-size:13px;color:var(--muted);font-weight:700}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);border-radius:14px;padding:12px 14px;font-size:15px;outline:none} textarea{min-height:84px;resize:vertical}
+    .progress{width:100%;height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);border:1px solid var(--line)} .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+    .badge,.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.06)} .info{background:rgba(56,189,248,.12);color:#bdeafe}.ok{background:rgba(34,197,94,.12);color:#b8f7d0}.warn{background:rgba(245,158,11,.14);color:#fde68a}.danger{background:rgba(239,68,68,.14);color:#fecaca}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px}.list{display:grid;gap:10px}.small{font-size:12px;color:var(--muted);line-height:1.45}.divider{height:1px;background:var(--line);margin:12px 0}
+    .workoutCard{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.04)}.workoutInner{display:grid;grid-template-columns:110px 1fr}.workoutImg{background:#0b1425;min-height:110px;overflow:hidden;border-right:1px solid var(--line);position:relative}.workoutImg img{width:100%;height:100%;object-fit:cover;display:block}.workoutContent{padding:12px}.checkRow{display:flex;align-items:flex-start;gap:10px}.checkRow input[type="checkbox"]{width:22px;height:22px;margin-top:2px}
+    .tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;width:min(880px,calc(100% - 16px));background:rgba(9,15,28,.92);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:22px;padding:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;box-shadow:var(--shadow);z-index:99}.tabBtn{border:none;background:transparent;color:var(--muted);border-radius:16px;padding:12px 6px;font-size:12px;font-weight:800;cursor:pointer}.tabBtn.active{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
+    .view{display:none}.view.active{display:block}.waterBar{height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid var(--line)}.waterFill{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#60a5fa)}.todayPct{font-size:34px;font-weight:900;line-height:1}.toast{position:fixed;top:16px;right:16px;z-index:999;background:#12203a;border:1px solid var(--line);color:var(--text);border-radius:16px;padding:12px 14px;display:none;max-width:320px;box-shadow:var(--shadow)}.toast.show{display:block}
+    canvas{width:100%;height:220px;background:rgba(255,255,255,.03);border-radius:14px;border:1px solid var(--line)}.timerBox{text-align:center;display:grid;gap:10px}.timerValue{font-size:52px;font-weight:900;line-height:1}.daysScroller{display:flex;gap:10px;overflow:auto;padding-bottom:6px}.dayBtn{min-width:96px;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);font-weight:800}.dayBtn.active{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.4)}.exerciseAction{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.recommend{position:absolute;top:10px;left:10px}
+    .modal{position:fixed;inset:0;background:rgba(2,6,14,.78);display:none;align-items:flex-end;justify-content:center;z-index:120;padding:12px}.modal.show{display:flex}.sheet{width:min(920px,100%);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#12203a,#0c162a);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}.sheetHead{padding:16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.sheetBody{padding:16px}.sessionStage{padding:16px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.04);text-align:center}.sessionBig{font-size:54px;font-weight:900;line-height:1}.seriesDots{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0}.dot{width:14px;height:14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid var(--line)}.dot.done{background:var(--ok)}.dot.current{background:var(--accent)}
+    @media(max-width:700px){.grid2,.grid3,.grid4,.macroGrid{grid-template-columns:1fr}.workoutInner{grid-template-columns:1fr}.workoutImg{border-right:none;border-bottom:1px solid var(--line);min-height:180px}.todayPct{font-size:28px}.tabs{grid-template-columns:repeat(3,1fr)}.timerValue,.sessionBig{font-size:42px}}
   </style>
 </head>
 <body>
   <div class="app">
     <div class="top">
       <div class="brand">
-        <div class="logo">⚡</div>
+        <div class="logo">M</div>
         <div>
-          <h1>Dashboard Fitness Pro</h1>
-          <div class="sub">Piano personale: alimentazione, allenamento, tapis roulant, relax, tracking e reminder</div>
+          <h1>Mazzofitpro</h1>
+          <div class="sub">App personale definitiva: piano, allenamento guidato, nutrizione reale, respirazione e tracking</div>
         </div>
       </div>
     </div>
 
     <div id="view-home" class="view active">
-      <div class="card hero">
-        <div class="cardBody">
-          <h2 style="font-size:24px;line-height:1.08;margin-bottom:8px;">Ogni giorno sai esattamente cosa fare.</h2>
-          <p class="sub" style="font-size:14px">
-            Inserisci i tuoi dati, genera il piano personalizzato e usa questa dashboard per
-            gestire calorie, pasti, acqua, allenamento, tapis roulant, sonno, stress e progressi.
-          </p>
-          <div class="btnRow" style="margin-top:14px">
-            <button class="btn btnPrimary" onclick="setView('profilo')">Imposta profilo</button>
-            <button class="btn btnSuccess" onclick="setView('oggi')">Apri oggi</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead">
-          <div>
-            <h3>Obiettivo principale</h3>
-            <div class="small">Peso, progresso e tempo stimato</div>
-          </div>
-          <span class="badge info" id="etaBadge">--</span>
-        </div>
-        <div class="cardBody">
-          <div class="grid2">
-            <div class="stat"><div class="label">Peso iniziale</div><div class="value" id="hStartWeight">--</div></div>
-            <div class="stat"><div class="label">Peso attuale</div><div class="value" id="hCurrentWeight">--</div></div>
-            <div class="stat"><div class="label">Obiettivo</div><div class="value" id="hTargetWeight">--</div></div>
-            <div class="stat"><div class="label">Da perdere</div><div class="value" id="hToLose">--</div></div>
-          </div>
-          <div class="divider"></div>
-          <div class="small" style="margin-bottom:6px">Avanzamento</div>
-          <div class="progress"><div id="goalBar" class="bar"></div></div>
-        </div>
-      </div>
-
+      <div class="card hero"><div class="cardBody">
+        <h2 style="font-size:24px;line-height:1.08;margin-bottom:8px;">Ogni giorno sai esattamente cosa fare.</h2>
+        <p class="sub" style="font-size:14px">Dashboard avanzata con allenamento giornaliero guidato, inserimento nutrizione reale, respirazione anti-cortisolo e log tapis roulant/cyclette.</p>
+        <div class="btnRow" style="margin-top:14px"><button class="btn btnPrimary" onclick="setView('workout')">Allenamento di oggi</button><button class="btn btnSuccess" onclick="setView('nutrition')">Nutrizione di oggi</button><button class="btn btnSecondary" onclick="setView('install')">Installa su iPhone</button></div>
+      </div></div>
+      <div class="card"><div class="cardHead"><div><h3>Obiettivo principale</h3><div class="small">Peso, progresso e tempo stimato</div></div><span class="badge info" id="etaBadge">--</span></div><div class="cardBody"><div class="grid2"><div class="stat"><div class="label">Peso iniziale</div><div class="value" id="hStartWeight">--</div></div><div class="stat"><div class="label">Peso attuale</div><div class="value" id="hCurrentWeight">--</div></div><div class="stat"><div class="label">Obiettivo</div><div class="value" id="hTargetWeight">--</div></div><div class="stat"><div class="label">Da perdere</div><div class="value" id="hToLose">--</div></div></div><div class="divider"></div><div class="small" style="margin-bottom:6px">Avanzamento</div><div class="progress"><div id="goalBar" class="bar"></div></div></div></div>
       <div class="grid2">
-        <div class="card">
-          <div class="cardHead">
-            <div><h3>Alimentazione</h3><div class="small">Calorie e idratazione di oggi</div></div>
-          </div>
-          <div class="cardBody">
-            <div class="grid2">
-              <div class="stat"><div class="label">Kcal target</div><div class="value" id="hCalories">--</div></div>
-              <div class="stat"><div class="label">Acqua target</div><div class="value" id="hWaterTarget">--</div></div>
-            </div>
-            <div class="divider"></div>
-            <div class="row"><strong>Acqua oggi</strong><span id="hWaterText" class="small">0 / 0 L</span></div>
-            <div class="waterBar" style="margin-top:8px"><div id="hWaterBar" class="waterFill"></div></div>
-            <div class="btnRow" style="margin-top:10px">
-              <button class="btn btnSecondary" onclick="quickWater(0.25)">+250ml</button>
-              <button class="btn btnSecondary" onclick="quickWater(0.5)">+500ml</button>
-              <button class="btn btnSecondary" onclick="quickWater(-0.25)">-250ml</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="cardHead">
-            <div><h3>Allenamento e relax</h3><div class="small">Stato della giornata</div></div>
-          </div>
-          <div class="cardBody">
-            <div class="grid2">
-              <div class="stat"><div class="label">Workout oggi</div><div class="value" id="hWorkoutToday">--</div></div>
-              <div class="stat"><div class="label">Sonno target</div><div class="value" id="hSleepTarget">--</div></div>
-            </div>
-            <div class="divider"></div>
-            <div class="row"><span>Allenamento completato</span><span id="hWorkoutDone" class="badge warn">No</span></div>
-            <div class="row" style="margin-top:10px"><span>Relax completato</span><span id="hRelaxDone" class="badge warn">No</span></div>
-          </div>
-        </div>
+        <div class="card"><div class="cardHead"><div><h3>Alimentazione</h3><div class="small">Target e consumo reale di oggi</div></div></div><div class="cardBody"><div class="grid2"><div class="stat"><div class="label">Kcal target</div><div class="value" id="hCalories">--</div></div><div class="stat"><div class="label">Kcal consumate</div><div class="value" id="hCaloriesActual">--</div></div></div><div class="divider"></div><div class="row"><strong>Acqua oggi</strong><span id="hWaterText" class="small">0 / 0 L</span></div><div class="waterBar" style="margin-top:8px"><div id="hWaterBar" class="waterFill"></div></div><div class="btnRow" style="margin-top:10px"><button class="btn btnSecondary" onclick="quickWater(0.25)">+250ml</button><button class="btn btnSecondary" onclick="quickWater(0.5)">+500ml</button><button class="btn btnSecondary" onclick="quickWater(-0.25)">-250ml</button></div></div></div>
+        <div class="card"><div class="cardHead"><div><h3>Allenamento e relax</h3><div class="small">Stato della giornata</div></div></div><div class="cardBody"><div class="grid2"><div class="stat"><div class="label">Workout oggi</div><div class="value" id="hWorkoutToday">--</div></div><div class="stat"><div class="label">Respirazione consigliata</div><div class="value" id="hBreathing">--</div></div></div><div class="divider"></div><div class="row"><span>Allenamento completato</span><span id="hWorkoutDone" class="badge warn">No</span></div><div class="row" style="margin-top:10px"><span>Relax completato</span><span id="hRelaxDone" class="badge warn">No</span></div></div></div>
       </div>
-
-      <div class="card">
-        <div class="cardHead">
-          <div><h3>Promemoria di oggi</h3><div class="small">Le azioni principali per arrivare all’obiettivo</div></div>
-        </div>
-        <div class="cardBody">
-          <div id="homeChecklist" class="list"></div>
-        </div>
-      </div>
+      <div class="card"><div class="cardHead"><div><h3>Promemoria di oggi</h3><div class="small">Le azioni principali per arrivare all’obiettivo</div></div></div><div class="cardBody"><div id="homeChecklist" class="list"></div></div></div>
     </div>
 
     <div id="view-profilo" class="view">
-      <div class="card">
-        <div class="cardHead">
-          <div><h3>Profilo e obiettivo</h3><div class="small">Dati usati per creare il piano personalizzato</div></div>
-        </div>
-        <div class="cardBody">
-          <div class="grid2">
-            <div class="field"><label>Sesso</label><select id="sex"><option value="male">Uomo</option><option value="female">Donna</option></select></div>
-            <div class="field"><label>Età</label><input id="age" type="number" placeholder="Es. 32"></div>
-            <div class="field"><label>Altezza (cm)</label><input id="height" type="number" placeholder="Es. 175"></div>
-            <div class="field"><label>Peso attuale (kg)</label><input id="currentWeight" type="number" step="0.1" placeholder="Es. 89"></div>
-            <div class="field"><label>Peso obiettivo (kg)</label><input id="targetWeight" type="number" step="0.1" placeholder="Es. 78"></div>
-            <div class="field"><label>Velocità desiderata</label><select id="pace"><option value="slow">Lenta e sostenibile</option><option value="medium">Media</option><option value="fast">Più rapida</option></select></div>
-            <div class="field"><label>Attività lavorativa</label><select id="activity"><option value="1.2">Molto sedentario</option><option value="1.35">Poco attivo</option><option value="1.5">Moderatamente attivo</option><option value="1.65">Abbastanza attivo</option></select></div>
-            <div class="field"><label>Stress percepito</label><select id="stress"><option value="low">Basso</option><option value="medium">Medio</option><option value="high">Alto</option></select></div>
-            <div class="field"><label>Ore di sonno attuali</label><input id="sleepHours" type="number" step="0.5" placeholder="Es. 6.5"></div>
-            <div class="field"><label>Caffè al giorno</label><input id="coffee" type="number" placeholder="Es. 6"></div>
-          </div>
-          <div class="divider"></div>
-          <div class="small">Le calorie sono stimate con formula Mifflin-St Jeor + livello attività. Il deficit viene adattato anche in base a stress, sonno e caffeina.</div>
-          <div class="btnRow" style="margin-top:14px">
-            <button class="btn btnPrimary" onclick="saveProfile()">Genera piano personalizzato</button>
-            <button class="btn btnSecondary" onclick="saveCurrentWeightToToday()">Salva peso di oggi</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead">
-          <div><h3>Reminder e notifiche</h3><div class="small">Per pasti, acqua, allenamento, relax e sonno</div></div>
-        </div>
-        <div class="cardBody">
-          <div class="small" style="margin-bottom:12px">
-            Le notifiche browser funzionano bene quando la dashboard è aperta e con permesso concesso.
-            Su GitHub Pages non sostituiscono una vera app nativa sempre in background.
-          </div>
-          <div class="grid2">
-            <div class="field"><label>Colazione</label><input id="remBreakfast" type="time"></div>
-            <div class="field"><label>Spuntino mattina</label><input id="remSnack1" type="time"></div>
-            <div class="field"><label>Pranzo</label><input id="remLunch" type="time"></div>
-            <div class="field"><label>Spuntino pomeriggio</label><input id="remSnack2" type="time"></div>
-            <div class="field"><label>Allenamento</label><input id="remWorkout" type="time"></div>
-            <div class="field"><label>Cena</label><input id="remDinner" type="time"></div>
-            <div class="field"><label>Relax / respirazione</label><input id="remRelax" type="time"></div>
-            <div class="field"><label>Routine sonno</label><input id="remSleep" type="time"></div>
-          </div>
-          <div class="btnRow" style="margin-top:14px">
-            <button class="btn btnSuccess" onclick="enableNotifications()">Attiva notifiche</button>
-            <button class="btn btnPrimary" onclick="saveReminders()">Salva reminders</button>
-          </div>
-        </div>
-      </div>
+      <div class="card"><div class="cardHead"><div><h3>Profilo e obiettivo</h3><div class="small">Dati usati per creare il piano personalizzato</div></div></div><div class="cardBody"><div class="grid2"><div class="field"><label>Sesso</label><select id="sex"><option value="male">Uomo</option><option value="female">Donna</option></select></div><div class="field"><label>Età</label><input id="age" type="number"></div><div class="field"><label>Altezza (cm)</label><input id="height" type="number"></div><div class="field"><label>Peso attuale (kg)</label><input id="currentWeight" type="number" step="0.1"></div><div class="field"><label>Peso obiettivo (kg)</label><input id="targetWeight" type="number" step="0.1"></div><div class="field"><label>Velocità desiderata</label><select id="pace"><option value="slow">Lenta e sostenibile</option><option value="medium">Media</option><option value="fast">Più rapida</option></select></div><div class="field"><label>Attività lavorativa</label><select id="activity"><option value="1.2">Molto sedentario</option><option value="1.35">Poco attivo</option><option value="1.5">Moderatamente attivo</option><option value="1.65">Abbastanza attivo</option></select></div><div class="field"><label>Stress percepito</label><select id="stress"><option value="low">Basso</option><option value="medium">Medio</option><option value="high">Alto</option></select></div><div class="field"><label>Ore di sonno attuali</label><input id="sleepHours" type="number" step="0.5"></div><div class="field"><label>Caffè al giorno</label><input id="coffee" type="number"></div></div><div class="divider"></div><div class="btnRow"><button class="btn btnPrimary" onclick="saveProfile()">Genera piano personalizzato</button><button class="btn btnSecondary" onclick="saveCurrentWeightToToday()">Salva peso di oggi</button></div></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Reminder e notifiche</h3><div class="small">Per pasti, acqua, allenamento, relax e sonno</div></div></div><div class="cardBody"><div class="grid2"><div class="field"><label>Colazione</label><input id="remBreakfast" type="time"></div><div class="field"><label>Spuntino mattina</label><input id="remSnack1" type="time"></div><div class="field"><label>Pranzo</label><input id="remLunch" type="time"></div><div class="field"><label>Spuntino pomeriggio</label><input id="remSnack2" type="time"></div><div class="field"><label>Allenamento</label><input id="remWorkout" type="time"></div><div class="field"><label>Cena</label><input id="remDinner" type="time"></div><div class="field"><label>Relax / respirazione</label><input id="remRelax" type="time"></div><div class="field"><label>Routine sonno</label><input id="remSleep" type="time"></div></div><div class="btnRow" style="margin-top:14px"><button class="btn btnSuccess" onclick="enableNotifications()">Attiva notifiche</button><button class="btn btnPrimary" onclick="saveReminders()">Salva reminders</button></div></div></div>
     </div>
 
-    <div id="view-oggi" class="view">
-      <div class="card">
-        <div class="cardHead">
-          <div><h3>Oggi</h3><div class="small" id="todayDate">--</div></div>
-          <div class="todayPct" id="todayPct">0%</div>
-        </div>
-        <div class="cardBody">
-          <div id="todayChecklist" class="list"></div>
-        </div>
-      </div>
-
-      <div class="grid2">
-        <div class="card">
-          <div class="cardHead"><div><h3>Log rapido giornata</h3><div class="small">Peso, acqua, sonno, caffè</div></div></div>
-          <div class="cardBody">
-            <div class="grid2">
-              <div class="field"><label>Peso oggi (kg)</label><input id="dailyWeight" type="number" step="0.1"></div>
-              <div class="field"><label>Acqua oggi (L)</label><input id="dailyWater" type="number" step="0.1"></div>
-              <div class="field"><label>Ore di sonno</label><input id="dailySleep" type="number" step="0.5"></div>
-              <div class="field"><label>Caffè oggi</label><input id="dailyCoffee" type="number"></div>
-            </div>
-            <div class="btnRow" style="margin-top:14px">
-              <button class="btn btnPrimary" onclick="saveTodayQuickLog()">Salva log</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="cardHead"><div><h3>Nota del giorno</h3><div class="small">Come ti senti, fame, energia, stress</div></div></div>
-          <div class="cardBody">
-            <div class="field"><label>Note</label><textarea id="dailyNotes" placeholder="Scrivi qui come è andata oggi..."></textarea></div>
-            <div class="btnRow" style="margin-top:14px">
-              <button class="btn btnSecondary" onclick="saveTodayNotes()">Salva note</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="view-workout" class="view">
+      <div class="card"><div class="cardHead"><div><h3>Allenamento giornaliero</h3><div class="small">Tocca il giorno, poi l’esercizio, e lasciati guidare fino al completamento</div></div></div><div class="cardBody"><div class="daysScroller" id="weekDays"></div><div class="divider"></div><div class="row"><div><strong id="selectedDayTitle">--</strong><div class="small" id="selectedDaySub">--</div></div><span id="selectedDayStatus" class="badge warn">Da fare</span></div><div class="divider"></div><div id="dailyWorkoutList" class="list"></div></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Log cardio macchine</h3><div class="small">Tapis roulant o cyclette: consigliato quando non puoi fare il resto o come cardio principale</div></div></div><div class="cardBody"><div class="grid2"><div class="field"><label>Tipo</label><select id="cardioType"><option value="treadmill">Tapis roulant</option><option value="bike">Cyclette</option></select></div><div class="field"><label>Durata (min)</label><input id="tmMinutes" type="number" step="0.1"></div><div class="field"><label>Kcal attive</label><input id="tmActiveKcal" type="number"></div><div class="field"><label>Kcal totali</label><input id="tmTotalKcal" type="number"></div><div class="field"><label>Battito medio</label><input id="tmAvgHr" type="number"></div><div class="field"><label>Distanza (km)</label><input id="tmDistance" type="number" step="0.01"></div><div class="field" style="grid-column:1 / -1"><label>Note</label><input id="tmNotes" type="text" placeholder="Es. inclinazione 4%"></div></div><div class="btnRow" style="margin-top:14px"><button class="btn btnPrimary" onclick="saveCardioLog()">Salva sessione</button></div><div class="divider"></div><div id="todayCardioSummary" class="small">Nessuna sessione cardio salvata oggi.</div></div></div>
     </div>
 
-    <div id="view-piano" class="view">
-      <div class="card">
-        <div class="cardHead"><div><h3>Fase 1 · Alimentazione</h3><div class="small">Calorie giornaliere, pasti e acqua</div></div></div>
-        <div class="cardBody">
-          <div class="grid2">
-            <div class="miniBox"><div class="pill">Calorie giornaliere</div><h2 id="pCalories" style="margin-top:8px">--</h2><div id="pCaloriesSub" class="small">--</div></div>
-            <div class="miniBox"><div class="pill">Acqua giornaliera</div><h2 id="pWater" style="margin-top:8px">--</h2><div class="small">Distribuiscila nella giornata</div></div>
-          </div>
-          <div class="divider"></div>
-          <div id="mealPlan" class="grid2"></div>
-        </div>
-      </div>
+    <div id="view-nutrition" class="view">
+      <div class="card"><div class="cardHead"><div><h3>Fase 1 · Alimentazione</h3><div class="small">Target giornalieri + quello che hai realmente consumato</div></div></div><div class="cardBody"><div class="grid2"><div class="miniBox"><div class="pill">Calorie giornaliere</div><h2 id="pCalories" style="margin-top:8px">--</h2><div id="pCaloriesSub" class="small">--</div></div><div class="miniBox"><div class="pill">Acqua giornaliera</div><h2 id="pWater" style="margin-top:8px">--</h2><div class="small">Distribuiscila nella giornata</div></div></div><div class="divider"></div><div id="mealPlan" class="grid2"></div></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Nutrizione reale di oggi</h3><div class="small">Inserisci i dati che leggi dalla tua app alimentazione</div></div></div><div class="cardBody"><div class="macroGrid"><div class="field"><label>Calorie</label><input id="nCalories" type="number"></div><div class="field"><label>Proteine (g)</label><input id="nProtein" type="number" step="0.1"></div><div class="field"><label>Carboidrati (g)</label><input id="nCarbs" type="number" step="0.1"></div><div class="field"><label>Grassi (g)</label><input id="nFat" type="number" step="0.1"></div><div class="field"><label>Fibre (g)</label><input id="nFiber" type="number" step="0.1"></div><div class="field"><label>Zuccheri (g)</label><input id="nSugar" type="number" step="0.1"></div><div class="field"><label>Sodio / sale</label><input id="nSodium" type="number" step="0.1"></div><div class="field"><label>Acqua totale (L)</label><input id="nWater" type="number" step="0.1"></div><div class="field"><label>Colazione effettiva</label><input id="nBreakfast" type="text"></div><div class="field"><label>Pranzo effettivo</label><input id="nLunch" type="text"></div><div class="field" style="grid-column:1 / -1"><label>Cena / snack / note</label><textarea id="nNotes"></textarea></div></div><div class="btnRow" style="margin-top:14px"><button class="btn btnPrimary" onclick="saveNutritionActual()">Salva nutrizione reale</button></div></div></div>
+    </div>
 
-      <div class="card">
-        <div class="cardHead"><div><h3>Fase 2 · Allenamento</h3><div class="small">Brucia grassi, esercizi e tapis roulant</div></div></div>
-        <div class="cardBody">
-          <div class="small" style="margin-bottom:10px">
-            Per le immagini esercizi crea la cartella <strong>img/fitness/</strong> e carica i file con questi nomi:
-            crunch.jpg, mountain-climber.jpg, plank.jpg, leg-raises.jpg, squat.jpg, push-up.jpg, burpee.jpg,
-            jumping-jack.jpg, high-knees.jpg, walk.jpg, treadmill.jpg
-          </div>
-          <div id="weeklyWorkoutPlan" class="list"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead"><div><h3>Tapis roulant · Log dedicato</h3><div class="small">Inserisci dati come quelli del tuo Apple Watch</div></div></div>
-        <div class="cardBody">
-          <div class="grid3">
-            <div class="field"><label>Durata (min)</label><input id="tmMinutes" type="number" step="0.1" placeholder="Es. 30.7"></div>
-            <div class="field"><label>Kcal attive</label><input id="tmActiveKcal" type="number" placeholder="Es. 192"></div>
-            <div class="field"><label>Kcal totali</label><input id="tmTotalKcal" type="number" placeholder="Es. 250"></div>
-            <div class="field"><label>Battito medio</label><input id="tmAvgHr" type="number" placeholder="Es. 126"></div>
-            <div class="field"><label>Distanza (km)</label><input id="tmDistance" type="number" step="0.01" placeholder="Es. 3.11"></div>
-            <div class="field"><label>Note tapis roulant</label><input id="tmNotes" type="text" placeholder="Es. inclinazione 4%"></div>
-          </div>
-          <div class="btnRow" style="margin-top:14px">
-            <button class="btn btnPrimary" onclick="saveTreadmillLog()">Salva sessione tapis roulant</button>
-          </div>
-          <div class="divider"></div>
-          <div id="treadmillTodayBox" class="small">Nessuna sessione tapis roulant salvata oggi.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead"><div><h3>Fase 3 · Relax, sonno, cortisolo</h3><div class="small">Routine serale, respirazione e scarico stress</div></div></div>
-        <div class="cardBody">
-          <div id="relaxPlan" class="list"></div>
-        </div>
-      </div>
+    <div id="view-relax" class="view">
+      <div class="card"><div class="cardHead"><div><h3>Fase 3 · Relax, sonno, cortisolo</h3><div class="small">Routine serale, respirazione e scarico stress</div></div></div><div class="cardBody"><div id="relaxPlan" class="list"></div></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Respirazione guidata</h3><div class="small">Consigliata 2–3 volte al giorno: mattina, dopo lavoro, sera</div></div></div><div class="cardBody"><div class="grid3"><div class="field"><label>Inspira (sec)</label><input id="breathIn" type="number" value="4"></div><div class="field"><label>Espira (sec)</label><input id="breathOut" type="number" value="6"></div><div class="field"><label>Cicli</label><input id="breathCycles" type="number" value="10"></div></div><div class="divider"></div><div class="timerBox"><div><span class="badge info" id="breathStage">Pronto</span></div><div class="timerValue" id="breathDisplay">00</div><div class="small" id="breathSub">Respirazione guidata</div></div><div class="btnRow" style="margin-top:14px"><button class="btn btnPrimary" onclick="startBreathTimer()">Avvia</button><button class="btn btnSecondary" onclick="pauseBreathTimer()">Pausa</button><button class="btn btnDanger" onclick="resetBreathTimer()">Reset</button></div></div></div>
     </div>
 
     <div id="view-tracking" class="view">
-      <div class="card">
-        <div class="cardHead"><div><h3>Tracking settimana</h3><div class="small">Tutto registrato giorno per giorno</div></div></div>
-        <div class="cardBody">
-          <div id="trackingList" class="list"></div>
-        </div>
-      </div>
+      <div class="card"><div class="cardHead"><div><h3>Grafico peso</h3><div class="small">Trend dei pesi registrati</div></div></div><div class="cardBody"><canvas id="weightChart" width="760" height="220"></canvas></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Tracking settimana</h3><div class="small">Tutto registrato giorno per giorno</div></div></div><div class="cardBody"><div id="trackingList" class="list"></div></div></div>
+      <div class="card"><div class="cardHead"><div><h3>Export settimanale</h3><div class="small">Per inviarmelo e analizzarlo insieme</div></div></div><div class="cardBody"><div class="btnRow"><button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button><button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button></div></div></div>
+    </div>
 
-      <div class="card">
-        <div class="cardHead"><div><h3>Export settimanale</h3><div class="small">Per inviarmelo e analizzarlo insieme</div></div></div>
-        <div class="cardBody">
-          <div class="btnRow">
-            <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
-            <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead"><div><h3>Analisi e previsione</h3><div class="small">BMR, TDEE, deficit e tempo stimato</div></div></div>
-        <div class="cardBody">
-          <div class="grid2">
-            <div class="stat"><div class="label">BMR stimato</div><div class="value" id="aBmr">--</div></div>
-            <div class="stat"><div class="label">TDEE stimato</div><div class="value" id="aTdee">--</div></div>
-            <div class="stat"><div class="label">Deficit giornaliero</div><div class="value" id="aDeficit">--</div></div>
-            <div class="stat"><div class="label">Tempo stimato</div><div class="value" id="aEta">--</div></div>
-          </div>
-          <div class="divider"></div>
-          <div id="analysisList" class="list"></div>
-        </div>
-      </div>
+    <div id="view-install" class="view">
+      <div class="card"><div class="cardHead"><div><h3>Installazione su iPhone</h3><div class="small">Per usarla dalla schermata Home con icona app</div></div></div><div class="cardBody"><div class="list"><div class="item"><strong>1. Apri con Safari</strong><div class="small" style="margin-top:6px">Apri il file pubblicato su GitHub Pages usando Safari.</div></div><div class="item"><strong>2. Condividi</strong><div class="small" style="margin-top:6px">Tocca l’icona Condividi in basso.</div></div><div class="item"><strong>3. Aggiungi a Home</strong><div class="small" style="margin-top:6px">Seleziona “Aggiungi a Home”. Vedrai l’icona Mazzofitpro.</div></div><div class="item"><strong>4. Icona</strong><div class="small" style="margin-top:6px">Carica nello stesso percorso sia il file HTML sia <code>mazzofitpro-icon.png</code>.</div></div><div class="item"><strong>5. Immagini esercizi</strong><div class="small" style="margin-top:6px">Se carichi immagini reali nella cartella <code>img/fitness/</code>, l’app userà quelle. Altrimenti vedrai placeholder già pronti.</div></div></div></div></div>
     </div>
   </div>
 
   <div class="tabs">
     <button class="tabBtn active" onclick="setView('home', this)">Home</button>
     <button class="tabBtn" onclick="setView('profilo', this)">Profilo</button>
-    <button class="tabBtn" onclick="setView('oggi', this)">Oggi</button>
-    <button class="tabBtn" onclick="setView('piano', this)">Piano</button>
+    <button class="tabBtn" onclick="setView('workout', this)">Workout</button>
+    <button class="tabBtn" onclick="setView('nutrition', this)">Food</button>
+    <button class="tabBtn" onclick="setView('relax', this)">Relax</button>
     <button class="tabBtn" onclick="setView('tracking', this)">Tracking</button>
   </div>
 
   <div id="toast" class="toast"></div>
 
-  <script>
-    const STORAGE_KEY = "fitness_dashboard_pro_v2";
+  <div id="exerciseModal" class="modal">
+    <div class="sheet">
+      <div class="sheetHead"><div><strong id="modalTitle">Esercizio</strong><div class="small" id="modalSubtitle">Guida completamento</div></div><button class="btn btnSecondary" onclick="closeExerciseModal()">Chiudi</button></div>
+      <div class="sheetBody"><div class="sessionStage"><div class="badge info" id="sessionPhase">Preparati</div><div class="sessionBig" id="sessionValue">00:05</div><div class="small" id="sessionText">Sei pronto per svolgere questo esercizio?</div><div class="seriesDots" id="sessionDots"></div><div class="btnRow" style="justify-content:center;margin-top:10px" id="sessionButtons"></div></div></div>
+    </div>
+  </div>
 
-    const DEFAULTS = {
-      profile: {
-        sex: "male",
-        age: 32,
-        height: 175,
-        startWeight: 89,
-        currentWeight: 89,
-        targetWeight: 78,
-        pace: "medium",
-        activity: 1.35,
-        stress: "high",
-        sleepHours: 6.5,
-        coffee: 6
-      },
-      reminders: {
-        breakfast: "08:00",
-        snack1: "11:00",
-        lunch: "13:30",
-        snack2: "17:00",
-        workout: "18:30",
-        dinner: "20:30",
-        relax: "22:15",
-        sleep: "23:15"
-      },
-      logs: {}
-    };
-
-    const IMG = "img/fitness/";
-    const EX = {
-      crunch:{name:"Crunch", img:"crunch.jpg", desc:"Solleva solo le spalle, non tirare il collo."},
-      mountain:{name:"Mountain Climber", img:"mountain-climber.jpg", desc:"Plank dinamico, ginocchia al petto alternate."},
-      plank:{name:"Plank", img:"plank.jpg", desc:"Gomiti sotto le spalle, corpo in linea."},
-      legraise:{name:"Leg Raises", img:"leg-raises.jpg", desc:"Gambe tese, schiena aderente."},
-      squat:{name:"Squat", img:"squat.jpg", desc:"Scendi controllato, schiena neutra."},
-      pushup:{name:"Push Up", img:"push-up.jpg", desc:"Corpo dritto, gomiti a circa 45°."},
-      burpee:{name:"Burpee", img:"burpee.jpg", desc:"Movimento completo a ritmo controllato."},
-      jumpingjack:{name:"Jumping Jack", img:"jumping-jack.jpg", desc:"Cardio base e attivazione."},
-      highknees:{name:"High Knees", img:"high-knees.jpg", desc:"Corsa sul posto a ginocchia alte."},
-      walk:{name:"Camminata veloce", img:"walk.jpg", desc:"Ottima per bruciare grassi con poco stress."},
-      treadmill:{name:"Tapis roulant", img:"treadmill.jpg", desc:"Camminata veloce o salita moderata."}
-    };
-
-    let db = loadDB();
-    let reminderCache = {};
-
-    function loadDB(){
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return structuredClone(DEFAULTS);
-      try{
-        const parsed = JSON.parse(raw);
-        return {
-          profile: {...DEFAULTS.profile, ...(parsed.profile || {})},
-          reminders: {...DEFAULTS.reminders, ...(parsed.reminders || {})},
-          logs: parsed.logs || {}
-        };
-      }catch{
-        return structuredClone(DEFAULTS);
-      }
-    }
-    function saveDB(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
-
-    function todayKey(){ return new Date().toISOString().slice(0,10); }
-    function ensureTodayLog(){
-      const k = todayKey();
-      if(!db.logs[k]){
-        db.logs[k] = {
-          date:k,
-          weight:"",
-          water:0,
-          sleep:"",
-          coffee:"",
-          notes:"",
-          workoutDone:false,
-          relaxDone:false,
-          checks:{
-            breakfast:false, snack1:false, lunch:false, snack2:false, dinner:false, waterTarget:false
-          },
-          treadmill:[]
-        };
-      }
-      return db.logs[k];
-    }
-
-    function showToast(msg){
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      setTimeout(()=>el.classList.remove("show"), 2200);
-    }
-
-    function setView(name, btn){
-      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-      document.getElementById("view-"+name).classList.add("active");
-      document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-      if(btn) btn.classList.add("active");
-      else{
-        const map = {home:0, profilo:1, oggi:2, piano:3, tracking:4};
-        const t = document.querySelectorAll(".tabBtn")[map[name]];
-        if(t) t.classList.add("active");
-      }
-      renderAll();
-    }
-
-    function fmtKg(v){ return Number(v).toFixed(1) + " kg"; }
-    function fmtKcal(v){ return Math.round(v) + " kcal"; }
-
-    function getCurrentWeight(){
-      const today = ensureTodayLog();
-      return today.weight !== "" ? Number(today.weight) : Number(db.profile.currentWeight);
-    }
-
-    function calcBMR(){
-      const p = db.profile;
-      const w = getCurrentWeight();
-      if(p.sex === "male") return (10*w) + (6.25*p.height) - (5*p.age) + 5;
-      return (10*w) + (6.25*p.height) - (5*p.age) - 161;
-    }
-
-    function baseDeficit(){
-      if(db.profile.pace === "slow") return 350;
-      if(db.profile.pace === "fast") return 650;
-      return 500;
-    }
-
-    function calcPlan(){
-      const p = db.profile;
-      const current = getCurrentWeight();
-      const toLose = Math.max(0, current - p.targetWeight);
-      const bmr = calcBMR();
-      const tdee = bmr * Number(p.activity);
-      let deficit = baseDeficit();
-      if(p.stress === "high") deficit -= 80;
-      if(Number(p.sleepHours) < 6.5) deficit -= 70;
-      if(Number(p.coffee) >= 5) deficit -= 50;
-      deficit = Math.max(250, deficit);
-      let calories = Math.round(tdee - deficit);
-      calories = p.sex === "male" ? Math.max(1700, calories) : Math.max(1400, calories);
-      const weeklyLoss = (deficit * 7) / 7700;
-      const etaWeeks = weeklyLoss > 0 ? Math.ceil(toLose / weeklyLoss) : 0;
-      const waterLiters = Math.max(2, current * 0.035).toFixed(1);
-      return {bmr,tdee,deficit,calories,toLose,weeklyLoss,etaWeeks,waterLiters};
-    }
-
-    function mealSplit(calories){
-      return {
-        breakfast: Math.round(calories * 0.25),
-        snack1: Math.round(calories * 0.10),
-        lunch: Math.round(calories * 0.30),
-        snack2: Math.round(calories * 0.10),
-        dinner: Math.round(calories * 0.25)
-      };
-    }
-
-    function ex(key, series, target, rest){
-      return {
-        type:"exercise",
-        name:EX[key].name,
-        img:IMG + EX[key].img,
-        desc:EX[key].desc,
-        details:`${series} serie · ${target} · recupero ${rest}`
-      };
-    }
-    function cardio(mins, text, mode="walk"){
-      const key = mode === "treadmill" ? "treadmill" : "walk";
-      return {
-        type:"cardio",
-        name:EX[key].name,
-        img:IMG + EX[key].img,
-        desc:text,
-        details:`Durata ${mins} min · intensità moderata`
-      };
-    }
-    function alt(text){
-      return {type:"alt", name:"Alternativa", img:"", desc:text, details:"Opzione alternativa"};
-    }
-    function relax(text){
-      return {type:"relax", name:"Relax", img:"", desc:text, details:"Recupero e cortisolo"};
-    }
-
-    function getWorkoutPlan(){
-      const p = db.profile;
-      const highStress = p.stress === "high";
-      const lowSleep = Number(p.sleepHours) < 6.5;
-      const walkMins = highStress || lowSleep ? 30 : 35;
-      const treadmillMins = highStress || lowSleep ? 30 : 35;
-
-      return {
-        monday: {
-          title: "Core + brucia grassi",
-          items: [
-            ex("crunch",3,"15 rip","30 sec"),
-            ex("mountain",3,"30 sec","30 sec"),
-            ex("plank",3,"30 sec","30 sec"),
-            cardio(treadmillMins, "Camminata veloce su tapis roulant o fuori, battito 120-135", "treadmill")
-          ]
-        },
-        tuesday: {
-          title: "Cardio principale",
-          items: [
-            cardio(treadmillMins + 5, "Tapis roulant: 5 min normali + parte centrale moderata + finale facile", "treadmill"),
-            alt("Oppure camminata veloce fuori 35-40 min oppure cyclette moderata 30-35 min")
-          ]
-        },
-        wednesday: {
-          title: "Total body base",
-          items: [
-            ex("squat",3,"15 rip","35 sec"),
-            ex("pushup",3,"8-12 rip","40 sec"),
-            ex("plank",3,"35 sec","30 sec"),
-            cardio(20, "Defaticamento su tapis roulant o camminata", "treadmill")
-          ]
-        },
-        thursday: {
-          title: "Recupero attivo",
-          items: [
-            cardio(30, "Camminata rilassata o veloce leggera", "treadmill"),
-            relax("10 min stretching + respirazione 4-6")
-          ]
-        },
-        friday: {
-          title: "Core + richiamo metabolico",
-          items: [
-            ex("crunch",3,"20 rip","25 sec"),
-            ex("legraise",3,"12-15 rip","30 sec"),
-            ex("mountain",3,"35 sec","30 sec"),
-            cardio(walkMins, "Camminata veloce finale", "treadmill")
-          ]
-        },
-        saturday: {
-          title: db.profile.pace === "fast" ? "HIIT controllato" : "Cardio avanzato",
-          items: db.profile.pace === "fast"
-            ? [
-                ex("jumpingjack",4,"35 sec","20 sec"),
-                ex("highknees",4,"25 sec","20 sec"),
-                ex("burpee",3,"8-10 rip","40 sec"),
-                cardio(20, "Tapis roulant finale a passo sostenuto", "treadmill")
-              ]
-            : [
-                cardio(treadmillMins + 5, "Tapis roulant continuo in zona moderata", "treadmill"),
-                alt("Oppure camminata all'aperto 40 min")
-              ]
-        },
-        sunday: {
-          title: "Riposo attivo o completo",
-          items: [
-            relax("Passeggiata leggera 20-30 min"),
-            relax("Respirazione 5 min e scarico mentale")
-          ]
-        }
-      };
-    }
-
-    function getRelaxPlan(){
-      const p = db.profile;
-      const arr = [
-        {title:"Sonno", text:`Obiettivo: almeno ${Math.max(7, Number(p.sleepHours) < 7 ? 7.5 : Number(p.sleepHours)).toFixed(1)} ore. Routine sonno alle ${db.reminders.sleep}.`},
-        {title:"Respirazione", text:"5 minuti la sera: inspira 4 secondi, espira 6 secondi."},
-        {title:"Schermi", text:"Riduci telefono e social almeno 45 minuti prima di dormire."}
-      ];
-      if(Number(p.coffee) > 3) arr.push({title:"Caffeina", text:`Riduci gradualmente il caffè. Obiettivo: da ${p.coffee} a 2-3 al giorno, niente caffeina dopo le 14:00.`});
-      if(p.stress === "high") arr.push({title:"Scarico mentale", text:"Prima di dormire scrivi per 5 minuti tutto ciò che devi fare domani o che ti pesa mentalmente."});
-      return arr;
-    }
-
-    function getTodayWorkout(){
-      const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
-      return getWorkoutPlan()[days[new Date().getDay()]];
-    }
-
-    function buildChecklist(){
-      const plan = calcPlan();
-      const log = ensureTodayLog();
-      return [
-        {key:"breakfast", title:"Colazione", sub:"Completa il primo pasto", done:log.checks.breakfast},
-        {key:"snack1", title:"Spuntino mattina", sub:"Piccolo spuntino controllato", done:log.checks.snack1},
-        {key:"lunch", title:"Pranzo", sub:"Pranzo bilanciato", done:log.checks.lunch},
-        {key:"snack2", title:"Spuntino pomeriggio", sub:"Evita fame serale eccessiva", done:log.checks.snack2},
-        {key:"dinner", title:"Cena", sub:"Cena leggera e proteica", done:log.checks.dinner},
-        {key:"waterTarget", title:"Acqua", sub:`Bevi ${plan.waterLiters} litri`, done:Number(log.water) >= Number(plan.waterLiters) || log.checks.waterTarget},
-        {key:"workoutDone", title:"Allenamento", sub:getTodayWorkout().title, done:log.workoutDone},
-        {key:"relaxDone", title:"Relax", sub:"Respirazione e routine serale", done:log.relaxDone}
-      ];
-    }
-
-    function renderHome(){
-      const plan = calcPlan();
-      const current = getCurrentWeight();
-      const start = Number(db.profile.startWeight);
-      const progress = start === db.profile.targetWeight ? 100 : Math.max(0, Math.min(100, ((start-current)/(start-db.profile.targetWeight))*100));
-
-      document.getElementById("hStartWeight").textContent = fmtKg(start);
-      document.getElementById("hCurrentWeight").textContent = fmtKg(current);
-      document.getElementById("hTargetWeight").textContent = fmtKg(db.profile.targetWeight);
-      document.getElementById("hToLose").textContent = plan.toLose.toFixed(1) + " kg";
-      document.getElementById("goalBar").style.width = progress + "%";
-      document.getElementById("etaBadge").textContent = plan.etaWeeks ? `~ ${plan.etaWeeks} sett.` : "raggiunto";
-      document.getElementById("hCalories").textContent = fmtKcal(plan.calories);
-      document.getElementById("hWaterTarget").textContent = plan.waterLiters + " L";
-      document.getElementById("hWorkoutToday").textContent = getTodayWorkout().title;
-      document.getElementById("hSleepTarget").textContent = Math.max(7, Number(db.profile.sleepHours)<7 ? 7.5 : Number(db.profile.sleepHours)).toFixed(1) + " h";
-
-      const log = ensureTodayLog();
-      document.getElementById("hWorkoutDone").textContent = log.workoutDone ? "Sì" : "No";
-      document.getElementById("hWorkoutDone").className = "badge " + (log.workoutDone ? "ok":"warn");
-      document.getElementById("hRelaxDone").textContent = log.relaxDone ? "Sì" : "No";
-      document.getElementById("hRelaxDone").className = "badge " + (log.relaxDone ? "ok":"warn");
-
-      const water = Number(log.water || 0);
-      document.getElementById("hWaterText").textContent = `${water.toFixed(1)} / ${Number(plan.waterLiters).toFixed(1)} L`;
-      document.getElementById("hWaterBar").style.width = Math.min(100, (water / Number(plan.waterLiters)) * 100) + "%";
-
-      document.getElementById("homeChecklist").innerHTML = buildChecklist().slice(0,6).map(x => `
-        <div class="item">
-          <div class="row">
-            <div><strong>${x.title}</strong><div class="small">${x.sub}</div></div>
-            <span class="badge ${x.done ? 'ok':'warn'}">${x.done ? 'Fatto':'Da fare'}</span>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderProfile(){
-      const p = db.profile;
-      sex.value = p.sex;
-      age.value = p.age;
-      height.value = p.height;
-      currentWeight.value = getCurrentWeight();
-      targetWeight.value = p.targetWeight;
-      pace.value = p.pace;
-      activity.value = String(p.activity);
-      stress.value = p.stress;
-      sleepHours.value = p.sleepHours;
-      coffee.value = p.coffee;
-
-      remBreakfast.value = db.reminders.breakfast;
-      remSnack1.value = db.reminders.snack1;
-      remLunch.value = db.reminders.lunch;
-      remSnack2.value = db.reminders.snack2;
-      remWorkout.value = db.reminders.workout;
-      remDinner.value = db.reminders.dinner;
-      remRelax.value = db.reminders.relax;
-      remSleep.value = db.reminders.sleep;
-    }
-
-    function renderToday(){
-      const list = buildChecklist();
-      const done = list.filter(x => x.done).length;
-      const pct = Math.round((done / list.length) * 100);
-      const log = ensureTodayLog();
-
-      document.getElementById("todayDate").textContent = new Date().toLocaleDateString("it-IT", {weekday:"long", day:"2-digit", month:"long"});
-      document.getElementById("todayPct").textContent = pct + "%";
-      document.getElementById("todayChecklist").innerHTML = list.map(x => `
-        <div class="item">
-          <div class="checkRow">
-            <input type="checkbox" ${x.done ? 'checked' : ''} onchange="toggleCheck('${x.key}', this.checked)">
-            <div><strong>${x.title}</strong><div class="small">${x.sub}</div></div>
-          </div>
-        </div>
-      `).join("");
-
-      dailyWeight.value = log.weight || "";
-      dailyWater.value = log.water || "";
-      dailySleep.value = log.sleep || "";
-      dailyCoffee.value = log.coffee || "";
-      dailyNotes.value = log.notes || "";
-    }
-
-    function renderPlan(){
-      const plan = calcPlan();
-      const meals = mealSplit(plan.calories);
-
-      document.getElementById("pCalories").textContent = fmtKcal(plan.calories);
-      document.getElementById("pCaloriesSub").textContent = `TDEE ~ ${Math.round(plan.tdee)} kcal · deficit ~ ${Math.round(plan.deficit)} kcal`;
-      document.getElementById("pWater").textContent = plan.waterLiters + " L";
-
-      document.getElementById("mealPlan").innerHTML = [
-        mealHtml("Colazione", meals.breakfast, "Proteine + carboidrati controllati", ["Yogurt greco / uova / fiocchi di latte", "Frutta o avena o pane integrale"]),
-        mealHtml("Spuntino mattina", meals.snack1, "Leggero e saziate", ["Frutta", "Yogurt", "10-15g frutta secca"]),
-        mealHtml("Pranzo", meals.lunch, "Pasto principale", ["Proteina magra", "Carboidrato controllato", "Verdure abbondanti"]),
-        mealHtml("Spuntino pomeriggio", meals.snack2, "Anti-fame", ["Yogurt / frutto / skyr / bresaola"]),
-        mealHtml("Cena", meals.dinner, "Più leggera del pranzo", ["Proteina + verdure", "Carboidrati ridotti la sera"]),
-        mealHtml("Idratazione", `${plan.waterLiters} L`, "Distribuzione", ["0.5 L entro metà mattina", "1 L entro pranzo", "0.5-1 L pomeriggio/sera"])
-      ].join("");
-
-      const labels = {monday:"Lunedì",tuesday:"Martedì",wednesday:"Mercoledì",thursday:"Giovedì",friday:"Venerdì",saturday:"Sabato",sunday:"Domenica"};
-      const weekly = getWorkoutPlan();
-      document.getElementById("weeklyWorkoutPlan").innerHTML = Object.keys(labels).map(day => `
-        <div class="item">
-          <div class="row"><div><strong>${labels[day]}</strong><div class="small">${weekly[day].title}</div></div></div>
-          <div class="list" style="margin-top:10px">${weekly[day].items.map(renderWorkoutItem).join("")}</div>
-        </div>
-      `).join("");
-
-      const log = ensureTodayLog();
-      if(log.treadmill.length){
-        const last = log.treadmill[log.treadmill.length - 1];
-        treadmillTodayBox.innerHTML = `
-          <strong>Ultima sessione di oggi</strong><br>
-          <span class="small">
-            ${last.minutes} min · ${last.activeKcal} kcal attive · ${last.totalKcal} kcal totali ·
-            ${last.avgHr} bpm · ${last.distance} km ${last.notes ? '· ' + escapeHtml(last.notes) : ''}
-          </span>
-        `;
-      } else {
-        treadmillTodayBox.textContent = "Nessuna sessione tapis roulant salvata oggi.";
-      }
-
-      document.getElementById("relaxPlan").innerHTML = getRelaxPlan().map(r => `
-        <div class="relaxBox"><strong>${r.title}</strong><div class="small" style="margin-top:6px">${r.text}</div></div>
-      `).join("");
-    }
-
-    function mealHtml(title, value, subtitle, bullets){
-      return `
-        <div class="mealBox">
-          <div class="pill">${title}</div>
-          <h3 style="margin-top:8px">${typeof value === "number" ? value + " kcal" : value}</h3>
-          <div class="small" style="margin:6px 0 8px">${subtitle}</div>
-          <ul style="padding-left:18px;margin:0">${bullets.map(x => `<li class="small" style="margin-bottom:6px">${x}</li>`).join("")}</ul>
-        </div>
-      `;
-    }
-
-    function renderWorkoutItem(it){
-      if(it.type === "exercise" || it.type === "cardio"){
-        return `
-          <div class="workoutCard">
-            <div class="workoutInner">
-              <div class="workoutImg">
-                <img src="${it.img}" alt="${it.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=&quot;padding:14px&quot; class=&quot;small&quot;>Inserisci immagine: ${it.name}</div>';">
-              </div>
-              <div class="workoutContent">
-                <strong>${it.name}</strong>
-                <div class="small" style="margin-top:6px">${it.desc}</div>
-                <div class="pill" style="margin-top:8px">${it.details}</div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-      return `<div class="miniBox"><strong>${it.name}</strong><div class="small" style="margin-top:6px">${it.desc}</div><div class="pill" style="margin-top:8px">${it.details}</div></div>`;
-    }
-
-    function getCurrentWeekDates(){
-      const today = new Date();
-      const day = today.getDay() || 7;
-      const monday = new Date(today);
-      monday.setDate(today.getDate() - day + 1);
-      const dates = [];
-      for(let i=0;i<7;i++){
-        const d = new Date(monday);
-        d.setDate(monday.getDate() + i);
-        dates.push(d.toISOString().slice(0,10));
-      }
-      return dates;
-    }
-
-    function renderTracking(){
-      const dates = getCurrentWeekDates();
-      document.getElementById("trackingList").innerHTML = dates.map(date => {
-        const x = db.logs[date] || {water:0,treadmill:[]};
-        const tm = x.treadmill && x.treadmill.length ? ` · Tapis roulant: ${x.treadmill.length} sessione/i` : "";
-        return `
-          <div class="item">
-            <div class="row">
-              <div>
-                <strong>${new Date(date).toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"2-digit"})}</strong>
-                <div class="small">${date}</div>
-              </div>
-              <span class="badge ${x.workoutDone ? 'ok':'warn'}">${x.workoutDone ? 'Workout ok':'Workout no'}</span>
-            </div>
-            <div class="grid2" style="margin-top:10px">
-              <div class="small">Peso: <strong>${x.weight || '--'}</strong></div>
-              <div class="small">Acqua: <strong>${x.water || 0} L</strong></div>
-              <div class="small">Sonno: <strong>${x.sleep || '--'} h</strong></div>
-              <div class="small">Caffè: <strong>${x.coffee || '--'}</strong></div>
-            </div>
-            <div class="small" style="margin-top:8px">Relax: <strong>${x.relaxDone ? 'sì':'no'}</strong>${tm}</div>
-            ${x.notes ? `<div class="small" style="margin-top:8px">${escapeHtml(x.notes)}</div>` : ''}
-          </div>
-        `;
-      }).join("");
-
-      const plan = calcPlan();
-      document.getElementById("aBmr").textContent = fmtKcal(plan.bmr);
-      document.getElementById("aTdee").textContent = fmtKcal(plan.tdee);
-      document.getElementById("aDeficit").textContent = fmtKcal(plan.deficit);
-      document.getElementById("aEta").textContent = plan.etaWeeks ? `${plan.etaWeeks} sett.` : "raggiunto";
-
-      const notes = [];
-      notes.push(infoNote("Perdita stimata", `Con questo piano puoi puntare a circa ${plan.weeklyLoss.toFixed(2)} kg a settimana.`));
-      if(db.profile.stress === "high") notes.push(infoNote("Stress alto", "Priorità a sonno, respirazione, camminata e riduzione graduale della caffeina."));
-      if(Number(db.profile.coffee) > 4) notes.push(infoNote("Caffeina", `Sei alto di caffeina (${db.profile.coffee}/giorno). Ridurla può aiutare fame, sonno e grasso addominale.`));
-      if(Number(db.profile.sleepHours) < 7) notes.push(infoNote("Sonno", "Con meno di 7 ore sarà più difficile dimagrire bene."));
-      notes.push(infoNote("Costanza", "Meglio 6 giorni buoni su 7 che 2 giorni perfetti e 5 disordinati."));
-      document.getElementById("analysisList").innerHTML = notes.join("");
-    }
-
-    function infoNote(title, text){
-      return `<div class="item"><strong>${title}</strong><div class="small" style="margin-top:6px">${text}</div></div>`;
-    }
-
-    function saveProfile(){
-      db.profile.sex = sex.value;
-      db.profile.age = Number(age.value || db.profile.age);
-      db.profile.height = Number(height.value || db.profile.height);
-      db.profile.currentWeight = Number(currentWeight.value || db.profile.currentWeight);
-      if(!db.profile.startWeight) db.profile.startWeight = db.profile.currentWeight;
-      db.profile.targetWeight = Number(targetWeight.value || db.profile.targetWeight);
-      db.profile.pace = pace.value;
-      db.profile.activity = Number(activity.value);
-      db.profile.stress = stress.value;
-      db.profile.sleepHours = Number(sleepHours.value || db.profile.sleepHours);
-      db.profile.coffee = Number(coffee.value || db.profile.coffee);
-      saveDB();
-      renderAll();
-      showToast("Profilo salvato e piano aggiornato");
-    }
-
-    function saveCurrentWeightToToday(){
-      const log = ensureTodayLog();
-      const val = Number(currentWeight.value || db.profile.currentWeight);
-      log.weight = val;
-      db.profile.currentWeight = val;
-      saveDB();
-      renderAll();
-      showToast("Peso di oggi salvato");
-    }
-
-    function toggleCheck(key, checked){
-      const log = ensureTodayLog();
-      if(key === "workoutDone") log.workoutDone = checked;
-      else if(key === "relaxDone") log.relaxDone = checked;
-      else log.checks[key] = checked;
-      saveDB();
-      renderAll();
-    }
-
-    function quickWater(delta){
-      const log = ensureTodayLog();
-      log.water = Math.max(0, Number(log.water || 0) + delta);
-      if(Number(log.water) >= Number(calcPlan().waterLiters)) log.checks.waterTarget = true;
-      saveDB();
-      renderAll();
-    }
-
-    function saveTodayQuickLog(){
-      const log = ensureTodayLog();
-      if(dailyWeight.value !== ""){
-        log.weight = Number(dailyWeight.value);
-        db.profile.currentWeight = Number(dailyWeight.value);
-      }
-      if(dailyWater.value !== "") log.water = Number(dailyWater.value);
-      if(dailySleep.value !== "") log.sleep = Number(dailySleep.value);
-      if(dailyCoffee.value !== "") log.coffee = Number(dailyCoffee.value);
-      if(Number(log.water) >= Number(calcPlan().waterLiters)) log.checks.waterTarget = true;
-      saveDB();
-      renderAll();
-      showToast("Log di oggi salvato");
-    }
-
-    function saveTodayNotes(){
-      const log = ensureTodayLog();
-      log.notes = dailyNotes.value.trim();
-      saveDB();
-      renderAll();
-      showToast("Note salvate");
-    }
-
-    function saveTreadmillLog(){
-      const log = ensureTodayLog();
-      const entry = {
-        minutes: Number(tmMinutes.value || 0),
-        activeKcal: Number(tmActiveKcal.value || 0),
-        totalKcal: Number(tmTotalKcal.value || 0),
-        avgHr: Number(tmAvgHr.value || 0),
-        distance: Number(tmDistance.value || 0),
-        notes: tmNotes.value.trim()
-      };
-      if(!entry.minutes && !entry.activeKcal && !entry.distance){
-        showToast("Inserisci almeno durata o kcal o distanza");
-        return;
-      }
-      log.treadmill.push(entry);
-      log.workoutDone = true;
-      saveDB();
-      tmMinutes.value = "";
-      tmActiveKcal.value = "";
-      tmTotalKcal.value = "";
-      tmAvgHr.value = "";
-      tmDistance.value = "";
-      tmNotes.value = "";
-      renderAll();
-      showToast("Sessione tapis roulant salvata");
-    }
-
-    function saveReminders(){
-      db.reminders.breakfast = remBreakfast.value || db.reminders.breakfast;
-      db.reminders.snack1 = remSnack1.value || db.reminders.snack1;
-      db.reminders.lunch = remLunch.value || db.reminders.lunch;
-      db.reminders.snack2 = remSnack2.value || db.reminders.snack2;
-      db.reminders.workout = remWorkout.value || db.reminders.workout;
-      db.reminders.dinner = remDinner.value || db.reminders.dinner;
-      db.reminders.relax = remRelax.value || db.reminders.relax;
-      db.reminders.sleep = remSleep.value || db.reminders.sleep;
-      saveDB();
-      showToast("Reminders salvati");
-    }
-
-    async function enableNotifications(){
-      if(!("Notification" in window)){
-        showToast("Browser non compatibile con notifiche");
-        return;
-      }
-      const perm = await Notification.requestPermission();
-      showToast(perm === "granted" ? "Notifiche attivate" : "Permesso notifiche non concesso");
-    }
-
-    function maybeNotify(title, body){
-      if("Notification" in window && Notification.permission === "granted"){
-        new Notification(title, {body});
-      }
-    }
-
-    function reminderLoop(){
-      setInterval(() => {
-        const now = new Date();
-        const hhmm = now.toTimeString().slice(0,5);
-        const today = todayKey();
-        const list = [
-          ["breakfast","Colazione","È il momento della colazione controllata."],
-          ["snack1","Spuntino","Piccolo spuntino per evitare fame forte."],
-          ["lunch","Pranzo","È il momento del pranzo bilanciato."],
-          ["snack2","Spuntino","Spuntino pomeridiano."],
-          ["workout","Allenamento","È il momento del workout o tapis roulant."],
-          ["dinner","Cena","Cena leggera e ordinata."],
-          ["relax","Relax","Respirazione e scarico mentale."],
-          ["sleep","Sonno","Inizia la routine sonno."]
-        ];
-        list.forEach(([k,title,text]) => {
-          if(db.reminders[k] === hhmm){
-            const cacheKey = today + "_" + k;
-            if(!reminderCache[cacheKey]){
-              reminderCache[cacheKey] = true;
-              maybeNotify(title, text);
-            }
-          }
-        });
-      }, 30000);
-    }
-
-    function exportWeeklyJSON(){
-      const dates = getCurrentWeekDates();
-      const payload = {
-        profile: db.profile,
-        plan: calcPlan(),
-        week: dates.map(d => ({date:d, ...(db.logs[d] || {})}))
-      };
-      download("fitness-weekly-report.json", JSON.stringify(payload, null, 2), "application/json");
-    }
-
-    function exportWeeklyCSV(){
-      const dates = getCurrentWeekDates();
-      const rows = [["date","weight","water","sleep","coffee","workoutDone","relaxDone","treadmill_sessions","notes"]];
-      dates.forEach(d => {
-        const x = db.logs[d] || {};
-        rows.push([
-          d,
-          x.weight || "",
-          x.water || "",
-          x.sleep || "",
-          x.coffee || "",
-          x.workoutDone ? "yes" : "no",
-          x.relaxDone ? "yes" : "no",
-          x.treadmill ? x.treadmill.length : 0,
-          (x.notes || "").replace(/\n/g," ").replace(/,/g,";")
-        ]);
-      });
-      download("fitness-weekly-report.csv", rows.map(r => r.join(",")).join("\n"), "text/csv");
-    }
-
-    function download(filename, content, mime){
-      const blob = new Blob([content], {type:mime});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function renderAll(){
-      ensureTodayLog();
-      renderHome();
-      renderProfile();
-      renderToday();
-      renderPlan();
-      renderTracking();
-      saveDB();
-    }
-
-    renderAll();
-    reminderLoop();
-  </script>
+<script>
+const STORAGE_KEY='mazzofitpro_v1';
+const DEFAULTS={profile:{sex:'male',age:32,height:175,startWeight:89,currentWeight:89,targetWeight:78,pace:'medium',activity:1.35,stress:'high',sleepHours:6.5,coffee:6},reminders:{breakfast:'08:00',snack1:'11:00',lunch:'13:30',snack2:'17:00',workout:'18:30',dinner:'20:30',relax:'22:15',sleep:'23:15'},selectedDay:null,logs:{}};
+const IMG='img/fitness/';
+const REMOTE={crunch:'https://placehold.co/600x400/0f172a/f8fbff?text=Crunch',mountain:'https://placehold.co/600x400/0f172a/f8fbff?text=Mountain+Climber',plank:'https://placehold.co/600x400/0f172a/f8fbff?text=Plank',legraise:'https://placehold.co/600x400/0f172a/f8fbff?text=Leg+Raises',squat:'https://placehold.co/600x400/0f172a/f8fbff?text=Squat',pushup:'https://placehold.co/600x400/0f172a/f8fbff?text=Push+Up',burpee:'https://placehold.co/600x400/0f172a/f8fbff?text=Burpee',jumpingjack:'https://placehold.co/600x400/0f172a/f8fbff?text=Jumping+Jack',highknees:'https://placehold.co/600x400/0f172a/f8fbff?text=High+Knees',treadmill:'https://placehold.co/600x400/0f172a/f8fbff?text=Tapis+Roulant',bike:'https://placehold.co/600x400/0f172a/f8fbff?text=Cyclette'};
+const EX={crunch:{name:'Crunch',file:'crunch.jpg',desc:'Solleva solo le spalle, non tirare il collo.',cadence:'2 sec su · 2 sec giù'},mountain:{name:'Mountain Climber',file:'mountain-climber.jpg',desc:'Plank dinamico, ginocchia al petto alternate.',cadence:'Ritmo costante'},plank:{name:'Plank',file:'plank.jpg',desc:'Gomiti sotto le spalle, corpo in linea.',cadence:'Respira lento'},legraise:{name:'Leg Raises',file:'leg-raises.jpg',desc:'Gambe tese, schiena aderente.',cadence:'2 sec su · 2 sec giù'},squat:{name:'Squat',file:'squat.jpg',desc:'Scendi controllato, schiena neutra.',cadence:'2 sec giù · 1 sec su'},pushup:{name:'Push Up',file:'push-up.jpg',desc:'Corpo dritto, gomiti a circa 45°.',cadence:'2 sec giù · 1 sec su'},burpee:{name:'Burpee',file:'burpee.jpg',desc:'Movimento completo a ritmo controllato.',cadence:'Fluido'},jumpingjack:{name:'Jumping Jack',file:'jumping-jack.jpg',desc:'Cardio base e attivazione.',cadence:'Costante'},highknees:{name:'High Knees',file:'high-knees.jpg',desc:'Corsa sul posto a ginocchia alte.',cadence:'Costante'},treadmill:{name:'Tapis roulant',file:'treadmill.jpg',desc:'Camminata veloce o salita moderata.',cadence:'Moderato'},bike:{name:'Cyclette',file:'bike.jpg',desc:'Alternativa a basso impatto.',cadence:'Moderato'}};
+let db=loadDB(), reminderCache={}, breathTimer=null, breathState=null, session=null, sessionTimer=null;
+function loadDB(){const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return structuredClone(DEFAULTS);try{const p=JSON.parse(raw);return{profile:{...DEFAULTS.profile,...(p.profile||{})},reminders:{...DEFAULTS.reminders,...(p.reminders||{})},selectedDay:p.selectedDay||null,logs:p.logs||{}}}catch{return structuredClone(DEFAULTS)}}
+function saveDB(){localStorage.setItem(STORAGE_KEY,JSON.stringify(db))}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function ensureLog(date){if(!db.logs[date])db.logs[date]={date,weight:'',water:0,sleep:'',coffee:'',notes:'',workoutDone:false,relaxDone:false,checks:{breakfast:false,snack1:false,lunch:false,snack2:false,dinner:false,waterTarget:false},nutrition:{calories:'',protein:'',carbs:'',fat:'',fiber:'',sugar:'',sodium:'',water:'',breakfast:'',lunch:'',notes:''},cardio:[],exerciseStatus:{}};return db.logs[date]}
+function todayLog(){return ensureLog(todayKey())}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+function setView(name,btn){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+name).classList.add('active');document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderAll()}
+function fmtKg(v){return Number(v).toFixed(1)+' kg'} function fmtKcal(v){return Math.round(v)+' kcal'}
+function getCurrentWeight(){const l=todayLog();return l.weight!==''?Number(l.weight):Number(db.profile.currentWeight)}
+function calcBMR(){const p=db.profile,w=getCurrentWeight();return p.sex==='male'?(10*w)+(6.25*p.height)-(5*p.age)+5:(10*w)+(6.25*p.height)-(5*p.age)-161}
+function baseDeficit(){return db.profile.pace==='slow'?350:db.profile.pace==='fast'?650:500}
+function calcPlan(){const p=db.profile,current=getCurrentWeight(),toLose=Math.max(0,current-p.targetWeight),bmr=calcBMR(),tdee=bmr*Number(p.activity);let deficit=baseDeficit();if(p.stress==='high')deficit-=80;if(Number(p.sleepHours)<6.5)deficit-=70;if(Number(p.coffee)>=5)deficit-=50;deficit=Math.max(250,deficit);let calories=Math.round(tdee-deficit);calories=p.sex==='male'?Math.max(1700,calories):Math.max(1400,calories);const weeklyLoss=(deficit*7)/7700,etaWeeks=weeklyLoss>0?Math.ceil(toLose/weeklyLoss):0,waterLiters=Math.max(2,current*0.035).toFixed(1);return{bmr,tdee,deficit,calories,toLose,weeklyLoss,etaWeeks,waterLiters}}
+function mealSplit(cal){return{breakfast:Math.round(cal*.25),snack1:Math.round(cal*.10),lunch:Math.round(cal*.30),snack2:Math.round(cal*.10),dinner:Math.round(cal*.25)}}
+function ex(key,series,target,rest,mode='reps'){return{id:key+'_'+series+'_'+target,type:mode,key,name:EX[key].name,local:IMG+EX[key].file,remote:REMOTE[key],desc:EX[key].desc,cadence:EX[key].cadence,series,target,rest}}
+function machine(key,recommended=false){return{id:key+'_machine',type:'machine',key,name:EX[key].name,local:IMG+EX[key].file,remote:REMOTE[key],desc:EX[key].desc,recommended}}
+function workoutDays(){const p=db.profile,highStress=p.stress==='high',lowSleep=Number(p.sleepHours)<6.5,treadmillMins=highStress||lowSleep?30:35;return{monday:{title:'Lunedì · Core + brucia grassi',sub:'Addome + cardio finale',items:[ex('crunch',3,15,30,'reps'),ex('mountain',3,30,30,'time'),ex('plank',3,30,30,'time'),machine('treadmill',true),machine('bike',false)]},tuesday:{title:'Martedì · Cardio principale',sub:'Giorno ideale per tapis roulant',items:[machine('treadmill',true),machine('bike',false),ex('plank',2,30,20,'time')],machineHint:`Consigliato: ${treadmillMins+5} min a ritmo moderato`},wednesday:{title:'Mercoledì · Total body',sub:'Forza base + cardio',items:[ex('squat',3,15,35,'reps'),ex('pushup',3,10,40,'reps'),ex('plank',3,35,30,'time'),machine('treadmill',true),machine('bike',false)]},thursday:{title:'Giovedì · Recupero attivo',sub:'Camminata + relax',items:[machine('treadmill',true),machine('bike',false)],machineHint:'Consigliato: 30 min leggeri'},friday:{title:'Venerdì · Core + richiamo',sub:'Addome e richiamo metabolico',items:[ex('crunch',3,20,25,'reps'),ex('legraise',3,12,30,'reps'),ex('mountain',3,35,30,'time'),machine('treadmill',true),machine('bike',false)]},saturday:{title:'Sabato · Cardio avanzato',sub:'Se hai energie aggiungi intensità',items:[ex('jumpingjack',4,35,20,'time'),ex('highknees',4,25,20,'time'),machine('treadmill',true),machine('bike',false)]},sunday:{title:'Domenica · Riposo attivo',sub:'Passeggiata leggera o riposo',items:[machine('treadmill',true),machine('bike',false)],machineHint:'Consigliato: 20-30 min facili'}}}
+function selectedDayKey(){if(db.selectedDay)return db.selectedDay;const keys=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];return keys[new Date().getDay()]}
+function buildChecklist(){const plan=calcPlan(),log=todayLog();return[{key:'breakfast',title:'Colazione',sub:'Completa il primo pasto',done:log.checks.breakfast},{key:'snack1',title:'Spuntino mattina',sub:'Piccolo spuntino controllato',done:log.checks.snack1},{key:'lunch',title:'Pranzo',sub:'Pranzo bilanciato',done:log.checks.lunch},{key:'snack2',title:'Spuntino pomeriggio',sub:'Evita fame serale eccessiva',done:log.checks.snack2},{key:'dinner',title:'Cena',sub:'Cena leggera e proteica',done:log.checks.dinner},{key:'waterTarget',title:'Acqua',sub:`Bevi ${plan.waterLiters} litri`,done:Number(log.water)>=Number(plan.waterLiters)||log.checks.waterTarget},{key:'workoutDone',title:'Allenamento',sub:workoutDays()[selectedDayKey()].title,done:log.workoutDone},{key:'relaxDone',title:'Relax',sub:'Respirazione 2-3 volte al giorno',done:log.relaxDone}]}
+function renderHome(){const plan=calcPlan(),current=getCurrentWeight(),start=Number(db.profile.startWeight),progress=start===db.profile.targetWeight?100:Math.max(0,Math.min(100,((start-current)/(start-db.profile.targetWeight))*100));hStartWeight.textContent=fmtKg(start);hCurrentWeight.textContent=fmtKg(current);hTargetWeight.textContent=fmtKg(db.profile.targetWeight);hToLose.textContent=plan.toLose.toFixed(1)+' kg';goalBar.style.width=progress+'%';etaBadge.textContent=plan.etaWeeks?`~ ${plan.etaWeeks} sett.`:'raggiunto';const log=todayLog();hCalories.textContent=fmtKcal(plan.calories);hCaloriesActual.textContent=log.nutrition.calories?fmtKcal(log.nutrition.calories):'--';hWorkoutToday.textContent=workoutDays()[selectedDayKey()].title;hBreathing.textContent='2-3x / giorno';hWorkoutDone.textContent=log.workoutDone?'Sì':'No';hWorkoutDone.className='badge '+(log.workoutDone?'ok':'warn');hRelaxDone.textContent=log.relaxDone?'Sì':'No';hRelaxDone.className='badge '+(log.relaxDone?'ok':'warn');const water=Number(log.water||0);hWaterText.textContent=`${water.toFixed(1)} / ${Number(plan.waterLiters).toFixed(1)} L`;hWaterBar.style.width=Math.min(100,(water/Number(plan.waterLiters))*100)+'%';homeChecklist.innerHTML=buildChecklist().slice(0,6).map(x=>`<div class="item"><div class="row"><div><strong>${x.title}</strong><div class="small">${x.sub}</div></div><span class="badge ${x.done?'ok':'warn'}">${x.done?'Fatto':'Da fare'}</span></div></div>`).join('')}
+function renderProfile(){const p=db.profile;sex.value=p.sex;age.value=p.age;height.value=p.height;currentWeight.value=getCurrentWeight();targetWeight.value=p.targetWeight;pace.value=p.pace;activity.value=String(p.activity);stress.value=p.stress;sleepHours.value=p.sleepHours;coffee.value=p.coffee;remBreakfast.value=db.reminders.breakfast;remSnack1.value=db.reminders.snack1;remLunch.value=db.reminders.lunch;remSnack2.value=db.reminders.snack2;remWorkout.value=db.reminders.workout;remDinner.value=db.reminders.dinner;remRelax.value=db.reminders.relax;remSleep.value=db.reminders.sleep}
+function renderWorkout(){const labels={monday:'Lun',tuesday:'Mar',wednesday:'Mer',thursday:'Gio',friday:'Ven',saturday:'Sab',sunday:'Dom'},data=workoutDays(),selected=selectedDayKey();weekDays.innerHTML=Object.keys(labels).map(k=>`<button class="dayBtn ${k===selected?'active':''}" onclick="selectDay('${k}')">${labels[k]}<div class="small">${data[k].title.split('·')[1].trim()}</div></button>`).join('');selectedDayTitle.textContent=data[selected].title;selectedDaySub.textContent=data[selected].sub+(data[selected].machineHint?' · '+data[selected].machineHint:'');const log=todayLog(),items=data[selected].items,doneCount=items.filter(it=>log.exerciseStatus[getExerciseStatusKey(selected,it)]).length;selectedDayStatus.textContent=doneCount===items.length?'Completato':`${doneCount}/${items.length}`;selectedDayStatus.className='badge '+(doneCount===items.length?'ok':'warn');dailyWorkoutList.innerHTML=items.map((it,idx)=>renderExerciseCard(selected,it,idx)).join('');renderTodayCardioSummary()}
+function getExerciseStatusKey(dayKey,it){return `${dayKey}__${it.id}`}
+function imageHtml(it){return `<img src="${it.local}" alt="${it.name}" onerror="this.onerror=null;this.src='${it.remote}'">`}
+function renderExerciseCard(dayKey,it,idx){const done=todayLog().exerciseStatus[getExerciseStatusKey(dayKey,it)];const badge=it.key==='treadmill'?'<span class="badge info recommend">Esercizio consigliato</span>':it.key==='bike'?'<span class="badge warn recommend">Alternativa</span>':'';return `<div class="workoutCard"><div class="workoutInner"><div class="workoutImg">${badge}${imageHtml(it)}</div><div class="workoutContent"><div class="row"><div><strong>${idx+1}. ${it.name}</strong><div class="small" style="margin-top:6px">${it.desc}</div></div><span class="badge ${done?'ok':'warn'}">${done?'Svolto':'Da fare'}</span></div><div class="pill" style="margin-top:8px">${it.type==='machine'?(it.key==='treadmill'?'Inserisci dati Apple Watch':'Log cardio alternativo'):`${it.series} serie · ${it.type==='reps'?it.target+' rip':it.target+' sec'} · recupero ${it.rest} sec`}</div>${it.cadence?`<div class="small" style="margin-top:8px">Tempo consigliato: ${it.cadence}</div>`:''}<div class="exerciseAction"><button class="btn btnPrimary" onclick="openExercise('${dayKey}','${it.id}')">${it.type==='machine'?'Apri log':'Avvia guida'}</button>${done?`<button class="btn btnSecondary" onclick="setExerciseDone('${dayKey}','${it.id}',false)">Segna non svolto</button>`:''}</div></div></div></div>`}
+function selectDay(dayKey){db.selectedDay=dayKey;saveDB();renderWorkout()}
+function findExercise(dayKey,id){return workoutDays()[dayKey].items.find(x=>x.id===id)}
+function setExerciseDone(dayKey,id,done=true){const log=todayLog();log.exerciseStatus[getExerciseStatusKey(dayKey,{id})]=done;updateWorkoutCompletion();saveDB();renderAll()}
+function updateWorkoutCompletion(){const log=todayLog(),day=selectedDayKey(),items=workoutDays()[day].items;log.workoutDone=items.every(it=>!!log.exerciseStatus[getExerciseStatusKey(day,it)])}
+function renderNutrition(){const plan=calcPlan(),meals=mealSplit(plan.calories),log=todayLog();pCalories.textContent=fmtKcal(plan.calories);pCaloriesSub.textContent=`TDEE ~ ${Math.round(plan.tdee)} kcal · deficit ~ ${Math.round(plan.deficit)} kcal`;pWater.textContent=plan.waterLiters+' L';mealPlan.innerHTML=[mealBox('Colazione',meals.breakfast,'Proteine + carboidrati controllati',['Yogurt greco / uova / fiocchi di latte','Frutta o avena o pane integrale']),mealBox('Spuntino mattina',meals.snack1,'Leggero e saziate',['Frutta','Yogurt','10-15g frutta secca']),mealBox('Pranzo',meals.lunch,'Pasto principale',['Proteina magra','Carboidrato controllato','Verdure abbondanti']),mealBox('Spuntino pomeriggio',meals.snack2,'Anti-fame',['Yogurt / frutto / skyr / bresaola']),mealBox('Cena',meals.dinner,'Più leggera del pranzo',['Proteina + verdure','Carboidrati ridotti la sera']),mealBox('Idratazione',`${plan.waterLiters} L`,'Distribuzione',['0.5 L entro metà mattina','1 L entro pranzo','0.5-1 L pomeriggio/sera'])].join('');nCalories.value=log.nutrition.calories||'';nProtein.value=log.nutrition.protein||'';nCarbs.value=log.nutrition.carbs||'';nFat.value=log.nutrition.fat||'';nFiber.value=log.nutrition.fiber||'';nSugar.value=log.nutrition.sugar||'';nSodium.value=log.nutrition.sodium||'';nWater.value=log.nutrition.water||'';nBreakfast.value=log.nutrition.breakfast||'';nLunch.value=log.nutrition.lunch||'';nNotes.value=log.nutrition.notes||''}
+function mealBox(title,val,sub,bullets){return `<div class="mealBox"><div class="pill">${title}</div><h3 style="margin-top:8px">${typeof val==='number'?val+' kcal':val}</h3><div class="small" style="margin:6px 0 8px">${sub}</div><ul style="padding-left:18px;margin:0">${bullets.map(x=>`<li class="small" style="margin-bottom:6px">${x}</li>`).join('')}</ul></div>`}
+function saveNutritionActual(){const n=todayLog().nutrition;n.calories=nCalories.value;n.protein=nProtein.value;n.carbs=nCarbs.value;n.fat=nFat.value;n.fiber=nFiber.value;n.sugar=nSugar.value;n.sodium=nSodium.value;n.water=nWater.value;n.breakfast=nBreakfast.value;n.lunch=nLunch.value;n.notes=nNotes.value;if(n.water)todayLog().water=Number(n.water);saveDB();renderAll();showToast('Nutrizione reale salvata')}
+function renderRelax(){relaxPlan.innerHTML=getRelaxPlan().map(r=>`<div class="relaxBox"><strong>${r.title}</strong><div class="small" style="margin-top:6px">${r.text}</div></div>`).join('');updateBreathUI()}
+function getRelaxPlan(){const p=db.profile;const arr=[{title:'Sonno',text:`Obiettivo: almeno ${Math.max(7,Number(p.sleepHours)<7?7.5:Number(p.sleepHours)).toFixed(1)} ore. Routine sonno alle ${db.reminders.sleep}.`},{title:'Respirazione',text:'Consigliata 2–3 volte al giorno: appena sveglio, dopo lavoro, prima di dormire. 5 minuti: inspira 4 sec, espira 6 sec.'},{title:'Schermi',text:'Riduci telefono e social almeno 45 minuti prima di dormire.'}];if(Number(p.coffee)>3)arr.push({title:'Caffeina',text:`Riduci gradualmente il caffè. Obiettivo: da ${p.coffee} a 2-3 al giorno, niente caffeina dopo le 14:00.`});if(p.stress==='high')arr.push({title:'Scarico mentale',text:'Prima di dormire scrivi per 5 minuti tutto ciò che devi fare domani o che ti pesa mentalmente.'});return arr}
+function renderTracking(){const dates=getCurrentWeekDates();trackingList.innerHTML=dates.map(date=>{const x=ensureLog(date),cardioTxt=x.cardio.length?` · Cardio: ${x.cardio.length}`:'';return `<div class="item"><div class="row"><div><strong>${new Date(date).toLocaleDateString('it-IT',{weekday:'long',day:'2-digit',month:'2-digit'})}</strong><div class="small">${date}</div></div><span class="badge ${x.workoutDone?'ok':'warn'}">${x.workoutDone?'Workout ok':'Workout no'}</span></div><div class="grid2" style="margin-top:10px"><div class="small">Peso: <strong>${x.weight||'--'}</strong></div><div class="small">Acqua: <strong>${x.water||0} L</strong></div><div class="small">Sonno: <strong>${x.sleep||'--'} h</strong></div><div class="small">Caffè: <strong>${x.coffee||'--'}</strong></div></div><div class="small" style="margin-top:8px">Relax: <strong>${x.relaxDone?'sì':'no'}</strong>${cardioTxt}</div>${x.notes?`<div class="small" style="margin-top:8px">${escapeHtml(x.notes)}</div>`:''}</div>`}).join('');drawWeightChart()}
+function getCurrentWeekDates(){const today=new Date();const day=today.getDay()||7;const monday=new Date(today);monday.setDate(today.getDate()-day+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);dates.push(d.toISOString().slice(0,10))}return dates}
+function drawWeightChart(){const canvas=document.getElementById('weightChart');if(!canvas)return;const ctx=canvas.getContext('2d');const points=Object.keys(db.logs).sort().filter(d=>db.logs[d].weight!==''&&db.logs[d].weight!=null).map(d=>({date:d,val:Number(db.logs[d].weight)}));ctx.clearRect(0,0,canvas.width,canvas.height);const w=canvas.width,h=canvas.height,pad=36;ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;for(let i=0;i<5;i++){const y=pad+((h-pad*2)/4)*i;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke()}if(points.length<2){ctx.fillStyle='#9fb0d1';ctx.font='14px sans-serif';ctx.fillText('Inserisci almeno 2 pesi per vedere il grafico.',pad,h/2);return}const min=Math.min(...points.map(p=>p.val))-0.5,max=Math.max(...points.map(p=>p.val))+0.5;const getX=i=>pad+(i*(w-pad*2)/(points.length-1));const getY=v=>h-pad-((v-min)/(max-min))*(h-pad*2);ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=getX(i),y=getY(p.val);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();ctx.fillStyle='#7dd3fc';points.forEach((p,i)=>{const x=getX(i),y=getY(p.val);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill()});ctx.fillStyle='#9fb0d1';ctx.font='12px sans-serif';ctx.fillText(max.toFixed(1)+' kg',4,pad+4);ctx.fillText(min.toFixed(1)+' kg',4,h-pad);ctx.fillText(points[0].date.slice(5),pad,h-8);ctx.fillText(points[points.length-1].date.slice(5),w-pad-40,h-8)}
+function saveProfile(){db.profile.sex=sex.value;db.profile.age=Number(age.value||db.profile.age);db.profile.height=Number(height.value||db.profile.height);db.profile.currentWeight=Number(currentWeight.value||db.profile.currentWeight);if(!db.profile.startWeight)db.profile.startWeight=db.profile.currentWeight;db.profile.targetWeight=Number(targetWeight.value||db.profile.targetWeight);db.profile.pace=pace.value;db.profile.activity=Number(activity.value);db.profile.stress=stress.value;db.profile.sleepHours=Number(sleepHours.value||db.profile.sleepHours);db.profile.coffee=Number(coffee.value||db.profile.coffee);saveDB();renderAll();showToast('Profilo salvato e piano aggiornato')}
+function saveCurrentWeightToToday(){const log=todayLog();const val=Number(currentWeight.value||db.profile.currentWeight);log.weight=val;db.profile.currentWeight=val;saveDB();renderAll();showToast('Peso di oggi salvato')}
+function quickWater(delta){const log=todayLog();log.water=Math.max(0,Number(log.water||0)+delta);if(Number(log.water)>=Number(calcPlan().waterLiters))log.checks.waterTarget=true;saveDB();renderAll()}
+function saveTodayQuickLog(){const log=todayLog();if(dailyWeight.value!==''){log.weight=Number(dailyWeight.value);db.profile.currentWeight=Number(dailyWeight.value)}if(dailyWater.value!=='')log.water=Number(dailyWater.value);if(dailySleep.value!=='')log.sleep=Number(dailySleep.value);if(dailyCoffee.value!=='')log.coffee=Number(dailyCoffee.value);if(Number(log.water)>=Number(calcPlan().waterLiters))log.checks.waterTarget=true;saveDB();renderAll();showToast('Log di oggi salvato')}
+function saveTodayNotes(){const log=todayLog();log.notes=dailyNotes.value.trim();saveDB();renderAll();showToast('Note salvate')}
+function saveCardioLog(){const log=todayLog();const entry={type:cardioType.value,minutes:Number(tmMinutes.value||0),activeKcal:Number(tmActiveKcal.value||0),totalKcal:Number(tmTotalKcal.value||0),avgHr:Number(tmAvgHr.value||0),distance:Number(tmDistance.value||0),notes:tmNotes.value.trim()};if(!entry.minutes&&!entry.activeKcal&&!entry.distance){showToast('Inserisci almeno durata o kcal o distanza');return}log.cardio.push(entry);log.workoutDone=true;if(entry.type==='treadmill')log.exerciseStatus[getExerciseStatusKey(selectedDayKey(),{id:'treadmill_machine'})]=true;if(entry.type==='bike')log.exerciseStatus[getExerciseStatusKey(selectedDayKey(),{id:'bike_machine'})]=true;saveDB();tmMinutes.value='';tmActiveKcal.value='';tmTotalKcal.value='';tmAvgHr.value='';tmDistance.value='';tmNotes.value='';renderAll();showToast('Sessione cardio salvata')}
+function renderTodayCardioSummary(){const arr=todayLog().cardio;if(!arr.length){todayCardioSummary.textContent='Nessuna sessione cardio salvata oggi.';return}const last=arr[arr.length-1];todayCardioSummary.innerHTML=`<strong>Ultima sessione</strong><br><span class="small">${last.type==='treadmill'?'Tapis roulant':'Cyclette'} · ${last.minutes} min · ${last.activeKcal} kcal attive · ${last.totalKcal} kcal totali · ${last.avgHr} bpm · ${last.distance} km ${last.notes?'· '+escapeHtml(last.notes):''}</span>`}
+async function enableNotifications(){if(!('Notification' in window)){showToast('Browser non compatibile con notifiche');return}const perm=await Notification.requestPermission();showToast(perm==='granted'?'Notifiche attivate':'Permesso notifiche non concesso')}
+function maybeNotify(title,body){if('Notification' in window&&Notification.permission==='granted'){new Notification(title,{body})}}
+function saveReminders(){db.reminders.breakfast=remBreakfast.value||db.reminders.breakfast;db.reminders.snack1=remSnack1.value||db.reminders.snack1;db.reminders.lunch=remLunch.value||db.reminders.lunch;db.reminders.snack2=remSnack2.value||db.reminders.snack2;db.reminders.workout=remWorkout.value||db.reminders.workout;db.reminders.dinner=remDinner.value||db.reminders.dinner;db.reminders.relax=remRelax.value||db.reminders.relax;db.reminders.sleep=remSleep.value||db.reminders.sleep;saveDB();showToast('Reminders salvati')}
+function reminderLoop(){setInterval(()=>{const hhmm=new Date().toTimeString().slice(0,5),today=todayKey();const list=[['breakfast','Colazione','È il momento della colazione controllata.'],['snack1','Spuntino','Piccolo spuntino per evitare fame forte.'],['lunch','Pranzo','È il momento del pranzo bilanciato.'],['snack2','Spuntino','Spuntino pomeridiano.'],['workout','Allenamento','È il momento del workout o del cardio.'],['dinner','Cena','Cena leggera e ordinata.'],['relax','Relax','Respirazione e scarico mentale.'],['sleep','Sonno','Inizia la routine sonno.']];list.forEach(([k,title,text])=>{if(db.reminders[k]===hhmm){const cacheKey=today+'_'+k;if(!reminderCache[cacheKey]){reminderCache[cacheKey]=true;maybeNotify(title,text)}}})},30000)}
+function openExercise(dayKey,id){const it=findExercise(dayKey,id);if(!it)return;if(it.type==='machine'){setView('workout');showToast(it.key==='treadmill'?'Inserisci i dati nel log cardio qui sotto':'Inserisci i dati nel log cardio scegliendo cyclette');return}session={dayKey,item:it,phase:'ready',series:1,repCount:0,remaining:5,paused:false};document.getElementById('exerciseModal').classList.add('show');renderSession();clearInterval(sessionTimer);sessionTimer=setInterval(tickSession,1000)}
+function closeExerciseModal(){clearInterval(sessionTimer);sessionTimer=null;session=null;document.getElementById('exerciseModal').classList.remove('show')}
+function renderSession(){if(!session)return;modalTitle.textContent=session.item.name;modalSubtitle.textContent=`${session.item.series} serie · ${session.item.type==='reps'?session.item.target+' ripetizioni':session.item.target+' secondi'} · recupero ${session.item.rest} sec`;sessionDots.innerHTML=Array.from({length:session.item.series},(_,i)=>`<div class="dot ${i+1<session.series?'done':i+1===session.series?'current':''}"></div>`).join('');if(session.phase==='ready'){sessionPhase.textContent='Preparati';sessionValue.textContent=formatMMSS(session.remaining);sessionText.textContent='Sei pronto per svolgere questo esercizio?';sessionButtons.innerHTML=`<button class="btn btnSecondary" onclick="skipSession()">Salta countdown</button>`}else if(session.phase==='time'){sessionPhase.textContent='Esecuzione';sessionValue.textContent=formatMMSS(session.remaining);sessionText.textContent=`Serie ${session.series} di ${session.item.series}. ${session.item.cadence}`;sessionButtons.innerHTML=`<button class="btn btnSecondary" onclick="pauseSession()">Pausa</button><button class="btn btnSecondary" onclick="skipSession()">Salta</button>`}else if(session.phase==='reps'){sessionPhase.textContent='Ripetizioni';sessionValue.textContent=`${session.repCount}/${session.item.target}`;sessionText.textContent=`Serie ${session.series} di ${session.item.series}. Tempo consigliato: ${session.item.cadence}`;sessionButtons.innerHTML=`<button class="btn btnSecondary" onclick="adjustRep(-1)">-1</button><button class="btn btnPrimary" onclick="adjustRep(1)">+1 ripetizione</button><button class="btn btnSuccess" onclick="completeRepSeries()">Completa serie</button>`}else if(session.phase==='rest'){sessionPhase.textContent='Riposo';sessionValue.textContent=formatMMSS(session.remaining);sessionText.textContent='Recupera e preparati alla prossima serie';sessionButtons.innerHTML=`<button class="btn btnSecondary" onclick="skipSession()">Salta riposo</button>`}else if(session.phase==='done'){sessionPhase.textContent='Completato';sessionValue.textContent='✅';sessionText.textContent='Esercizio completato. Vuoi segnarlo come svolto?';sessionButtons.innerHTML=`<button class="btn btnSuccess" onclick="finishExercise(true)">Segna svolto</button><button class="btn btnSecondary" onclick="finishExercise(false)">Chiudi</button>`}}
+function tickSession(){if(!session||session.paused)return;if(session.phase==='ready'||session.phase==='time'||session.phase==='rest'){session.remaining--;if(session.remaining<=0){if(session.phase==='ready'){if(session.item.type==='time'){session.phase='time';session.remaining=session.item.target}else{clearInterval(sessionTimer);session.phase='reps';session.repCount=0}}else if(session.phase==='time'){if(session.series<session.item.series){session.series++;session.phase='rest';session.remaining=session.item.rest}else{clearInterval(sessionTimer);session.phase='done'}}else if(session.phase==='rest'){if(session.item.type==='time'){session.phase='time';session.remaining=session.item.target}else{clearInterval(sessionTimer);session.phase='reps';session.repCount=0}}}renderSession()}}
+function pauseSession(){if(!session)return;session.paused=!session.paused;showToast(session.paused?'Guida in pausa':'Guida ripresa')}
+function skipSession(){if(!session)return;if(session.phase==='ready'){if(session.item.type==='time'){session.phase='time';session.remaining=session.item.target;if(!sessionTimer)sessionTimer=setInterval(tickSession,1000)}else{clearInterval(sessionTimer);session.phase='reps';session.repCount=0}}else if(session.phase==='time'||session.phase==='rest'){clearInterval(sessionTimer);if(session.phase==='time'){if(session.series<session.item.series){session.series++;session.phase='rest';session.remaining=session.item.rest;sessionTimer=setInterval(tickSession,1000)}else{session.phase='done'}}else{if(session.item.type==='time'){session.phase='time';session.remaining=session.item.target;sessionTimer=setInterval(tickSession,1000)}else{session.phase='reps';session.repCount=0}}}renderSession()}
+function adjustRep(delta){if(!session)return;session.repCount=Math.max(0,Math.min(session.item.target,session.repCount+delta));renderSession()}
+function completeRepSeries(){if(!session)return;if(session.series<session.item.series){session.series++;session.phase='rest';session.remaining=session.item.rest;clearInterval(sessionTimer);sessionTimer=setInterval(tickSession,1000)}else{session.phase='done'}renderSession()}
+function finishExercise(markDone){if(markDone){const log=todayLog();log.exerciseStatus[getExerciseStatusKey(session.dayKey,session.item)]=true;updateWorkoutCompletion();saveDB();showToast('Esercizio segnato come svolto')}closeExerciseModal();renderAll()}
+function formatMMSS(total){const m=Math.floor(total/60),s=total%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function startBreathTimer(){breathState={inSec:Number(breathIn.value||4),outSec:Number(breathOut.value||6),cycles:Number(breathCycles.value||10),currentCycle:1,phase:'in',remaining:Number(breathIn.value||4),paused:false};updateBreathUI();clearInterval(breathTimer);breathTimer=setInterval(tickBreathTimer,1000)}
+function tickBreathTimer(){if(!breathState||breathState.paused)return;breathState.remaining--;if(breathState.remaining<=0){if(breathState.phase==='in'){breathState.phase='out';breathState.remaining=breathState.outSec}else{if(breathState.currentCycle>=breathState.cycles){clearInterval(breathTimer);breathState.phase='done';breathState.remaining=0;todayLog().relaxDone=true;saveDB();renderAll();showToast('Respirazione completata')}else{breathState.currentCycle++;breathState.phase='in';breathState.remaining=breathState.inSec}}}updateBreathUI()}
+function updateBreathUI(){if(!document.getElementById('breathStage'))return;if(!breathState){breathStage.textContent='Pronto';breathDisplay.textContent='00';breathSub.textContent='Respirazione guidata';return}const labels={in:'Inspira',out:'Espira',done:'Completato'};breathStage.textContent=labels[breathState.phase];breathDisplay.textContent=breathState.phase==='done'?'✅':String(breathState.remaining);breathSub.textContent=breathState.phase==='done'?'Routine relax completata':`Ciclo ${breathState.currentCycle} di ${breathState.cycles}`}
+function pauseBreathTimer(){if(breathState){breathState.paused=!breathState.paused;showToast(breathState.paused?'Respirazione in pausa':'Respirazione ripresa')}}
+function resetBreathTimer(){clearInterval(breathTimer);breathState=null;updateBreathUI()}
+function exportWeeklyJSON(){const dates=getCurrentWeekDates();const payload={profile:db.profile,plan:calcPlan(),week:dates.map(d=>({date:d,...ensureLog(d)}))};download('mazzofitpro-weekly-report.json',JSON.stringify(payload,null,2),'application/json')}
+function exportWeeklyCSV(){const dates=getCurrentWeekDates();const rows=[['date','weight','water','sleep','coffee','workoutDone','relaxDone','cardio_sessions','nutrition_kcal','notes']];dates.forEach(d=>{const x=ensureLog(d);rows.push([d,x.weight||'',x.water||'',x.sleep||'',x.coffee||'',x.workoutDone?'yes':'no',x.relaxDone?'yes':'no',x.cardio.length,x.nutrition.calories||'',(x.notes||'').replace(/\n/g,' ').replace(/,/g,';')])});download('mazzofitpro-weekly-report.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')}
+function download(filename,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url)}
+function escapeHtml(str){return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function renderAll(){if(!db.selectedDay){const keys=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];db.selectedDay=keys[new Date().getDay()]}renderHome();renderProfile();renderWorkout();renderNutrition();renderRelax();renderTracking();updateBreathUI();saveDB()}
+renderAll();reminderLoop();
+</script>
 </body>
 </html>
