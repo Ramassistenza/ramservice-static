@@ -862,7 +862,19 @@
           <div id="mealPlan" class="grid2"></div>
         </div>
       </div>
-
+			
+			<div class="card">
+			  <div class="cardHead">
+			    <div>
+			      <h3>Checklist alimentazione di oggi</h3>
+			      <div class="small">Segna rapidamente i pasti completati</div>
+			    </div>
+			  </div>
+			  <div class="cardBody">
+			    <div id="nutritionChecklist" class="list"></div>
+			  </div>
+			</div>
+			
       <div class="card">
         <div class="cardHead">
           <div>
@@ -1418,34 +1430,60 @@
     }
 
     function buildChecklist() {
-      const plan = calcPlan();
-      const log = todayLog();
-      return [
-        { key: "breakfast", title: "Colazione", sub: "Completa il primo pasto", done: log.checks.breakfast },
-        { key: "snack1", title: "Spuntino mattina", sub: "Piccolo spuntino controllato", done: log.checks.snack1 },
-        { key: "lunch", title: "Pranzo", sub: "Pranzo bilanciato", done: log.checks.lunch },
-        { key: "snack2", title: "Spuntino pomeriggio", sub: "Evita fame serale eccessiva", done: log.checks.snack2 },
-        { key: "dinner", title: "Cena", sub: "Cena leggera e proteica", done: log.checks.dinner },
-        {
-          key: "waterTarget",
-          title: "Acqua",
-          sub: `Bevi ${plan.waterLiters} litri`,
-          done: Number(log.water) >= Number(plan.waterLiters) || log.checks.waterTarget
-        },
-        {
-          key: "workoutDone",
-          title: "Allenamento",
-          sub: workoutDays()[selectedDayKey()].title,
-          done: log.workoutDone
-        },
-        {
-          key: "relaxDone",
-          title: "Relax",
-          sub: "Respirazione 2-3 volte al giorno",
-          done: log.relaxDone
-        }
-      ];
-    }
+		  const plan = calcPlan();
+		  const log = todayLog();
+		
+		  return [
+		    {
+		      key: "breakfast",
+		      title: "Colazione",
+		      sub: "Completa il primo pasto",
+		      done: log.checks.breakfast
+		    },
+		    {
+		      key: "snack1",
+		      title: "Spuntino mattina",
+		      sub: "Piccolo spuntino controllato",
+		      done: log.checks.snack1
+		    },
+		    {
+		      key: "lunch",
+		      title: "Pranzo",
+		      sub: "Pranzo bilanciato",
+		      done: log.checks.lunch
+		    },
+		    {
+		      key: "snack2",
+		      title: "Spuntino pomeriggio",
+		      sub: "Evita fame serale eccessiva",
+		      done: log.checks.snack2
+		    },
+		    {
+		      key: "dinner",
+		      title: "Cena",
+		      sub: "Cena leggera e proteica",
+		      done: log.checks.dinner
+		    },
+		    {
+		      key: "waterTarget",
+		      title: "Acqua",
+		      sub: `Bevi ${plan.waterLiters} litri`,
+		      done: log.checks.waterTarget || Number(log.water) >= Number(plan.waterLiters)
+		    },
+		    {
+		      key: "workoutDone",
+		      title: "Allenamento",
+		      sub: workoutDays()[selectedDayKey()].title,
+		      done: log.workoutDone
+		    },
+		    {
+		      key: "relaxDone",
+		      title: "Relax",
+		      sub: "Respirazione 2-3 volte al giorno",
+		      done: log.relaxDone
+		    }
+		  ];
+		}
 
     function getExerciseStatusKey(dayKey, itemLike) {
       return `${dayKey}__${itemLike.id}`;
@@ -1480,17 +1518,22 @@
       hWaterText.textContent = `${water.toFixed(1)} / ${Number(plan.waterLiters).toFixed(1)} L`;
       hWaterBar.style.width = Math.min(100, (water / Number(plan.waterLiters)) * 100) + "%";
 
-      homeChecklist.innerHTML = buildChecklist().slice(0, 6).map(x => `
-        <div class="item">
-          <div class="row">
-            <div>
-              <strong>${x.title}</strong>
-              <div class="small">${x.sub}</div>
-            </div>
-            <span class="badge ${x.done ? 'ok' : 'warn'}">${x.done ? 'Fatto' : 'Da fare'}</span>
-          </div>
-        </div>
-      `).join("");
+      homeChecklist.innerHTML = buildChecklist().map(x => `
+		  <div class="item">
+		    <div class="row">
+		      <div>
+		        <strong>${x.title}</strong>
+		        <div class="small">${x.sub}</div>
+		      </div>
+		      <div class="btnRow" style="justify-content:flex-end">
+		        <span class="badge ${x.done ? 'ok' : 'warn'}">${x.done ? 'Fatto' : 'Da fare'}</span>
+		        <button class="btn btnSecondary" style="padding:8px 10px" onclick="toggleDailyCheck('${x.key}')">
+		          ${x.done ? 'Annulla' : 'Segna fatto'}
+		        </button>
+		      </div>
+		    </div>
+		  </div>
+		`).join("");
     }
 
     function renderProfile() {
@@ -1863,6 +1906,32 @@
       nBreakfast.value = log.nutrition.breakfast || "";
       nLunch.value = log.nutrition.lunch || "";
       nNotes.value = log.nutrition.notes || "";
+			
+			const nutritionCard = document.getElementById("nutritionChecklist");
+			if (nutritionCard) {
+			  nutritionCard.innerHTML = [
+			    { key: "breakfast", label: "Colazione" },
+			    { key: "snack1", label: "Spuntino mattina" },
+			    { key: "lunch", label: "Pranzo" },
+			    { key: "snack2", label: "Spuntino pomeriggio" },
+			    { key: "dinner", label: "Cena" },
+			    { key: "waterTarget", label: "Acqua" }
+			  ].map(item => `
+			    <div class="item">
+			      <div class="row">
+			        <strong>${item.label}</strong>
+			        <div class="btnRow">
+			          <span class="badge ${log.checks[item.key] ? 'ok' : 'warn'}">
+			            ${log.checks[item.key] ? 'Fatto' : 'Da fare'}
+			          </span>
+			          <button class="btn btnSecondary" style="padding:8px 10px" onclick="toggleDailyCheck('${item.key}')">
+			            ${log.checks[item.key] ? 'Annulla' : 'Segna fatto'}
+			          </button>
+			        </div>
+			      </div>
+			    </div>
+			  `).join("");
+			}
     }
 
     function mealBox(title, value, subtitle, bullets) {
@@ -2083,6 +2152,22 @@
       renderAll();
       showToast("Note salvate");
     }
+		
+		function toggleDailyCheck(key) {
+		  const log = todayLog();
+		
+		  if (key === "workoutDone") {
+		    log.workoutDone = !log.workoutDone;
+		  } else if (key === "relaxDone") {
+		    log.relaxDone = !log.relaxDone;
+		  } else {
+		    log.checks[key] = !log.checks[key];
+		  }
+		
+		  saveDB();
+		  renderAll();
+		  showToast("Stato aggiornato");
+		}
 
     function saveCardioLog() {
       const log = todayLog();
