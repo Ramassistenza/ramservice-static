@@ -973,17 +973,37 @@
         <div class="cardHead">
           <div>
             <h3>Export settimanale</h3>
-            <div class="small">Per inviarmelo e analizzarlo insieme</div>
-          </div>
-        </div>
-        <div class="cardBody">
-          <div class="btnRow">
-            <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
-            <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="card">
+						  <div class="cardHead">
+						    <div>
+						      <h3>Backup dati</h3>
+						      <div class="small">Esporta o ricarica il backup JSON della dashboard</div>
+						    </div>
+						  </div>
+						  <div class="cardBody">
+						    <div class="btnRow">
+						      <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
+						      <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
+						    </div>
+						
+						    <div class="divider"></div>
+						
+						    <div class="grid2">
+						      <div class="field">
+						        <label>Importa backup JSON</label>
+						        <input id="importJsonFile" type="file" accept=".json,application/json">
+						      </div>
+						      <div class="field">
+						        <label>Ripristino</label>
+						        <button class="btn btnSuccess" onclick="importBackupJSON()">Carica backup JSON</button>
+						      </div>
+						    </div>
+						
+						    <div class="small" style="margin-top:10px">
+						      Il file JSON ricarica profilo, log, nutrizione, cardio, checklist e stato esercizi.
+						    </div>
+						  </div>
+						</div>
 
     <div id="view-install" class="view">
       <div class="card">
@@ -1069,7 +1089,7 @@
       logs: {}
     };
 
-    const IMG = "img/fitness/";
+    const IMG = "img/";
 
     const REMOTE = {
       crunch: "https://placehold.co/600x400/0f172a/f8fbff?text=Crunch",
@@ -1594,8 +1614,14 @@
     }
 
     function imageHtml(it) {
-      return `<img src="${it.local}" alt="${it.name}" onerror="this.onerror=null;this.src='${it.remote}'">`;
-    }
+		  return `
+		    <img
+		      src="${it.local}"
+		      alt="${it.name}"
+		      onerror="this.onerror=null; this.src='${it.remote}'"
+		    >
+		  `;
+		}
 
     function renderExerciseCard(dayKey, it, idx) {
       const done = todayLog().exerciseStatus[getExerciseStatusKey(dayKey, it)];
@@ -2406,14 +2432,83 @@
     }
 
     function exportWeeklyJSON() {
-      const dates = getCurrentWeekDates();
-      const payload = {
-        profile: db.profile,
-        plan: calcPlan(),
-        week: dates.map(d => ({ date: d, ...(db.logs[d] || {}) }))
-      };
-      download("mazzofitpro-weekly-report.json", JSON.stringify(payload, null, 2), "application/json");
-    }
+		  const payload = {
+		    profile: db.profile,
+		    reminders: db.reminders,
+		    selectedDay: db.selectedDay,
+		    logs: db.logs
+		  };
+		
+		  download(
+		    "mazzofitpro-backup-completo.json",
+		    JSON.stringify(payload, null, 2),
+		    "application/json"
+		  );
+		}
+		
+		function importBackupJSON() {
+		  const input = document.getElementById("importJsonFile");
+		
+		  if (!input || !input.files || !input.files.length) {
+		    showToast("Seleziona prima un file JSON");
+		    return;
+		  }
+		
+		  const file = input.files[0];
+		  const reader = new FileReader();
+		
+		  reader.onload = function (e) {
+		    try {
+		      const parsed = JSON.parse(e.target.result);
+		
+		      if (!parsed || typeof parsed !== "object") {
+		        showToast("JSON non valido");
+		        return;
+		      }
+		
+		      // Supporta sia backup completi sia export settimanali
+		      if (parsed.profile) {
+		        db.profile = {
+		          ...DEFAULTS.profile,
+		          ...parsed.profile
+		        };
+		      }
+		
+		      if (parsed.reminders) {
+		        db.reminders = {
+		          ...DEFAULTS.reminders,
+		          ...parsed.reminders
+		        };
+		      }
+		
+		      if (parsed.logs && typeof parsed.logs === "object") {
+		        db.logs = parsed.logs;
+		      }
+		
+		      // Supporta export con chiave "week"
+		      if (Array.isArray(parsed.week)) {
+		        parsed.week.forEach(entry => {
+		          if (entry && entry.date) {
+		            db.logs[entry.date] = {
+		              ...(db.logs[entry.date] || {}),
+		              ...entry
+		            };
+		          }
+		        });
+		      }
+		
+		      saveDB();
+		      renderAll();
+		      showToast("Backup caricato correttamente");
+		      input.value = "";
+		    } catch (err) {
+		      console.error(err);
+		      showToast("Errore nel caricamento del JSON");
+		    }
+		  };
+		
+		  reader.readAsText(file);
+		}
 
     function exportWeeklyCSV() {
       const dates = getCurrentWeekDates();
