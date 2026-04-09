@@ -453,7 +453,7 @@
       transform: translateX(-50%);
       bottom: 12px;
       width: min(900px, calc(100% - 16px));
-      background: rgba(9, 15, 28, 0.92);
+      background: rgba(9, 15, 28, 0.96);
       backdrop-filter: blur(14px);
       border: 1px solid var(--line);
       border-radius: 22px;
@@ -462,7 +462,7 @@
       grid-template-columns: repeat(6, 1fr);
       gap: 8px;
       box-shadow: var(--shadow);
-      z-index: 99;
+      z-index: 9999;
     }
 
     .tabBtn {
@@ -972,38 +972,35 @@
       <div class="card">
         <div class="cardHead">
           <div>
-            <h3>Export settimanale</h3>
-            <div class="card">
-						  <div class="cardHead">
-						    <div>
-						      <h3>Backup dati</h3>
-						      <div class="small">Esporta o ricarica il backup JSON della dashboard</div>
-						    </div>
-						  </div>
-						  <div class="cardBody">
-						    <div class="btnRow">
-						      <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
-						      <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
-						    </div>
-						
-						    <div class="divider"></div>
-						
-						    <div class="grid2">
-						      <div class="field">
-						        <label>Importa backup JSON</label>
-						        <input id="importJsonFile" type="file" accept=".json,application/json">
-						      </div>
-						      <div class="field">
-						        <label>Ripristino</label>
-						        <button class="btn btnSuccess" onclick="importBackupJSON()">Carica backup JSON</button>
-						      </div>
-						    </div>
-						
-						    <div class="small" style="margin-top:10px">
-						      Il file JSON ricarica profilo, log, nutrizione, cardio, checklist e stato esercizi.
-						    </div>
-						  </div>
-						</div>
+            <h3>Backup dati</h3>
+            <div class="small">Esporta o ricarica il backup JSON della dashboard</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="btnRow">
+            <button class="btn btnPrimary" onclick="exportWeeklyCSV()">Esporta CSV</button>
+            <button class="btn btnSecondary" onclick="exportWeeklyJSON()">Esporta JSON</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="grid2">
+            <div class="field">
+              <label>Importa backup JSON</label>
+              <input id="importJsonFile" type="file" accept=".json,application/json">
+            </div>
+            <div class="field">
+              <label>Ripristino</label>
+              <button class="btn btnSuccess" onclick="importBackupJSON()">Carica backup JSON</button>
+            </div>
+          </div>
+
+          <div class="small" style="margin-top:10px">
+            Il file JSON ricarica profilo, log, nutrizione, cardio, checklist e stato esercizi.
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="view-install" class="view">
       <div class="card">
@@ -1257,9 +1254,31 @@
 
     function setView(name, btn) {
       document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-      document.getElementById("view-" + name).classList.add("active");
+
+      const target = document.getElementById("view-" + name);
+      if (target) {
+        target.classList.add("active");
+      }
+
       document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-      if (btn) btn.classList.add("active");
+
+      if (btn) {
+        btn.classList.add("active");
+      } else {
+        const map = {
+          home: 0,
+          profilo: 1,
+          workout: 2,
+          nutrition: 3,
+          relax: 4,
+          tracking: 5
+        };
+        const tabs = document.querySelectorAll(".tabBtn");
+        if (tabs[map[name]]) {
+          tabs[map[name]].classList.add("active");
+        }
+      }
+
       renderAll();
     }
 
