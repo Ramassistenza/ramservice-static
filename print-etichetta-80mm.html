@@ -89,6 +89,7 @@ function escposText(label) {
   // ===== ESC/POS =====
   const INIT       = "\x1B\x40";
   const LEFT       = "\x1B\x61\x00";
+  const CENTER     = "\x1B\x61\x01";
   const BOLD_ON    = "\x1B\x45\x01";
   const BOLD_OFF   = "\x1B\x45\x00";
   const FONT_A     = "\x1B\x4D\x00"; // font A
@@ -97,8 +98,9 @@ function escposText(label) {
   const SIZE_2X1   = "\x1D\x21\x10"; // medio (altezza doppia)
   const SIZE_2X2   = "\x1D\x21\x11"; // grande (altezza+larghezza)
 
-  const hr  = "==========================================\n";
-  const sep = "------------------------------------------\n";
+  const HR  = "==========================================\n";
+  const SEP = "------------------------------------------\n";
+  const W = 42;
 
   const clean = (s) =>
     String(s ?? "")
@@ -106,7 +108,7 @@ function escposText(label) {
       .replace(/[ \t]+/g, " ")
       .trim();
 
-  const wrap = (text, width = 42) => {
+  const wrap = (text, width = W) => {
     const t = clean(text);
     if (!t) return [];
     const words = t.split(" ");
@@ -121,6 +123,41 @@ function escposText(label) {
     return out;
   };
 
+  const line = (label, value) => {
+    const v = clean(value);
+    if (!v) return "";
+    const prefix = `${label}: `;
+    const max = W - prefix.length;
+    const rows = wrap(v, Math.max(max, 12));
+    if (!rows.length) return "";
+    return rows.map((row, i) => (i === 0 ? prefix : " ".repeat(prefix.length)) + row + nl).join("");
+  };
+
+  const title = (text) => [
+    BOLD_ON,
+    SEP,
+    text + nl,
+    SEP,
+    BOLD_OFF
+  ].join("");
+
+  const barcodeCode128 = (value) => {
+    const raw = clean(value).replace(/[^\x20-\x7E]/g, "");
+    if (!raw) return "";
+    const payload = "{B" + raw;
+    return [
+      CENTER,
+      "\x1D\x48\x02",      // HRI sotto il barcode
+      "\x1D\x68\x48",      // altezza
+      "\x1D\x77\x02",      // larghezza modulo
+      "\x1D\x6B\x49",
+      String.fromCharCode(payload.length),
+      payload,
+      nl,
+      LEFT
+    ].join("");
+  };
+
   const numeroScheda = clean(label.numeroScheda) || "-";
   const type = (clean(label.type) || "accettazione").toUpperCase();
   const dataIngresso = clean(label.dataIngresso);
@@ -130,6 +167,8 @@ function escposText(label) {
 
   const dispositivo = clean(label.dispositivo) || "-";
   const seriale = clean(label.seriale);
+  const pinSim = clean(label.pinSim);
+  const codiceProtezione = clean(label.codiceProtezione);
 
   const difetto = clean(label.difetto);
   const costo = clean(label.costo) || "-";
@@ -139,54 +178,73 @@ function escposText(label) {
   // init + tutto a sinistra
   lines.push(INIT, FONT_A, LEFT, SIZE_1X1);
 
-  // ===== INTESTAZIONE RAMSERVICE (più grande) =====
+  // ===== TESTATA =====
+  lines.push(CENTER);
   lines.push(BOLD_ON, SIZE_2X2);
   lines.push("RAMSERVICE\n");
-  lines.push(SIZE_1X1, BOLD_OFF);
-  lines.push(hr);
+  lines.push(SIZE_1X1);
+  lines.push("ASSISTENZA TECNICA\n");
+  lines.push(BOLD_OFF);
+  lines.push("Via di Macchia Saponara 104C\n");
+  lines.push("00125 Roma - Tel. 06 89345782\n");
+  lines.push(LEFT, HR);
 
-  // ===== SCHEDA (medio) =====
+  // ===== SCHEDA =====
+  lines.push(CENTER, BOLD_ON, SIZE_2X2);
+  lines.push(`SCHEDA ${numeroScheda}\n`);
+  lines.push(SIZE_1X1, BOLD_OFF);
+  lines.push(barcodeCode128(numeroScheda));
+  lines.push(LEFT);
+
+  lines.push(line("TIPO", type));
+  lines.push(line("DATA", dataIngresso));
+
+  // ===== CLIENTE =====
+  lines.push(title("CLIENTE"));
+  lines.push(SIZE_2X2);
+  wrap(cliente, 20).forEach(l => lines.push(l + nl));
+  lines.push(SIZE_1X1);
+  lines.push(line("TEL", telefono));
+
+  // ===== DISPOSITIVO =====
+  lines.push(title("DISPOSITIVO"));
   lines.push(BOLD_ON, SIZE_2X1);
-  lines.push(`SCHEDA: ${numeroScheda}\n`);
+  wrap(dispositivo, 21).forEach(l => lines.push(l + nl));
   lines.push(SIZE_1X1, BOLD_OFF);
+  lines.push(line("SERIALE", seriale));
 
-  lines.push(`TIPO:  ${type}\n`);
-  if (dataIngresso) lines.push(`DATA:  ${dataIngresso}\n`);
-  lines.push(sep);
-
-  // ===== CLIENTE (GRANDE come prima era COSTO) =====
-  lines.push(BOLD_ON);
-  lines.push("CLIENTE:\n");
-  lines.push(SIZE_2X2);
-  wrap(cliente, 30).forEach(l => lines.push(l + nl)); // 30 perché in 2x2 ci stanno meno caratteri
-  lines.push(SIZE_1X1, BOLD_OFF);
-  if (telefono) lines.push(`TEL:  ${telefono}\n`);
-  lines.push(sep);
-
-  // ===== DISPOSITIVO (GRANDE) =====
-  lines.push(BOLD_ON);
-  lines.push("DISPOSITIVO:\n");
-  lines.push(SIZE_2X2);
-  wrap(dispositivo, 30).forEach(l => lines.push(l + nl));
-  lines.push(SIZE_1X1, BOLD_OFF);
-  if (seriale) lines.push(`SN:   ${seriale}\n`);
-  lines.push(sep);
-
-  // ===== DIFETTO (GRANDE) =====
-  if (difetto) {
-    lines.push(BOLD_ON);
-    lines.push("DIFETTO:\n");
-    lines.push(SIZE_2X2);
-    wrap(difetto, 30).forEach(l => lines.push(l + nl));
-    lines.push(SIZE_1X1, BOLD_OFF);
-    lines.push(sep);
+  // ===== CODICI =====
+  if (pinSim || codiceProtezione) {
+    lines.push(title("CODICI CLIENTE"));
+    if (pinSim) {
+      lines.push(BOLD_ON, SIZE_2X1);
+      lines.push(`PIN SIM: ${pinSim}\n`);
+      lines.push(SIZE_1X1, BOLD_OFF);
+    }
+    if (codiceProtezione) {
+      lines.push(BOLD_ON, SIZE_2X1);
+      wrap(`CODICE: ${codiceProtezione}`, 21).forEach(l => lines.push(l + nl));
+      lines.push(SIZE_1X1, BOLD_OFF);
+    }
   }
 
-  // ===== COSTO (più piccolo di prima) =====
+  // ===== DIFETTO =====
+  if (difetto) {
+    lines.push(title("DIFETTO SEGNALATO"));
+    lines.push(BOLD_ON);
+    wrap(difetto, W).forEach(l => lines.push(l + nl));
+    lines.push(BOLD_OFF);
+  }
+
+  // ===== COSTO =====
+  lines.push(HR);
   lines.push(BOLD_ON, SIZE_2X1);
   lines.push(`COSTO: ${costo}\n`);
   lines.push(SIZE_1X1, BOLD_OFF);
-  lines.push(hr);
+  lines.push(HR);
+
+  lines.push("Conservare questa ricevuta per il ritiro.\n");
+  lines.push("Info e aggiornamenti: RAMSERVICE\n");
 
   // feed + cut
   lines.push("\n\n\n", cut, "\x00");
