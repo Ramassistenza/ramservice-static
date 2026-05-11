@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Valutazione usato RAMSERVICE Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#07111f;font-family:Poppins,Arial,sans-serif;min-height:100vh}.home{position:fixed;left:22px;top:18px;z-index:20;width:78px;height:78px;border:0;border-radius:24px;background:#07111f;color:#fff;font-size:42px;font-weight:900;box-shadow:0 16px 32px rgba(7,17,31,.22)}.wrap{width:min(1260px,calc(100% - 38px));margin:0 auto;padding:110px 0 36px}.head{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:20px}.kicker{color:#006ee6;font-size:15px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:clamp(56px,7vw,104px);letter-spacing:.01em;line-height:.9;margin:6px 0 0}.head p{max-width:560px;margin:0;color:#526070;font-size:18px;line-height:1.45}.grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(360px,.82fr);gap:18px;align-items:start}.card{background:#fff;border:1px solid #dde5ef;border-radius:28px;box-shadow:0 18px 46px rgba(15,23,42,.08)}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}.steps button{min-height:66px;border:0;border-radius:20px;background:#eef3f9;color:#697386;font-weight:900;font-size:15px}.steps button.active{background:#07111f;color:#fff}.panel{padding:24px}.panel[hidden]{display:none}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:8px}.full{grid-column:1/-1}label{font-size:14px;color:#485568;font-weight:900}select,input,textarea{width:100%;min-height:64px;border:2px solid #dbe4ef;border-radius:20px;background:#f9fbfd;color:#07111f;padding:0 17px;font:inherit;font-size:19px;font-weight:800}textarea{padding:15px 17px;min-height:112px}.checks{display:grid;gap:12px}.check{display:flex;gap:12px;align-items:flex-start;padding:17px;border:2px solid #dbe4ef;border-radius:22px;background:#f9fbfd;color:#485568;font-size:17px;line-height:1.35}.check input{width:28px;min-width:28px;height:28px;min-height:28px;accent-color:#006ee6}.actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}.btn{min-height:66px;border:0;border-radius:22px;padding:0 26px;font:inherit;font-size:18px;font-weight:950;cursor:pointer}.primary{background:#006ee6;color:#fff;box-shadow:0 16px 32px rgba(0,110,230,.23)}.dark{background:#07111f;color:#fff}.ghost{background:#edf2f7;color:#07111f}.result{position:sticky;top:24px;padding:24px}.price{margin-top:16px;border-radius:28px;background:#07111f;color:#fff;padding:24px}.price span{display:block;color:#91c8ff;font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}.price strong{display:block;margin-top:9px;font-size:clamp(42px,5vw,70px);line-height:.95}.summary{display:grid;gap:10px;margin-top:16px}.row{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #e8eef5;color:#526070;font-size:15px}.row strong{color:#07111f;text-align:right}.status{margin-top:14px;padding:14px;border-radius:18px;background:#eff6ff;color:#07539f;font-weight:900}.status.ok{background:#e8f8ef;color:#12643d}.status.err{background:#fff0f0;color:#991b1b}@media(max-width:980px){.grid{grid-template-columns:1fr}.result{position:static}.head{display:block}.head p{margin-top:10px}.fields{grid-template-columns:1fr}.home{width:66px;height:66px;font-size:34px}}
+  </style>
+</head>
+<body>
+  <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
+  <main class="wrap">
+    <header class="head">
+      <div><div class="kicker">RAMSERVICE Kiosk</div><h1>Valuta il tuo usato</h1></div>
+      <p>Prima stima immediata. Il valore finale viene confermato in negozio dopo controllo tecnico, account, IMEI e condizioni reali.</p>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <div class="steps">
+          <button class="active" data-step-btn="0">1. Modello</button>
+          <button data-step-btn="1">2. Stato</button>
+          <button data-step-btn="2">3. Cliente</button>
+          <button data-step-btn="3">4. Stima</button>
+        </div>
+        <form id="form">
+          <div class="panel" data-panel="0">
+            <div class="fields">
+              <div class="field"><label>Marca</label><select id="brand" data-label="Marca"></select></div>
+              <div class="field"><label>Modello</label><select id="model" required data-label="Modello"></select></div>
+              <div class="field"><label>Memoria</label><select id="storage" required data-label="Memoria"></select></div>
+              <div class="field"><label>Salute batteria</label><input id="battery" type="number" min="0" max="100" placeholder="Es. 88" data-label="Salute batteria"></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="1" hidden>
+            <div class="fields">
+              <div class="field"><label>Condizione estetica</label><select id="condition" data-label="Condizione estetica"><option value="ottimo">Ottimo</option><option value="buono" selected>Buono</option><option value="segni">Segni evidenti</option><option value="danneggiato">Danneggiato</option></select></div>
+              <div class="field"><label>Display</label><select id="display" data-label="Display"><option value="ok" selected>Perfetto</option><option value="graffi">Graffi</option><option value="non_originale">Non originale</option><option value="rotto">Rotto o difettoso</option></select></div>
+              <div class="field"><label>Riparazioni</label><select id="repairs" data-label="Riparazioni"><option value="nessuna" selected>Nessuna nota</option><option value="non_note">Non so</option><option value="apple_documentate">Apple/documentate</option><option value="batteria_documentata">Batteria documentata</option><option value="batteria_non_originale">Batteria non originale</option><option value="display_documentato">Display documentato</option><option value="display_non_originale">Display non originale</option><option value="vetro_posteriore">Vetro posteriore</option><option value="fotocamera_faceid">Fotocamera/Face ID</option><option value="liquidi">Liquidi/ossidazione</option><option value="scheda">Scheda madre</option></select></div>
+              <div class="field"><label>Accessori</label><select id="accessories" data-label="Accessori"><option value="completi">Scatola e accessori</option><option value="caricatore">Solo caricatore/cavo</option><option value="nessuno" selected>Nessuno</option></select></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="2" hidden>
+            <div class="fields">
+              <div class="field"><label>Nome e cognome</label><input id="name" required data-label="Nome e cognome"></div>
+              <div class="field"><label>Telefono</label><input id="phone" required data-label="Telefono"></div>
+              <div class="field"><label>Email</label><input id="email" type="email" data-label="Email"></div>
+              <div class="field"><label>Prova acquisto</label><select id="proof" data-label="Prova acquisto"><option value="presente">Presente</option><option value="assente" selected>Assente</option></select></div>
+              <div class="field full"><label>Note</label><textarea id="notes" data-label="Note" placeholder="Difetti, accessori, colore, blocchi, dettagli utili"></textarea></div>
+              <label class="check full"><input id="origin" type="checkbox" required data-label="Conferma account/IMEI"><span>Confermo che il dispositivo è mio, senza blocchi account e verificabile in negozio.</span></label>
+            </div>
+          </div>
+          <div class="panel" data-panel="3" hidden>
+            <div class="checks">
+              <label class="check"><input id="accept" type="checkbox" required><span>Ho capito che questa è una stima indicativa. Il valore definitivo viene confermato solo dopo controllo tecnico RAMSERVICE.</span></label>
+            </div>
+            <div class="actions">
+              <button class="btn primary" type="submit">Invia richiesta in dashboard</button>
+              <button class="btn dark" type="button" id="wa">Invia su WhatsApp</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" type="button" id="prev" hidden>Indietro</button>
+            <button class="btn primary" type="button" id="next">Avanti</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="card result">
+        <div class="kicker">Stima online</div>
+        <div class="price"><span>Valore indicativo</span><strong id="estimate">Completa i dati</strong></div>
+        <div class="summary">
+          <div class="row"><span>Dispositivo</span><strong id="sumModel">-</strong></div>
+          <div class="row"><span>Condizione</span><strong id="sumCond">-</strong></div>
+          <div class="row"><span>Validità</span><strong id="sumExp">7 giorni</strong></div>
+        </div>
+        <div class="status" id="status">Carico quotazioni sincronizzate dalla pagina Shopify...</div>
+      </aside>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const SHOPIFY_PAGE = "https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato";
+  const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
+  const WHATSAPP = "393475941558";
+  const fallbackQuotes = [
+    ["iPhone 16 Pro Max",[["256GB",979],["512GB",1119],["1TB",1269]]],["iPhone 16 Pro",[["128GB",879],["256GB",949],["512GB",1089],["1TB",1229]]],["iPhone 16 Plus",[["128GB",759],["256GB",829],["512GB",949]]],["iPhone 16",[["128GB",689],["256GB",759],["512GB",879]]],["iPhone 15 Pro Max",[["256GB",849],["512GB",969],["1TB",1089]]],["iPhone 15 Pro",[["128GB",749],["256GB",829],["512GB",949],["1TB",1069]]],["iPhone 15",[["128GB",549],["256GB",629],["512GB",749]]],["iPhone 14 Pro Max",[["128GB",649],["256GB",719],["512GB",839],["1TB",949]]],["iPhone 14 Pro",[["128GB",595],["256GB",665],["512GB",779],["1TB",879]]],["iPhone 14",[["128GB",389],["256GB",459],["512GB",549]]],["iPhone 13 Pro Max",[["128GB",589],["256GB",649],["512GB",759],["1TB",879]]],["iPhone 13 Pro",[["128GB",449],["256GB",519],["512GB",629],["1TB",749]]],["iPhone 13",[["128GB",299],["256GB",359],["512GB",469]]],["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]],["Galaxy S25 Ultra",[["256GB",780],["512GB",890],["1TB",1020]],"Samsung"],["Galaxy S24 Ultra",[["256GB",650],["512GB",740],["1TB",860]],"Samsung"],["Galaxy S23 Ultra",[["256GB",480],["512GB",560],["1TB",680]],"Samsung"]
+  ];
+  let quotes = fallbackQuotes;
+  let step = 0;
+  const $ = (id) => document.getElementById(id);
+  const panels = [...document.querySelectorAll("[data-panel]")];
+  const stepBtns = [...document.querySelectorAll("[data-step-btn]")];
+  const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(v||0))));
+  const quoteBrand = (row) => row[2] || "Apple";
+
+  async function loadShopifyQuotes(){
+    try{
+      const html = await fetch(SHOPIFY_PAGE + "?kiosk_sync=" + Date.now(), {cache:"no-store"}).then((r)=>r.text());
+      const match = html.match(/const\s+quotes\s*=\s*(\[[\s\S]*?\n\s*\]);/);
+      if (!match) throw new Error("quotazioni non trovate");
+      const parsed = Function(`"use strict";return (${match[1]});`)();
+      if (!Array.isArray(parsed) || !parsed.length) throw new Error("quotazioni vuote");
+      quotes = parsed;
+      $("status").textContent = "Quotazioni sincronizzate con Shopify.";
+      $("status").className = "status ok";
+    }catch(error){
+      $("status").textContent = "Uso quotazioni locali di sicurezza. Controllare sincronizzazione Shopify.";
+      $("status").className = "status err";
+    }
+    populateBrands();
+  }
+
+  function populateBrands(){
+    const brands = [...new Set(quotes.map(quoteBrand))].sort();
+    $("brand").innerHTML = brands.map((b)=>`<option>${b}</option>`).join("");
+    populateModels();
+  }
+  function populateModels(){
+    const brand = $("brand").value || "Apple";
+    $("model").innerHTML = '<option value="" selected disabled>Seleziona modello</option>' + quotes.filter((r)=>quoteBrand(r)===brand).map((r)=>`<option>${r[0]}</option>`).join("");
+    populateStorage();
+  }
+  function populateStorage(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    $("storage").innerHTML = row ? '<option value="" selected disabled>Seleziona memoria</option>' + row[1].map(([s])=>`<option>${s}</option>`).join("") : '<option value="">Prima scegli il modello</option>';
+    calculate();
+  }
+  function selectedQuote(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    const storage = row?.[1]?.find(([s])=>s===$("storage").value);
+    return storage ? {brand:$("brand").value,model:row[0],storage:storage[0],market:storage[1]} : null;
+  }
+  function calculate(){
+    const q = selectedQuote();
+    if(!q){$("estimate").textContent="Completa i dati";$("sumModel").textContent="-";return null;}
+    let factor=.56;
+    const condition=$("condition").value, display=$("display").value, repairs=$("repairs").value, accessories=$("accessories").value, proof=$("proof").value;
+    const battery=Number($("battery").value||0);
+    if(condition==="ottimo")factor+=.04;if(condition==="segni")factor-=.09;if(condition==="danneggiato")factor-=.22;
+    if(display==="graffi")factor-=.06;if(display==="non_originale")factor-=.14;if(display==="rotto")factor-=.30;
+    if(repairs==="non_note")factor-=.06;if(repairs==="apple_documentate")factor-=.02;if(repairs==="batteria_documentata")factor-=.03;if(repairs==="batteria_non_originale")factor-=.10;if(repairs==="display_documentato")factor-=.07;if(repairs==="display_non_originale")factor-=.16;if(repairs==="vetro_posteriore")factor-=.08;if(repairs==="fotocamera_faceid")factor-=.18;if(repairs==="liquidi"||repairs==="scheda")factor-=.25;
+    if(accessories==="completi")factor+=.02;if(accessories==="nessuno")factor-=.03;if(proof==="presente")factor+=.02;if(proof==="assente")factor-=.04;
+    if(battery && battery<80)factor-=.08;if(battery && battery<75)factor-=.14;
+    const max=Math.max(0,Math.round(q.market*Math.max(.18,factor)));
+    const min=Math.max(0,Math.round(max*.82));
+    const expiry=new Date(); expiry.setDate(expiry.getDate()+7);
+    $("estimate").textContent=`${money(min)} - ${money(max)}`;
+    $("sumModel").textContent=`${q.model} ${q.storage}`;
+    $("sumCond").textContent=$("condition").selectedOptions[0]?.textContent || "-";
+    $("sumExp").textContent=expiry.toLocaleDateString("it-IT");
+    return {...q,min,max,expiresAt:expiry.toLocaleDateString("it-IT")};
+  }
+  function showStep(next){
+    step=Math.max(0,Math.min(3,next));
+    panels.forEach((p,i)=>p.hidden=i!==step);
+    stepBtns.forEach((b,i)=>b.classList.toggle("active",i===step));
+    $("prev").hidden=step===0;$("next").hidden=step===3;
+    calculate();
+  }
+  function validateCurrent(){
+    const invalid=[...panels[step].querySelectorAll("input,select,textarea")].find((el)=>!el.checkValidity());
+    if(invalid){invalid.reportValidity();return false;}
+    return true;
+  }
+  function buildSummary(){
+    const est=calculate();
+    const rows=["Richiesta valutazione usato RAMSERVICE Kiosk","",`Stima online: ${est ? `${money(est.min)} - ${money(est.max)}` : "-"}`,`Scadenza stima: ${est?.expiresAt || "-"}`,"","Dati inseriti dal cliente:"];
+    document.querySelectorAll("[data-label]").forEach((field)=>rows.push(`${field.dataset.label}: ${field.type==="checkbox" ? (field.checked?"Confermato":"Non confermato") : (field.value||"-")}`));
+    rows.push("Nota: stima indicativa da confermare in negozio dopo verifica tecnica.");
+    return rows.join("\n");
+  }
+  async function submitRequest(){
+    const summary=buildSummary();
+    const payload={type:"valutazione_usato",source:"kiosk-valutazione-usato",pageUrl:location.href,subject:"Richiesta valutazione usato da kiosk",name:$("name").value,phone:$("phone").value,email:$("email").value,summary,fields:{Marca:$("brand").value,Modello:$("model").value,Memoria:$("storage").value,"Salute batteria":$("battery").value,Telefono:$("phone").value,Email:$("email").value,"Nome e cognome":$("name").value},userAgent:navigator.userAgent};
+    const res=await fetch(`${API}/site-requests`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.ok) throw new Error(data.error||"Errore invio richiesta");
+    $("status").textContent=`Richiesta inviata in dashboard. ID ${data.id}`;
+    $("status").className="status ok";
+  }
+  $("brand").addEventListener("change",populateModels);$("model").addEventListener("change",populateStorage);
+  document.querySelectorAll("input,select,textarea").forEach((el)=>el.addEventListener("input",calculate));
+  $("next").addEventListener("click",()=>{if(validateCurrent())showStep(step+1);});
+  $("prev").addEventListener("click",()=>showStep(step-1));
+  $("form").addEventListener("submit",async(e)=>{e.preventDefault();if(!validateCurrent())return;try{$("status").textContent="Invio richiesta in dashboard...";await submitRequest();}catch(err){$("status").textContent=err.message;$("status").className="status err";}});
+  $("wa").addEventListener("click",()=>{if(!validateCurrent())return;window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildSummary())}`,"_blank","noopener");});
+  loadShopifyQuotes();
+})();
+</script>
+</body>
+</html>
