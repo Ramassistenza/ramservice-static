@@ -33,7 +33,7 @@
       <div class="title">Risparmio</div>
       <div class="desc">Calcola quanto risparmi</div>
     </button>
-    <button onclick="location.href='https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato'">
+    <button onclick="location.href='valutazione-shopify.html'">
       <div class="icon">📱</div>
       <div class="title">Valutazione</div>
       <div class="desc">Scopri il valore usato</div>
@@ -50,7 +50,7 @@
   <section id="riquadri">
   
     <!-- BOX 1 -->
-    <div class="riquadro riquadro-usato-btn" onclick="location.href='https://www.ramserviceitalia.it/pages/cover-personalizzate-iphone'">
+    <div class="riquadro riquadro-usato-btn" onclick="location.href='cover-shopify.html'">
       <div class="icon">🎨</div>
       <div class="title">COVER PERSONALIZZATE</div>
       <div class="desc">Crea la tua cover dal monitor</div>
@@ -144,6 +144,45 @@
   }
   updateDate();
 
+  async function loadKioskConfig(){
+    try{
+      const r=await fetch("https://ramassistenza.github.io/ramservice-static/Kiosk/promo/config.json?v="+Date.now(),{cache:"no-store"});
+      if(!r.ok) return null;
+      return await r.json();
+    }catch{
+      return null;
+    }
+  }
+
+  function renderHomeConfig(config){
+    const centerData=config?.home?.center;
+    const slides=Array.isArray(config?.home?.slides) ? config.home.slides : [];
+    const centerBox=document.getElementById("center");
+    const slideBox=document.getElementById("slideshow");
+    let hasCenter=false;
+    let hasSlides=false;
+
+    if(centerData?.imageUrl){
+      centerBox.innerHTML=`<img src="${centerData.imageUrl}" alt="${centerData.title || "Promo RAMSERVICE"}">`;
+      hasCenter=true;
+    }
+
+    if(slides.length){
+      slideBox.innerHTML=slides.map((item,index)=>`<img class="${index===0 ? "active" : ""}" src="${item.imageUrl}" alt="${item.title || "Promo RAMSERVICE"}">`).join("");
+      let x=0;
+      setInterval(()=>{
+        const s=slideBox.querySelectorAll("img");
+        if(!s.length) return;
+        s[x]?.classList.remove("active");
+        x=(x+1)%s.length;
+        s[x]?.classList.add("active");
+      },4000);
+      hasSlides=true;
+    }
+
+    return {hasCenter,hasSlides};
+  }
+
   async function loadImages(folder,id,slide=false){
     const base="https://ramassistenza.github.io/ramservice-static/Kiosk/img";
     const c=document.getElementById(id);
@@ -170,6 +209,7 @@
       let x=0;
       setInterval(()=>{
         const s=c.querySelectorAll("img");
+        if(!s.length) return;
         s[x].classList.remove("active");
         x=(x+1)%s.length;
         s[x].classList.add("active");
@@ -177,8 +217,12 @@
     }
   }
 
-  loadImages("center","center");
-  loadImages("operatori","slideshow",true);
+  (async()=>{
+    const config=await loadKioskConfig();
+    const loaded=renderHomeConfig(config);
+    if(!loaded.hasCenter) loadImages("center","center");
+    if(!loaded.hasSlides) loadImages("operatori","slideshow",true);
+  })();
 
   const INTERVAL=10*60*1000;
   const DURATION=5*60*1000;
