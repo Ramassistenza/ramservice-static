@@ -12,6 +12,20 @@
       .grade-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.grade-card{border:2px solid #d8e3ef;border-radius:18px;background:#fff;padding:6px;text-align:left;font:inherit;color:#07111f;display:grid;grid-template-rows:78px auto auto;gap:5px}.grade-card img{width:100%;height:78px;object-fit:cover;border-radius:13px;background:#e5edf6}.grade-card span{display:inline-flex;width:max-content;padding:3px 7px;border-radius:999px;background:#06111f;color:#fff;font-size:9px;font-weight:950}.grade-card strong{font-size:12px;line-height:1}.grade-card.is-active{border-color:#0a7cff;box-shadow:0 0 0 3px rgba(10,124,255,.12)}
     }
   </style>
+  <style>
+    @media (min-width:761px){
+      html,body{overflow:hidden!important}
+      .wrap{width:min(1040px,calc(100% - 28px))!important;height:100vh!important;padding:12px 0!important;grid-template-rows:82px minmax(0,1fr) 176px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:58px!important;height:58px!important;border-radius:18px!important;font-size:28px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 330px!important;gap:14px!important}.head h1{font-size:56px!important}.head p{font-size:13px!important;line-height:1.18!important}.kicker{font-size:11px!important}
+      .card{border-radius:22px!important}.flow-card{grid-template-rows:58px minmax(0,1fr)!important}.steps{padding:8px 10px!important;gap:7px!important}.steps button{min-height:42px!important;font-size:12px!important;border-radius:14px!important}
+      form{grid-template-rows:minmax(0,1fr) 58px!important}.panel{grid-template-columns:210px 1fr!important;gap:10px!important;padding:0 10px 10px!important}.step-title{padding:16px!important;border-radius:18px!important}.step-title b{width:42px!important;height:42px!important;border-radius:14px!important;font-size:18px!important}.step-title strong{font-size:24px!important;line-height:.98!important}.step-title span{font-size:12px!important;line-height:1.25!important}
+      .fields,.checks{padding:12px!important;gap:8px!important;border-radius:18px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-content:start!important;overflow:hidden!important}.field{gap:4px!important}.full{grid-column:1/-1!important}label{font-size:10px!important}select,input,textarea{min-height:42px!important;height:42px!important;font-size:13px!important;border-radius:13px!important;padding:0 10px!important}textarea{min-height:52px!important;height:52px!important;padding:8px 10px!important}.check{padding:10px!important;font-size:12px!important;border-radius:14px!important}.check input{width:20px!important;min-width:20px!important;height:20px!important;min-height:20px!important}
+      .actions{padding:0 10px 10px!important;gap:8px!important}.btn{min-height:42px!important;font-size:13px!important;border-radius:14px!important;padding:0 18px!important}
+      .grade-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important}.grade-card{height:148px!important;border-radius:18px!important;padding:7px!important;grid-template-rows:96px auto auto!important;gap:4px!important}.grade-card img{height:96px!important;border-radius:13px!important}.grade-card span{font-size:9px!important;padding:3px 7px!important}.grade-card strong{font-size:12px!important}
+      .result{padding:10px!important;grid-template-columns:100px 1fr 230px!important;grid-template-rows:1fr 42px!important;gap:8px!important}.summary{gap:7px!important}.row{padding:9px!important;border-radius:14px!important;font-size:9px!important}.row strong{font-size:13px!important}.price{padding:12px!important;border-radius:16px!important}.price strong{font-size:26px!important}.status{padding:8px 10px!important;font-size:10px!important;border-radius:14px!important}
+    }
+  </style>
 </head>
 <body>
   <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
