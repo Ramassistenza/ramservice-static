@@ -766,6 +766,88 @@ footer {
   letter-spacing: 2px;
 }
 
+/* ===============================
+   PAGINE PONTE SHOPIFY
+================================ */
+.shopify-kiosk-body {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Poppins', sans-serif;
+}
+
+.shopify-kiosk-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #000;
+  color: #fff;
+}
+
+.shopify-kiosk-home {
+  position: fixed;
+  top: 28px;
+  left: 28px;
+  width: 110px;
+  height: 92px;
+  border: none;
+  border-radius: 24px;
+  background: #0077cc;
+  color: #fff;
+  font-size: 3.2em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  z-index: 10;
+}
+
+.shopify-kiosk-card {
+  width: min(860px, 86vw);
+  padding: 58px 52px;
+  border-radius: 34px;
+  background: #fff;
+  color: #111827;
+  text-align: center;
+  box-shadow: 0 30px 90px rgba(0,0,0,.65);
+}
+
+.shopify-kiosk-card img {
+  width: 280px;
+  max-width: 70%;
+  margin-bottom: 30px;
+}
+
+.shopify-kiosk-card h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5em;
+  letter-spacing: 2px;
+  color: #0077cc;
+  margin-bottom: 18px;
+}
+
+.shopify-kiosk-card p {
+  font-size: 1.45em;
+  line-height: 1.55;
+  color: #475569;
+  margin-bottom: 34px;
+}
+
+.shopify-kiosk-card button {
+  min-width: 360px;
+  min-height: 96px;
+  border: none;
+  border-radius: 28px;
+  background: #0077cc;
+  color: #fff;
+  font-size: 1.8em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 14px 36px rgba(0,119,204,.35);
+}
+
 /* QR PIÙ GRANDE */
 .fidelity-qr img{
   width: 180px;
@@ -806,6 +888,5 @@ footer {
   letter-spacing: 1px;
   color: #6fb0ff;
 }
-
 
 
