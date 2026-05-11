@@ -45,6 +45,63 @@
       .result{padding:10px!important;grid-template-columns:100px 1fr 230px!important;grid-template-rows:1fr 42px!important;gap:8px!important}.row{padding:9px!important}.price strong{font-size:26px!important}.status{font-size:10px!important}
     }
   </style>
+  <style>
+    @media (min-width:761px){
+      html,body{width:100%;height:100%;overflow:hidden!important;background:#e9eff6!important}
+      body:before{display:none!important}
+      .wrap{width:1048px!important;max-width:calc(100% - 24px)!important;height:100vh!important;margin:0 auto!important;padding:10px 0!important;display:grid!important;grid-template-rows:84px minmax(0,1fr) 216px!important;gap:10px!important}
+      .home{left:16px!important;top:16px!important;width:58px!important;height:58px!important;border-radius:17px!important;font-size:29px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 360px!important;gap:18px!important}
+      .kicker{font-size:12px!important;letter-spacing:.13em!important}
+      .head h1{font-size:64px!important;line-height:.86!important;margin:3px 0 0!important}
+      .head p{font-size:14px!important;line-height:1.2!important;color:#1e293b!important}
+      .card{border-radius:18px!important;background:#fff!important;border:1px solid #d9e3ef!important;box-shadow:0 10px 22px rgba(15,23,42,.08)!important}
+      .grid{height:100%!important;min-height:0!important;display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+      .flow-card{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:66px minmax(0,1fr)!important;background:#fff!important}
+      .steps{height:66px!important;padding:10px!important;gap:8px!important}
+      .steps button{min-height:46px!important;border-radius:14px!important;font-size:13px!important;font-weight:950!important}
+      form{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) 60px!important}
+      .panel{height:100%!important;min-height:0!important;grid-template-columns:240px minmax(0,1fr)!important;gap:10px!important;padding:0 10px 10px!important;overflow:hidden!important}
+      .panel[hidden]{display:none!important}
+      .step-title{height:100%!important;border-radius:18px!important;padding:18px!important;background:#06111f!important;box-shadow:none!important}
+      .step-title b{width:48px!important;height:48px!important;border-radius:14px!important;font-size:20px!important}
+      .step-title strong{font-size:31px!important;line-height:.96!important;margin-top:0!important}
+      .step-title span{font-size:14px!important;line-height:1.25!important;margin-top:10px!important;color:#dbe7f4!important}
+      .fields,.checks{height:100%!important;min-height:0!important;border-radius:18px!important;border:1px solid #d9e3ef!important;background:#f8fafc!important;padding:14px!important;gap:12px!important;overflow:hidden!important}
+      .fields{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-content:start!important}
+      .field{gap:6px!important;min-width:0!important}
+      label{font-size:12px!important;line-height:1.15!important;color:#334155!important;font-weight:950!important}
+      select,input,textarea{height:52px!important;min-height:52px!important;border-radius:14px!important;border:2px solid #c9d6e5!important;background:#fff!important;color:#07111f!important;padding:0 14px!important;font-size:15px!important;font-weight:900!important}
+      textarea{height:86px!important;min-height:86px!important;padding:12px 14px!important;line-height:1.15!important}
+      .full{grid-column:1/-1!important}
+      .panel[data-panel="0"] .fields{grid-template-columns:1fr 1fr!important;grid-template-rows:1fr 1fr!important;align-content:stretch!important}
+      .panel[data-panel="0"] .field{height:100%!important;border-radius:18px!important;background:#fff!important;border:1px solid #d9e3ef!important;padding:22px!important;display:grid!important;grid-template-rows:auto 1fr!important;align-items:end!important}
+      .panel[data-panel="0"] label{font-size:15px!important}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:66px!important;min-height:66px!important;font-size:20px!important;border-radius:17px!important}
+      .grade-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important;height:226px!important;min-height:226px!important}
+      .grade-card{height:226px!important;border-radius:18px!important;border:2px solid #d4e0ec!important;background:#fff!important;padding:10px!important;display:grid!important;grid-template-rows:150px 24px 28px!important;gap:6px!important;text-align:left!important;color:#07111f!important;overflow:hidden!important}
+      .grade-card img{width:100%!important;height:150px!important;object-fit:cover!important;border-radius:14px!important;background:#e5edf6!important}
+      .grade-card span{width:max-content!important;padding:4px 8px!important;border-radius:999px!important;background:#06111f!important;color:#fff!important;font-size:10px!important;line-height:1!important;font-weight:950!important}
+      .grade-card strong{font-size:15px!important;line-height:1.05!important;font-weight:950!important}
+      .grade-card.is-active{border-color:#087cff!important;box-shadow:0 0 0 4px rgba(8,124,255,.13)!important}
+      .panel[data-panel="1"] .fields{grid-template-columns:repeat(3,1fr)!important;grid-auto-rows:minmax(70px,auto)!important}
+      .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr!important;grid-auto-rows:auto!important}
+      .check{font-size:15px!important;line-height:1.25!important;border-radius:16px!important;border:2px solid #d4e0ec!important;background:#fff!important;padding:16px!important}
+      .check input{width:24px!important;min-width:24px!important;height:24px!important;min-height:24px!important}
+      .actions{height:60px!important;padding:0 10px 10px!important;gap:10px!important;display:flex!important;justify-content:flex-end!important;align-items:center!important}
+      .btn{min-height:50px!important;border-radius:14px!important;font-size:15px!important;font-weight:950!important;padding:0 22px!important}
+      .result{height:216px!important;min-height:0!important;padding:12px!important;display:grid!important;grid-template-columns:126px 1fr 270px!important;grid-template-rows:1fr 40px!important;gap:10px!important;align-items:stretch!important}
+      .result>.kicker{display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;background:#fff!important;color:#006ee6!important;text-align:center!important}
+      .summary{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:10px!important}
+      .row{height:100%!important;border-radius:15px!important;background:#f8fafc!important;border:1px solid #d9e3ef!important;padding:13px!important;font-size:11px!important;color:#526070!important}
+      .row strong{font-size:18px!important;line-height:1.05!important;margin-top:8px!important;color:#07111f!important}
+      .price{height:100%!important;border-radius:16px!important;background:#06111f!important;padding:18px!important;color:#fff!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+      .price.locked{background:#132238!important}
+      .price span{font-size:11px!important;letter-spacing:.13em!important;color:#8cc8ff!important}
+      .price strong{font-size:30px!important;line-height:1.02!important;margin-top:8px!important}
+      .status{grid-column:2/4!important;border-radius:12px!important;padding:10px 14px!important;font-size:11px!important;line-height:1.15!important;background:#dcf7e8!important;color:#12643d!important}
+    }
+  </style>
 </head>
 <body>
   <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
