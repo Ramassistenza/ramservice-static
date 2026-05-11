@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Valutazione usato RAMSERVICE Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:#e8edf4;color:#07111f;font-family:Poppins,Arial,sans-serif;min-height:100vh;overflow:hidden}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 52% 8%,rgba(0,110,230,.2),transparent 30%),linear-gradient(180deg,#f8fbff 0,#dce5ef 48%,#cfdbe8 100%);pointer-events:none}.home{position:fixed;left:28px;top:28px;z-index:20;width:76px;height:76px;border:0;border-radius:26px;background:#06111f;color:#fff;font-size:38px;font-weight:900;box-shadow:0 20px 42px rgba(7,17,31,.26)}.wrap{position:relative;width:min(1048px,calc(100% - 32px));height:100vh;margin:0 auto;padding:24px 0;display:grid;grid-template-rows:118px minmax(0,1fr) 292px;gap:18px}.head{display:grid;grid-template-columns:1fr 420px;align-items:center;gap:22px;padding-left:100px}.kicker{color:#006ee6;font-size:15px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:78px;letter-spacing:.01em;line-height:.86;margin:6px 0 0}.head p{margin:0;color:#304052;font-size:18px;line-height:1.25;font-weight:900}.grid{min-height:0;display:grid;grid-template-columns:1fr;gap:18px}.card{background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.85);border-radius:34px;box-shadow:0 24px 60px rgba(15,23,42,.16)}.flow-card{display:grid;grid-template-rows:96px minmax(0,1fr);min-height:0;background:linear-gradient(180deg,#fff,#f4f8fc)}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px}.steps button{min-height:60px;border:0;border-radius:22px;background:#edf3f9;color:#647386;font-weight:950;font-size:17px}.steps button.active{background:linear-gradient(145deg,#06111f,#12243a);color:#fff;box-shadow:0 16px 30px rgba(7,17,31,.2)}form{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) 92px}.panel{padding:0 18px 18px;display:grid;grid-template-columns:330px 1fr;gap:20px;min-height:0}.panel[hidden]{display:none}.fields{min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-content:start;background:#fff;border:2px solid #e3ebf4;border-radius:30px;padding:26px}.field{display:grid;gap:9px}.full{grid-column:1/-1}label{font-size:15px;color:#3d4b5e;font-weight:950}select,input,textarea{width:100%;min-height:82px;border:2px solid #cbd7e6;border-radius:24px;background:#fbfdff;color:#07111f;padding:0 22px;font:inherit;font-size:23px;font-weight:900}textarea{padding:18px 22px;min-height:124px;resize:none}.checks{display:grid;gap:18px;align-content:start;background:#fff;border:2px solid #e3ebf4;border-radius:30px;padding:28px}.check{display:flex;gap:16px;align-items:flex-start;padding:22px;border:2px solid #d8e3ef;border-radius:26px;background:#fbfdff;color:#344256;font-size:20px;font-weight:850;line-height:1.35}.check input{width:34px;min-width:34px;height:34px;min-height:34px;accent-color:#006ee6}.actions{display:flex;gap:14px;justify-content:flex-end;align-items:center;padding:0 18px 18px}.btn{min-height:68px;border:0;border-radius:24px;padding:0 34px;font:inherit;font-size:21px;font-weight:950;cursor:pointer}.primary{background:linear-gradient(180deg,#0a84ff,#0067df);color:#fff;box-shadow:0 18px 34px rgba(0,110,230,.28)}.dark{background:#06111f;color:#fff}.ghost{background:#edf3f9;color:#07111f}.result{padding:22px;display:grid;grid-template-columns:164px 1fr 330px;grid-template-rows:1fr 70px;align-items:stretch;gap:14px}.result>.kicker{align-self:center}.price{border-radius:28px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:26px;min-height:0}.price.locked{background:linear-gradient(145deg,#132034,#25364e)}.price span{display:block;color:#92cbff;font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:950}.price strong{display:block;margin-top:12px;font-size:46px;line-height:.98}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.row{padding:18px;border-radius:24px;background:#f7fafc;color:#526070;font-size:14px;font-weight:900}.row span,.row strong{display:block}.row strong{margin-top:10px;color:#07111f;font-size:21px;line-height:1.08}.status{grid-column:2/4;padding:17px 20px;border-radius:22px;background:#eff6ff;color:#07539f;font-weight:950;font-size:16px;line-height:1.25}.status.ok{background:#e4f8ed;color:#12643d}.status.err{background:#fff0f0;color:#991b1b}.step-title{min-height:100%;border-radius:30px;background:radial-gradient(circle at 30% 18%,rgba(0,132,255,.32),transparent 34%),linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:34px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}.step-title b{display:grid;place-items:center;width:76px;height:76px;border-radius:24px;background:#fff;color:#06111f;font-size:30px}.step-title strong{display:block;margin-top:28px;font-size:43px;line-height:.94}.step-title span{display:block;color:#cbd8e8;font-size:20px;font-weight:850;line-height:1.35;margin-top:18px}@media(max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto}.head{display:block;padding-left:92px}.head p{margin-top:10px}.panel,.fields,.summary,.result{grid-template-columns:1fr}.home{width:68px;height:68px;font-size:32px}}
+    @media (min-width:761px){
+      .wrap{padding:14px 0;grid-template-rows:90px minmax(0,1fr) 210px;gap:10px}.home{left:22px;top:22px;width:64px;height:64px;border-radius:22px;font-size:31px}.head{grid-template-columns:1fr 360px;padding-left:82px}.head h1{font-size:61px}.head p{font-size:14px}.flow-card{grid-template-rows:70px minmax(0,1fr)}.steps{padding:10px 12px;gap:8px}.steps button{min-height:50px;font-size:13px;border-radius:16px}form{grid-template-rows:minmax(0,1fr) 68px}.panel{grid-template-columns:270px 1fr;gap:14px;padding:0 12px 12px}.step-title{padding:22px;border-radius:22px}.step-title b{width:54px;height:54px;border-radius:17px;font-size:22px}.step-title strong{font-size:31px}.step-title span{font-size:14px}.fields{padding:16px;gap:12px;border-radius:22px;overflow:hidden}.field{gap:5px}label{font-size:11px}select,input,textarea{min-height:54px;font-size:16px;border-radius:16px;padding:0 14px}textarea{min-height:76px;padding:12px 14px}.check{padding:13px;font-size:14px}.check input{width:24px;min-width:24px;height:24px;min-height:24px}.actions{padding:0 12px 12px}.btn{min-height:52px;font-size:15px;border-radius:17px}.result{padding:14px;grid-template-columns:122px 1fr 250px;grid-template-rows:1fr 48px;gap:10px}.summary{gap:8px}.row{padding:11px;border-radius:16px;font-size:10px}.row strong{font-size:14px}.price{padding:16px;border-radius:18px}.price strong{font-size:30px}.status{padding:10px 12px;font-size:11px;border-radius:16px}
+      .grade-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.grade-card{border:2px solid #d8e3ef;border-radius:18px;background:#fff;padding:6px;text-align:left;font:inherit;color:#07111f;display:grid;grid-template-rows:78px auto auto;gap:5px}.grade-card img{width:100%;height:78px;object-fit:cover;border-radius:13px;background:#e5edf6}.grade-card span{display:inline-flex;width:max-content;padding:3px 7px;border-radius:999px;background:#06111f;color:#fff;font-size:9px;font-weight:950}.grade-card strong{font-size:12px;line-height:1}.grade-card.is-active{border-color:#0a7cff;box-shadow:0 0 0 3px rgba(10,124,255,.12)}
+    }
+  </style>
+  <style>
+    @media (min-width:761px){
+      html,body{overflow:hidden!important}
+      .wrap{width:min(1040px,calc(100% - 28px))!important;height:100vh!important;padding:12px 0!important;grid-template-rows:82px minmax(0,1fr) 176px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:58px!important;height:58px!important;border-radius:18px!important;font-size:28px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 330px!important;gap:14px!important}.head h1{font-size:56px!important}.head p{font-size:13px!important;line-height:1.18!important}.kicker{font-size:11px!important}
+      .card{border-radius:22px!important}.flow-card{grid-template-rows:58px minmax(0,1fr)!important}.steps{padding:8px 10px!important;gap:7px!important}.steps button{min-height:42px!important;font-size:12px!important;border-radius:14px!important}
+      form{grid-template-rows:minmax(0,1fr) 58px!important}.panel{grid-template-columns:210px 1fr!important;gap:10px!important;padding:0 10px 10px!important}.step-title{padding:16px!important;border-radius:18px!important}.step-title b{width:42px!important;height:42px!important;border-radius:14px!important;font-size:18px!important}.step-title strong{font-size:24px!important;line-height:.98!important}.step-title span{font-size:12px!important;line-height:1.25!important}
+      .fields,.checks{padding:12px!important;gap:8px!important;border-radius:18px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-content:start!important;overflow:hidden!important}.field{gap:4px!important}.full{grid-column:1/-1!important}label{font-size:10px!important}select,input,textarea{min-height:42px!important;height:42px!important;font-size:13px!important;border-radius:13px!important;padding:0 10px!important}textarea{min-height:52px!important;height:52px!important;padding:8px 10px!important}.check{padding:10px!important;font-size:12px!important;border-radius:14px!important}.check input{width:20px!important;min-width:20px!important;height:20px!important;min-height:20px!important}
+      .actions{padding:0 10px 10px!important;gap:8px!important}.btn{min-height:42px!important;font-size:13px!important;border-radius:14px!important;padding:0 18px!important}
+      .grade-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important}.grade-card{height:148px!important;border-radius:18px!important;padding:7px!important;grid-template-rows:96px auto auto!important;gap:4px!important}.grade-card img{height:96px!important;border-radius:13px!important}.grade-card span{font-size:9px!important;padding:3px 7px!important}.grade-card strong{font-size:12px!important}
+      .result{padding:10px!important;grid-template-columns:100px 1fr 230px!important;grid-template-rows:1fr 42px!important;gap:8px!important}.summary{gap:7px!important}.row{padding:9px!important;border-radius:14px!important;font-size:9px!important}.row strong{font-size:13px!important}.price{padding:12px!important;border-radius:16px!important}.price strong{font-size:26px!important}.status{padding:8px 10px!important;font-size:10px!important;border-radius:14px!important}
+    }
+  </style>
+  <style>
+    @media (min-width:761px){
+      body{background:#edf2f7!important}
+      body:before{display:none!important}
+      .wrap{width:1040px!important;max-width:calc(100% - 24px)!important;height:100vh!important;padding:12px 0!important;grid-template-rows:76px minmax(0,1fr) 184px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:56px!important;height:56px!important;border-radius:16px!important}
+      .head{padding-left:72px!important;grid-template-columns:1fr 300px!important}.head h1{font-size:52px!important}.head p{font-size:12px!important;line-height:1.16!important}.kicker{font-size:10px!important}
+      .card{border-radius:20px!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}
+      .flow-card{grid-template-rows:58px minmax(0,1fr)!important;background:#fff!important}
+      .steps{padding:8px 10px!important;gap:8px!important}.steps button{min-height:42px!important;font-size:13px!important;border-radius:14px!important}
+      form{grid-template-rows:minmax(0,1fr) 56px!important}.panel{grid-template-columns:220px 1fr!important;gap:10px!important;padding:0 10px 10px!important}
+      .step-title{padding:16px!important;border-radius:18px!important}.step-title b{width:42px!important;height:42px!important}.step-title strong{font-size:25px!important}.step-title span{font-size:12px!important}
+      .fields,.checks{background:#fff!important;border-radius:18px!important;padding:12px!important;gap:9px!important;grid-template-columns:repeat(3,1fr)!important;overflow:hidden!important}
+      .grade-strip{grid-template-columns:repeat(4,1fr)!important;gap:10px!important}.grade-card{height:168px!important;grid-template-rows:112px auto auto!important;padding:8px!important}.grade-card img{height:112px!important}.grade-card strong{font-size:13px!important}
+      label{font-size:11px!important}select,input,textarea{height:46px!important;min-height:46px!important;font-size:14px!important;border-radius:13px!important}textarea{height:58px!important;min-height:58px!important}
+      .actions{padding:0 10px 10px!important}.btn{min-height:42px!important;font-size:13px!important}
+      .result{padding:10px!important;grid-template-columns:100px 1fr 230px!important;grid-template-rows:1fr 42px!important;gap:8px!important}.row{padding:9px!important}.price strong{font-size:26px!important}.status{font-size:10px!important}
+    }
+  </style>
+  <style>
+    @media (min-width:761px){
+      html,body{width:100%;height:100%;overflow:hidden!important;background:#e9eff6!important}
+      body:before{display:none!important}
+      .wrap{width:1048px!important;max-width:calc(100% - 24px)!important;height:100vh!important;margin:0 auto!important;padding:10px 0!important;display:grid!important;grid-template-rows:84px minmax(0,1fr) 216px!important;gap:10px!important}
+      .home{left:16px!important;top:16px!important;width:58px!important;height:58px!important;border-radius:17px!important;font-size:29px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 360px!important;gap:18px!important}
+      .kicker{font-size:12px!important;letter-spacing:.13em!important}
+      .head h1{font-size:64px!important;line-height:.86!important;margin:3px 0 0!important}
+      .head p{font-size:14px!important;line-height:1.2!important;color:#1e293b!important}
+      .card{border-radius:18px!important;background:#fff!important;border:1px solid #d9e3ef!important;box-shadow:0 10px 22px rgba(15,23,42,.08)!important}
+      .grid{height:100%!important;min-height:0!important;display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+      .flow-card{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:66px minmax(0,1fr)!important;background:#fff!important}
+      .steps{height:66px!important;padding:10px!important;gap:8px!important}
+      .steps button{min-height:46px!important;border-radius:14px!important;font-size:13px!important;font-weight:950!important}
+      form{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) 60px!important}
+      .panel{height:100%!important;min-height:0!important;grid-template-columns:240px minmax(0,1fr)!important;gap:10px!important;padding:0 10px 10px!important;overflow:hidden!important}
+      .panel[hidden]{display:none!important}
+      .step-title{height:100%!important;border-radius:18px!important;padding:18px!important;background:#06111f!important;box-shadow:none!important}
+      .step-title b{width:48px!important;height:48px!important;border-radius:14px!important;font-size:20px!important}
+      .step-title strong{font-size:31px!important;line-height:.96!important;margin-top:0!important}
+      .step-title span{font-size:14px!important;line-height:1.25!important;margin-top:10px!important;color:#dbe7f4!important}
+      .fields,.checks{height:100%!important;min-height:0!important;border-radius:18px!important;border:1px solid #d9e3ef!important;background:#f8fafc!important;padding:14px!important;gap:12px!important;overflow:hidden!important}
+      .fields{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-content:start!important}
+      .field{gap:6px!important;min-width:0!important}
+      label{font-size:12px!important;line-height:1.15!important;color:#334155!important;font-weight:950!important}
+      select,input,textarea{height:52px!important;min-height:52px!important;border-radius:14px!important;border:2px solid #c9d6e5!important;background:#fff!important;color:#07111f!important;padding:0 14px!important;font-size:15px!important;font-weight:900!important}
+      textarea{height:86px!important;min-height:86px!important;padding:12px 14px!important;line-height:1.15!important}
+      .full{grid-column:1/-1!important}
+      .panel[data-panel="0"] .fields{grid-template-columns:1fr 1fr!important;grid-template-rows:1fr 1fr!important;align-content:stretch!important}
+      .panel[data-panel="0"] .field{height:100%!important;border-radius:18px!important;background:#fff!important;border:1px solid #d9e3ef!important;padding:22px!important;display:grid!important;grid-template-rows:auto 1fr!important;align-items:end!important}
+      .panel[data-panel="0"] label{font-size:15px!important}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:66px!important;min-height:66px!important;font-size:20px!important;border-radius:17px!important}
+      .grade-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important;height:226px!important;min-height:226px!important}
+      .grade-card{height:226px!important;border-radius:18px!important;border:2px solid #d4e0ec!important;background:#fff!important;padding:10px!important;display:grid!important;grid-template-rows:150px 24px 28px!important;gap:6px!important;text-align:left!important;color:#07111f!important;overflow:hidden!important}
+      .grade-card img{width:100%!important;height:150px!important;object-fit:cover!important;border-radius:14px!important;background:#e5edf6!important}
+      .grade-card span{width:max-content!important;padding:4px 8px!important;border-radius:999px!important;background:#06111f!important;color:#fff!important;font-size:10px!important;line-height:1!important;font-weight:950!important}
+      .grade-card strong{font-size:15px!important;line-height:1.05!important;font-weight:950!important}
+      .grade-card.is-active{border-color:#087cff!important;box-shadow:0 0 0 4px rgba(8,124,255,.13)!important}
+      .panel[data-panel="1"] .fields{grid-template-columns:repeat(3,1fr)!important;grid-auto-rows:minmax(70px,auto)!important}
+      .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr!important;grid-auto-rows:auto!important}
+      .check{font-size:15px!important;line-height:1.25!important;border-radius:16px!important;border:2px solid #d4e0ec!important;background:#fff!important;padding:16px!important}
+      .check input{width:24px!important;min-width:24px!important;height:24px!important;min-height:24px!important}
+      .actions{height:60px!important;padding:0 10px 10px!important;gap:10px!important;display:flex!important;justify-content:flex-end!important;align-items:center!important}
+      .btn{min-height:50px!important;border-radius:14px!important;font-size:15px!important;font-weight:950!important;padding:0 22px!important}
+      .result{height:216px!important;min-height:0!important;padding:12px!important;display:grid!important;grid-template-columns:126px 1fr 270px!important;grid-template-rows:1fr 40px!important;gap:10px!important;align-items:stretch!important}
+      .result>.kicker{display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;background:#fff!important;color:#006ee6!important;text-align:center!important}
+      .summary{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:10px!important}
+      .row{height:100%!important;border-radius:15px!important;background:#f8fafc!important;border:1px solid #d9e3ef!important;padding:13px!important;font-size:11px!important;color:#526070!important}
+      .row strong{font-size:18px!important;line-height:1.05!important;margin-top:8px!important;color:#07111f!important}
+      .price{height:100%!important;border-radius:16px!important;background:#06111f!important;padding:18px!important;color:#fff!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+      .price.locked{background:#132238!important}
+      .price span{font-size:11px!important;letter-spacing:.13em!important;color:#8cc8ff!important}
+      .price strong{font-size:30px!important;line-height:1.02!important;margin-top:8px!important}
+      .status{grid-column:2/4!important;border-radius:12px!important;padding:10px 14px!important;font-size:11px!important;line-height:1.15!important;background:#dcf7e8!important;color:#12643d!important}
+    }
+  </style>
+</head>
+<body>
+  <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
+  <main class="wrap">
+    <header class="head">
+      <div><div class="kicker">RAMSERVICE Kiosk</div><h1>Valuta il tuo usato</h1></div>
+      <p>Prima stima immediata. Il valore finale viene confermato in negozio dopo controllo tecnico, account, IMEI e condizioni reali.</p>
+    </header>
+
+    <section class="grid">
+      <div class="card flow-card">
+        <div class="steps">
+          <button class="active" data-step-btn="0">1. Modello</button>
+          <button data-step-btn="1">2. Stato</button>
+          <button data-step-btn="2">3. Cliente</button>
+          <button data-step-btn="3">4. Stima</button>
+        </div>
+        <form id="form">
+          <div class="panel" data-panel="0">
+            <div class="step-title"><b>1</b><div><strong>Scegli il dispositivo</strong><span>Marca, modello, memoria e batteria preparano il riepilogo.</span></div></div>
+            <div class="fields">
+              <div class="field"><label>Marca</label><select id="brand" data-label="Marca"></select></div>
+              <div class="field"><label>Modello</label><select id="model" required data-label="Modello"></select></div>
+              <div class="field"><label>Memoria</label><select id="storage" required data-label="Memoria"></select></div>
+              <div class="field"><label>Salute batteria</label><input id="battery" type="number" min="0" max="100" placeholder="Es. 88" data-label="Salute batteria"></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="1" hidden>
+            <div class="step-title"><b>2</b><div><strong>Controlla lo stato</strong><span>Condizioni, display, riparazioni e accessori modificano la stima finale.</span></div></div>
+            <div class="fields">
+              <div class="grade-strip full" aria-label="Esempi condizioni estetiche">
+                <button type="button" class="grade-card" data-grade="ottimo"><img src="https://www.ramserviceitalia.it/cdn/shop/files/1524AB14-B38C-4CA3-8C31-0A4C6C4D7CA6.png?v=1778329888&width=352" alt="Grado A Ottimo"><span>Grado A</span><strong>Ottimo</strong></button>
+                <button type="button" class="grade-card" data-grade="buono"><img src="https://www.ramserviceitalia.it/cdn/shop/files/703C2115-92F0-4190-B6DF-FA265094531E.png?v=1778329890&width=352" alt="Grado B Buono"><span>Grado B</span><strong>Buono</strong></button>
+                <button type="button" class="grade-card" data-grade="segni"><img src="https://www.ramserviceitalia.it/cdn/shop/files/92E9FF1D-FC87-49A9-9B37-2F865A696F24.png?v=1778329891&width=352" alt="Grado C Segni evidenti"><span>Grado C</span><strong>Segni evidenti</strong></button>
+                <button type="button" class="grade-card" data-grade="danneggiato"><img src="https://www.ramserviceitalia.it/cdn/shop/files/48E84DB3-D5C5-43F9-AC22-08DB115FB8ED.png?v=1778329893&width=352" alt="Grado D Danneggiato"><span>Grado D</span><strong>Danneggiato</strong></button>
+              </div>
+              <div class="field"><label>Condizione estetica</label><select id="condition" data-label="Condizione estetica"><option value="ottimo">Ottimo</option><option value="buono" selected>Buono</option><option value="segni">Segni evidenti</option><option value="danneggiato">Danneggiato</option></select></div>
+              <div class="field"><label>Display</label><select id="display" data-label="Display"><option value="ok" selected>Perfetto</option><option value="graffi">Graffi</option><option value="non_originale">Non originale</option><option value="rotto">Rotto o difettoso</option></select></div>
+              <div class="field"><label>Riparazioni effettuate</label><select id="repairs" data-label="Riparazioni effettuate"><option value="nessuna" selected>Nessuna riparazione</option><option value="non_note">Non so / non sono note</option><option value="apple_documentate">Riparazioni Apple o centro autorizzato documentate</option><option value="batteria_documentata">Batteria sostituita con intervento documentato</option><option value="batteria_non_originale">Batteria sostituita non originale / non documentata</option><option value="display_documentato">Display sostituito documentato</option><option value="display_non_originale">Display sostituito non originale / non documentato</option><option value="vetro_posteriore">Vetro posteriore o scocca sostituiti</option><option value="fotocamera_faceid">Fotocamera, Face ID o sensori riparati/difettosi</option><option value="connettore_audio">Connettore, speaker, microfono o tasti riparati</option><option value="liquidi">Contatto con liquidi / ossidazione nota</option><option value="scheda">Scheda madre riparata</option></select></div>
+              <div class="field"><label>Accessori e scatola</label><select id="accessories" data-label="Accessori e scatola"><option value="completi">Scatola e accessori</option><option value="scatola">Solo scatola</option><option value="cavo">Solo cavo</option><option value="nessuno" selected>Nessuno</option></select></div>
+              <div class="field"><label>Prova acquisto</label><select id="proof" data-label="Prova acquisto"><option value="presente">Fattura o scontrino presente</option><option value="dichiarazione">Dichiarazione di vendita</option><option value="assente" selected>Assente</option></select></div>
+              <div class="field"><label>Preferenza</label><select id="preference" data-label="Preferenza"><option>Vorrei far verificare il dispositivo in negozio</option><option>Vorrei usare il valore come credito per un nuovo acquisto</option><option>Vorrei ricevere pagamento con bonifico dopo conferma tecnica</option></select></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="2" hidden>
+            <div class="step-title"><b>3</b><div><strong>Dati cliente</strong><span>Servono per salvare la richiesta nella dashboard e ricontattare il cliente.</span></div></div>
+            <div class="fields">
+              <div class="field"><label>Nome e cognome</label><input id="name" required data-label="Nome e cognome"></div>
+              <div class="field"><label>Telefono</label><input id="phone" required data-label="Telefono"></div>
+              <div class="field"><label>Email</label><input id="email" type="email" data-label="Email"></div>
+              <div class="field"><label>IMEI o seriale</label><input id="imei" data-label="IMEI o seriale" placeholder="Facoltativo"></div>
+              <div class="field full"><label>Note</label><textarea id="notes" data-label="Note" placeholder="Difetti, accessori, colore, blocchi, dettagli utili"></textarea></div>
+              <label class="check full"><input id="origin" type="checkbox" required data-label="Conferma account/IMEI"><span>Confermo che il dispositivo è mio, senza blocchi account e verificabile in negozio.</span></label>
+            </div>
+          </div>
+          <div class="panel" data-panel="3" hidden>
+            <div class="step-title"><b>4</b><div><strong>Stima e conferma</strong><span>Il valore indicativo viene mostrato solo dopo tutti i passaggi.</span></div></div>
+            <div class="checks">
+              <label class="check"><input id="accept" type="checkbox" required><span>Ho capito che questa è una stima indicativa. Il valore definitivo viene confermato solo dopo controllo tecnico RAMSERVICE.</span></label>
+            </div>
+            <div class="actions">
+              <button class="btn primary" type="submit">Invia richiesta in dashboard</button>
+              <button class="btn dark" type="button" id="wa">Invia su WhatsApp</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" type="button" id="prev" hidden>Indietro</button>
+            <button class="btn primary" type="button" id="next">Avanti</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="card result">
+        <div class="kicker">Stima online</div>
+        <div class="summary">
+          <div class="row"><span>Dispositivo</span><strong id="sumModel">-</strong></div>
+          <div class="row"><span>Condizione</span><strong id="sumCond">-</strong></div>
+          <div class="row"><span>Validità</span><strong id="sumExp">7 giorni</strong></div>
+        </div>
+        <div class="price locked" id="priceBox"><span>Valore indicativo</span><strong id="estimate">Completa tutti i passaggi</strong></div>
+        <div class="status" id="status">Carico quotazioni sincronizzate dalla pagina Shopify...</div>
+      </aside>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const SHOPIFY_PAGE = "https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato";
+  const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
+  const WHATSAPP = "393475941558";
+  const fallbackQuotes = [
+    ["iPhone 16 Pro Max",[["256GB",979],["512GB",1119],["1TB",1269]]],["iPhone 16 Pro",[["128GB",879],["256GB",949],["512GB",1089],["1TB",1229]]],["iPhone 16 Plus",[["128GB",759],["256GB",829],["512GB",949]]],["iPhone 16",[["128GB",689],["256GB",759],["512GB",879]]],["iPhone 15 Pro Max",[["256GB",849],["512GB",969],["1TB",1089]]],["iPhone 15 Pro",[["128GB",749],["256GB",829],["512GB",949],["1TB",1069]]],["iPhone 15",[["128GB",549],["256GB",629],["512GB",749]]],["iPhone 14 Pro Max",[["128GB",649],["256GB",719],["512GB",839],["1TB",949]]],["iPhone 14 Pro",[["128GB",595],["256GB",665],["512GB",779],["1TB",879]]],["iPhone 14",[["128GB",389],["256GB",459],["512GB",549]]],["iPhone 13 Pro Max",[["128GB",589],["256GB",649],["512GB",759],["1TB",879]]],["iPhone 13 Pro",[["128GB",449],["256GB",519],["512GB",629],["1TB",749]]],["iPhone 13",[["128GB",299],["256GB",359],["512GB",469]]],["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]],["Galaxy S25 Ultra",[["256GB",780],["512GB",890],["1TB",1020]],"Samsung"],["Galaxy S24 Ultra",[["256GB",650],["512GB",740],["1TB",860]],"Samsung"],["Galaxy S23 Ultra",[["256GB",480],["512GB",560],["1TB",680]],"Samsung"]
+  ];
+  let quotes = fallbackQuotes;
+  let step = 0;
+  let estimateRevealed = false;
+  const $ = (id) => document.getElementById(id);
+  const panels = [...document.querySelectorAll("[data-panel]")];
+  const stepBtns = [...document.querySelectorAll("[data-step-btn]")];
+  const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(v||0))));
+  const quoteBrand = (row) => row[2] || "Apple";
+
+  async function loadShopifyQuotes(){
+    try{
+      const html = await fetch(SHOPIFY_PAGE + "?kiosk_sync=" + Date.now(), {cache:"no-store"}).then((r)=>r.text());
+      const match = html.match(/const\s+quotes\s*=\s*(\[[\s\S]*?\n\s*\]);/);
+      if (!match) throw new Error("quotazioni non trovate");
+      const parsed = Function(`"use strict";return (${match[1]});`)();
+      if (!Array.isArray(parsed) || !parsed.length) throw new Error("quotazioni vuote");
+      quotes = parsed;
+      $("status").textContent = "Quotazioni sincronizzate con Shopify.";
+      $("status").className = "status ok";
+    }catch(error){
+      $("status").textContent = "Uso quotazioni locali di sicurezza. Controllare sincronizzazione Shopify.";
+      $("status").className = "status err";
+    }
+    populateBrands();
+  }
+
+  function populateBrands(){
+    const brands = [...new Set(quotes.map(quoteBrand))].sort();
+    $("brand").innerHTML = brands.map((b)=>`<option>${b}</option>`).join("");
+    populateModels();
+  }
+  function populateModels(){
+    const brand = $("brand").value || "Apple";
+    $("model").innerHTML = '<option value="" selected disabled>Seleziona modello</option>' + quotes.filter((r)=>quoteBrand(r)===brand).map((r)=>`<option>${r[0]}</option>`).join("");
+    populateStorage();
+  }
+  function populateStorage(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    $("storage").innerHTML = row ? '<option value="" selected disabled>Seleziona memoria</option>' + row[1].map(([s])=>`<option>${s}</option>`).join("") : '<option value="">Prima scegli il modello</option>';
+    calculate();
+  }
+  function selectedQuote(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    const storage = row?.[1]?.find(([s])=>s===$("storage").value);
+    return storage ? {brand:$("brand").value,model:row[0],storage:storage[0],market:storage[1]} : null;
+  }
+  function calculate(){
+    const q = selectedQuote();
+    if(!q){$("estimate").textContent="Completa tutti i passaggi";$("priceBox").classList.add("locked");$("sumModel").textContent="-";return null;}
+    let factor=.56;
+    const condition=$("condition").value, display=$("display").value, repairs=$("repairs").value, accessories=$("accessories").value, proof=$("proof").value;
+    const battery=Number($("battery").value||0);
+    if(condition==="ottimo")factor+=.04;if(condition==="segni")factor-=.09;if(condition==="danneggiato")factor-=.22;
+    if(display==="graffi")factor-=.06;if(display==="non_originale")factor-=.14;if(display==="rotto")factor-=.30;
+    if(repairs==="non_note")factor-=.06;if(repairs==="apple_documentate")factor-=.02;if(repairs==="batteria_documentata")factor-=.03;if(repairs==="batteria_non_originale")factor-=.10;if(repairs==="display_documentato")factor-=.07;if(repairs==="display_non_originale")factor-=.16;if(repairs==="vetro_posteriore")factor-=.08;if(repairs==="fotocamera_faceid")factor-=.18;if(repairs==="connettore_audio")factor-=.08;if(repairs==="liquidi"||repairs==="scheda")factor-=.25;
+    if(accessories==="completi")factor+=.02;if(accessories==="nessuno")factor-=.03;if(proof==="presente")factor+=.02;if(proof==="assente")factor-=.04;
+    if(battery && battery<80)factor-=.08;if(battery && battery<75)factor-=.14;
+    const max=Math.max(0,Math.round(q.market*Math.max(.18,factor)));
+    const min=Math.max(0,Math.round(max*.82));
+    const expiry=new Date(); expiry.setDate(expiry.getDate()+7);
+    $("sumModel").textContent=`${q.model} ${q.storage}`;
+    $("sumCond").textContent=$("condition").selectedOptions[0]?.textContent || "-";
+    $("sumExp").textContent=expiry.toLocaleDateString("it-IT");
+    if (estimateRevealed) {
+      $("estimate").textContent=`${money(min)} - ${money(max)}`;
+      $("priceBox").classList.remove("locked");
+    } else {
+      $("estimate").textContent="Completa tutti i passaggi";
+      $("priceBox").classList.add("locked");
+    }
+    return {...q,min,max,expiresAt:expiry.toLocaleDateString("it-IT")};
+  }
+  function showStep(next){
+    step=Math.max(0,Math.min(3,next));
+    if (step < 3) estimateRevealed = false;
+    panels.forEach((p,i)=>p.hidden=i!==step);
+    stepBtns.forEach((b,i)=>b.classList.toggle("active",i===step));
+    $("prev").hidden=step===0;$("next").hidden=step===3;
+    calculate();
+  }
+  function validateCurrent(){
+    const invalid=[...panels[step].querySelectorAll("input,select,textarea")].find((el)=>!el.checkValidity());
+    if(invalid){invalid.reportValidity();return false;}
+    return true;
+  }
+  function buildSummary(){
+    const est=calculate();
+    const rows=["Richiesta valutazione usato RAMSERVICE Kiosk","",`Stima online: ${est ? `${money(est.min)} - ${money(est.max)}` : "-"}`,`Scadenza stima: ${est?.expiresAt || "-"}`,"","Dati inseriti dal cliente:"];
+    document.querySelectorAll("[data-label]").forEach((field)=>rows.push(`${field.dataset.label}: ${field.type==="checkbox" ? (field.checked?"Confermato":"Non confermato") : (field.value||"-")}`));
+    rows.push("Nota: stima indicativa da confermare in negozio dopo verifica tecnica.");
+    return rows.join("\n");
+  }
+  async function submitRequest(){
+    const summary=buildSummary();
+    const payload={type:"valutazione_usato",source:"kiosk-valutazione-usato",pageUrl:location.href,subject:"Richiesta valutazione usato da kiosk",name:$("name").value,phone:$("phone").value,email:$("email").value,summary,fields:{Marca:$("brand").value,Modello:$("model").value,Memoria:$("storage").value,"Salute batteria":$("battery").value,Telefono:$("phone").value,Email:$("email").value,"Nome e cognome":$("name").value},userAgent:navigator.userAgent};
+    const res=await fetch(`${API}/site-requests`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.ok) throw new Error(data.error||"Errore invio richiesta");
+    $("status").textContent=`Richiesta inviata in dashboard. ID ${data.id}`;
+    $("status").className="status ok";
+  }
+  $("brand").addEventListener("change",populateModels);$("model").addEventListener("change",populateStorage);
+  document.querySelectorAll("[data-grade]").forEach((button)=>button.addEventListener("click",()=>{$("condition").value=button.dataset.grade;document.querySelectorAll("[data-grade]").forEach((item)=>item.classList.toggle("is-active",item===button));calculate();}));
+  document.querySelector('[data-grade="buono"]')?.classList.add("is-active");
+  document.querySelectorAll("input,select,textarea").forEach((el)=>el.addEventListener("input",calculate));
+  $("next").addEventListener("click",()=>{if(validateCurrent()){if(step===2) estimateRevealed=true;showStep(step+1);}});
+  $("prev").addEventListener("click",()=>showStep(step-1));
+  $("form").addEventListener("submit",async(e)=>{e.preventDefault();estimateRevealed=true;calculate();if(!validateCurrent())return;try{$("status").textContent="Invio richiesta in dashboard...";await submitRequest();}catch(err){$("status").textContent=err.message;$("status").className="status err";}});
+  $("wa").addEventListener("click",()=>{estimateRevealed=true;calculate();if(!validateCurrent())return;window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildSummary())}`,"_blank","noopener");});
+  loadShopifyQuotes();
+})();
+</script>
+</body>
+</html>
