@@ -18,6 +18,20 @@
       .checkout-grid{gap:10px}.customer-card,.pay-card{padding:13px}.customer-card h2,.pay-card h2{font-size:18px;margin-bottom:8px}.customer-fields{gap:7px}.customer-fields textarea{min-height:46px}.price{padding:12px;border-radius:18px}.price strong{font-size:34px}.check{padding:6px 8px;font-size:10.5px}.status{padding:7px 9px;font-size:10px}#pay{min-height:48px;font-size:15px;border-radius:16px}
     }
   </style>
+  <style>
+    @media (min-width:761px){
+      html,body{overflow:hidden!important}
+      .wrap{width:min(1040px,calc(100% - 28px))!important;height:100vh!important;padding:12px 0!important;grid-template-rows:82px 276px minmax(0,1fr) 218px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:58px!important;height:58px!important;border-radius:18px!important;font-size:28px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 330px!important;gap:14px!important}.head h1{font-size:56px!important}.head p{font-size:13px!important;line-height:1.18!important}.kicker{font-size:11px!important}
+      .card{border-radius:22px!important}.tools-panel{padding:10px!important;grid-template-rows:56px minmax(0,1fr)!important;gap:8px!important}.top-row{grid-template-columns:1fr 210px!important;gap:10px!important}.mini-price{display:none!important}.upload-tile{min-height:52px!important;height:52px!important;border-radius:16px!important}.upload-tile:before{width:38px!important;height:38px!important;border-radius:12px!important}.upload-tile strong{font-size:12px!important}.upload-tile span{font-size:9px!important}
+      .tool-grid{grid-template-columns:.82fr 1.18fr!important;gap:8px!important}.tool-box{padding:10px!important;border-radius:18px!important;gap:8px!important;overflow:hidden!important}.tool-title{font-size:14px!important}.tool-title b{width:24px!important;height:24px!important;border-radius:9px!important;font-size:11px!important}
+      label{font-size:10px!important;gap:4px!important}select,input,textarea{min-height:38px!important;height:38px!important;font-size:12px!important;border-radius:12px!important;padding:0 10px!important}textarea{min-height:48px!important;height:48px!important;padding:8px 10px!important}.btn{min-height:38px!important;font-size:11px!important;border-radius:12px!important;padding:0 10px!important}
+      .range-row{grid-template-columns:1fr 1fr 62px!important;gap:7px!important}.range-row input[type=range]{min-height:26px!important}.color-field{grid-template-columns:34px 1fr!important}.color-field input{height:34px!important;min-height:34px!important;padding:3px!important}.text-row{grid-template-columns:1.35fr .85fr .9fr 62px 78px 128px!important;gap:7px!important}.align-group{gap:4px!important}.align-btn{min-height:34px!important;font-size:11px!important;border-radius:10px!important}.text-actions{grid-template-columns:1fr 1fr 1fr!important;gap:7px!important}
+      .editor-stage{padding:8px!important;grid-template-rows:28px minmax(0,1fr)!important}.canvas-head{font-size:10px!important;padding:0 6px 5px!important}.canvas-wrap{padding:6px!important;border-radius:18px!important}canvas{width:min(100%,460px)!important}
+      .checkout-grid{grid-template-columns:1.55fr .75fr!important;gap:10px!important;min-height:0!important}.customer-card,.pay-card{padding:12px!important;overflow:hidden!important}.customer-card h2,.pay-card h2{font-size:17px!important;margin:0 0 7px!important}.customer-fields{gap:6px!important}.customer-fields textarea{height:38px!important;min-height:38px!important}.pay-card{grid-template-rows:auto auto 1fr auto!important}.price{padding:10px!important;border-radius:16px!important}.price strong{font-size:30px!important}.checklist{gap:5px!important}.check{padding:5px 8px!important;font-size:10px!important;border-radius:10px!important}.status{display:none!important}#pay{min-height:44px!important;font-size:14px!important;border-radius:14px!important}
+    }
+  </style>
 </head>
 <body>
   <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
@@ -30,7 +44,7 @@
       <div class="top-row">
         <label>Modello cover sincronizzato Shopify<select id="model"></select></label>
         <button class="upload-tile" id="qrBtn"><span>Smartphone</span><strong>Carica foto con QR</strong></button>
-        <div class="mini-price"><span>Prezzo</span><strong id="price">€ 0,00</strong></div>
+        <div class="mini-price" aria-hidden="true"><span>Prezzo</span><strong id="price">€ 0,00</strong></div>
       </div>
       <div class="tool-grid">
         <div class="tool-box">
@@ -45,8 +59,10 @@
           <div class="tool-title"><b>2</b>Testo personalizzato</div>
           <div class="text-row">
             <label>Testo<textarea id="text" maxlength="80" placeholder="Nome o frase"></textarea></label>
+            <label>Font<select id="textFont"><option value="Poppins, Arial, sans-serif">Poppins</option><option value="Arial, sans-serif">Arial</option><option value="'Bebas Neue', Arial, sans-serif">Bebas</option><option value="Georgia, serif">Georgia</option></select></label>
             <label>Dimensione<input id="textSize" type="range" min="22" max="120" step="1" value="52"></label>
             <label class="color-field">Colore<input id="textColor" type="color" value="#111111"></label>
+            <label>Stile<div class="align-group"><button type="button" class="align-btn active" data-style="bold">B</button><button type="button" class="align-btn" data-style="italic">I</button></div></label>
             <label>Allinea<div class="align-group"><button type="button" class="align-btn" data-align="left">SX</button><button type="button" class="align-btn active" data-align="center">C</button><button type="button" class="align-btn" data-align="right">DX</button></div></label>
           </div>
           <div class="text-actions">
@@ -157,6 +173,8 @@
   let dragStart = null;
   let pollTimer = null;
   let textAlign = "center";
+  let textBold = true;
+  let textItalic = false;
   const $ = (id) => document.getElementById(id);
   const canvas = $("canvas");
   const ctx = canvas.getContext("2d");
@@ -226,7 +244,7 @@
     ctx.save();ctx.shadowColor="rgba(15,23,42,.25)";ctx.shadowBlur=34;ctx.shadowOffsetY=22;roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.fillStyle="#fff";ctx.fill();ctx.restore();
     ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.clip();ctx.fillStyle=$("bg").value||"#fff";ctx.fillRect(cover.x,cover.y,cover.w,cover.h);
     if(image){const base=Math.max(cover.w/image.width,cover.h/image.height);const scale=base*imageObj.scale;ctx.save();ctx.translate(imageObj.x,imageObj.y);ctx.rotate(imageObj.rotate*Math.PI/180);ctx.drawImage(image,-image.width*scale/2,-image.height*scale/2,image.width*scale,image.height*scale);ctx.restore();}
-    texts.forEach((t)=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.rotate*Math.PI/180);ctx.font=`900 ${t.size}px Poppins,Arial`;ctx.textAlign=t.align||"center";ctx.textBaseline="middle";ctx.lineWidth=Math.max(4,t.size*.08);ctx.strokeStyle="#fff";ctx.fillStyle=t.color;const lines=String(t.value).split(/\n/).slice(0,3);lines.forEach((line,i)=>{const y=(i-(lines.length-1)/2)*t.size*1.15;ctx.strokeText(line,0,y);ctx.fillText(line,0,y);});ctx.restore();});
+    texts.forEach((t)=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.rotate*Math.PI/180);ctx.font=`${t.italic?"italic ":""}${t.bold===false?"700":"900"} ${t.size}px ${t.font||"Poppins,Arial"}`;ctx.textAlign=t.align||"center";ctx.textBaseline="middle";ctx.lineWidth=Math.max(4,t.size*.08);ctx.strokeStyle="#fff";ctx.fillStyle=t.color;const lines=String(t.value).split(/\n/).slice(0,3);lines.forEach((line,i)=>{const y=(i-(lines.length-1)/2)*t.size*1.15;ctx.strokeText(line,0,y);ctx.fillText(line,0,y);});ctx.restore();});
     ctx.restore();
     ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.strokeStyle="rgba(15,23,42,.55)";ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([12,10]);roundRect(cover.x+24,cover.y+24,cover.w-48,cover.h-48,Math.max(24,cover.r-24));ctx.strokeStyle="#006ee6";ctx.stroke();ctx.setLineDash([]);ctx.restore();zones.forEach(drawNoPrintZone);ctx.save();ctx.font="900 18px Poppins,Arial";ctx.fillStyle="rgba(153,27,27,.95)";roundRect(cam.x+10,cam.y+2,156,30,15);ctx.fill();ctx.fillStyle="#fff";ctx.fillText("Non stampabile",cam.x+22,cam.y+23);ctx.restore();
     $("checkImage").classList.toggle("ok", Boolean(image || texts.length));
@@ -286,9 +304,11 @@
   $("scale").addEventListener("input",()=>{imageObj.scale=Number($("scale").value);draw();});
   $("rotate").addEventListener("input",()=>{imageObj.rotate=Number($("rotate").value);draw();});
   $("bg").addEventListener("input",draw);
-  $("addText").addEventListener("click",()=>{const value=$("text").value.trim();if(!value)return;texts.push({value,x:380,y:630,color:$("textColor").value,size:Number($("textSize").value||52),rotate:0,align:textAlign});active=`text:${texts.length-1}`;draw();});
+  $("addText").addEventListener("click",()=>{const value=$("text").value.trim();if(!value)return;texts.push({value,x:380,y:630,color:$("textColor").value,size:Number($("textSize").value||52),font:$("textFont").value,rotate:0,align:textAlign,bold:textBold,italic:textItalic});active=`text:${texts.length-1}`;draw();});
   $("textSize").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.size=Number($("textSize").value||52);draw();}});
   $("textColor").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.color=$("textColor").value;draw();}});
+  $("textFont").addEventListener("change",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.font=$("textFont").value;draw();}});
+  document.querySelectorAll("[data-style]").forEach((button)=>button.addEventListener("click",()=>{const style=button.dataset.style;if(style==="bold"){textBold=!textBold;button.classList.toggle("active",textBold);}if(style==="italic"){textItalic=!textItalic;button.classList.toggle("active",textItalic);}if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.bold=textBold;t.italic=textItalic;draw();}}}));
   document.querySelectorAll("[data-align]").forEach((button)=>button.addEventListener("click",()=>{textAlign=button.dataset.align||"center";document.querySelectorAll("[data-align]").forEach((item)=>item.classList.toggle("active",item===button));if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.align=textAlign;draw();}}}));
   $("center").addEventListener("click",()=>{if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.x=380;t.y=630;}}else{imageObj.x=380;imageObj.y=610;}draw();});
   $("reset").addEventListener("click",()=>{image=null;texts=[];imageObj={x:380,y:610,scale:1,rotate:0};draw();});
