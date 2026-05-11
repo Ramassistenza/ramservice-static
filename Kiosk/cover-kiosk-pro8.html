@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RamCover Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;min-height:100vh;overflow:hidden;background:#e8edf4;color:#07111f;font-family:Poppins,Arial,sans-serif}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 8%,rgba(0,110,230,.22),transparent 30%),linear-gradient(180deg,#f8fbff 0,#dce5ef 46%,#cfdbe8 100%);pointer-events:none}.home{position:fixed;left:28px;top:28px;z-index:30;width:76px;height:76px;border:0;border-radius:26px;background:#06111f;color:#fff;font-size:38px;font-weight:900;box-shadow:0 20px 42px rgba(7,17,31,.26)}.wrap{position:relative;width:min(1048px,calc(100% - 32px));height:100vh;margin:0 auto;padding:24px 0;display:grid;grid-template-rows:118px 282px minmax(0,1fr) 300px;gap:16px}.head{display:grid;grid-template-columns:1fr 410px;align-items:center;gap:20px;padding-left:100px}.kicker{color:#006ee6;font-size:15px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:78px;line-height:.86;margin:6px 0 0;letter-spacing:.01em}.head p{margin:0;color:#304052;font-size:18px;line-height:1.25;font-weight:900}.card{background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.85);border-radius:34px;box-shadow:0 24px 60px rgba(15,23,42,.16);min-height:0}.tools-panel{padding:18px;display:grid;grid-template-rows:72px 1fr;gap:14px;background:linear-gradient(180deg,#fff,#f3f7fb)}.top-row{display:grid;grid-template-columns:minmax(0,1fr) 248px 188px;gap:14px;align-items:end}.tool-grid{display:grid;grid-template-columns:.9fr 1.35fr;gap:14px;min-height:0}.tool-box{border:2px solid #e2eaf4;border-radius:26px;background:#fff;padding:16px;display:grid;gap:12px}.tool-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:950}.tool-title b{display:grid;place-items:center;width:32px;height:32px;border-radius:12px;background:#06111f;color:#fff;font-size:14px}label{display:grid;gap:7px;color:#3d4b5e;font-size:12px;font-weight:950}select,input,textarea{width:100%;min-height:56px;border:2px solid #cbd7e6;border-radius:18px;background:#fff;color:#07111f;padding:0 16px;font:inherit;font-size:17px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}textarea{min-height:74px;padding:13px 16px;resize:none}.btn{min-height:56px;border:0;border-radius:18px;padding:0 16px;font:inherit;font-size:15px;font-weight:950;cursor:pointer}.dark{background:#06111f;color:#fff}.primary{background:linear-gradient(180deg,#0a84ff,#0067df);color:#fff;box-shadow:0 18px 34px rgba(0,110,230,.28)}.ghost{background:#eef4fa;color:#07111f}.danger{background:#fff1f1;color:#991b1b}.upload-tile{display:grid;grid-template-columns:54px 1fr;align-items:center;text-align:left;gap:12px;min-height:72px;border-radius:24px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:0 16px;box-shadow:0 18px 36px rgba(7,17,31,.2)}.upload-tile::before{content:"QR";display:grid;place-items:center;width:52px;height:52px;border-radius:18px;background:#fff;color:#06111f;font-size:15px;font-weight:950}.upload-tile span{display:block;color:#9cc7ff;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.upload-tile strong{display:block;font-size:17px;line-height:1.04}.mini-price{height:72px;border-radius:24px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:14px 18px}.mini-price span,.price span{display:block;color:#92cbff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:950}.mini-price strong{display:block;margin-top:5px;font-size:34px;line-height:1}.range-row{display:grid;grid-template-columns:1fr 1fr 86px;gap:12px;align-items:end}.range-row input[type=range]{padding:0;min-height:42px;accent-color:#0a7cff}.color-field{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center}.color-field input{height:54px;min-height:54px;padding:5px}.text-row{display:grid;grid-template-columns:1fr 142px 86px 220px;gap:12px;align-items:end}.align-group{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.align-btn{min-height:54px;border:0;border-radius:16px;background:#edf3f9;font-size:15px;font-weight:950;color:#07111f}.align-btn.active{background:#06111f;color:#fff}.text-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.editor-stage{padding:12px;display:grid;grid-template-rows:42px minmax(0,1fr);background:linear-gradient(145deg,#081524,#1b2a3f)}.canvas-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:0 10px 8px;color:#dbeafe;font-size:14px;font-weight:900}.canvas-wrap{display:grid;place-items:center;min-height:0;border-radius:28px;background:radial-gradient(circle at 50% 20%,rgba(255,255,255,.65),rgba(255,255,255,.07) 36%,rgba(3,10,21,.35) 72%),linear-gradient(160deg,#07111f,#26364d);overflow:hidden;padding:12px}canvas{width:min(100%,590px);max-height:100%;height:auto;touch-action:none;filter:drop-shadow(0 34px 46px rgba(0,0,0,.36))}.checkout-grid{display:grid;grid-template-columns:1.42fr .78fr;gap:16px}.customer-card,.pay-card{padding:22px}.customer-card h2,.pay-card h2{margin:0 0 16px;font-size:27px;line-height:1}.customer-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.customer-fields .wide{grid-column:1/-1}.pay-card{display:grid;grid-template-rows:auto auto auto 1fr auto;gap:12px}.price{border-radius:26px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:20px}.price strong{display:block;margin-top:6px;font-size:54px;line-height:1}.checklist{display:grid;grid-template-columns:1fr;gap:9px}.check{padding:12px 14px;border-radius:16px;background:#f1f5fa;color:#526173;font-size:14px;font-weight:950}.check.ok{background:#e4f8ed;color:#12643d}.status{padding:13px 15px;border-radius:18px;background:#eff6ff;color:#07539f;font-size:13px;font-weight:950;line-height:1.28}.status.ok{background:#e4f8ed;color:#12643d}.status.err{background:#fff0f0;color:#991b1b}#pay{min-height:72px;font-size:22px;border-radius:24px}.qr-modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(7,17,31,.66);padding:22px}.qr-modal[hidden]{display:none}.qr-box{width:min(620px,100%);background:#fff;border-radius:36px;padding:32px;text-align:center;color:#07111f}.qr-box h2{font-size:42px;margin:0 0 10px}.qr-box p{color:#526070;margin:0 0 16px;font-size:18px}.qr-box img{width:min(340px,80vw);height:min(340px,80vw);border:12px solid #f3f6fa;border-radius:28px}.mini{font-size:13px;color:#667386;margin-top:12px;word-break:break-all}@media(max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto}.head,.top-row,.tool-grid,.range-row,.text-row,.checkout-grid,.customer-fields{grid-template-columns:1fr}.head{padding-left:92px}.canvas-wrap{min-height:620px}.home{width:68px;height:68px;font-size:32px}}
+    @media (min-width:761px){
+      .wrap{padding:14px 0;grid-template-rows:92px 190px minmax(0,1fr) 212px;gap:10px}
+      .home{left:22px;top:22px;width:64px;height:64px;border-radius:22px;font-size:31px}
+      .head{grid-template-columns:1fr 360px;padding-left:82px}.head h1{font-size:61px}.head p{font-size:14px}
+      .tools-panel{padding:12px;grid-template-rows:60px 1fr}.top-row{grid-template-columns:minmax(0,1fr) 220px 164px}.tool-box{padding:10px}.tool-title{font-size:15px}
+      select,input,textarea{min-height:42px;font-size:13px;border-radius:14px}.btn{min-height:42px;font-size:12px}.upload-tile,.mini-price{min-height:58px;height:58px;border-radius:18px}.upload-tile strong{font-size:13px}.mini-price strong{font-size:25px}
+      .range-row{grid-template-columns:1fr 1fr 70px}.text-row{grid-template-columns:1fr 108px 70px 174px}.align-btn{min-height:38px}.text-actions{gap:7px}
+      .editor-stage{padding:8px;grid-template-rows:30px minmax(0,1fr)}.canvas-head{font-size:11px}.canvas-wrap{border-radius:22px}canvas{width:min(100%,500px)}
+      .checkout-grid{gap:10px}.customer-card,.pay-card{padding:13px}.customer-card h2,.pay-card h2{font-size:18px;margin-bottom:8px}.customer-fields{gap:7px}.customer-fields textarea{min-height:46px}.price{padding:12px;border-radius:18px}.price strong{font-size:34px}.check{padding:6px 8px;font-size:10.5px}.status{padding:7px 9px;font-size:10px}#pay{min-height:48px;font-size:15px;border-radius:16px}
+    }
+  </style>
+  <style>
+    @media (min-width:761px){
+      html,body{overflow:hidden!important}
+      .wrap{width:min(1040px,calc(100% - 28px))!important;height:100vh!important;padding:12px 0!important;grid-template-rows:82px 276px minmax(0,1fr) 218px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:58px!important;height:58px!important;border-radius:18px!important;font-size:28px!important}
+      .head{padding-left:74px!important;grid-template-columns:1fr 330px!important;gap:14px!important}.head h1{font-size:56px!important}.head p{font-size:13px!important;line-height:1.18!important}.kicker{font-size:11px!important}
+      .card{border-radius:22px!important}.tools-panel{padding:10px!important;grid-template-rows:56px minmax(0,1fr)!important;gap:8px!important}.top-row{grid-template-columns:1fr 210px!important;gap:10px!important}.mini-price{display:none!important}.upload-tile{min-height:52px!important;height:52px!important;border-radius:16px!important}.upload-tile:before{width:38px!important;height:38px!important;border-radius:12px!important}.upload-tile strong{font-size:12px!important}.upload-tile span{font-size:9px!important}
+      .tool-grid{grid-template-columns:.82fr 1.18fr!important;gap:8px!important}.tool-box{padding:10px!important;border-radius:18px!important;gap:8px!important;overflow:hidden!important}.tool-title{font-size:14px!important}.tool-title b{width:24px!important;height:24px!important;border-radius:9px!important;font-size:11px!important}
+      label{font-size:10px!important;gap:4px!important}select,input,textarea{min-height:38px!important;height:38px!important;font-size:12px!important;border-radius:12px!important;padding:0 10px!important}textarea{min-height:48px!important;height:48px!important;padding:8px 10px!important}.btn{min-height:38px!important;font-size:11px!important;border-radius:12px!important;padding:0 10px!important}
+      .range-row{grid-template-columns:1fr 1fr 62px!important;gap:7px!important}.range-row input[type=range]{min-height:26px!important}.color-field{grid-template-columns:34px 1fr!important}.color-field input{height:34px!important;min-height:34px!important;padding:3px!important}.text-row{grid-template-columns:1.35fr .85fr .9fr 62px 78px 128px!important;gap:7px!important}.align-group{gap:4px!important}.align-btn{min-height:34px!important;font-size:11px!important;border-radius:10px!important}.text-actions{grid-template-columns:1fr 1fr 1fr!important;gap:7px!important}
+      .editor-stage{padding:8px!important;grid-template-rows:28px minmax(0,1fr)!important}.canvas-head{font-size:10px!important;padding:0 6px 5px!important}.canvas-wrap{padding:6px!important;border-radius:18px!important}canvas{width:min(100%,460px)!important}
+      .checkout-grid{grid-template-columns:1.55fr .75fr!important;gap:10px!important;min-height:0!important}.customer-card,.pay-card{padding:12px!important;overflow:hidden!important}.customer-card h2,.pay-card h2{font-size:17px!important;margin:0 0 7px!important}.customer-fields{gap:6px!important}.customer-fields textarea{height:38px!important;min-height:38px!important}.pay-card{grid-template-rows:auto auto 1fr auto!important}.price{padding:10px!important;border-radius:16px!important}.price strong{font-size:30px!important}.checklist{gap:5px!important}.check{padding:5px 8px!important;font-size:10px!important;border-radius:10px!important}.status{display:none!important}#pay{min-height:44px!important;font-size:14px!important;border-radius:14px!important}
+    }
+  </style>
+  <style>
+    @media (min-width:761px){
+      body{background:#edf2f7!important}
+      body:before{display:none!important}
+      .wrap{width:1040px!important;max-width:calc(100% - 24px)!important;height:100vh!important;padding:12px 0!important;grid-template-rows:76px 330px minmax(0,1fr) 310px!important;gap:10px!important}
+      .home{left:18px!important;top:18px!important;width:56px!important;height:56px!important;border-radius:16px!important}
+      .head{padding-left:72px!important;grid-template-columns:1fr 280px!important}.head h1{font-size:52px!important}.head p{font-size:12px!important;line-height:1.16!important}.kicker{font-size:10px!important}
+      .card{border-radius:20px!important;box-shadow:0 12px 28px rgba(15,23,42,.10)!important}
+      .tools-panel{padding:12px!important;grid-template-rows:58px 1fr!important;gap:10px!important;background:#fff!important}
+      .top-row{grid-template-columns:1fr 220px!important;gap:12px!important}.mini-price{display:none!important}
+      .tool-grid{grid-template-columns:360px 1fr!important;gap:12px!important}.tool-box{padding:14px!important;border-radius:18px!important;background:#f8fafc!important}.tool-title{font-size:16px!important;margin-bottom:2px!important}
+      .range-row{grid-template-columns:1fr 1fr 76px!important;gap:10px!important}
+      .text-row{grid-template-columns:1.15fr .85fr .9fr 70px 96px 142px!important;gap:10px!important;align-items:end!important}
+      label{font-size:11px!important;color:#334155!important}select,input,textarea{height:46px!important;min-height:46px!important;font-size:14px!important;border-radius:13px!important;border:2px solid #cbd5e1!important;background:#fff!important}textarea{height:58px!important;min-height:58px!important}
+      .align-btn,.btn{min-height:42px!important;font-size:13px!important}.text-actions{gap:10px!important}
+      .editor-stage{background:#fff!important;border:2px solid #dbe3ef!important;padding:10px!important;grid-template-rows:32px minmax(0,1fr)!important}
+      .canvas-head{color:#334155!important;font-size:12px!important;padding:0 8px 6px!important}
+      .canvas-wrap{background:#f8fafc!important;border:2px solid #e2e8f0!important;border-radius:18px!important;padding:8px!important;overflow:hidden!important}
+      canvas{width:min(100%,560px)!important;filter:drop-shadow(0 18px 26px rgba(15,23,42,.20))!important}
+      .checkout-grid{grid-template-columns:1.45fr .85fr!important;gap:10px!important}.customer-card,.pay-card{padding:14px!important;background:#fff!important}.customer-card h2,.pay-card h2{font-size:20px!important}.customer-fields{gap:8px!important}.customer-fields textarea{height:54px!important;min-height:54px!important}
+      .price strong{font-size:36px!important}.check{font-size:11px!important;padding:7px 10px!important}.status{display:none!important}#pay{min-height:54px!important;font-size:16px!important}
+    }
+  </style>
+</head>
+<body>
+  <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
+  <main class="wrap">
+    <header class="head">
+      <div><div class="kicker">RamCover Studio Kiosk</div><h1>Crea la tua cover</h1></div>
+      <p>Scegli il modello, carica la foto dal telefono con QR, posiziona l'immagine e completa con pagamento in cassa.</p>
+    </header>
+    <section class="card tools-panel">
+      <div class="top-row">
+        <label>Modello cover sincronizzato Shopify<select id="model"></select></label>
+        <button class="upload-tile" id="qrBtn"><span>Smartphone</span><strong>Carica foto con QR</strong></button>
+        <div class="mini-price" aria-hidden="true"><span>Prezzo</span><strong id="price">€ 0,00</strong></div>
+      </div>
+      <div class="tool-grid">
+        <div class="tool-box">
+          <div class="tool-title"><b>1</b>Immagine e sfondo</div>
+          <div class="range-row">
+            <label>Zoom<input id="scale" type="range" min=".35" max="3" step=".01" value="1"></label>
+            <label>Rotazione<input id="rotate" type="range" min="-35" max="35" step="1" value="0"></label>
+            <label class="color-field">Sfondo<input id="bg" type="color" value="#ffffff"></label>
+          </div>
+        </div>
+        <div class="tool-box">
+          <div class="tool-title"><b>2</b>Testo personalizzato</div>
+          <div class="text-row">
+            <label>Testo<textarea id="text" maxlength="80" placeholder="Nome o frase"></textarea></label>
+            <label>Font<select id="textFont"><option value="Poppins, Arial, sans-serif">Poppins</option><option value="Arial, sans-serif">Arial</option><option value="'Bebas Neue', Arial, sans-serif">Bebas</option><option value="Georgia, serif">Georgia</option></select></label>
+            <label>Dimensione<input id="textSize" type="range" min="22" max="120" step="1" value="52"></label>
+            <label class="color-field">Colore<input id="textColor" type="color" value="#111111"></label>
+            <label>Stile<div class="align-group"><button type="button" class="align-btn active" data-style="bold">B</button><button type="button" class="align-btn" data-style="italic">I</button></div></label>
+            <label>Allinea<div class="align-group"><button type="button" class="align-btn" data-align="left">SX</button><button type="button" class="align-btn active" data-align="center">C</button><button type="button" class="align-btn" data-align="right">DX</button></div></label>
+          </div>
+          <div class="text-actions">
+            <button class="btn ghost" id="addText">Aggiungi testo</button>
+            <button class="btn ghost" id="center">Centra selezione</button>
+            <button class="btn danger" id="reset">Reset progetto</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="card editor-stage">
+      <div class="canvas-head"><span id="warning">Carica una foto o aggiungi testo.</span><span>Trascina sullo schermo per posizionare</span></div>
+      <div class="canvas-wrap"><canvas id="canvas" width="760" height="1180"></canvas></div>
+    </section>
+    <section class="checkout-grid">
+      <div class="card customer-card">
+        <h2>Dati cliente</h2>
+        <div class="customer-fields">
+          <label>Nome e cognome<input id="name" required></label>
+          <label>Telefono<input id="phone" required></label>
+          <label>Email<input id="email" type="email"></label>
+          <label class="wide">Note<textarea id="notes" placeholder="Note per stampa"></textarea></label>
+        </div>
+      </div>
+      <div class="card pay-card">
+        <h2>Riepilogo</h2>
+        <div class="price"><span>Totale da pagare in cassa</span><strong id="priceFinal">€ 0,00</strong></div>
+        <div class="checklist">
+          <div class="check" id="checkModel">Modello da selezionare</div>
+          <div class="check" id="checkImage">Grafica da inserire</div>
+          <div class="check" id="checkSafe">Controllo area stampa</div>
+        </div>
+        <div id="status" class="status">Carico modelli e disponibilità sincronizzati da Shopify...</div>
+        <button class="btn primary" id="pay">Paga in cassa</button>
+      </div>
+    </section>
+  </main>
+  <div class="qr-modal" id="qrModal" hidden>
+    <div class="qr-box">
+      <h2>Scansiona il QR</h2>
+      <p>Carica la foto dal telefono. Quando arriva, il kiosk la inserisce automaticamente.</p>
+      <img id="qrImg" alt="QR upload foto">
+      <div class="mini" id="qrUrl"></div>
+      <button class="btn dark" id="closeQr" style="margin-top:16px">Chiudi</button>
+    </div>
+  </div>
+<script>
+(() => {
+  const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
+  const SHOPIFY_PAGE = "https://www.ramserviceitalia.it/pages/cover-personalizzate-iphone";
+  const UPLOAD_PAGE = "https://ramassistenza.github.io/ramservice-static/Kiosk/cover-upload.html";
+  const fallbackModels = [
+    {id:"iphone-16-pro-max",name:"iPhone 16 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-16-pro",name:"iPhone 16 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-16",name:"iPhone 16",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-15-pro-max",name:"iPhone 15 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-15-pro",name:"iPhone 15 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-15",name:"iPhone 15",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-14-pro-max",name:"iPhone 14 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-14-pro",name:"iPhone 14 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-14",name:"iPhone 14",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-13",name:"iPhone 13",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}}
+  ];
+  const TECH_PROFILES = {
+    "iphone 8": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone 8 plus": {width:78.1,height:158.4,calibrated:true,camera:{type:"horizontal-dual",x:.055,y:.043,w:.330,h:.105,r:22}},
+    "iphone se 2020": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone se 2022": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone x": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xr": {width:75.7,height:150.9,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.130,r:22}},
+    "iphone xs": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xs max": {width:77.4,height:157.5,calibrated:true,camera:{type:"vertical-dual",x:.056,y:.036,w:.225,h:.185,r:24}},
+    "iphone 11": {width:75.7,height:150.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.038,w:.255,h:.180,r:25}},
+    "iphone 11 pro": {width:71.4,height:144.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.420,h:.215,r:28}},
+    "iphone 11 pro max": {width:77.8,height:158.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.405,h:.205,r:28}},
+    "iphone 12": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.162,r:27}},
+    "iphone 12 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.164,r:27}},
+    "iphone 12 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.455,h:.222,r:30}},
+    "iphone 12 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.440,h:.214,r:30}},
+    "iphone 13": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.490,h:.239,r:32}},
+    "iphone 13 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.470,h:.228,r:32}},
+    "iphone 14": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 14 plus": {width:78.1,height:160.8,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.166,r:28}},
+    "iphone 14 pro": {width:71.5,height:147.5,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.495,h:.240,r:32}},
+    "iphone 14 pro max": {width:77.6,height:160.7,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.475,h:.229,r:32}},
+    "iphone 15": {width:71.6,height:147.6,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.172,r:28}},
+    "iphone 15 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.165,r:28}},
+    "iphone 15 pro": {width:70.6,height:146.6,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.535,h:.258,r:32}},
+    "iphone 15 pro max": {width:76.7,height:159.9,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.515,h:.248,r:32}},
+    "iphone 16": {width:71.8,height:147.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.230,r:28}},
+    "iphone 16 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.245,h:.220,r:28}},
+    "iphone 16e": {width:71.5,height:146.7,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.190,h:.135,r:24}},
+    "iphone 16 pro": {width:71.6,height:146.6,calibrated:true,camera:{type:"square",x:.043,y:.016,w:.540,h:.252,r:34}},
+    "iphone 16 pro max": {width:77.8,height:160.7,calibrated:true,camera:{type:"square",x:.048,y:.014,w:.550,h:.277,r:34}},
+    "iphone 17": {width:71.5,height:149.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.226,r:28}},
+    "iphone 17 pro": {width:71.7,height:149.6,calibrated:true,camera:{type:"plateau",x:.038,y:.026,w:.924,h:.258,r:32}},
+    "iphone 17 pro max": {width:76.9,height:163.0,calibrated:true,camera:{type:"plateau",x:.035,y:.026,w:.936,h:.270,widthMm:72,heightMm:44,r:30,holes:[{type:"circle",x:.190,y:.090,d:.118},{type:"circle",x:.425,y:.137,d:.118},{type:"circle",x:.196,y:.196,d:.118},{type:"circle",x:.792,y:.094,d:.082},{type:"circle",x:.790,y:.202,d:.086}]}}
+  };
+  let models = fallbackModels.slice();
+  let selected = models[0];
+  let image = null;
+  let imageObj = {x:380,y:610,scale:1,rotate:0};
+  let texts = [];
+  let active = "image";
+  let dragging = false;
+  let dragStart = null;
+  let pollTimer = null;
+  let textAlign = "center";
+  let textBold = true;
+  let textItalic = false;
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("canvas");
+  const ctx = canvas.getContext("2d");
+  const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(Number(v||0));
+  const cleanTitle = (v) => String(v||"").toLowerCase().replace(/apple|cover|custodia|personalizzata|iphone/g,"iphone").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+
+  async function loadCatalog(){
+    try{
+      const html = await fetch(SHOPIFY_PAGE + "?kiosk_sync=" + Date.now(), {cache:"no-store"}).then((r)=>r.text());
+      const modelJson = html.match(/<script type="application\/json" data-cover-models>([\s\S]*?)<\/script>/)?.[1];
+      const productsJson = html.match(/<script type="application\/json" data-cover-products>([\s\S]*?)<\/script>/)?.[1];
+      const baseModels = JSON.parse(modelJson || "[]");
+      const products = JSON.parse(productsJson || "[]");
+      if (products.length) {
+        models = products.map((p)=>{
+          const base = baseModels.find((m)=>m.id===p.id) || {};
+          return {...base,id:p.id,name:modelLabel(p.id),shopifyName:p.name||"",price:Number(base.price||24.99),coverPrice:Number(p.coverPrice||0),variantId:String(p.variantId||""),available:p.available!==false,productHandle:p.productHandle||""};
+        }).filter((m)=>m.id && m.available);
+      } else if (baseModels.length) {
+        models = baseModels;
+      }
+      $("status").textContent = "Modelli sincronizzati con Shopify.";
+      $("status").className = "status ok";
+    }catch(error){
+      $("status").textContent = "Uso catalogo locale di sicurezza. Controllare sincronizzazione Shopify.";
+      $("status").className = "status err";
+    }
+    models.forEach((m)=>{ const p=TECH_PROFILES[String(m.id).replace(/-/g," ")]||TECH_PROFILES[cleanTitle(m.name)]||{width:71.5,height:147.6,calibrated:false,camera:{type:"square",x:.075,y:.05,w:.25,h:.15,r:24}}; m.width=p.width;m.height=p.height;m.calibrated=Boolean(p.calibrated);m.camera=p.camera; });
+    renderModels();
+  }
+  function modelLabel(id){return String(id||"").split("-").map((p)=>p==="iphone"?"iPhone":p.charAt(0).toUpperCase()+p.slice(1)).join(" ").replace("Pro Max","Pro Max");}
+  function renderModels(){
+    $("model").innerHTML = models.map((m)=>`<option value="${m.id}">${m.name || modelLabel(m.id)}${m.shopifyName ? " - " + m.shopifyName.replace(/^Cover\\s*/i,"") : ""}</option>`).join("");
+    updateModel();
+  }
+  function updateModel(){
+    selected = models.find((m)=>m.id===$("model").value) || models[0];
+    $("price").textContent = money(selected?.price || 0);
+    $("priceFinal").textContent = money(selected?.price || 0);
+    $("checkModel").textContent = selected ? `Modello: ${selected.name}` : "Modello da selezionare";
+    $("checkModel").classList.toggle("ok", Boolean(selected));
+    draw();
+  }
+  function coverRect(){
+    const height = 1110;
+    const ratio = Number(selected?.width||71.5) / Number(selected?.height||147.6);
+    const width = Math.max(460, Math.min(535, Math.round(height * ratio)));
+    return {x:Math.round((760-width)/2),y:34,w:width,h:height,r:Math.round(width*.145)};
+  }
+  function cameraRect(){
+    const c = selected?.camera || {x:.075,y:.05,w:.25,h:.15};
+    const cover = coverRect();
+    const phoneWidth=Number(selected?.width||71.5), phoneHeight=Number(selected?.height||147.6);
+    const w=c.widthMm ? cover.w*(Number(c.widthMm)/phoneWidth) : cover.w*c.w;
+    const h=c.heightMm ? cover.h*(Number(c.heightMm)/phoneHeight) : cover.h*c.h;
+    return {x:cover.x+cover.w*c.x,y:cover.y+cover.h*c.y,w,h,r:c.r||28};
+  }
+  function effectiveCutout(){const c=selected?.camera||{};return Array.isArray(c.holes)&&c.holes.length&&String(c.type)==="plateau"?"holes":"block";}
+  function cameraZones(){const c=selected?.camera||{},cover=coverRect(),block=cameraRect();if(effectiveCutout()!=="holes")return [block];return c.holes.map((hole)=>{const d=cover.w*Number(hole.d||.08);return {type:"circle",x:cover.x+cover.w*Number(hole.x||0)-d/2,y:cover.y+cover.h*Number(hole.y||0)-d/2,w:d,h:d,d};});}
+  function zonePath(zone){ctx.beginPath();if(zone.type==="circle"){ctx.arc(zone.x+zone.w/2,zone.y+zone.h/2,zone.w/2,0,Math.PI*2);return;}roundRect(zone.x,zone.y,zone.w,zone.h,selected?.camera?.r||28);}
+  function drawNoPrintZone(zone){ctx.save();zonePath(zone);ctx.fillStyle="rgba(255,255,255,.95)";ctx.fill();ctx.clip();ctx.strokeStyle="rgba(239,68,68,.38)";ctx.lineWidth=3;for(let x=zone.x-zone.h;x<zone.x+zone.w+zone.h;x+=18){ctx.beginPath();ctx.moveTo(x,zone.y+zone.h+18);ctx.lineTo(x+zone.h+18,zone.y-18);ctx.stroke();}ctx.restore();ctx.save();zonePath(zone);ctx.strokeStyle="rgba(220,38,38,.94)";ctx.lineWidth=4;ctx.stroke();ctx.restore();}
+  function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function draw(){
+    const cover=coverRect(), zones=cameraZones(), cam=cameraRect();
+    ctx.clearRect(0,0,760,1180);
+    ctx.fillStyle="#dfe7f0";ctx.fillRect(0,0,760,1180);
+    ctx.save();ctx.shadowColor="rgba(15,23,42,.25)";ctx.shadowBlur=34;ctx.shadowOffsetY=22;roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.fillStyle="#fff";ctx.fill();ctx.restore();
+    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.clip();ctx.fillStyle=$("bg").value||"#fff";ctx.fillRect(cover.x,cover.y,cover.w,cover.h);
+    if(image){const base=Math.max(cover.w/image.width,cover.h/image.height);const scale=base*imageObj.scale;ctx.save();ctx.translate(imageObj.x,imageObj.y);ctx.rotate(imageObj.rotate*Math.PI/180);ctx.drawImage(image,-image.width*scale/2,-image.height*scale/2,image.width*scale,image.height*scale);ctx.restore();}
+    texts.forEach((t)=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.rotate*Math.PI/180);ctx.font=`${t.italic?"italic ":""}${t.bold===false?"700":"900"} ${t.size}px ${t.font||"Poppins,Arial"}`;ctx.textAlign=t.align||"center";ctx.textBaseline="middle";ctx.lineWidth=Math.max(4,t.size*.08);ctx.strokeStyle="#fff";ctx.fillStyle=t.color;const lines=String(t.value).split(/\n/).slice(0,3);lines.forEach((line,i)=>{const y=(i-(lines.length-1)/2)*t.size*1.15;ctx.strokeText(line,0,y);ctx.fillText(line,0,y);});ctx.restore();});
+    ctx.restore();
+    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.strokeStyle="rgba(15,23,42,.55)";ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([12,10]);roundRect(cover.x+24,cover.y+24,cover.w-48,cover.h-48,Math.max(24,cover.r-24));ctx.strokeStyle="#006ee6";ctx.stroke();ctx.setLineDash([]);ctx.restore();zones.forEach(drawNoPrintZone);ctx.save();ctx.font="900 18px Poppins,Arial";ctx.fillStyle="rgba(153,27,27,.95)";roundRect(cam.x+10,cam.y+2,156,30,15);ctx.fill();ctx.fillStyle="#fff";ctx.fillText("Non stampabile",cam.x+22,cam.y+23);ctx.restore();
+    $("checkImage").classList.toggle("ok", Boolean(image || texts.length));
+    $("checkImage").textContent = image || texts.length ? "Grafica inserita" : "Grafica da inserire";
+    $("checkSafe").classList.toggle("ok", Boolean(image || texts.length));
+    $("warning").textContent = image || texts.length ? "Anteprima pronta. Controlla posizione e modello." : "Carica una foto o aggiungi testo.";
+  }
+  function loadDataUrl(dataUrl, name="foto"){
+    const img = new Image();
+    img.onload = () => { image=img; active="image"; imageObj={x:380,y:610,scale:Number($("scale").value),rotate:Number($("rotate").value)}; $("status").textContent=`Foto caricata: ${name}`; $("status").className="status ok"; draw(); };
+    img.src = dataUrl;
+  }
+  function exportDataUrl(maxWidth, quality, mode){
+    draw();
+    const cover=coverRect();
+    const crop = mode==="print" ? cover : {x:0,y:0,w:760,h:1180};
+    const out=document.createElement("canvas");
+    const scale=maxWidth/crop.w; out.width=Math.round(crop.w*scale); out.height=Math.round(crop.h*scale);
+    out.getContext("2d").drawImage(canvas,crop.x,crop.y,crop.w,crop.h,0,0,out.width,out.height);
+    return out.toDataURL("image/jpeg",quality);
+  }
+  async function createQrSession(){
+    $("qrBtn").disabled=true; $("status").textContent="Creo QR upload...";
+    try{
+      const res=await fetch(`${API}/cover-studio/kiosk/upload-sessions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:"kiosk-cover-studio",pageUrl:location.href,userAgent:navigator.userAgent})});
+      const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.message||"Errore QR");
+      const uploadUrl = `${UPLOAD_PAGE}?session=${encodeURIComponent(data.id)}`;
+      $("qrUrl").textContent = uploadUrl;
+      $("qrImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(uploadUrl)}`;
+      $("qrModal").hidden=false;
+      clearInterval(pollTimer);
+      pollTimer=setInterval(()=>pollSession(data.id),2200);
+    }catch(error){$("status").textContent=error.message;$("status").className="status err";}finally{$("qrBtn").disabled=false;}
+  }
+  async function pollSession(id){
+    try{
+      const res=await fetch(`${API}/cover-studio/kiosk/upload-sessions/${encodeURIComponent(id)}?v=${Date.now()}`,{cache:"no-store"});
+      const data=await res.json(); if(!res.ok||!data.ok) return;
+      if(data.status==="uploaded" && data.imageDataUrl){clearInterval(pollTimer);$("qrModal").hidden=true;loadDataUrl(data.imageDataUrl,data.fileName||"foto telefono");}
+    }catch{}
+  }
+  async function savePayInStore(){
+    if(!selected) throw new Error("Seleziona un modello.");
+    if(!image && !texts.length) throw new Error("Carica una foto o aggiungi testo.");
+    if(!$("name").value.trim() || !$("phone").value.trim()) throw new Error("Inserisci nome e telefono cliente.");
+    const previewDataUrl=exportDataUrl(620,.82,"preview");
+    const printDataUrl=exportDataUrl(1800,.92,"print");
+    const res=await fetch(`${API}/cover-studio/projects`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:selected.id,modelLabel:selected.name,price:selected.price,customerName:$("name").value,customerPhone:$("phone").value,customerEmail:$("email").value,notes:`PAGA IN CASSA - Kiosk. ${$("notes").value||""}`,source:"kiosk-cover-studio-pay-in-store",status:"cart_ready",previewDataUrl,printDataUrl,editorState:{model:selected,image:image?imageObj:null,backgroundColor:$("bg").value,texts},userAgent:navigator.userAgent,pageUrl:location.href})});
+    const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok) throw new Error(data.message||"Errore salvataggio progetto");
+    return data;
+  }
+  function pointerPos(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*(760/r.width),y:(e.clientY-r.top)*(1180/r.height)};}
+  canvas.addEventListener("pointerdown",(e)=>{e.preventDefault();dragging=true;dragStart=pointerPos(e);canvas.setPointerCapture?.(e.pointerId);});
+  canvas.addEventListener("pointermove",(e)=>{if(!dragging||!dragStart)return;e.preventDefault();const p=pointerPos(e),dx=p.x-dragStart.x,dy=p.y-dragStart.y;const t=active.startsWith("text:")?texts[Number(active.split(":")[1])]:null;if(t){t.x+=dx;t.y+=dy;}else if(image){imageObj.x+=dx;imageObj.y+=dy;}dragStart=p;draw();});
+  ["pointerup","pointercancel","pointerleave"].forEach((ev)=>canvas.addEventListener(ev,()=>{dragging=false;dragStart=null;}));
+  $("model").addEventListener("change",updateModel);
+  $("scale").addEventListener("input",()=>{imageObj.scale=Number($("scale").value);draw();});
+  $("rotate").addEventListener("input",()=>{imageObj.rotate=Number($("rotate").value);draw();});
+  $("bg").addEventListener("input",draw);
+  $("addText").addEventListener("click",()=>{const value=$("text").value.trim();if(!value)return;texts.push({value,x:380,y:630,color:$("textColor").value,size:Number($("textSize").value||52),font:$("textFont").value,rotate:0,align:textAlign,bold:textBold,italic:textItalic});active=`text:${texts.length-1}`;draw();});
+  $("textSize").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.size=Number($("textSize").value||52);draw();}});
+  $("textColor").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.color=$("textColor").value;draw();}});
+  $("textFont").addEventListener("change",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.font=$("textFont").value;draw();}});
+  document.querySelectorAll("[data-style]").forEach((button)=>button.addEventListener("click",()=>{const style=button.dataset.style;if(style==="bold"){textBold=!textBold;button.classList.toggle("active",textBold);}if(style==="italic"){textItalic=!textItalic;button.classList.toggle("active",textItalic);}if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.bold=textBold;t.italic=textItalic;draw();}}}));
+  document.querySelectorAll("[data-align]").forEach((button)=>button.addEventListener("click",()=>{textAlign=button.dataset.align||"center";document.querySelectorAll("[data-align]").forEach((item)=>item.classList.toggle("active",item===button));if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.align=textAlign;draw();}}}));
+  $("center").addEventListener("click",()=>{if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.x=380;t.y=630;}}else{imageObj.x=380;imageObj.y=610;}draw();});
+  $("reset").addEventListener("click",()=>{image=null;texts=[];imageObj={x:380,y:610,scale:1,rotate:0};draw();});
+  $("qrBtn").addEventListener("click",createQrSession);
+  $("closeQr").addEventListener("click",()=>{$("qrModal").hidden=true;});
+  $("pay").addEventListener("click",async()=>{try{$("pay").disabled=true;$("status").textContent="Salvo progetto cover in dashboard...";const p=await savePayInStore();$("status").textContent=`Progetto arrivato in dashboard. ID ${p.id}. Incasso in cassa.`;$("status").className="status ok";}catch(e){$("status").textContent=e.message;$("status").className="status err";}finally{$("pay").disabled=false;}});
+  loadCatalog();
+})();
+</script>
+</body>
+</html>
