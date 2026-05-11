@@ -7,6 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box}html,body{height:100%}body{margin:0;min-height:100vh;overflow:hidden;background:#e8edf4;color:#07111f;font-family:Poppins,Arial,sans-serif}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 8%,rgba(0,110,230,.22),transparent 30%),linear-gradient(180deg,#f8fbff 0,#dce5ef 46%,#cfdbe8 100%);pointer-events:none}.home{position:fixed;left:28px;top:28px;z-index:30;width:76px;height:76px;border:0;border-radius:26px;background:#06111f;color:#fff;font-size:38px;font-weight:900;box-shadow:0 20px 42px rgba(7,17,31,.26)}.wrap{position:relative;width:min(1048px,calc(100% - 32px));height:100vh;margin:0 auto;padding:24px 0;display:grid;grid-template-rows:118px 282px minmax(0,1fr) 300px;gap:16px}.head{display:grid;grid-template-columns:1fr 410px;align-items:center;gap:20px;padding-left:100px}.kicker{color:#006ee6;font-size:15px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:78px;line-height:.86;margin:6px 0 0;letter-spacing:.01em}.head p{margin:0;color:#304052;font-size:18px;line-height:1.25;font-weight:900}.card{background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.85);border-radius:34px;box-shadow:0 24px 60px rgba(15,23,42,.16);min-height:0}.tools-panel{padding:18px;display:grid;grid-template-rows:72px 1fr;gap:14px;background:linear-gradient(180deg,#fff,#f3f7fb)}.top-row{display:grid;grid-template-columns:minmax(0,1fr) 248px 188px;gap:14px;align-items:end}.tool-grid{display:grid;grid-template-columns:.9fr 1.35fr;gap:14px;min-height:0}.tool-box{border:2px solid #e2eaf4;border-radius:26px;background:#fff;padding:16px;display:grid;gap:12px}.tool-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:950}.tool-title b{display:grid;place-items:center;width:32px;height:32px;border-radius:12px;background:#06111f;color:#fff;font-size:14px}label{display:grid;gap:7px;color:#3d4b5e;font-size:12px;font-weight:950}select,input,textarea{width:100%;min-height:56px;border:2px solid #cbd7e6;border-radius:18px;background:#fff;color:#07111f;padding:0 16px;font:inherit;font-size:17px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}textarea{min-height:74px;padding:13px 16px;resize:none}.btn{min-height:56px;border:0;border-radius:18px;padding:0 16px;font:inherit;font-size:15px;font-weight:950;cursor:pointer}.dark{background:#06111f;color:#fff}.primary{background:linear-gradient(180deg,#0a84ff,#0067df);color:#fff;box-shadow:0 18px 34px rgba(0,110,230,.28)}.ghost{background:#eef4fa;color:#07111f}.danger{background:#fff1f1;color:#991b1b}.upload-tile{display:grid;grid-template-columns:54px 1fr;align-items:center;text-align:left;gap:12px;min-height:72px;border-radius:24px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:0 16px;box-shadow:0 18px 36px rgba(7,17,31,.2)}.upload-tile::before{content:"QR";display:grid;place-items:center;width:52px;height:52px;border-radius:18px;background:#fff;color:#06111f;font-size:15px;font-weight:950}.upload-tile span{display:block;color:#9cc7ff;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.upload-tile strong{display:block;font-size:17px;line-height:1.04}.mini-price{height:72px;border-radius:24px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:14px 18px}.mini-price span,.price span{display:block;color:#92cbff;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:950}.mini-price strong{display:block;margin-top:5px;font-size:34px;line-height:1}.range-row{display:grid;grid-template-columns:1fr 1fr 86px;gap:12px;align-items:end}.range-row input[type=range]{padding:0;min-height:42px;accent-color:#0a7cff}.color-field{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center}.color-field input{height:54px;min-height:54px;padding:5px}.text-row{display:grid;grid-template-columns:1fr 142px 86px 220px;gap:12px;align-items:end}.align-group{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.align-btn{min-height:54px;border:0;border-radius:16px;background:#edf3f9;font-size:15px;font-weight:950;color:#07111f}.align-btn.active{background:#06111f;color:#fff}.text-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.editor-stage{padding:12px;display:grid;grid-template-rows:42px minmax(0,1fr);background:linear-gradient(145deg,#081524,#1b2a3f)}.canvas-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:0 10px 8px;color:#dbeafe;font-size:14px;font-weight:900}.canvas-wrap{display:grid;place-items:center;min-height:0;border-radius:28px;background:radial-gradient(circle at 50% 20%,rgba(255,255,255,.65),rgba(255,255,255,.07) 36%,rgba(3,10,21,.35) 72%),linear-gradient(160deg,#07111f,#26364d);overflow:hidden;padding:12px}canvas{width:min(100%,590px);max-height:100%;height:auto;touch-action:none;filter:drop-shadow(0 34px 46px rgba(0,0,0,.36))}.checkout-grid{display:grid;grid-template-columns:1.42fr .78fr;gap:16px}.customer-card,.pay-card{padding:22px}.customer-card h2,.pay-card h2{margin:0 0 16px;font-size:27px;line-height:1}.customer-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.customer-fields .wide{grid-column:1/-1}.pay-card{display:grid;grid-template-rows:auto auto auto 1fr auto;gap:12px}.price{border-radius:26px;background:linear-gradient(145deg,#06111f,#12243a);color:#fff;padding:20px}.price strong{display:block;margin-top:6px;font-size:54px;line-height:1}.checklist{display:grid;grid-template-columns:1fr;gap:9px}.check{padding:12px 14px;border-radius:16px;background:#f1f5fa;color:#526173;font-size:14px;font-weight:950}.check.ok{background:#e4f8ed;color:#12643d}.status{padding:13px 15px;border-radius:18px;background:#eff6ff;color:#07539f;font-size:13px;font-weight:950;line-height:1.28}.status.ok{background:#e4f8ed;color:#12643d}.status.err{background:#fff0f0;color:#991b1b}#pay{min-height:72px;font-size:22px;border-radius:24px}.qr-modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(7,17,31,.66);padding:22px}.qr-modal[hidden]{display:none}.qr-box{width:min(620px,100%);background:#fff;border-radius:36px;padding:32px;text-align:center;color:#07111f}.qr-box h2{font-size:42px;margin:0 0 10px}.qr-box p{color:#526070;margin:0 0 16px;font-size:18px}.qr-box img{width:min(340px,80vw);height:min(340px,80vw);border:12px solid #f3f6fa;border-radius:28px}.mini{font-size:13px;color:#667386;margin-top:12px;word-break:break-all}@media(max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto}.head,.top-row,.tool-grid,.range-row,.text-row,.checkout-grid,.customer-fields{grid-template-columns:1fr}.head{padding-left:92px}.canvas-wrap{min-height:620px}.home{width:68px;height:68px;font-size:32px}}
+    @media (min-width:761px){
+      .wrap{padding:14px 0;grid-template-rows:92px 190px minmax(0,1fr) 212px;gap:10px}
+      .home{left:22px;top:22px;width:64px;height:64px;border-radius:22px;font-size:31px}
+      .head{grid-template-columns:1fr 360px;padding-left:82px}.head h1{font-size:61px}.head p{font-size:14px}
+      .tools-panel{padding:12px;grid-template-rows:60px 1fr}.top-row{grid-template-columns:minmax(0,1fr) 220px 164px}.tool-box{padding:10px}.tool-title{font-size:15px}
+      select,input,textarea{min-height:42px;font-size:13px;border-radius:14px}.btn{min-height:42px;font-size:12px}.upload-tile,.mini-price{min-height:58px;height:58px;border-radius:18px}.upload-tile strong{font-size:13px}.mini-price strong{font-size:25px}
+      .range-row{grid-template-columns:1fr 1fr 70px}.text-row{grid-template-columns:1fr 108px 70px 174px}.align-btn{min-height:38px}.text-actions{gap:7px}
+      .editor-stage{padding:8px;grid-template-rows:30px minmax(0,1fr)}.canvas-head{font-size:11px}.canvas-wrap{border-radius:22px}canvas{width:min(100%,500px)}
+      .checkout-grid{gap:10px}.customer-card,.pay-card{padding:13px}.customer-card h2,.pay-card h2{font-size:18px;margin-bottom:8px}.customer-fields{gap:7px}.customer-fields textarea{min-height:46px}.price{padding:12px;border-radius:18px}.price strong{font-size:34px}.check{padding:6px 8px;font-size:10.5px}.status{padding:7px 9px;font-size:10px}#pay{min-height:48px;font-size:15px;border-radius:16px}
+    }
   </style>
 </head>
 <body>
@@ -100,7 +110,43 @@
     {id:"iphone-14",name:"iPhone 14",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
     {id:"iphone-13",name:"iPhone 13",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}}
   ];
-  const profiles = {"iphone 16 pro max":{width:77.8,height:160.7},"iphone 16 pro":{width:71.6,height:146.6},"iphone 16":{width:71.8,height:147.6},"iphone 15 pro max":{width:76.7,height:159.9},"iphone 15 pro":{width:70.6,height:146.6},"iphone 15":{width:71.6,height:147.6},"iphone 14 pro max":{width:77.6,height:160.7},"iphone 14 pro":{width:71.5,height:147.5},"iphone 14":{width:71.5,height:146.7},"iphone 13":{width:71.5,height:146.7}};
+  const TECH_PROFILES = {
+    "iphone 8": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone 8 plus": {width:78.1,height:158.4,calibrated:true,camera:{type:"horizontal-dual",x:.055,y:.043,w:.330,h:.105,r:22}},
+    "iphone se 2020": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone se 2022": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone x": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xr": {width:75.7,height:150.9,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.130,r:22}},
+    "iphone xs": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xs max": {width:77.4,height:157.5,calibrated:true,camera:{type:"vertical-dual",x:.056,y:.036,w:.225,h:.185,r:24}},
+    "iphone 11": {width:75.7,height:150.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.038,w:.255,h:.180,r:25}},
+    "iphone 11 pro": {width:71.4,height:144.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.420,h:.215,r:28}},
+    "iphone 11 pro max": {width:77.8,height:158.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.405,h:.205,r:28}},
+    "iphone 12": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.162,r:27}},
+    "iphone 12 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.164,r:27}},
+    "iphone 12 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.455,h:.222,r:30}},
+    "iphone 12 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.440,h:.214,r:30}},
+    "iphone 13": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.490,h:.239,r:32}},
+    "iphone 13 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.470,h:.228,r:32}},
+    "iphone 14": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 14 plus": {width:78.1,height:160.8,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.166,r:28}},
+    "iphone 14 pro": {width:71.5,height:147.5,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.495,h:.240,r:32}},
+    "iphone 14 pro max": {width:77.6,height:160.7,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.475,h:.229,r:32}},
+    "iphone 15": {width:71.6,height:147.6,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.172,r:28}},
+    "iphone 15 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.165,r:28}},
+    "iphone 15 pro": {width:70.6,height:146.6,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.535,h:.258,r:32}},
+    "iphone 15 pro max": {width:76.7,height:159.9,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.515,h:.248,r:32}},
+    "iphone 16": {width:71.8,height:147.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.230,r:28}},
+    "iphone 16 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.245,h:.220,r:28}},
+    "iphone 16e": {width:71.5,height:146.7,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.190,h:.135,r:24}},
+    "iphone 16 pro": {width:71.6,height:146.6,calibrated:true,camera:{type:"square",x:.043,y:.016,w:.540,h:.252,r:34}},
+    "iphone 16 pro max": {width:77.8,height:160.7,calibrated:true,camera:{type:"square",x:.048,y:.014,w:.550,h:.277,r:34}},
+    "iphone 17": {width:71.5,height:149.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.226,r:28}},
+    "iphone 17 pro": {width:71.7,height:149.6,calibrated:true,camera:{type:"plateau",x:.038,y:.026,w:.924,h:.258,r:32}},
+    "iphone 17 pro max": {width:76.9,height:163.0,calibrated:true,camera:{type:"plateau",x:.035,y:.026,w:.936,h:.270,widthMm:72,heightMm:44,r:30,holes:[{type:"circle",x:.190,y:.090,d:.118},{type:"circle",x:.425,y:.137,d:.118},{type:"circle",x:.196,y:.196,d:.118},{type:"circle",x:.792,y:.094,d:.082},{type:"circle",x:.790,y:.202,d:.086}]}}
+  };
   let models = fallbackModels.slice();
   let selected = models[0];
   let image = null;
@@ -138,7 +184,7 @@
       $("status").textContent = "Uso catalogo locale di sicurezza. Controllare sincronizzazione Shopify.";
       $("status").className = "status err";
     }
-    models.forEach((m)=>{ const p=profiles[cleanTitle(m.name)]||profiles[String(m.id).replace(/-/g," ")]||{width:71.5,height:147.6}; m.width=p.width;m.height=p.height;m.camera=m.camera||{x:.075,y:.05,w:.25,h:.15}; });
+    models.forEach((m)=>{ const p=TECH_PROFILES[String(m.id).replace(/-/g," ")]||TECH_PROFILES[cleanTitle(m.name)]||{width:71.5,height:147.6,calibrated:false,camera:{type:"square",x:.075,y:.05,w:.25,h:.15,r:24}}; m.width=p.width;m.height=p.height;m.calibrated=Boolean(p.calibrated);m.camera=p.camera; });
     renderModels();
   }
   function modelLabel(id){return String(id||"").split("-").map((p)=>p==="iphone"?"iPhone":p.charAt(0).toUpperCase()+p.slice(1)).join(" ").replace("Pro Max","Pro Max");}
@@ -163,11 +209,18 @@
   function cameraRect(){
     const c = selected?.camera || {x:.075,y:.05,w:.25,h:.15};
     const cover = coverRect();
-    return {x:cover.x+cover.w*c.x,y:cover.y+cover.h*c.y,w:cover.w*c.w,h:cover.h*c.h,r:c.r||28};
+    const phoneWidth=Number(selected?.width||71.5), phoneHeight=Number(selected?.height||147.6);
+    const w=c.widthMm ? cover.w*(Number(c.widthMm)/phoneWidth) : cover.w*c.w;
+    const h=c.heightMm ? cover.h*(Number(c.heightMm)/phoneHeight) : cover.h*c.h;
+    return {x:cover.x+cover.w*c.x,y:cover.y+cover.h*c.y,w,h,r:c.r||28};
   }
+  function effectiveCutout(){const c=selected?.camera||{};return Array.isArray(c.holes)&&c.holes.length&&String(c.type)==="plateau"?"holes":"block";}
+  function cameraZones(){const c=selected?.camera||{},cover=coverRect(),block=cameraRect();if(effectiveCutout()!=="holes")return [block];return c.holes.map((hole)=>{const d=cover.w*Number(hole.d||.08);return {type:"circle",x:cover.x+cover.w*Number(hole.x||0)-d/2,y:cover.y+cover.h*Number(hole.y||0)-d/2,w:d,h:d,d};});}
+  function zonePath(zone){ctx.beginPath();if(zone.type==="circle"){ctx.arc(zone.x+zone.w/2,zone.y+zone.h/2,zone.w/2,0,Math.PI*2);return;}roundRect(zone.x,zone.y,zone.w,zone.h,selected?.camera?.r||28);}
+  function drawNoPrintZone(zone){ctx.save();zonePath(zone);ctx.fillStyle="rgba(255,255,255,.95)";ctx.fill();ctx.clip();ctx.strokeStyle="rgba(239,68,68,.38)";ctx.lineWidth=3;for(let x=zone.x-zone.h;x<zone.x+zone.w+zone.h;x+=18){ctx.beginPath();ctx.moveTo(x,zone.y+zone.h+18);ctx.lineTo(x+zone.h+18,zone.y-18);ctx.stroke();}ctx.restore();ctx.save();zonePath(zone);ctx.strokeStyle="rgba(220,38,38,.94)";ctx.lineWidth=4;ctx.stroke();ctx.restore();}
   function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
   function draw(){
-    const cover=coverRect(), cam=cameraRect();
+    const cover=coverRect(), zones=cameraZones(), cam=cameraRect();
     ctx.clearRect(0,0,760,1180);
     ctx.fillStyle="#dfe7f0";ctx.fillRect(0,0,760,1180);
     ctx.save();ctx.shadowColor="rgba(15,23,42,.25)";ctx.shadowBlur=34;ctx.shadowOffsetY=22;roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.fillStyle="#fff";ctx.fill();ctx.restore();
@@ -175,7 +228,7 @@
     if(image){const base=Math.max(cover.w/image.width,cover.h/image.height);const scale=base*imageObj.scale;ctx.save();ctx.translate(imageObj.x,imageObj.y);ctx.rotate(imageObj.rotate*Math.PI/180);ctx.drawImage(image,-image.width*scale/2,-image.height*scale/2,image.width*scale,image.height*scale);ctx.restore();}
     texts.forEach((t)=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.rotate*Math.PI/180);ctx.font=`900 ${t.size}px Poppins,Arial`;ctx.textAlign=t.align||"center";ctx.textBaseline="middle";ctx.lineWidth=Math.max(4,t.size*.08);ctx.strokeStyle="#fff";ctx.fillStyle=t.color;const lines=String(t.value).split(/\n/).slice(0,3);lines.forEach((line,i)=>{const y=(i-(lines.length-1)/2)*t.size*1.15;ctx.strokeText(line,0,y);ctx.fillText(line,0,y);});ctx.restore();});
     ctx.restore();
-    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.strokeStyle="rgba(15,23,42,.55)";ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([12,10]);roundRect(cover.x+24,cover.y+24,cover.w-48,cover.h-48,Math.max(24,cover.r-24));ctx.strokeStyle="#006ee6";ctx.stroke();ctx.setLineDash([]);roundRect(cam.x,cam.y,cam.w,cam.h,cam.r);ctx.fillStyle="rgba(255,255,255,.95)";ctx.fill();ctx.strokeStyle="#dc2626";ctx.lineWidth=4;ctx.stroke();ctx.restore();
+    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.strokeStyle="rgba(15,23,42,.55)";ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([12,10]);roundRect(cover.x+24,cover.y+24,cover.w-48,cover.h-48,Math.max(24,cover.r-24));ctx.strokeStyle="#006ee6";ctx.stroke();ctx.setLineDash([]);ctx.restore();zones.forEach(drawNoPrintZone);ctx.save();ctx.font="900 18px Poppins,Arial";ctx.fillStyle="rgba(153,27,27,.95)";roundRect(cam.x+10,cam.y+2,156,30,15);ctx.fill();ctx.fillStyle="#fff";ctx.fillText("Non stampabile",cam.x+22,cam.y+23);ctx.restore();
     $("checkImage").classList.toggle("ok", Boolean(image || texts.length));
     $("checkImage").textContent = image || texts.length ? "Grafica inserita" : "Grafica da inserire";
     $("checkSafe").classList.toggle("ok", Boolean(image || texts.length));
