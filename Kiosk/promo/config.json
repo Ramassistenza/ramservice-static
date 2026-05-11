@@ -2,12 +2,18 @@
   "updatedAt": "2026-05-11T00:00:00.000Z",
   "format": {
     "hero": "1080x1350 JPG/WebP",
-    "banner": "1080x360 JPG/WebP"
+    "banner": "1080x360 JPG/WebP",
+    "center": "1080x520 JPG/WebP",
+    "slide": "1080x600 JPG/WebP"
   },
   "links": {
     "valutazione": "https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato",
     "cover": "https://www.ramserviceitalia.it/pages/cover-personalizzate-iphone"
   },
   "hero": null,
-  "banners": []
+  "banners": [],
+  "home": {
+    "center": null,
+    "slides": []
+  }
 }
