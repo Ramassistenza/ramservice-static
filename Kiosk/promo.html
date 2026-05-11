@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promozioni RAMSERVICE</title>
+  <link rel="stylesheet" href="https://ramassistenza.github.io/ramservice-static/Kiosk/stile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="promo-body">
+  <main class="promo-screen">
+    <header class="promo-header">
+      <button type="button" class="promo-home" onclick="location.href='kiosk.html'">⌂</button>
+      <img src="https://ramassistenza.github.io/ramservice-static/Kiosk/img/logoram.png" alt="RAMSERVICE">
+      <div>
+        <span>Promo</span>
+        <strong id="promoDate">Offerte del mese</strong>
+      </div>
+    </header>
+
+    <section id="promoHero" class="promo-hero">
+      <div class="promo-empty">Caricamento volantino...</div>
+    </section>
+
+    <section class="promo-banner-section">
+      <h2>Altre promozioni</h2>
+      <div id="promoBanners" class="promo-banners"></div>
+    </section>
+
+    <footer class="promo-footer">RAMSERVICE</footer>
+  </main>
+
+  <script>
+    const CONFIG_URL = "https://ramassistenza.github.io/ramservice-static/Kiosk/promo/config.json";
+    const HOME_URL = "kiosk.html";
+    let homeTimer = null;
+
+    function esc(value = "") {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[char]));
+    }
+
+    function touchReset() {
+      clearTimeout(homeTimer);
+      homeTimer = setTimeout(() => { location.href = HOME_URL; }, 120000);
+    }
+
+    function openPromoLink(url) {
+      if (!url) return;
+      location.href = url;
+    }
+
+    function renderConfig(config = {}) {
+      const hero = document.getElementById("promoHero");
+      const banners = document.getElementById("promoBanners");
+      const date = document.getElementById("promoDate");
+      if (date && config.updatedAt) {
+        date.textContent = new Date(config.updatedAt).toLocaleDateString("it-IT", {
+          day: "2-digit", month: "long", year: "numeric"
+        });
+      }
+
+      if (config.hero?.imageUrl) {
+        hero.innerHTML = `
+          <button class="promo-hero-card" type="button" onclick="openPromoLink('${esc(config.hero.linkUrl || "")}')">
+            <img src="${esc(config.hero.imageUrl)}" alt="${esc(config.hero.title || "Volantino RAMSERVICE")}">
+          </button>
+        `;
+      } else {
+        hero.innerHTML = `<div class="promo-empty">Nessun volantino caricato.</div>`;
+      }
+
+      const list = Array.isArray(config.banners) ? config.banners : [];
+      banners.innerHTML = list.length
+        ? list.map(item => `
+            <button class="promo-banner" type="button" onclick="openPromoLink('${esc(item.linkUrl || "")}')">
+              <img src="${esc(item.imageUrl)}" alt="${esc(item.title || "Promo RAMSERVICE")}">
+            </button>
+          `).join("")
+        : `<div class="promo-empty">Nessun banner caricato.</div>`;
+    }
+
+    async function loadPromo() {
+      try {
+        const response = await fetch(`${CONFIG_URL}?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error("config");
+        renderConfig(await response.json());
+      } catch {
+        document.getElementById("promoHero").innerHTML = `<div class="promo-empty">Promo non disponibili.</div>`;
+        document.getElementById("promoBanners").innerHTML = "";
+      }
+    }
+
+    ["click", "touchstart", "pointerdown"].forEach(eventName => {
+      window.addEventListener(eventName, touchReset, { passive: true });
+    });
+    touchReset();
+    loadPromo();
+    setInterval(loadPromo, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
