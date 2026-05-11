@@ -619,6 +619,153 @@ footer {
   box-shadow: 0 12px 30px rgba(0,0,0,.35);
 }
 
+/* ===============================
+   PAGINA PROMO / VOLANTINO
+================================ */
+.promo-body {
+  display: block;
+  background: #000;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.promo-screen {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.promo-header {
+  min-height: 140px;
+  background: #fff;
+  color: #111;
+  display: grid;
+  grid-template-columns: 120px 1fr 260px;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 34px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.promo-header img {
+  height: 96px;
+  justify-self: center;
+}
+
+.promo-header span {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.4em;
+  letter-spacing: 2px;
+  color: #0077cc;
+  text-align: right;
+}
+
+.promo-header strong {
+  display: block;
+  font-size: 1em;
+  text-transform: capitalize;
+  text-align: right;
+}
+
+.promo-home {
+  width: 96px;
+  height: 86px;
+  border: none;
+  border-radius: 22px;
+  background: #0077cc;
+  color: #fff;
+  font-size: 3em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+.promo-hero {
+  flex: 1;
+  min-height: 0;
+  padding: 24px 34px 12px;
+  display: grid;
+  place-items: center;
+}
+
+.promo-hero-card,
+.promo-banner {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.promo-hero-card img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  height: calc(100vh - 650px);
+  min-height: 780px;
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 24px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.7);
+  background: #111;
+}
+
+.promo-banner-section {
+  padding: 0 34px 22px;
+}
+
+.promo-banner-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8em;
+  letter-spacing: 2px;
+  margin: 0 0 14px;
+  color: #fff;
+}
+
+.promo-banners {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.promo-banner img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+  border-radius: 22px;
+  background: #111;
+  box-shadow: 0 14px 40px rgba(0,0,0,.55);
+}
+
+.promo-empty {
+  width: 100%;
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  border: 2px dashed #263241;
+  border-radius: 24px;
+  color: #94a3b8;
+  font-size: 1.6em;
+  text-align: center;
+}
+
+.promo-footer {
+  height: 70px;
+  background: #fff;
+  color: #111;
+  display: grid;
+  place-items: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6em;
+  letter-spacing: 2px;
+}
+
 /* QR PIÙ GRANDE */
 .fidelity-qr img{
   width: 180px;
@@ -659,7 +806,6 @@ footer {
   letter-spacing: 1px;
   color: #6fb0ff;
 }
-
 
 
 
