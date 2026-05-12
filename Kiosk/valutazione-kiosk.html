@@ -124,6 +124,69 @@
       .price strong{font-size:46px!important}
       .status{font-size:18px!important}
     }
+
+    /* =========================================================
+       KIOSK PORTRAIT REAL DISPLAY FIX - browser con viewport stretto
+       ========================================================= */
+    @media (orientation: portrait) and (min-height: 900px) and (max-width: 899px) {
+      html,body{height:auto!important;min-height:100vh!important;overflow-y:auto!important;background:#eef3f8!important;font-size:20px!important}
+      body{padding:0!important}
+      .home{left:18px!important;top:18px!important;width:64px!important;height:64px!important;border-radius:20px!important;font-size:32px!important}
+      .wrap{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-height:100vh!important;height:auto!important;margin:0!important;padding:22px 24px 34px!important;gap:22px!important}
+      .head{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;min-height:auto!important;padding-left:70px!important}
+      .kicker{font-size:15px!important;letter-spacing:.12em!important}
+      .head h1{font-size:68px!important;line-height:.86!important;margin:2px 0 0!important}
+      .head p{font-size:20px!important;line-height:1.28!important;max-width:none!important}
+      .grid{display:flex!important;flex-direction:column!important;gap:22px!important;min-height:0!important;height:auto!important}
+      .card{border-radius:24px!important;box-shadow:0 16px 42px rgba(15,23,42,.10)!important}
+      .flow-card{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;overflow:visible!important}
+      .steps{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:16px!important;height:auto!important}
+      .steps button{min-height:66px!important;border-radius:20px!important;font-size:19px!important;line-height:1.1!important}
+      form{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important}
+      .panel{display:flex!important;flex-direction:column!important;gap:18px!important;min-height:0!important;height:auto!important;padding:0 18px 18px!important;overflow:visible!important}
+      .panel[hidden]{display:none!important}
+      .step-title{display:grid!important;grid-template-columns:64px 1fr!important;align-items:center!important;min-height:0!important;padding:22px!important;border-radius:22px!important;gap:18px!important}
+      .step-title b{width:58px!important;height:58px!important;border-radius:18px!important;font-size:26px!important}
+      .step-title strong{margin:0!important;font-size:34px!important;line-height:1!important}
+      .step-title span{grid-column:1/-1!important;margin:0!important;font-size:19px!important;line-height:1.26!important}
+      .fields,.checks{height:auto!important;min-height:0!important;padding:22px!important;border-radius:22px!important;gap:18px!important;overflow:visible!important;background:#fff!important}
+      .fields{display:grid!important;grid-template-columns:1fr!important}
+      .field{gap:10px!important}
+      label{font-size:20px!important;line-height:1.15!important}
+      select,input,textarea,.btn{width:100%!important;min-height:70px!important;height:70px!important;border-radius:20px!important;font-size:21px!important}
+      textarea{min-height:110px!important;height:110px!important}
+      .panel[data-panel="0"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:none!important;gap:18px!important}
+      .panel[data-panel="0"] .field{min-height:170px!important;height:auto!important;padding:20px!important;border-radius:20px!important;align-content:center!important}
+      .panel[data-panel="0"] label{font-size:20px!important}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{min-height:72px!important;height:72px!important;font-size:21px!important}
+      .panel[data-panel="1"] .fields{display:grid!important;grid-template-columns:1fr!important;gap:20px!important}
+      .grade-strip{display:grid!important;grid-template-columns:1fr 1fr!important;height:auto!important;gap:16px!important}
+      .grade-card{height:auto!important;min-height:270px!important;grid-template-rows:170px auto auto!important;border-radius:22px!important;padding:14px!important}
+      .grade-card img{height:170px!important;border-radius:18px!important}
+      .grade-card span{font-size:15px!important;padding:6px 11px!important}
+      .grade-card strong{font-size:20px!important;line-height:1.1!important}
+      .panel[data-panel="2"] .fields{display:grid!important;grid-template-columns:1fr!important}
+      .check-grid{display:grid!important;grid-template-columns:1fr!important;gap:16px!important}
+      .check{font-size:19px!important;line-height:1.28!important;padding:20px!important;border-radius:20px!important}
+      .check input{width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important}
+      .field-help{font-size:17px!important;line-height:1.25!important;color:#5f6f82!important}
+      .actions{height:auto!important;min-height:0!important;padding:0 18px 18px!important;justify-content:stretch!important}
+      .actions .btn{width:100%!important;min-height:78px!important;font-size:24px!important;border-radius:22px!important}
+      .panel[data-panel="3"]>.actions{grid-column:auto!important;align-self:stretch!important;padding:0!important}
+      .result{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto!important;height:auto!important;min-height:0!important;padding:20px!important;gap:16px!important}
+      .result>.kicker{font-size:18px!important;min-height:52px!important;border-radius:18px!important}
+      .summary{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+      .row{font-size:17px!important;padding:18px!important;border-radius:18px!important}
+      .row strong{font-size:24px!important}
+      .price{min-height:150px!important;border-radius:24px!important;padding:24px!important}
+      .price span{font-size:15px!important}
+      .price strong{font-size:42px!important}
+      .status{grid-column:auto!important;font-size:17px!important;line-height:1.22!important;border-radius:18px!important;padding:14px 16px!important}
+      .legal-card{width:calc(100% - 36px)!important;border-radius:28px!important;padding:28px!important}
+      .legal-card h2{font-size:36px!important}
+      .legal-card p,.legal-card li{font-size:20px!important}
+      .legal-actions{grid-template-columns:1fr!important}
+    }
   </style>
 </head>
 <body>
