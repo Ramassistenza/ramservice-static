@@ -221,12 +221,12 @@
       .panel[data-panel="0"] .field{min-height:0!important;height:auto!important;padding:22px!important;border-radius:20px!important;align-content:center!important;background:#fff!important}
       .panel[data-panel="0"] label{font-size:19px!important}
       .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:66px!important;min-height:66px!important;font-size:20px!important}
-      .panel[data-panel="1"] .fields{grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr)!important;align-content:stretch!important}
-      .grade-strip{height:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
-      .grade-card{height:100%!important;min-height:0!important;grid-template-rows:minmax(0,1fr) 26px 40px!important;border-radius:18px!important;padding:10px!important}
-      .grade-card img{height:100%!important;min-height:0!important;border-radius:14px!important}
-      .grade-card span{font-size:12px!important;padding:5px 8px!important}
-      .grade-card strong{font-size:15px!important;line-height:1.05!important}
+      .panel[data-panel="1"] .fields{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:auto!important;align-content:start!important;overflow-y:auto!important;padding-right:16px!important}
+      .grade-strip{grid-column:1/-1!important;height:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+      .grade-card{height:190px!important;min-height:190px!important;grid-template-rows:118px 24px 28px!important;border-radius:18px!important;padding:10px!important;overflow:hidden!important}
+      .grade-card img{height:118px!important;min-height:0!important;border-radius:14px!important;object-fit:cover!important}
+      .grade-card span{font-size:13px!important;padding:5px 9px!important}
+      .grade-card strong{font-size:17px!important;line-height:1.05!important}
       .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr!important;align-content:start!important}
       .check-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
       .check{font-size:16px!important;line-height:1.22!important;padding:15px!important;border-radius:18px!important}
@@ -359,7 +359,33 @@
   const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
   const WHATSAPP = "393475941558";
   const fallbackQuotes = [
-    ["iPhone 16 Pro Max",[["256GB",979],["512GB",1119],["1TB",1269]]],["iPhone 16 Pro",[["128GB",879],["256GB",949],["512GB",1089],["1TB",1229]]],["iPhone 16 Plus",[["128GB",759],["256GB",829],["512GB",949]]],["iPhone 16",[["128GB",689],["256GB",759],["512GB",879]]],["iPhone 15 Pro Max",[["256GB",849],["512GB",969],["1TB",1089]]],["iPhone 15 Pro",[["128GB",749],["256GB",829],["512GB",949],["1TB",1069]]],["iPhone 15",[["128GB",549],["256GB",629],["512GB",749]]],["iPhone 14 Pro Max",[["128GB",649],["256GB",719],["512GB",839],["1TB",949]]],["iPhone 14 Pro",[["128GB",595],["256GB",665],["512GB",779],["1TB",879]]],["iPhone 14",[["128GB",389],["256GB",459],["512GB",549]]],["iPhone 13 Pro Max",[["128GB",589],["256GB",649],["512GB",759],["1TB",879]]],["iPhone 13 Pro",[["128GB",449],["256GB",519],["512GB",629],["1TB",749]]],["iPhone 13",[["128GB",299],["256GB",359],["512GB",469]]],["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]],["Galaxy S25 Ultra",[["256GB",780],["512GB",890],["1TB",1020]],"Samsung"],["Galaxy S24 Ultra",[["256GB",650],["512GB",740],["1TB",860]],"Samsung"],["Galaxy S23 Ultra",[["256GB",480],["512GB",560],["1TB",680]],"Samsung"]
+    ["iPhone 17 Pro Max",[["256GB",1289],["512GB",1399],["1TB",1519],["2TB",1639]]],
+    ["iPhone 17 Pro",[["256GB",1209],["512GB",1359],["1TB",1499]]],
+    ["iPhone 17",[["256GB",959],["512GB",1089]]],
+    ["iPhone 16 Pro Max",[["256GB",979],["512GB",1119],["1TB",1269]]],
+    ["iPhone 16 Pro",[["128GB",879],["256GB",949],["512GB",1089],["1TB",1229]]],
+    ["iPhone 16 Plus",[["128GB",759],["256GB",829],["512GB",949]]],
+    ["iPhone 16",[["128GB",689],["256GB",759],["512GB",879]]],
+    ["iPhone 16e",[["128GB",529],["256GB",599],["512GB",719]]],
+    ["iPhone 15 Pro Max",[["256GB",849],["512GB",969],["1TB",1089]]],
+    ["iPhone 15 Pro",[["128GB",749],["256GB",829],["512GB",949],["1TB",1069]]],
+    ["iPhone 15 Plus",[["128GB",549],["256GB",629],["512GB",759]]],
+    ["iPhone 15",[["128GB",549],["256GB",629],["512GB",749]]],
+    ["iPhone 14 Pro Max",[["128GB",649],["256GB",719],["512GB",839],["1TB",949]]],
+    ["iPhone 14 Pro",[["128GB",595],["256GB",665],["512GB",779],["1TB",879]]],
+    ["iPhone 14 Plus",[["128GB",449],["256GB",519],["512GB",639]]],
+    ["iPhone 14",[["128GB",389],["256GB",459],["512GB",549]]],
+    ["iPhone 13 Pro Max",[["128GB",589],["256GB",649],["512GB",759],["1TB",879]]],
+    ["iPhone 13 Pro",[["128GB",449],["256GB",519],["512GB",629],["1TB",749]]],
+    ["iPhone 13 mini",[["128GB",319],["256GB",379],["512GB",489]]],
+    ["iPhone 13",[["128GB",299],["256GB",359],["512GB",469]]],
+    ["iPhone 12 Pro Max",[["128GB",405],["256GB",469],["512GB",579]]],
+    ["iPhone 12 Pro",[["128GB",339],["256GB",399],["512GB",499]]],
+    ["iPhone 12 mini",[["64GB",205],["128GB",239],["256GB",299]]],
+    ["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],
+    ["iPhone 11 Pro Max",[["64GB",369],["256GB",429],["512GB",519]]],
+    ["iPhone 11 Pro",[["64GB",229],["256GB",299],["512GB",389]]],
+    ["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]]
   ];
   let quotes = fallbackQuotes;
   let step = 0;
@@ -369,6 +395,8 @@
   const stepBtns = [...document.querySelectorAll("[data-step-btn]")];
   const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(v||0))));
   const quoteBrand = (row) => row[2] || "Apple";
+  const allowedModels = new Set(fallbackQuotes.map((row)=>row[0]));
+  const cleanQuotes = (rows) => rows.filter((row)=>quoteBrand(row)==="Apple" && allowedModels.has(row[0]));
 
   async function loadShopifyQuotes(){
     try{
@@ -377,7 +405,8 @@
       if (!match) throw new Error("quotazioni non trovate");
       const parsed = Function(`"use strict";return (${match[1]});`)();
       if (!Array.isArray(parsed) || !parsed.length) throw new Error("quotazioni vuote");
-      quotes = parsed;
+      quotes = cleanQuotes(parsed);
+      if (!quotes.length) quotes = fallbackQuotes;
       $("status").textContent = "Quotazioni sincronizzate con Shopify.";
       $("status").className = "status ok";
     }catch(error){
