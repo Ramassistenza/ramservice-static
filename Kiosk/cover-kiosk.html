@@ -115,6 +115,61 @@
       .check{font-size:18px!important}
       #pay{min-height:84px!important;font-size:28px!important}
     }
+
+    /* =========================================================
+       KIOSK PORTRAIT REAL DISPLAY FIX - browser con viewport stretto
+       ========================================================= */
+    @media (orientation: portrait) and (min-height: 900px) and (max-width: 899px) {
+      html,body{height:auto!important;min-height:100vh!important;overflow-y:auto!important;background:#eef3f8!important;font-size:20px!important}
+      body{padding:0!important}
+      .home{left:18px!important;top:18px!important;width:64px!important;height:64px!important;border-radius:20px!important;font-size:32px!important}
+      .wrap{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-height:100vh!important;height:auto!important;margin:0!important;padding:22px 24px 34px!important;gap:22px!important}
+      .head{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;min-height:auto!important;padding-left:70px!important}
+      .kicker{font-size:15px!important;letter-spacing:.12em!important}
+      .head h1{font-size:68px!important;line-height:.86!important;margin:2px 0 0!important}
+      .head p{font-size:20px!important;line-height:1.28!important;max-width:none!important}
+      .card{border-radius:24px!important;box-shadow:0 16px 42px rgba(15,23,42,.10)!important}
+      .tools-panel{display:flex!important;flex-direction:column!important;padding:22px!important;gap:22px!important;overflow:visible!important}
+      .top-row{display:grid!important;grid-template-columns:1fr!important;gap:18px!important}
+      .top-row select{height:72px!important;min-height:72px!important;font-size:20px!important}
+      .upload-tile{min-height:110px!important;border-radius:22px!important;grid-template-columns:68px 1fr!important;padding:18px!important}
+      .upload-tile:before{width:62px!important;height:62px!important;border-radius:18px!important;font-size:18px!important}
+      .upload-tile span,.upload-tile strong,.upload-tile small{grid-column:2!important}
+      .upload-tile span{font-size:14px!important}
+      .upload-tile strong{font-size:22px!important;line-height:1.1!important}
+      .upload-tile small{font-size:16px!important;line-height:1.2!important}
+      .tool-grid{display:grid!important;grid-template-columns:1fr!important;gap:18px!important;overflow:visible!important}
+      .tool-box{min-height:0!important;height:auto!important;padding:22px!important;border-radius:22px!important;gap:18px!important;overflow:visible!important;background:#fff!important}
+      .tool-title{font-size:24px!important;line-height:1.1!important}
+      .tool-title b{width:40px!important;height:40px!important;border-radius:14px!important;font-size:17px!important}
+      label{font-size:19px!important;gap:10px!important}
+      select,input,textarea,.btn,.align-btn{width:100%!important;min-height:70px!important;height:70px!important;border-radius:20px!important;font-size:21px!important}
+      textarea#text{min-height:118px!important;height:118px!important;font-size:24px!important;line-height:1.25!important}
+      .range-row,.text-row,.style-row{display:grid!important;grid-template-columns:1fr!important;gap:18px!important;align-items:stretch!important}
+      .range-row input[type=range],#textSize{height:58px!important;min-height:58px!important}
+      .color-field{display:grid!important;grid-template-columns:90px 1fr!important;gap:14px!important}
+      .color-field input{height:80px!important;min-height:80px!important;border-radius:20px!important}
+      .align-group{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:14px!important}
+      .align-btn{font-size:22px!important}
+      .text-actions,.style-actions{display:grid!important;grid-template-columns:1fr!important;gap:16px!important}
+      #addText,#center,#reset{min-height:76px!important;font-size:22px!important}
+      .editor-stage{display:grid!important;grid-template-rows:auto auto!important;min-height:0!important;height:auto!important;padding:20px!important;gap:14px!important;overflow:visible!important}
+      .canvas-head{height:auto!important;display:grid!important;grid-template-columns:1fr!important;gap:10px!important;padding:0!important;font-size:18px!important;line-height:1.22!important}
+      .canvas-head span:last-child{justify-self:start!important;font-size:16px!important;border-radius:999px!important}
+      .canvas-wrap{height:auto!important;min-height:720px!important;padding:18px!important;border-radius:24px!important;overflow:visible!important}
+      canvas{width:min(100%,620px)!important;max-height:none!important}
+      .checkout-grid{display:grid!important;grid-template-columns:1fr!important;gap:20px!important}
+      .customer-card,.pay-card{padding:22px!important;border-radius:24px!important}
+      .customer-card h2,.pay-card h2{font-size:30px!important;margin-bottom:16px!important}
+      .customer-fields{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+      .customer-fields input,.customer-fields textarea{min-height:68px!important;height:68px!important;font-size:21px!important}
+      .customer-fields textarea{min-height:92px!important;height:92px!important}
+      .price{border-radius:24px!important;padding:22px!important}
+      .price span{font-size:15px!important}
+      .price strong{font-size:58px!important}
+      .check{font-size:17px!important;line-height:1.22!important;padding:13px 16px!important;border-radius:18px!important}
+      #pay{min-height:84px!important;font-size:28px!important;border-radius:24px!important}
+    }
   </style>
 </head>
 <body>
