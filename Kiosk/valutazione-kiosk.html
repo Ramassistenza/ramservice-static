@@ -82,6 +82,48 @@
       .legal-card p,.legal-card li{font-size:22px;line-height:1.35;color:#344256}
       .legal-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
     }
+
+    /* KIOSK READABILITY OVERRIDE - niente compressione, niente tagli */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{height:auto!important;min-height:100vh!important;overflow-y:auto!important;font-size:22px!important}
+      .wrap{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;height:auto!important;min-height:100vh!important;padding:32px 48px!important;gap:28px!important}
+      .head{min-height:128px!important;padding-left:80px!important;grid-template-columns:minmax(0,1fr) 430px!important}
+      .head h1{font-size:96px!important}
+      .head p{font-size:24px!important}
+      .grid{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;gap:28px!important}
+      .flow-card{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;padding:0!important;overflow:visible!important}
+      .steps{height:auto!important;padding:18px!important;gap:16px!important}
+      .steps button{min-height:78px!important;font-size:22px!important;border-radius:24px!important}
+      form{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important}
+      .panel{display:grid!important;grid-template-columns:30fr 70fr!important;gap:28px!important;min-height:780px!important;height:auto!important;padding:0 24px 24px!important;overflow:visible!important}
+      .panel[hidden]{display:none!important}
+      .step-title{min-height:520px!important;padding:36px!important;border-radius:30px!important}
+      .step-title b{width:76px!important;height:76px!important;font-size:34px!important}
+      .step-title strong{font-size:46px!important}
+      .step-title span{font-size:22px!important}
+      .fields,.checks{height:auto!important;min-height:520px!important;padding:30px!important;gap:24px!important;overflow:visible!important}
+      label{font-size:22px!important}
+      select,input,textarea,.btn{min-height:76px!important;height:76px!important;font-size:24px!important;border-radius:24px!important}
+      .panel[data-panel="0"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:repeat(2,260px)!important}
+      .panel[data-panel="0"] .field{min-height:260px!important;padding:30px!important}
+      .panel[data-panel="1"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important}
+      .grade-strip{height:320px!important;gap:18px!important}
+      .grade-card{height:320px!important;grid-template-rows:210px 36px 44px!important}
+      .grade-card img{height:210px!important}
+      .grade-card span{font-size:17px!important}
+      .grade-card strong{font-size:22px!important}
+      .check-grid{grid-template-columns:1fr!important;gap:18px!important}
+      .check{font-size:20px!important;padding:22px!important}
+      .check input{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important}
+      .actions{height:auto!important;min-height:104px!important;padding:0 24px 24px!important}
+      .actions .btn{min-width:240px!important;min-height:82px!important;font-size:24px!important}
+      .result{height:auto!important;min-height:260px!important;display:grid!important;grid-template-columns:180px 1fr 380px!important;grid-template-rows:1fr 60px!important;padding:24px!important;gap:20px!important}
+      .result>.kicker{font-size:20px!important}
+      .row{font-size:18px!important;padding:22px!important}
+      .row strong{font-size:26px!important}
+      .price strong{font-size:46px!important}
+      .status{font-size:18px!important}
+    }
   </style>
 </head>
 <body>
