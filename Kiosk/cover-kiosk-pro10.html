@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RamCover Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Base kiosk shell */
+    :root{--ink:#06111f;--muted:#5f6f82;--line:#dbe5f0;--line-strong:#c6d4e4;--panel:#ffffff;--soft:#f6f8fb;--blue:#087cff;--blue-dark:#0064d8;--danger:#d94141;--ok:#15803d;--shadow:0 22px 55px rgba(15,23,42,.10);--soft-shadow:0 10px 28px rgba(15,23,42,.08)}
+    *{box-sizing:border-box}html,body{width:100%;min-height:100%;margin:0}body{font-family:Poppins,Arial,sans-serif;color:var(--ink);background:#eef3f8;overflow:auto}button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}.home{position:fixed;left:20px;top:20px;z-index:30;width:64px;height:64px;border:0;border-radius:20px;background:var(--ink);color:#fff;font-size:32px;font-weight:900;box-shadow:0 16px 36px rgba(6,17,31,.22)}
+    .wrap{width:min(1048px,calc(100% - 28px));min-height:100vh;margin:0 auto;padding:18px 0;display:grid;grid-template-rows:auto auto minmax(640px,1fr) auto;gap:16px}.head{display:grid;grid-template-columns:1fr minmax(260px,380px);gap:22px;align-items:center;padding-left:86px}.kicker{color:var(--blue);font-size:13px;font-weight:950;letter-spacing:.15em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:70px;line-height:.88;letter-spacing:.01em;margin:4px 0 0}.head p{margin:0;color:#243447;font-size:16px;line-height:1.28;font-weight:850}.card{min-width:0;min-height:0;background:rgba(255,255,255,.96);border:1px solid rgba(219,229,240,.95);border-radius:24px;box-shadow:var(--shadow)}
+
+    /* Cover toolbar */
+    .tools-panel{padding:18px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:16px;background:linear-gradient(180deg,#fff 0,#f9fbfe 100%)}.top-row{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;align-items:stretch}.mini-price{display:none}.tool-grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}.tool-box{min-width:0;min-height:0;padding:18px;border-radius:20px;background:#f8fafc;border:1px solid var(--line);display:grid;gap:14px}.tool-title{display:flex;align-items:center;gap:10px;font-size:18px;line-height:1.1;font-weight:950;color:var(--ink)}.tool-title b{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:var(--ink);color:#fff;font-size:13px}label{display:grid;gap:7px;color:#344256;font-size:12px;line-height:1.15;font-weight:950}select,input,textarea{width:100%;height:56px;min-height:56px;border:2px solid var(--line-strong);border-radius:16px;background:#fff;color:var(--ink);padding:0 16px;font-size:16px;font-weight:850;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(8,124,255,.12)}textarea{height:74px;min-height:74px;padding:13px 16px;line-height:1.18;resize:none}.range-row{display:grid;grid-template-columns:1fr 1fr 92px;gap:13px;align-items:end}.range-row input[type=range]{height:38px;min-height:38px;padding:0;accent-color:var(--blue);border:0;background:transparent;box-shadow:none}.color-field{grid-template-columns:48px 1fr;gap:9px;align-items:end}.color-field input{height:48px;min-height:48px;padding:5px;border-radius:14px}.text-row{display:grid;grid-template-columns:1.25fr .82fr .9fr 82px 110px 150px;gap:11px;align-items:end}.align-group{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.align-btn{height:48px;min-height:48px;border:0;border-radius:14px;background:#e9eff6;color:var(--ink);font-size:13px;font-weight:950}.align-btn.active{background:var(--ink);color:#fff}.btn{min-height:54px;border:0;border-radius:16px;padding:0 18px;font-size:15px;font-weight:950}.ghost{background:#eef4fb;color:var(--ink)}.dark{background:var(--ink);color:#fff}.danger{background:#fff1f1;color:#a21b1b}.primary{background:linear-gradient(180deg,var(--blue),var(--blue-dark));color:#fff;box-shadow:0 18px 34px rgba(8,124,255,.26)}.text-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}.upload-tile{min-height:82px;border:0;border-radius:20px;padding:13px 16px;background:linear-gradient(145deg,#06111f,#142338);color:#fff;text-align:left;display:grid;grid-template-columns:58px 1fr;gap:13px;align-items:center;box-shadow:0 16px 34px rgba(6,17,31,.16)}.upload-tile:before{content:"QR";display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:#fff;color:var(--ink);font-size:15px;font-weight:950}.upload-tile span{display:block;color:#8cc8ff;font-size:10px;line-height:1;letter-spacing:.13em;text-transform:uppercase}.upload-tile strong{display:block;margin-top:3px;font-size:16px;line-height:1.08}.upload-tile small{display:block;margin-top:4px;color:#dbeafe;font-size:11px;line-height:1.15;font-weight:800}
+
+    /* Preview and checkout */
+    .editor-stage{padding:12px;display:grid;grid-template-rows:46px minmax(0,1fr);background:#fff}.canvas-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 8px 8px;color:#263548;font-size:13px;line-height:1.15;font-weight:950}.canvas-head span:first-child{max-width:690px}.canvas-head span:last-child{padding:8px 12px;border-radius:999px;background:#fff5f5;color:#b12727;border:1px solid #ffd6d6}.canvas-wrap{min-height:0;height:100%;border-radius:20px;border:1px solid var(--line);background:radial-gradient(circle at 50% 12%,#fff 0,#f8fbff 45%,#eef4fb 100%);display:grid;place-items:center;padding:10px;overflow:hidden}canvas{width:min(100%,640px);height:auto;max-height:100%;touch-action:none;filter:drop-shadow(0 24px 34px rgba(15,23,42,.18))}.checkout-grid{display:grid;grid-template-columns:1.4fr .82fr;gap:14px}.customer-card,.pay-card{padding:18px}.customer-card h2,.pay-card h2{margin:0 0 12px;font-size:24px;line-height:1}.customer-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.customer-fields .wide{grid-column:1/-1}.customer-fields textarea{height:64px;min-height:64px}.pay-card{display:grid;grid-template-rows:auto auto auto 1fr;gap:10px}.price{padding:17px 18px;border-radius:20px;background:linear-gradient(145deg,#06111f,#15243a);color:#fff}.price span{display:block;color:#8cc8ff;font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:950}.price strong{display:block;margin-top:5px;font-size:42px;line-height:1}.checklist{display:grid;gap:7px}.check{padding:9px 11px;border-radius:13px;background:#f0f5fa;color:#526173;font-size:12px;line-height:1.15;font-weight:950}.check.ok{background:#e4f8ed;color:#12643d}.status{display:none}.status.ok,.status.err{display:block;padding:10px 12px;border-radius:14px;font-size:12px;font-weight:900}.status.ok{background:#e4f8ed;color:#12643d}.status.err{background:#fff0f0;color:#991b1b}#pay{align-self:end;min-height:62px;border-radius:18px;font-size:19px}.qr-modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(6,17,31,.66);padding:24px}.qr-modal[hidden]{display:none}.qr-box{width:min(640px,calc(100% - 32px));padding:34px;border-radius:32px;background:#fff;color:var(--ink);text-align:center}.qr-box h2{font-size:46px;line-height:.95;margin:0 0 12px}.qr-box p{margin:0 0 18px;color:#526173;font-size:18px;line-height:1.32}.qr-box img{width:min(340px,74vw);height:min(340px,74vw);border:12px solid #f2f6fb;border-radius:26px}.mini{margin-top:12px;color:#667386;font-size:13px;word-break:break-all}
+
+    /* Dedicated portrait kiosk optimization: 1080 x 1920 touch totem */
+    @media (min-width:900px) and (min-height:1400px) and (orientation:portrait){
+      body{overflow:hidden}.wrap{width:1048px;max-width:calc(100% - 24px);height:100vh;min-height:0;padding:18px 0;grid-template-rows:96px 430px minmax(0,1fr) 308px;gap:18px}.head{padding-left:90px;grid-template-columns:1fr 380px}.head h1{font-size:76px}.head p{font-size:16px}.tools-panel{padding:20px;gap:18px}.tool-grid{grid-template-columns:350px minmax(0,1fr);gap:18px}.tool-box{padding:20px}.text-row{grid-template-columns:1.28fr .82fr .92fr 84px 112px 154px;gap:12px}textarea#text{height:82px;min-height:82px;font-size:18px}.editor-stage{grid-template-rows:50px minmax(0,1fr);padding:14px}.canvas-head{font-size:14px}.canvas-wrap{padding:12px}canvas{width:min(100%,675px)}.checkout-grid{gap:18px}.customer-card,.pay-card{padding:20px}.customer-card h2,.pay-card h2{font-size:26px}.price strong{font-size:46px}#pay{min-height:66px;font-size:20px}}
+    @media (max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto;padding:16px 0}.head,.top-row,.tool-grid,.range-row,.text-row,.checkout-grid,.customer-fields{grid-template-columns:1fr}.head{padding-left:82px}.head h1{font-size:56px}.canvas-wrap{min-height:620px}.home{width:58px;height:58px;font-size:28px}.align-group{grid-template-columns:repeat(3,1fr)}}
+
+    /* =========================================================
+       KIOSK PORTRAIT FIX DEFINITIVO - 1080x1920
+       ========================================================= */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{width:100%;min-height:100vh;overflow:auto;background:#eef3f8;font-size:20px}
+      body{font-size:20px}
+      .home{left:28px;top:28px;width:76px;height:76px;border-radius:24px;font-size:38px}
+      .wrap{width:100%;max-width:none;height:100vh;min-height:100vh;padding:24px 48px;grid-template-rows:126px 520px minmax(850px,1fr) 280px;gap:24px;overflow:visible}
+      .head{padding-left:72px;grid-template-columns:minmax(0,1fr) 420px;gap:32px}
+      .kicker{font-size:18px}
+      .head h1{font-size:92px;line-height:.86}
+      .head p{font-size:22px;line-height:1.24}
+      .card{border-radius:28px}
+      .tools-panel{padding:24px;grid-template-rows:96px minmax(0,1fr);gap:24px;overflow:visible}
+      .top-row{grid-template-columns:65fr 35fr;gap:24px}
+      label{font-size:18px;gap:10px}
+      select,input,textarea,.btn{min-height:64px;height:64px;border-radius:22px;font-size:20px}
+      .top-row select{height:72px;min-height:72px;font-size:20px}
+      .upload-tile{min-height:96px;border-radius:24px;grid-template-columns:66px 1fr;padding:16px 20px}
+      .upload-tile:before{width:62px;height:62px;border-radius:20px;font-size:18px}
+      .upload-tile span{font-size:16px}
+      .upload-tile strong{font-size:22px}
+      .upload-tile small{font-size:16px}
+      .tool-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;overflow:visible}
+      .tool-box{padding:24px;border-radius:26px;gap:22px;overflow:visible;align-content:start}
+      .tool-title{font-size:24px}
+      .tool-title b{width:42px;height:42px;border-radius:14px;font-size:18px}
+      .range-row,.text-row,.style-row{display:grid;grid-template-columns:1fr;gap:20px;align-items:stretch}
+      .range-row input[type=range],#textSize{width:100%;height:56px;min-height:56px}
+      .color-field{grid-template-columns:78px 1fr;align-items:end}
+      .color-field input{height:72px;min-height:72px;border-radius:20px}
+      #text{height:96px;min-height:96px;font-size:22px;line-height:1.2}
+      #textFont{height:72px;min-height:72px}
+      .align-group{gap:12px}
+      .align-btn{height:72px;min-height:72px;border-radius:20px;font-size:20px}
+      .text-actions,.style-actions{display:grid;grid-template-columns:1fr;gap:16px}
+      #addText,#center,#reset{min-height:72px;font-size:20px;border-radius:22px}
+      .editor-stage{min-height:850px;padding:20px;grid-template-rows:58px minmax(0,1fr);overflow:visible}
+      .canvas-head{font-size:18px;height:58px;padding:0 12px 12px}
+      .canvas-head span:last-child{font-size:17px;padding:10px 16px}
+      .canvas-wrap{min-height:850px;border-radius:28px;padding:18px;overflow:visible}
+      canvas{width:min(100%,760px);max-height:100%;filter:drop-shadow(0 26px 40px rgba(15,23,42,.18))}
+      .checkout-grid{grid-template-columns:1.35fr .85fr;gap:24px}
+      .customer-card,.pay-card{padding:24px;border-radius:28px}
+      .customer-card h2,.pay-card h2{font-size:30px;margin-bottom:18px}
+      .customer-fields{gap:16px}
+      .customer-fields input,.customer-fields textarea{min-height:64px;height:64px;font-size:20px}
+      .price{border-radius:26px;padding:22px}
+      .price span{font-size:16px}
+      .price strong{font-size:58px}
+      .check{font-size:16px;border-radius:18px;padding:12px 16px}
+      #pay{width:100%;min-height:76px;border-radius:24px;font-size:24px}
+      .qr-box{width:min(780px,calc(100% - 96px));border-radius:34px;padding:42px}
+      .qr-box h2{font-size:62px}
+      .qr-box p{font-size:22px}
+      .qr-box img{width:380px;height:380px}
+    }
+  </style>
+</head>
+<body>
+  <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
+  <main class="wrap">
+    <header class="head">
+      <div><div class="kicker">RamCover Studio Kiosk</div><h1>Crea la tua cover</h1></div>
+      <p>Scegli il modello, carica la foto dal telefono con QR, posiziona l'immagine e completa con pagamento in cassa.</p>
+    </header>
+    <section class="card tools-panel">
+      <div class="top-row">
+        <label>Modello cover sincronizzato Shopify<select id="model"></select></label>
+        <button class="upload-tile" id="qrBtn"><span>Step 2 - Smartphone</span><strong>Scansiona il QR e carica la foto</strong><small>La foto arriva qui automaticamente</small></button>
+        <div class="mini-price" aria-hidden="true"><span>Prezzo</span><strong id="price">€ 0,00</strong></div>
+      </div>
+      <div class="tool-grid">
+        <div class="tool-box tool-image">
+          <div class="tool-title"><b>1</b>Immagine e sfondo</div>
+          <div class="range-row">
+            <label>Zoom<input id="scale" type="range" min=".35" max="3" step=".01" value="1"></label>
+            <label>Rotazione<input id="rotate" type="range" min="-35" max="35" step="1" value="0"></label>
+            <label class="color-field">Sfondo<input id="bg" type="color" value="#ffffff"></label>
+          </div>
+        </div>
+        <div class="tool-box tool-text">
+          <div class="tool-title"><b>2</b>Testo personalizzato</div>
+          <div class="text-row">
+            <label>Testo<textarea id="text" maxlength="80" placeholder="Nome o frase"></textarea></label>
+            <label>Font<select id="textFont"><option value="Poppins, Arial, sans-serif">Poppins</option><option value="Arial, sans-serif">Arial</option><option value="'Bebas Neue', Arial, sans-serif">Bebas</option><option value="Georgia, serif">Georgia</option></select></label>
+            <label>Dimensione<input id="textSize" type="range" min="22" max="120" step="1" value="52"></label>
+          </div>
+          <div class="text-actions">
+            <button class="btn ghost" id="addText">Aggiungi testo</button>
+          </div>
+        </div>
+        <div class="tool-box tool-style">
+          <div class="tool-title"><b>3</b>Stile testo</div>
+          <div class="style-row">
+            <label class="color-field">Colore<input id="textColor" type="color" value="#111111"></label>
+            <label>Stile<div class="align-group"><button type="button" class="align-btn active" data-style="bold">B</button><button type="button" class="align-btn" data-style="italic">I</button></div></label>
+            <label>Allinea<div class="align-group"><button type="button" class="align-btn" data-align="left">SX</button><button type="button" class="align-btn active" data-align="center">C</button><button type="button" class="align-btn" data-align="right">DX</button></div></label>
+          </div>
+          <div class="style-actions">
+            <button class="btn ghost" id="center">Centra selezione</button>
+            <button class="btn danger" id="reset">Reset progetto</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="card editor-stage">
+      <div class="canvas-head"><span id="warning">Step 3 - Controlla l'anteprima e posiziona immagine o testo dentro la cover.</span><span>Area rossa = non stampabile</span></div>
+      <div class="canvas-wrap"><canvas id="canvas" width="760" height="1180"></canvas></div>
+    </section>
+    <section class="checkout-grid">
+      <div class="card customer-card">
+        <h2>Dati cliente</h2>
+        <div class="customer-fields">
+          <label>Nome e cognome<input id="name" required></label>
+          <label>Telefono<input id="phone" required></label>
+          <label>Email<input id="email" type="email"></label>
+          <label class="wide">Note<textarea id="notes" placeholder="Note per stampa"></textarea></label>
+        </div>
+      </div>
+      <div class="card pay-card">
+        <h2>Riepilogo</h2>
+        <div class="price"><span>Totale da pagare in cassa</span><strong id="priceFinal">€ 0,00</strong></div>
+        <div class="checklist">
+          <div class="check" id="checkModel">Modello da selezionare</div>
+          <div class="check" id="checkImage">Grafica da inserire</div>
+          <div class="check" id="checkSafe">Controllo area stampa</div>
+        </div>
+        <div id="status" class="status">Carico modelli e disponibilità sincronizzati da Shopify...</div>
+        <button class="btn primary" id="pay">Paga in cassa</button>
+      </div>
+    </section>
+  </main>
+  <div class="qr-modal" id="qrModal" hidden>
+    <div class="qr-box">
+      <h2>Scansiona il QR</h2>
+      <p>1. Inquadra il QR con il telefono. 2. Scegli la foto dal telefono. 3. Torna al kiosk: la foto compare automaticamente nell'editor.</p>
+      <img id="qrImg" alt="QR upload foto">
+      <div class="mini" id="qrUrl"></div>
+      <button class="btn dark" id="closeQr" style="margin-top:16px">Chiudi</button>
+    </div>
+  </div>
+<script>
+(() => {
+  const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
+  const SHOPIFY_PAGE = "https://www.ramserviceitalia.it/pages/cover-personalizzate-iphone";
+  const UPLOAD_PAGE = "https://ramassistenza.github.io/ramservice-static/Kiosk/cover-upload.html";
+  const fallbackModels = [
+    {id:"iphone-16-pro-max",name:"iPhone 16 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-16-pro",name:"iPhone 16 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-16",name:"iPhone 16",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-15-pro-max",name:"iPhone 15 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-15-pro",name:"iPhone 15 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-15",name:"iPhone 15",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-14-pro-max",name:"iPhone 14 Pro Max",price:29.90,camera:{x:.08,y:.045,w:.29,h:.18}},
+    {id:"iphone-14-pro",name:"iPhone 14 Pro",price:29.90,camera:{x:.08,y:.045,w:.28,h:.175}},
+    {id:"iphone-14",name:"iPhone 14",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}},
+    {id:"iphone-13",name:"iPhone 13",price:24.90,camera:{x:.08,y:.05,w:.25,h:.14}}
+  ];
+  const TECH_PROFILES = {
+    "iphone 8": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone 8 plus": {width:78.1,height:158.4,calibrated:true,camera:{type:"horizontal-dual",x:.055,y:.043,w:.330,h:.105,r:22}},
+    "iphone se 2020": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone se 2022": {width:67.3,height:138.4,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.125,r:22}},
+    "iphone x": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xr": {width:75.7,height:150.9,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.170,h:.130,r:22}},
+    "iphone xs": {width:70.9,height:143.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.036,w:.245,h:.205,r:24}},
+    "iphone xs max": {width:77.4,height:157.5,calibrated:true,camera:{type:"vertical-dual",x:.056,y:.036,w:.225,h:.185,r:24}},
+    "iphone 11": {width:75.7,height:150.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.038,w:.255,h:.180,r:25}},
+    "iphone 11 pro": {width:71.4,height:144.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.420,h:.215,r:28}},
+    "iphone 11 pro max": {width:77.8,height:158.0,calibrated:true,camera:{type:"square",x:.046,y:.020,w:.405,h:.205,r:28}},
+    "iphone 12": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.162,r:27}},
+    "iphone 12 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.056,y:.035,w:.330,h:.164,r:27}},
+    "iphone 12 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.455,h:.222,r:30}},
+    "iphone 12 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.045,y:.020,w:.440,h:.214,r:30}},
+    "iphone 13": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 mini": {width:64.2,height:131.5,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 13 pro": {width:71.5,height:146.7,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.490,h:.239,r:32}},
+    "iphone 13 pro max": {width:78.1,height:160.8,calibrated:true,camera:{type:"square",x:.043,y:.018,w:.470,h:.228,r:32}},
+    "iphone 14": {width:71.5,height:146.7,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.173,r:28}},
+    "iphone 14 plus": {width:78.1,height:160.8,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.166,r:28}},
+    "iphone 14 pro": {width:71.5,height:147.5,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.495,h:.240,r:32}},
+    "iphone 14 pro max": {width:77.6,height:160.7,calibrated:true,camera:{type:"square",x:.043,y:.017,w:.475,h:.229,r:32}},
+    "iphone 15": {width:71.6,height:147.6,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.355,h:.172,r:28}},
+    "iphone 15 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"diagonal-dual",x:.054,y:.034,w:.340,h:.165,r:28}},
+    "iphone 15 pro": {width:70.6,height:146.6,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.535,h:.258,r:32}},
+    "iphone 15 pro max": {width:76.7,height:159.9,calibrated:true,camera:{type:"square",x:.040,y:.015,w:.515,h:.248,r:32}},
+    "iphone 16": {width:71.8,height:147.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.230,r:28}},
+    "iphone 16 plus": {width:77.8,height:160.9,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.245,h:.220,r:28}},
+    "iphone 16e": {width:71.5,height:146.7,calibrated:true,camera:{type:"single",x:.060,y:.040,w:.190,h:.135,r:24}},
+    "iphone 16 pro": {width:71.6,height:146.6,calibrated:true,camera:{type:"square",x:.043,y:.016,w:.540,h:.252,r:34}},
+    "iphone 16 pro max": {width:77.8,height:160.7,calibrated:true,camera:{type:"square",x:.048,y:.014,w:.550,h:.277,r:34}},
+    "iphone 17": {width:71.5,height:149.6,calibrated:true,camera:{type:"vertical-dual",x:.058,y:.034,w:.255,h:.226,r:28}},
+    "iphone 17 pro": {width:71.7,height:149.6,calibrated:true,camera:{type:"plateau",x:.038,y:.026,w:.924,h:.258,r:32}},
+    "iphone 17 pro max": {width:76.9,height:163.0,calibrated:true,camera:{type:"plateau",x:.035,y:.026,w:.936,h:.270,widthMm:72,heightMm:44,r:30,holes:[{type:"circle",x:.190,y:.090,d:.118},{type:"circle",x:.425,y:.137,d:.118},{type:"circle",x:.196,y:.196,d:.118},{type:"circle",x:.792,y:.094,d:.082},{type:"circle",x:.790,y:.202,d:.086}]}}
+  };
+  let models = fallbackModels.slice();
+  let selected = models[0];
+  let image = null;
+  let imageObj = {x:380,y:610,scale:1,rotate:0};
+  let texts = [];
+  let active = "image";
+  let dragging = false;
+  let dragStart = null;
+  let pollTimer = null;
+  let textAlign = "center";
+  let textBold = true;
+  let textItalic = false;
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("canvas");
+  const ctx = canvas.getContext("2d");
+  const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(Number(v||0));
+  const cleanTitle = (v) => String(v||"").toLowerCase().replace(/apple|cover|custodia|personalizzata|iphone/g,"iphone").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+
+  async function loadCatalog(){
+    try{
+      const html = await fetch(SHOPIFY_PAGE + "?kiosk_sync=" + Date.now(), {cache:"no-store"}).then((r)=>r.text());
+      const modelJson = html.match(/<script type="application\/json" data-cover-models>([\s\S]*?)<\/script>/)?.[1];
+      const productsJson = html.match(/<script type="application\/json" data-cover-products>([\s\S]*?)<\/script>/)?.[1];
+      const baseModels = JSON.parse(modelJson || "[]");
+      const products = JSON.parse(productsJson || "[]");
+      if (products.length) {
+        models = products.map((p)=>{
+          const base = baseModels.find((m)=>m.id===p.id) || {};
+          return {...base,id:p.id,name:modelLabel(p.id),shopifyName:p.name||"",price:Number(base.price||24.99),coverPrice:Number(p.coverPrice||0),variantId:String(p.variantId||""),available:p.available!==false,productHandle:p.productHandle||""};
+        }).filter((m)=>m.id && m.available);
+      } else if (baseModels.length) {
+        models = baseModels;
+      }
+      $("status").textContent = "Modelli sincronizzati con Shopify.";
+      $("status").className = "status ok";
+    }catch(error){
+      $("status").textContent = "Uso catalogo locale di sicurezza. Controllare sincronizzazione Shopify.";
+      $("status").className = "status err";
+    }
+    models.forEach((m)=>{ const p=TECH_PROFILES[String(m.id).replace(/-/g," ")]||TECH_PROFILES[cleanTitle(m.name)]||{width:71.5,height:147.6,calibrated:false,camera:{type:"square",x:.075,y:.05,w:.25,h:.15,r:24}}; m.width=p.width;m.height=p.height;m.calibrated=Boolean(p.calibrated);m.camera=p.camera; });
+    renderModels();
+  }
+  function modelLabel(id){return String(id||"").split("-").map((p)=>p==="iphone"?"iPhone":p.charAt(0).toUpperCase()+p.slice(1)).join(" ").replace("Pro Max","Pro Max");}
+  function renderModels(){
+    $("model").innerHTML = models.map((m)=>`<option value="${m.id}">${m.name || modelLabel(m.id)}${m.shopifyName ? " - " + m.shopifyName.replace(/^Cover\\s*/i,"") : ""}</option>`).join("");
+    updateModel();
+  }
+  function updateModel(){
+    selected = models.find((m)=>m.id===$("model").value) || models[0];
+    $("price").textContent = money(selected?.price || 0);
+    $("priceFinal").textContent = money(selected?.price || 0);
+    $("checkModel").textContent = selected ? `Modello: ${selected.name}` : "Modello da selezionare";
+    $("checkModel").classList.toggle("ok", Boolean(selected));
+    draw();
+  }
+  function coverRect(){
+    const height = 1110;
+    const ratio = Number(selected?.width||71.5) / Number(selected?.height||147.6);
+    const width = Math.max(460, Math.min(535, Math.round(height * ratio)));
+    return {x:Math.round((760-width)/2),y:34,w:width,h:height,r:Math.round(width*.145)};
+  }
+  function cameraRect(){
+    const c = selected?.camera || {x:.075,y:.05,w:.25,h:.15};
+    const cover = coverRect();
+    const phoneWidth=Number(selected?.width||71.5), phoneHeight=Number(selected?.height||147.6);
+    const w=c.widthMm ? cover.w*(Number(c.widthMm)/phoneWidth) : cover.w*c.w;
+    const h=c.heightMm ? cover.h*(Number(c.heightMm)/phoneHeight) : cover.h*c.h;
+    return {x:cover.x+cover.w*c.x,y:cover.y+cover.h*c.y,w,h,r:c.r||28};
+  }
+  function effectiveCutout(){const c=selected?.camera||{};return Array.isArray(c.holes)&&c.holes.length&&String(c.type)==="plateau"?"holes":"block";}
+  function cameraZones(){const c=selected?.camera||{},cover=coverRect(),block=cameraRect();if(effectiveCutout()!=="holes")return [block];return c.holes.map((hole)=>{const d=cover.w*Number(hole.d||.08);return {type:"circle",x:cover.x+cover.w*Number(hole.x||0)-d/2,y:cover.y+cover.h*Number(hole.y||0)-d/2,w:d,h:d,d};});}
+  function zonePath(zone){ctx.beginPath();if(zone.type==="circle"){ctx.arc(zone.x+zone.w/2,zone.y+zone.h/2,zone.w/2,0,Math.PI*2);return;}roundRect(zone.x,zone.y,zone.w,zone.h,selected?.camera?.r||28);}
+  function drawNoPrintZone(zone){ctx.save();zonePath(zone);ctx.fillStyle="rgba(255,255,255,.95)";ctx.fill();ctx.clip();ctx.strokeStyle="rgba(239,68,68,.38)";ctx.lineWidth=3;for(let x=zone.x-zone.h;x<zone.x+zone.w+zone.h;x+=18){ctx.beginPath();ctx.moveTo(x,zone.y+zone.h+18);ctx.lineTo(x+zone.h+18,zone.y-18);ctx.stroke();}ctx.restore();ctx.save();zonePath(zone);ctx.strokeStyle="rgba(220,38,38,.94)";ctx.lineWidth=4;ctx.stroke();ctx.restore();}
+  function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function draw(){
+    const cover=coverRect(), zones=cameraZones(), cam=cameraRect();
+    ctx.clearRect(0,0,760,1180);
+    ctx.fillStyle="#dfe7f0";ctx.fillRect(0,0,760,1180);
+    ctx.save();ctx.shadowColor="rgba(15,23,42,.25)";ctx.shadowBlur=34;ctx.shadowOffsetY=22;roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.fillStyle="#fff";ctx.fill();ctx.restore();
+    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.clip();ctx.fillStyle=$("bg").value||"#fff";ctx.fillRect(cover.x,cover.y,cover.w,cover.h);
+    if(image){const base=Math.max(cover.w/image.width,cover.h/image.height);const scale=base*imageObj.scale;ctx.save();ctx.translate(imageObj.x,imageObj.y);ctx.rotate(imageObj.rotate*Math.PI/180);ctx.drawImage(image,-image.width*scale/2,-image.height*scale/2,image.width*scale,image.height*scale);ctx.restore();}
+    texts.forEach((t)=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.rotate*Math.PI/180);ctx.font=`${t.italic?"italic ":""}${t.bold===false?"700":"900"} ${t.size}px ${t.font||"Poppins,Arial"}`;ctx.textAlign=t.align||"center";ctx.textBaseline="middle";ctx.lineWidth=Math.max(4,t.size*.08);ctx.strokeStyle="#fff";ctx.fillStyle=t.color;const lines=String(t.value).split(/\n/).slice(0,3);lines.forEach((line,i)=>{const y=(i-(lines.length-1)/2)*t.size*1.15;ctx.strokeText(line,0,y);ctx.fillText(line,0,y);});ctx.restore();});
+    ctx.restore();
+    ctx.save();roundRect(cover.x,cover.y,cover.w,cover.h,cover.r);ctx.strokeStyle="rgba(15,23,42,.55)";ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([12,10]);roundRect(cover.x+24,cover.y+24,cover.w-48,cover.h-48,Math.max(24,cover.r-24));ctx.strokeStyle="#006ee6";ctx.stroke();ctx.setLineDash([]);ctx.restore();zones.forEach(drawNoPrintZone);ctx.save();ctx.font="900 18px Poppins,Arial";ctx.fillStyle="rgba(153,27,27,.95)";roundRect(cam.x+10,cam.y+2,156,30,15);ctx.fill();ctx.fillStyle="#fff";ctx.fillText("Non stampabile",cam.x+22,cam.y+23);ctx.restore();
+    $("checkImage").classList.toggle("ok", Boolean(image || texts.length));
+    $("checkImage").textContent = image || texts.length ? "Grafica inserita" : "Grafica da inserire";
+    $("checkSafe").classList.toggle("ok", Boolean(image || texts.length));
+    $("warning").textContent = image || texts.length ? "Anteprima pronta. Controlla posizione e modello." : "Carica una foto o aggiungi testo.";
+  }
+  function loadDataUrl(dataUrl, name="foto"){
+    const img = new Image();
+    img.onload = () => { image=img; active="image"; imageObj={x:380,y:610,scale:Number($("scale").value),rotate:Number($("rotate").value)}; $("status").textContent=`Foto caricata: ${name}`; $("status").className="status ok"; draw(); };
+    img.src = dataUrl;
+  }
+  function exportDataUrl(maxWidth, quality, mode){
+    draw();
+    const cover=coverRect();
+    const crop = mode==="print" ? cover : {x:0,y:0,w:760,h:1180};
+    const out=document.createElement("canvas");
+    const scale=maxWidth/crop.w; out.width=Math.round(crop.w*scale); out.height=Math.round(crop.h*scale);
+    out.getContext("2d").drawImage(canvas,crop.x,crop.y,crop.w,crop.h,0,0,out.width,out.height);
+    return out.toDataURL("image/jpeg",quality);
+  }
+  async function createQrSession(){
+    $("qrBtn").disabled=true; $("status").textContent="Creo QR upload...";
+    try{
+      const res=await fetch(`${API}/cover-studio/kiosk/upload-sessions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:"kiosk-cover-studio",pageUrl:location.href,userAgent:navigator.userAgent})});
+      const data=await res.json(); if(!res.ok||!data.ok) throw new Error(data.message||"Errore QR");
+      const uploadUrl = `${UPLOAD_PAGE}?session=${encodeURIComponent(data.id)}`;
+      $("qrUrl").textContent = uploadUrl;
+      $("qrImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(uploadUrl)}`;
+      $("qrModal").hidden=false;
+      clearInterval(pollTimer);
+      pollTimer=setInterval(()=>pollSession(data.id),2200);
+    }catch(error){$("status").textContent=error.message;$("status").className="status err";}finally{$("qrBtn").disabled=false;}
+  }
+  async function pollSession(id){
+    try{
+      const res=await fetch(`${API}/cover-studio/kiosk/upload-sessions/${encodeURIComponent(id)}?v=${Date.now()}`,{cache:"no-store"});
+      const data=await res.json(); if(!res.ok||!data.ok) return;
+      if(data.status==="uploaded" && data.imageDataUrl){clearInterval(pollTimer);$("qrModal").hidden=true;loadDataUrl(data.imageDataUrl,data.fileName||"foto telefono");}
+    }catch{}
+  }
+  async function savePayInStore(){
+    if(!selected) throw new Error("Seleziona un modello.");
+    if(!image && !texts.length) throw new Error("Carica una foto o aggiungi testo.");
+    if(!$("name").value.trim() || !$("phone").value.trim()) throw new Error("Inserisci nome e telefono cliente.");
+    const previewDataUrl=exportDataUrl(620,.82,"preview");
+    const printDataUrl=exportDataUrl(1800,.92,"print");
+    const res=await fetch(`${API}/cover-studio/projects`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:selected.id,modelLabel:selected.name,price:selected.price,customerName:$("name").value,customerPhone:$("phone").value,customerEmail:$("email").value,notes:`PAGA IN CASSA - Kiosk. ${$("notes").value||""}`,source:"kiosk-cover-studio-pay-in-store",status:"cart_ready",previewDataUrl,printDataUrl,editorState:{model:selected,image:image?imageObj:null,backgroundColor:$("bg").value,texts},userAgent:navigator.userAgent,pageUrl:location.href})});
+    const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok) throw new Error(data.message||"Errore salvataggio progetto");
+    return data;
+  }
+  function pointerPos(e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*(760/r.width),y:(e.clientY-r.top)*(1180/r.height)};}
+  canvas.addEventListener("pointerdown",(e)=>{e.preventDefault();dragging=true;dragStart=pointerPos(e);canvas.setPointerCapture?.(e.pointerId);});
+  canvas.addEventListener("pointermove",(e)=>{if(!dragging||!dragStart)return;e.preventDefault();const p=pointerPos(e),dx=p.x-dragStart.x,dy=p.y-dragStart.y;const t=active.startsWith("text:")?texts[Number(active.split(":")[1])]:null;if(t){t.x+=dx;t.y+=dy;}else if(image){imageObj.x+=dx;imageObj.y+=dy;}dragStart=p;draw();});
+  ["pointerup","pointercancel","pointerleave"].forEach((ev)=>canvas.addEventListener(ev,()=>{dragging=false;dragStart=null;}));
+  $("model").addEventListener("change",updateModel);
+  $("scale").addEventListener("input",()=>{imageObj.scale=Number($("scale").value);draw();});
+  $("rotate").addEventListener("input",()=>{imageObj.rotate=Number($("rotate").value);draw();});
+  $("bg").addEventListener("input",draw);
+  $("addText").addEventListener("click",()=>{const value=$("text").value.trim();if(!value)return;texts.push({value,x:380,y:630,color:$("textColor").value,size:Number($("textSize").value||52),font:$("textFont").value,rotate:0,align:textAlign,bold:textBold,italic:textItalic});active=`text:${texts.length-1}`;draw();});
+  $("textSize").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.size=Number($("textSize").value||52);draw();}});
+  $("textColor").addEventListener("input",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.color=$("textColor").value;draw();}});
+  $("textFont").addEventListener("change",()=>{if(!active.startsWith("text:"))return;const t=texts[Number(active.split(":")[1])];if(t){t.font=$("textFont").value;draw();}});
+  document.querySelectorAll("[data-style]").forEach((button)=>button.addEventListener("click",()=>{const style=button.dataset.style;if(style==="bold"){textBold=!textBold;button.classList.toggle("active",textBold);}if(style==="italic"){textItalic=!textItalic;button.classList.toggle("active",textItalic);}if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.bold=textBold;t.italic=textItalic;draw();}}}));
+  document.querySelectorAll("[data-align]").forEach((button)=>button.addEventListener("click",()=>{textAlign=button.dataset.align||"center";document.querySelectorAll("[data-align]").forEach((item)=>item.classList.toggle("active",item===button));if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.align=textAlign;draw();}}}));
+  $("center").addEventListener("click",()=>{if(active.startsWith("text:")){const t=texts[Number(active.split(":")[1])];if(t){t.x=380;t.y=630;}}else{imageObj.x=380;imageObj.y=610;}draw();});
+  $("reset").addEventListener("click",()=>{image=null;texts=[];imageObj={x:380,y:610,scale:1,rotate:0};draw();});
+  $("qrBtn").addEventListener("click",createQrSession);
+  $("closeQr").addEventListener("click",()=>{$("qrModal").hidden=true;});
+  $("pay").addEventListener("click",async()=>{try{$("pay").disabled=true;$("status").textContent="Salvo progetto cover in dashboard...";const p=await savePayInStore();$("status").textContent=`Progetto arrivato in dashboard. ID ${p.id}. Incasso in cassa.`;$("status").className="status ok";}catch(e){$("status").textContent=e.message;$("status").className="status err";}finally{$("pay").disabled=false;}});
+  loadCatalog();
+})();
+</script>
+</body>
+</html>
