@@ -20,6 +20,68 @@
     @media (min-width:900px) and (min-height:1400px) and (orientation:portrait){
       body{overflow:hidden}.wrap{width:1048px;max-width:calc(100% - 24px);height:100vh;min-height:0;padding:18px 0;grid-template-rows:96px minmax(0,1fr) 232px;gap:18px}.head{padding-left:90px;grid-template-columns:1fr 390px}.head h1{font-size:76px}.head p{font-size:16px}.grid{gap:18px}.flow-card{grid-template-rows:78px minmax(0,1fr)}form{grid-template-rows:minmax(0,1fr) 70px}.panel{grid-template-columns:248px minmax(0,1fr);gap:16px;padding:0 16px 16px}.steps{padding:13px;gap:12px}.steps button{min-height:52px;font-size:15px}.step-title{padding:24px}.step-title strong{font-size:32px}.fields,.checks{padding:18px;gap:15px}.panel[data-panel="0"] .fields{grid-template-rows:repeat(2,minmax(128px,1fr))}.grade-strip{height:242px}.grade-card{height:242px;grid-template-rows:164px 24px 30px}.grade-card img{height:164px}.result{height:232px;grid-template-columns:136px 1fr 304px}.price strong{font-size:34px}.btn{min-height:54px;font-size:16px}}
     @media (max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto;padding:16px 0}.head{display:block;padding-left:82px}.head h1{font-size:56px}.head p{margin-top:10px}.panel,.fields,.summary,.result{grid-template-columns:1fr}.flow-card,form{grid-template-rows:auto}.panel{padding:0 12px 12px}.result{height:auto}.grade-strip{grid-template-columns:1fr 1fr;height:auto}.home{width:58px;height:58px;font-size:28px}}
+
+    /* =========================================================
+       KIOSK PORTRAIT FIX DEFINITIVO - 1080x1920
+       ========================================================= */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{width:100%;min-height:100vh;overflow:auto;background:#eef3f8;font-size:20px}
+      body{font-size:20px}
+      .home{left:28px;top:28px;width:76px;height:76px;border-radius:24px;font-size:38px}
+      .wrap{width:100%;max-width:none;height:100vh;min-height:100vh;padding:24px 48px;grid-template-rows:126px minmax(0,1fr);gap:24px;overflow:visible}
+      .head{padding-left:72px;grid-template-columns:minmax(0,1fr) 420px;gap:32px}
+      .kicker{font-size:18px}
+      .head h1{font-size:92px;line-height:.86}
+      .head p{font-size:22px;line-height:1.24}
+      .grid{height:100%;min-height:0;grid-template-rows:minmax(900px,1fr) 240px;gap:24px}
+      .card{border-radius:28px}
+      .flow-card{height:100%;grid-template-rows:84px minmax(0,1fr);overflow:visible}
+      .steps{height:84px;padding:12px;gap:16px}
+      .steps button{min-height:72px;border-radius:22px;font-size:20px}
+      form{height:100%;grid-template-rows:minmax(0,1fr) 96px}
+      .panel{height:100%;min-height:900px;grid-template-columns:28fr 72fr;gap:24px;padding:0 24px 24px;overflow:visible}
+      .step-title{border-radius:28px;padding:34px}
+      .step-title b{width:68px;height:68px;border-radius:22px;font-size:30px}
+      .step-title strong{font-size:42px;line-height:1}
+      .step-title span{font-size:20px;line-height:1.28}
+      .fields,.checks{height:100%;border-radius:28px;padding:28px;gap:24px;overflow:visible}
+      label{font-size:20px}
+      select,input,textarea,.btn{min-height:70px;height:70px;border-radius:22px;font-size:22px}
+      textarea{min-height:112px;height:112px}
+      .panel[data-panel="0"] .fields{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+      .panel[data-panel="0"] .field{min-height:260px;padding:28px;border-radius:26px;align-content:center}
+      .panel[data-panel="0"] label{font-size:20px}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:76px;min-height:76px;font-size:22px}
+      .panel[data-panel="1"] .fields{grid-template-columns:1fr 1fr;grid-auto-rows:auto;align-content:start}
+      .grade-strip{height:290px;grid-template-columns:repeat(4,1fr);gap:16px}
+      .grade-card{height:290px;grid-template-rows:190px 32px 40px;border-radius:24px;padding:14px}
+      .grade-card img{height:190px;border-radius:18px}
+      .grade-card span{font-size:16px;padding:6px 12px}
+      .grade-card strong{font-size:20px}
+      .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      .check{border-radius:22px;padding:18px;font-size:18px;line-height:1.28}
+      .check input{width:30px;min-width:30px;height:30px;min-height:30px}
+      .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr;align-content:start}
+      .field-help{font-size:16px;line-height:1.25;color:#5f6f82}
+      .actions{height:96px;padding:0 24px 24px;gap:18px}
+      .btn{min-height:72px;border-radius:22px;font-size:22px;padding:0 34px}
+      #next{min-width:230px}
+      .panel[data-panel="3"]>.actions{grid-column:2;align-self:end;padding:0}
+      .result{height:240px;padding:20px;grid-template-columns:170px 1fr 360px;grid-template-rows:1fr 52px;gap:18px}
+      .result>.kicker{font-size:18px;border-radius:22px}
+      .row{border-radius:22px;padding:20px;font-size:16px}
+      .row strong{font-size:24px}
+      .price{border-radius:24px;padding:26px}
+      .price span{font-size:16px}
+      .price strong{font-size:42px}
+      .status{font-size:16px;border-radius:18px;padding:14px 18px}
+      .legal-modal{position:fixed;inset:0;z-index:90;background:rgba(6,17,31,.68);display:grid;place-items:center;padding:48px}
+      .legal-modal[hidden]{display:none}
+      .legal-card{width:min(820px,100%);background:#fff;border-radius:34px;padding:42px;box-shadow:0 28px 70px rgba(6,17,31,.30)}
+      .legal-card h2{margin:0 0 16px;font-size:42px;line-height:1}
+      .legal-card p,.legal-card li{font-size:22px;line-height:1.35;color:#344256}
+      .legal-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+    }
   </style>
 </head>
 <body>
@@ -63,6 +125,12 @@
               <div class="field"><label>Accessori e scatola</label><select id="accessories" data-label="Accessori e scatola"><option value="completi">Scatola e accessori</option><option value="scatola">Solo scatola</option><option value="cavo">Solo cavo</option><option value="nessuno" selected>Nessuno</option></select></div>
               <div class="field"><label>Prova acquisto</label><select id="proof" data-label="Prova acquisto"><option value="presente">Fattura o scontrino presente</option><option value="dichiarazione">Dichiarazione di vendita</option><option value="assente" selected>Assente</option></select></div>
               <div class="field"><label>Preferenza</label><select id="preference" data-label="Preferenza"><option>Vorrei far verificare il dispositivo in negozio</option><option>Vorrei usare il valore come credito per un nuovo acquisto</option><option>Vorrei ricevere pagamento con bonifico dopo conferma tecnica</option></select></div>
+              <div class="check-grid full">
+                <label class="check"><input id="okAccount" type="checkbox" required data-label="Account iCloud/Google rimosso"><span>Account iCloud/Google gia rimosso o rimovibile *</span></label>
+                <label class="check"><input id="okPower" type="checkbox" required data-label="Dispositivo funzionante"><span>Il dispositivo si accende e funziona *</span></label>
+                <label class="check"><input id="okImei" type="checkbox" required data-label="IMEI verificabile"><span>IMEI verificabile e dispositivo non bloccato *</span></label>
+                <label class="check"><input id="originLegal" type="checkbox" required data-label="Provenienza certa, libera da vincoli e lecita"><span>Confermo provenienza certa e lecita, prodotto libero da contratti, rate, leasing, finanziamenti, blocchi o vincoli di proprieta *</span></label>
+              </div>
             </div>
           </div>
           <div class="panel" data-panel="2" hidden>
@@ -73,6 +141,7 @@
               <div class="field"><label>Email</label><input id="email" type="email" data-label="Email"></div>
               <div class="field"><label>IMEI o seriale</label><input id="imei" data-label="IMEI o seriale" placeholder="Facoltativo"></div>
               <div class="field full"><label>Note</label><textarea id="notes" data-label="Note" placeholder="Difetti, accessori, colore, blocchi, dettagli utili"></textarea></div>
+              <div class="field full"><label>Foto del dispositivo</label><input id="photos" type="file" accept="image/*" multiple data-label="Foto caricate"><small class="field-help">Consigliate 4 foto: fronte, retro, lati e schermata stato batteria.</small></div>
               <label class="check full"><input id="origin" type="checkbox" required data-label="Conferma account/IMEI"><span>Confermo che il dispositivo è mio, senza blocchi account e verificabile in negozio.</span></label>
             </div>
           </div>
@@ -105,6 +174,21 @@
       </aside>
     </section>
   </main>
+  <div class="legal-modal" id="legalModal" hidden role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+    <div class="legal-card">
+      <h2 id="legalModalTitle">Conferma provenienza e liberta del prodotto</h2>
+      <p>Prima di procedere devi confermare che il dispositivo e cedibile a RAMSERVICE senza vincoli o limitazioni.</p>
+      <ul>
+        <li>Non deve essere rubato, smarrito, bloccato o di provenienza non dimostrabile.</li>
+        <li>Non deve essere vincolato a contratti, abbonamenti, leasing, comodati, rate, finanziamenti o riserva di proprieta.</li>
+        <li>Non deve avere blocchi operatore, MDM aziendale, iCloud attivo o vincoli che ne impediscano la rivendita.</li>
+      </ul>
+      <div class="legal-actions">
+        <button type="button" class="btn ghost" id="legalCancel">Annulla</button>
+        <button type="button" class="btn primary" id="legalAccept">Confermo</button>
+      </div>
+    </div>
+  </div>
 
 <script>
 (() => {
@@ -202,7 +286,14 @@
   function buildSummary(){
     const est=calculate();
     const rows=["Richiesta valutazione usato RAMSERVICE Kiosk","",`Stima online: ${est ? `${money(est.min)} - ${money(est.max)}` : "-"}`,`Scadenza stima: ${est?.expiresAt || "-"}`,"","Dati inseriti dal cliente:"];
-    document.querySelectorAll("[data-label]").forEach((field)=>rows.push(`${field.dataset.label}: ${field.type==="checkbox" ? (field.checked?"Confermato":"Non confermato") : (field.value||"-")}`));
+    document.querySelectorAll("[data-label]").forEach((field)=>{
+      const value = field.type==="checkbox"
+        ? (field.checked?"Confermato":"Non confermato")
+        : field.type==="file"
+        ? (field.files?.length ? [...field.files].map((file)=>file.name).join(", ") : "Nessuna foto caricata")
+        : (field.value||"-");
+      rows.push(`${field.dataset.label}: ${value}`);
+    });
     rows.push("Nota: stima indicativa da confermare in negozio dopo verifica tecnica.");
     return rows.join("\n");
   }
@@ -219,6 +310,10 @@
   document.querySelectorAll("[data-grade]").forEach((button)=>button.addEventListener("click",()=>{$("condition").value=button.dataset.grade;document.querySelectorAll("[data-grade]").forEach((item)=>item.classList.toggle("is-active",item===button));calculate();}));
   document.querySelector('[data-grade="buono"]')?.classList.add("is-active");
   document.querySelectorAll("input,select,textarea").forEach((el)=>el.addEventListener("input",calculate));
+  $("originLegal")?.addEventListener("click",(event)=>{ if(!$("originLegal").dataset.accepted){ event.preventDefault(); $("legalModal").hidden=false; }});
+  $("legalAccept")?.addEventListener("click",()=>{ $("originLegal").dataset.accepted="true"; $("originLegal").checked=true; $("legalModal").hidden=true; calculate(); });
+  $("legalCancel")?.addEventListener("click",()=>{ $("originLegal").checked=false; $("legalModal").hidden=true; });
+  $("legalModal")?.addEventListener("click",(event)=>{ if(event.target===$("legalModal")){ $("originLegal").checked=false; $("legalModal").hidden=true; }});
   $("next").addEventListener("click",()=>{if(validateCurrent()){if(step===2) estimateRevealed=true;showStep(step+1);}});
   $("prev").addEventListener("click",()=>showStep(step-1));
   $("form").addEventListener("submit",async(e)=>{e.preventDefault();estimateRevealed=true;calculate();if(!validateCurrent())return;try{$("status").textContent="Invio richiesta in dashboard...";await submitRequest();}catch(err){$("status").textContent=err.message;$("status").className="status err";}});
