@@ -170,6 +170,62 @@
       .check{font-size:17px!important;line-height:1.22!important;padding:13px 16px!important;border-radius:18px!important}
       #pay{min-height:84px!important;font-size:28px!important;border-radius:24px!important}
     }
+
+    /* =========================================================
+       KIOSK ONE SCREEN PRO13 - layout fisso senza scroll
+       ========================================================= */
+    @media (orientation: portrait) and (min-height: 1200px) {
+      html,body{width:100%!important;height:100vh!important;min-height:100vh!important;overflow:hidden!important;background:#eef3f8!important;font-size:18px!important}
+      .home{left:24px!important;top:24px!important;width:70px!important;height:70px!important;border-radius:22px!important;font-size:34px!important}
+      .wrap{width:100%!important;max-width:none!important;height:100vh!important;min-height:0!important;margin:0!important;padding:22px 34px 26px!important;display:grid!important;grid-template-columns:405px minmax(0,1fr)!important;grid-template-rows:112px minmax(0,1fr) 390px!important;grid-template-areas:"head head" "tools editor" "checkout checkout"!important;gap:18px!important;overflow:hidden!important}
+      .head{grid-area:head!important;display:grid!important;grid-template-columns:minmax(0,1fr) 430px!important;gap:26px!important;align-items:center!important;min-height:0!important;padding-left:82px!important}
+      .kicker{font-size:14px!important;letter-spacing:.16em!important}
+      .head h1{font-size:76px!important;line-height:.84!important;margin:2px 0 0!important}
+      .head p{font-size:19px!important;line-height:1.18!important;margin:0!important}
+      .card{border-radius:24px!important;box-shadow:0 16px 38px rgba(15,23,42,.10)!important}
+      .tools-panel{grid-area:tools!important;height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:auto minmax(0,1fr)!important;padding:16px!important;gap:14px!important;overflow:hidden!important;background:#fff!important}
+      .top-row{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;min-height:0!important}
+      label{font-size:15px!important;line-height:1.12!important;gap:6px!important}
+      select,input,textarea,.btn,.align-btn{height:50px!important;min-height:50px!important;border-radius:16px!important;font-size:16px!important;padding-left:14px!important;padding-right:14px!important}
+      .top-row select{height:58px!important;min-height:58px!important}
+      .upload-tile{min-height:92px!important;padding:12px 14px!important;border-radius:18px!important;display:grid!important;grid-template-columns:54px 1fr!important;gap:12px!important}
+      .upload-tile:before{width:50px!important;height:50px!important;border-radius:15px!important;font-size:15px!important}
+      .upload-tile span,.upload-tile strong,.upload-tile small{grid-column:2!important}
+      .upload-tile span{font-size:11px!important}
+      .upload-tile strong{font-size:19px!important;line-height:1.05!important}
+      .upload-tile small{font-size:13px!important;line-height:1.15!important}
+      .tool-grid{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:280px 340px minmax(0,1fr)!important;gap:12px!important;min-height:0!important;overflow:hidden!important}
+      .tool-box{min-height:0!important;height:auto!important;padding:13px!important;border-radius:18px!important;gap:8px!important;align-content:start!important;overflow:hidden!important;background:#f8fafc!important}
+      .tool-title{font-size:21px!important;line-height:1.05!important;gap:9px!important}
+      .tool-title b{width:34px!important;height:34px!important;border-radius:12px!important;font-size:15px!important}
+      .range-row,.text-row,.style-row{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;align-items:stretch!important}
+      .range-row input[type=range],#textSize{height:34px!important;min-height:34px!important}
+      textarea#text{height:60px!important;min-height:60px!important;font-size:18px!important;line-height:1.12!important;padding:9px 14px!important}
+      .color-field{display:grid!important;grid-template-columns:64px 1fr!important;gap:10px!important}
+      .color-field input{height:54px!important;min-height:54px!important;padding:4px!important}
+      .align-group{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important}
+      .align-btn{font-size:16px!important;padding:0!important}
+      .text-actions,.style-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+      #addText,#center,#reset{height:48px!important;min-height:48px!important;font-size:16px!important}
+      .editor-stage{grid-area:editor!important;height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:64px minmax(0,1fr)!important;padding:16px!important;gap:10px!important;overflow:hidden!important;background:#fff!important}
+      .canvas-head{height:auto!important;display:grid!important;grid-template-columns:1fr!important;gap:6px!important;padding:0!important;font-size:15px!important;line-height:1.14!important}
+      .canvas-head span:last-child{justify-self:start!important;font-size:13px!important;padding:7px 11px!important}
+      .canvas-wrap{height:100%!important;min-height:0!important;padding:16px!important;border-radius:22px!important;overflow:hidden!important;background:linear-gradient(180deg,#fff,#f2f6fb)!important}
+      canvas{width:min(100%,520px)!important;max-height:100%!important;height:auto!important;filter:drop-shadow(0 24px 34px rgba(15,23,42,.18))!important}
+      .checkout-grid{grid-area:checkout!important;height:100%!important;display:grid!important;grid-template-columns:minmax(0,1.2fr) 380px!important;gap:18px!important;overflow:hidden!important}
+      .customer-card,.pay-card{height:100%!important;padding:18px!important;border-radius:24px!important;overflow:hidden!important}
+      .customer-card h2,.pay-card h2{font-size:26px!important;margin:0 0 12px!important}
+      .customer-fields{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+      .customer-fields input{height:52px!important;min-height:52px!important;font-size:16px!important}
+      .customer-fields textarea{height:70px!important;min-height:70px!important;font-size:16px!important}
+      .pay-card{display:grid!important;grid-template-rows:auto auto auto auto 68px!important;gap:8px!important}
+      .price{padding:16px!important;border-radius:20px!important}
+      .price span{font-size:12px!important}
+      .price strong{font-size:46px!important}
+      .checklist{gap:7px!important}
+      .check{font-size:12px!important;line-height:1.08!important;padding:8px 12px!important;border-radius:14px!important}
+      #pay{height:68px!important;min-height:68px!important;border-radius:20px!important;font-size:23px!important}
+    }
   </style>
 </head>
 <body>
