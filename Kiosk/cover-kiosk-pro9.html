@@ -21,6 +21,64 @@
     @media (min-width:900px) and (min-height:1400px) and (orientation:portrait){
       body{overflow:hidden}.wrap{width:1048px;max-width:calc(100% - 24px);height:100vh;min-height:0;padding:18px 0;grid-template-rows:96px 430px minmax(0,1fr) 308px;gap:18px}.head{padding-left:90px;grid-template-columns:1fr 380px}.head h1{font-size:76px}.head p{font-size:16px}.tools-panel{padding:20px;gap:18px}.tool-grid{grid-template-columns:350px minmax(0,1fr);gap:18px}.tool-box{padding:20px}.text-row{grid-template-columns:1.28fr .82fr .92fr 84px 112px 154px;gap:12px}textarea#text{height:82px;min-height:82px;font-size:18px}.editor-stage{grid-template-rows:50px minmax(0,1fr);padding:14px}.canvas-head{font-size:14px}.canvas-wrap{padding:12px}canvas{width:min(100%,675px)}.checkout-grid{gap:18px}.customer-card,.pay-card{padding:20px}.customer-card h2,.pay-card h2{font-size:26px}.price strong{font-size:46px}#pay{min-height:66px;font-size:20px}}
     @media (max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto;padding:16px 0}.head,.top-row,.tool-grid,.range-row,.text-row,.checkout-grid,.customer-fields{grid-template-columns:1fr}.head{padding-left:82px}.head h1{font-size:56px}.canvas-wrap{min-height:620px}.home{width:58px;height:58px;font-size:28px}.align-group{grid-template-columns:repeat(3,1fr)}}
+
+    /* =========================================================
+       KIOSK PORTRAIT FIX DEFINITIVO - 1080x1920
+       ========================================================= */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{width:100%;min-height:100vh;overflow:auto;background:#eef3f8;font-size:20px}
+      body{font-size:20px}
+      .home{left:28px;top:28px;width:76px;height:76px;border-radius:24px;font-size:38px}
+      .wrap{width:100%;max-width:none;height:100vh;min-height:100vh;padding:24px 48px;grid-template-rows:126px 520px minmax(850px,1fr) 280px;gap:24px;overflow:visible}
+      .head{padding-left:72px;grid-template-columns:minmax(0,1fr) 420px;gap:32px}
+      .kicker{font-size:18px}
+      .head h1{font-size:92px;line-height:.86}
+      .head p{font-size:22px;line-height:1.24}
+      .card{border-radius:28px}
+      .tools-panel{padding:24px;grid-template-rows:96px minmax(0,1fr);gap:24px;overflow:visible}
+      .top-row{grid-template-columns:65fr 35fr;gap:24px}
+      label{font-size:18px;gap:10px}
+      select,input,textarea,.btn{min-height:64px;height:64px;border-radius:22px;font-size:20px}
+      .top-row select{height:72px;min-height:72px;font-size:20px}
+      .upload-tile{min-height:96px;border-radius:24px;grid-template-columns:66px 1fr;padding:16px 20px}
+      .upload-tile:before{width:62px;height:62px;border-radius:20px;font-size:18px}
+      .upload-tile span{font-size:16px}
+      .upload-tile strong{font-size:22px}
+      .upload-tile small{font-size:16px}
+      .tool-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;overflow:visible}
+      .tool-box{padding:24px;border-radius:26px;gap:22px;overflow:visible;align-content:start}
+      .tool-title{font-size:24px}
+      .tool-title b{width:42px;height:42px;border-radius:14px;font-size:18px}
+      .range-row,.text-row,.style-row{display:grid;grid-template-columns:1fr;gap:20px;align-items:stretch}
+      .range-row input[type=range],#textSize{width:100%;height:56px;min-height:56px}
+      .color-field{grid-template-columns:78px 1fr;align-items:end}
+      .color-field input{height:72px;min-height:72px;border-radius:20px}
+      #text{height:96px;min-height:96px;font-size:22px;line-height:1.2}
+      #textFont{height:72px;min-height:72px}
+      .align-group{gap:12px}
+      .align-btn{height:72px;min-height:72px;border-radius:20px;font-size:20px}
+      .text-actions,.style-actions{display:grid;grid-template-columns:1fr;gap:16px}
+      #addText,#center,#reset{min-height:72px;font-size:20px;border-radius:22px}
+      .editor-stage{min-height:850px;padding:20px;grid-template-rows:58px minmax(0,1fr);overflow:visible}
+      .canvas-head{font-size:18px;height:58px;padding:0 12px 12px}
+      .canvas-head span:last-child{font-size:17px;padding:10px 16px}
+      .canvas-wrap{min-height:850px;border-radius:28px;padding:18px;overflow:visible}
+      canvas{width:min(100%,760px);max-height:100%;filter:drop-shadow(0 26px 40px rgba(15,23,42,.18))}
+      .checkout-grid{grid-template-columns:1.35fr .85fr;gap:24px}
+      .customer-card,.pay-card{padding:24px;border-radius:28px}
+      .customer-card h2,.pay-card h2{font-size:30px;margin-bottom:18px}
+      .customer-fields{gap:16px}
+      .customer-fields input,.customer-fields textarea{min-height:64px;height:64px;font-size:20px}
+      .price{border-radius:26px;padding:22px}
+      .price span{font-size:16px}
+      .price strong{font-size:58px}
+      .check{font-size:16px;border-radius:18px;padding:12px 16px}
+      #pay{width:100%;min-height:76px;border-radius:24px;font-size:24px}
+      .qr-box{width:min(780px,calc(100% - 96px));border-radius:34px;padding:42px}
+      .qr-box h2{font-size:62px}
+      .qr-box p{font-size:22px}
+      .qr-box img{width:380px;height:380px}
+    }
   </style>
 </head>
 <body>
@@ -37,7 +95,7 @@
         <div class="mini-price" aria-hidden="true"><span>Prezzo</span><strong id="price">€ 0,00</strong></div>
       </div>
       <div class="tool-grid">
-        <div class="tool-box">
+        <div class="tool-box tool-image">
           <div class="tool-title"><b>1</b>Immagine e sfondo</div>
           <div class="range-row">
             <label>Zoom<input id="scale" type="range" min=".35" max="3" step=".01" value="1"></label>
@@ -45,18 +103,25 @@
             <label class="color-field">Sfondo<input id="bg" type="color" value="#ffffff"></label>
           </div>
         </div>
-        <div class="tool-box">
+        <div class="tool-box tool-text">
           <div class="tool-title"><b>2</b>Testo personalizzato</div>
           <div class="text-row">
             <label>Testo<textarea id="text" maxlength="80" placeholder="Nome o frase"></textarea></label>
             <label>Font<select id="textFont"><option value="Poppins, Arial, sans-serif">Poppins</option><option value="Arial, sans-serif">Arial</option><option value="'Bebas Neue', Arial, sans-serif">Bebas</option><option value="Georgia, serif">Georgia</option></select></label>
             <label>Dimensione<input id="textSize" type="range" min="22" max="120" step="1" value="52"></label>
+          </div>
+          <div class="text-actions">
+            <button class="btn ghost" id="addText">Aggiungi testo</button>
+          </div>
+        </div>
+        <div class="tool-box tool-style">
+          <div class="tool-title"><b>3</b>Stile testo</div>
+          <div class="style-row">
             <label class="color-field">Colore<input id="textColor" type="color" value="#111111"></label>
             <label>Stile<div class="align-group"><button type="button" class="align-btn active" data-style="bold">B</button><button type="button" class="align-btn" data-style="italic">I</button></div></label>
             <label>Allinea<div class="align-group"><button type="button" class="align-btn" data-align="left">SX</button><button type="button" class="align-btn active" data-align="center">C</button><button type="button" class="align-btn" data-align="right">DX</button></div></label>
           </div>
-          <div class="text-actions">
-            <button class="btn ghost" id="addText">Aggiungi testo</button>
+          <div class="style-actions">
             <button class="btn ghost" id="center">Centra selezione</button>
             <button class="btn danger" id="reset">Reset progetto</button>
           </div>
