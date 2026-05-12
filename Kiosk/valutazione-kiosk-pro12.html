@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Valutazione usato RAMSERVICE Kiosk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Base kiosk shell */
+    :root{--ink:#06111f;--muted:#5f6f82;--line:#dbe5f0;--line-strong:#c6d4e4;--panel:#ffffff;--soft:#f6f8fb;--blue:#087cff;--blue-dark:#0064d8;--shadow:0 22px 55px rgba(15,23,42,.10);--soft-shadow:0 10px 28px rgba(15,23,42,.08)}
+    *{box-sizing:border-box}html,body{width:100%;min-height:100%;margin:0}body{font-family:Poppins,Arial,sans-serif;color:var(--ink);background:#eef3f8;overflow:auto}button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}.home{position:fixed;left:20px;top:20px;z-index:30;width:64px;height:64px;border:0;border-radius:20px;background:var(--ink);color:#fff;font-size:32px;font-weight:900;box-shadow:0 16px 36px rgba(6,17,31,.22)}.wrap{width:min(1048px,calc(100% - 28px));min-height:100vh;margin:0 auto;padding:18px 0;display:grid;grid-template-rows:auto minmax(720px,1fr) auto;gap:16px}.head{display:grid;grid-template-columns:1fr minmax(280px,390px);gap:22px;align-items:center;padding-left:86px}.kicker{color:var(--blue);font-size:13px;font-weight:950;letter-spacing:.15em;text-transform:uppercase}.head h1{font-family:"Bebas Neue",Poppins,sans-serif;font-size:70px;line-height:.88;letter-spacing:.01em;margin:4px 0 0}.head p{margin:0;color:#243447;font-size:16px;line-height:1.28;font-weight:850}.card{min-width:0;min-height:0;background:rgba(255,255,255,.96);border:1px solid rgba(219,229,240,.95);border-radius:24px;box-shadow:var(--shadow)}.grid{min-height:0;display:grid;grid-template-columns:1fr;gap:16px}
+
+    /* Guided valuation flow */
+    .flow-card{min-height:0;display:grid;grid-template-rows:76px minmax(0,1fr);background:linear-gradient(180deg,#fff 0,#f9fbfe 100%)}.steps{padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.steps button{min-height:52px;border:0;border-radius:16px;background:#eef4fb;color:#627284;font-size:14px;font-weight:950}.steps button.active{background:linear-gradient(145deg,#06111f,#142338);color:#fff;box-shadow:0 14px 28px rgba(6,17,31,.16)}form{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) 68px}.panel{min-height:0;display:grid;grid-template-columns:238px minmax(0,1fr);gap:14px;padding:0 14px 14px;overflow:hidden}.panel[hidden]{display:none}.step-title{min-height:0;border-radius:20px;padding:22px;background:linear-gradient(145deg,#06111f,#142338);color:#fff;display:flex;flex-direction:column;justify-content:space-between}.step-title b{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#fff;color:var(--ink);font-size:22px}.step-title strong{display:block;margin-top:16px;font-size:30px;line-height:.98}.step-title span{display:block;margin-top:10px;color:#d8e5f2;font-size:14px;line-height:1.28;font-weight:800}.fields,.checks{min-width:0;min-height:0;border-radius:20px;border:1px solid var(--line);background:#f8fafc;padding:16px;gap:14px;overflow:hidden}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start}.field{display:grid;gap:7px;min-width:0}label{font-size:12px;line-height:1.15;color:#344256;font-weight:950}select,input,textarea{width:100%;height:56px;min-height:56px;border:2px solid var(--line-strong);border-radius:16px;background:#fff;color:var(--ink);padding:0 16px;font-size:16px;font-weight:850;outline:none}select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(8,124,255,.12)}textarea{height:92px;min-height:92px;padding:13px 16px;line-height:1.18;resize:none}.full{grid-column:1/-1}.panel[data-panel="0"] .fields{grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(118px,1fr));align-content:stretch}.panel[data-panel="0"] .field{height:100%;padding:18px;border-radius:18px;background:#fff;border:1px solid var(--line);align-content:center}.panel[data-panel="0"] label{font-size:14px}.panel[data-panel="0"] select,.panel[data-panel="0"] input{height:62px;min-height:62px;font-size:18px}.panel[data-panel="1"] .fields{grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(76px,auto)}.panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr}.checks{display:grid;align-content:start}.check{display:flex;gap:14px;align-items:flex-start;padding:16px;border:2px solid var(--line);border-radius:17px;background:#fff;color:#344256;font-size:15px;line-height:1.28;font-weight:850}.check input{width:24px;min-width:24px;height:24px;min-height:24px;accent-color:var(--blue)}.actions{padding:0 14px 14px;display:flex;justify-content:flex-end;align-items:center;gap:12px}.panel[data-panel="3"]>.actions{grid-column:2;padding:0;align-self:end}.btn{min-height:52px;border:0;border-radius:16px;padding:0 24px;font-size:15px;font-weight:950}.primary{background:linear-gradient(180deg,var(--blue),var(--blue-dark));color:#fff;box-shadow:0 18px 34px rgba(8,124,255,.24)}.dark{background:var(--ink);color:#fff}.ghost{background:#eef4fb;color:var(--ink)}
+
+    /* Condition cards and estimate footer */
+    .grade-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;height:230px}.grade-card{height:230px;border:2px solid var(--line);border-radius:20px;background:#fff;padding:11px;text-align:left;color:var(--ink);display:grid;grid-template-rows:154px 24px 28px;gap:6px;overflow:hidden}.grade-card img{width:100%;height:154px;object-fit:cover;border-radius:15px;background:#e5edf6}.grade-card span{width:max-content;padding:4px 8px;border-radius:999px;background:var(--ink);color:#fff;font-size:10px;line-height:1;font-weight:950}.grade-card strong{font-size:15px;line-height:1.05;font-weight:950}.grade-card.is-active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(8,124,255,.13)}.result{padding:14px;display:grid;grid-template-columns:132px 1fr 292px;grid-template-rows:1fr 42px;gap:12px;align-items:stretch}.result>.kicker{display:flex;align-items:center;justify-content:center;border-radius:16px;background:#fff;color:var(--blue);text-align:center}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.row{height:100%;padding:14px;border-radius:16px;background:#f8fafc;border:1px solid var(--line);color:#526173;font-size:12px;font-weight:900}.row span,.row strong{display:block}.row strong{margin-top:8px;color:var(--ink);font-size:18px;line-height:1.05}.price{height:100%;border-radius:18px;background:linear-gradient(145deg,#06111f,#15243a);color:#fff;padding:20px;display:flex;flex-direction:column;justify-content:center}.price.locked{background:linear-gradient(145deg,#132238,#263a55)}.price span{display:block;color:#8cc8ff;font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:950}.price strong{display:block;margin-top:8px;font-size:32px;line-height:1.02}.status{grid-column:2/4;padding:10px 14px;border-radius:13px;background:#dcf7e8;color:#12643d;font-size:11px;line-height:1.15;font-weight:950}.status.err{background:#fff0f0;color:#991b1b}.status.ok{background:#dcf7e8;color:#12643d}
+
+    /* Dedicated portrait kiosk optimization: 1080 x 1920 touch totem */
+    @media (min-width:900px) and (min-height:1400px) and (orientation:portrait){
+      body{overflow:hidden}.wrap{width:1048px;max-width:calc(100% - 24px);height:100vh;min-height:0;padding:18px 0;grid-template-rows:96px minmax(0,1fr) 232px;gap:18px}.head{padding-left:90px;grid-template-columns:1fr 390px}.head h1{font-size:76px}.head p{font-size:16px}.grid{gap:18px}.flow-card{grid-template-rows:78px minmax(0,1fr)}form{grid-template-rows:minmax(0,1fr) 70px}.panel{grid-template-columns:248px minmax(0,1fr);gap:16px;padding:0 16px 16px}.steps{padding:13px;gap:12px}.steps button{min-height:52px;font-size:15px}.step-title{padding:24px}.step-title strong{font-size:32px}.fields,.checks{padding:18px;gap:15px}.panel[data-panel="0"] .fields{grid-template-rows:repeat(2,minmax(128px,1fr))}.grade-strip{height:242px}.grade-card{height:242px;grid-template-rows:164px 24px 30px}.grade-card img{height:164px}.result{height:232px;grid-template-columns:136px 1fr 304px}.price strong{font-size:34px}.btn{min-height:54px;font-size:16px}}
+    @media (max-width:760px){body{overflow:auto}.wrap{height:auto;grid-template-rows:auto;padding:16px 0}.head{display:block;padding-left:82px}.head h1{font-size:56px}.head p{margin-top:10px}.panel,.fields,.summary,.result{grid-template-columns:1fr}.flow-card,form{grid-template-rows:auto}.panel{padding:0 12px 12px}.result{height:auto}.grade-strip{grid-template-columns:1fr 1fr;height:auto}.home{width:58px;height:58px;font-size:28px}}
+
+    /* =========================================================
+       KIOSK PORTRAIT FIX DEFINITIVO - 1080x1920
+       ========================================================= */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{width:100%;min-height:100vh;overflow:auto;background:#eef3f8;font-size:20px}
+      body{font-size:20px}
+      .home{left:28px;top:28px;width:76px;height:76px;border-radius:24px;font-size:38px}
+      .wrap{width:100%;max-width:none;height:100vh;min-height:100vh;padding:24px 48px;grid-template-rows:126px minmax(0,1fr);gap:24px;overflow:visible}
+      .head{padding-left:72px;grid-template-columns:minmax(0,1fr) 420px;gap:32px}
+      .kicker{font-size:18px}
+      .head h1{font-size:92px;line-height:.86}
+      .head p{font-size:22px;line-height:1.24}
+      .grid{height:100%;min-height:0;grid-template-rows:minmax(900px,1fr) 240px;gap:24px}
+      .card{border-radius:28px}
+      .flow-card{height:100%;grid-template-rows:84px minmax(0,1fr);overflow:visible}
+      .steps{height:84px;padding:12px;gap:16px}
+      .steps button{min-height:72px;border-radius:22px;font-size:20px}
+      form{height:100%;grid-template-rows:minmax(0,1fr) 96px}
+      .panel{height:100%;min-height:900px;grid-template-columns:28fr 72fr;gap:24px;padding:0 24px 24px;overflow:visible}
+      .step-title{border-radius:28px;padding:34px}
+      .step-title b{width:68px;height:68px;border-radius:22px;font-size:30px}
+      .step-title strong{font-size:42px;line-height:1}
+      .step-title span{font-size:20px;line-height:1.28}
+      .fields,.checks{height:100%;border-radius:28px;padding:28px;gap:24px;overflow:visible}
+      label{font-size:20px}
+      select,input,textarea,.btn{min-height:70px;height:70px;border-radius:22px;font-size:22px}
+      textarea{min-height:112px;height:112px}
+      .panel[data-panel="0"] .fields{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+      .panel[data-panel="0"] .field{min-height:260px;padding:28px;border-radius:26px;align-content:center}
+      .panel[data-panel="0"] label{font-size:20px}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:76px;min-height:76px;font-size:22px}
+      .panel[data-panel="1"] .fields{grid-template-columns:1fr 1fr;grid-auto-rows:auto;align-content:start}
+      .grade-strip{height:290px;grid-template-columns:repeat(4,1fr);gap:16px}
+      .grade-card{height:290px;grid-template-rows:190px 32px 40px;border-radius:24px;padding:14px}
+      .grade-card img{height:190px;border-radius:18px}
+      .grade-card span{font-size:16px;padding:6px 12px}
+      .grade-card strong{font-size:20px}
+      .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      .check{border-radius:22px;padding:18px;font-size:18px;line-height:1.28}
+      .check input{width:30px;min-width:30px;height:30px;min-height:30px}
+      .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr;align-content:start}
+      .field-help{font-size:16px;line-height:1.25;color:#5f6f82}
+      .actions{height:96px;padding:0 24px 24px;gap:18px}
+      .btn{min-height:72px;border-radius:22px;font-size:22px;padding:0 34px}
+      #next{min-width:230px}
+      .panel[data-panel="3"]>.actions{grid-column:2;align-self:end;padding:0}
+      .result{height:240px;padding:20px;grid-template-columns:170px 1fr 360px;grid-template-rows:1fr 52px;gap:18px}
+      .result>.kicker{font-size:18px;border-radius:22px}
+      .row{border-radius:22px;padding:20px;font-size:16px}
+      .row strong{font-size:24px}
+      .price{border-radius:24px;padding:26px}
+      .price span{font-size:16px}
+      .price strong{font-size:42px}
+      .status{font-size:16px;border-radius:18px;padding:14px 18px}
+      .legal-modal{position:fixed;inset:0;z-index:90;background:rgba(6,17,31,.68);display:grid;place-items:center;padding:48px}
+      .legal-modal[hidden]{display:none}
+      .legal-card{width:min(820px,100%);background:#fff;border-radius:34px;padding:42px;box-shadow:0 28px 70px rgba(6,17,31,.30)}
+      .legal-card h2{margin:0 0 16px;font-size:42px;line-height:1}
+      .legal-card p,.legal-card li{font-size:22px;line-height:1.35;color:#344256}
+      .legal-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+    }
+
+    /* KIOSK READABILITY OVERRIDE - niente compressione, niente tagli */
+    @media (min-width: 900px) and (min-height: 1400px) and (orientation: portrait) {
+      html,body{height:auto!important;min-height:100vh!important;overflow-y:auto!important;font-size:22px!important}
+      .wrap{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;height:auto!important;min-height:100vh!important;padding:32px 48px!important;gap:28px!important}
+      .head{min-height:128px!important;padding-left:80px!important;grid-template-columns:minmax(0,1fr) 430px!important}
+      .head h1{font-size:96px!important}
+      .head p{font-size:24px!important}
+      .grid{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;gap:28px!important}
+      .flow-card{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;padding:0!important;overflow:visible!important}
+      .steps{height:auto!important;padding:18px!important;gap:16px!important}
+      .steps button{min-height:78px!important;font-size:22px!important;border-radius:24px!important}
+      form{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important}
+      .panel{display:grid!important;grid-template-columns:30fr 70fr!important;gap:28px!important;min-height:780px!important;height:auto!important;padding:0 24px 24px!important;overflow:visible!important}
+      .panel[hidden]{display:none!important}
+      .step-title{min-height:520px!important;padding:36px!important;border-radius:30px!important}
+      .step-title b{width:76px!important;height:76px!important;font-size:34px!important}
+      .step-title strong{font-size:46px!important}
+      .step-title span{font-size:22px!important}
+      .fields,.checks{height:auto!important;min-height:520px!important;padding:30px!important;gap:24px!important;overflow:visible!important}
+      label{font-size:22px!important}
+      select,input,textarea,.btn{min-height:76px!important;height:76px!important;font-size:24px!important;border-radius:24px!important}
+      .panel[data-panel="0"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:repeat(2,260px)!important}
+      .panel[data-panel="0"] .field{min-height:260px!important;padding:30px!important}
+      .panel[data-panel="1"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important}
+      .grade-strip{height:320px!important;gap:18px!important}
+      .grade-card{height:320px!important;grid-template-rows:210px 36px 44px!important}
+      .grade-card img{height:210px!important}
+      .grade-card span{font-size:17px!important}
+      .grade-card strong{font-size:22px!important}
+      .check-grid{grid-template-columns:1fr!important;gap:18px!important}
+      .check{font-size:20px!important;padding:22px!important}
+      .check input{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important}
+      .actions{height:auto!important;min-height:104px!important;padding:0 24px 24px!important}
+      .actions .btn{min-width:240px!important;min-height:82px!important;font-size:24px!important}
+      .result{height:auto!important;min-height:260px!important;display:grid!important;grid-template-columns:180px 1fr 380px!important;grid-template-rows:1fr 60px!important;padding:24px!important;gap:20px!important}
+      .result>.kicker{font-size:20px!important}
+      .row{font-size:18px!important;padding:22px!important}
+      .row strong{font-size:26px!important}
+      .price strong{font-size:46px!important}
+      .status{font-size:18px!important}
+    }
+
+    /* =========================================================
+       KIOSK PORTRAIT REAL DISPLAY FIX - browser con viewport stretto
+       ========================================================= */
+    @media (orientation: portrait) and (min-height: 900px) and (max-width: 899px) {
+      html,body{height:auto!important;min-height:100vh!important;overflow-y:auto!important;background:#eef3f8!important;font-size:20px!important}
+      body{padding:0!important}
+      .home{left:18px!important;top:18px!important;width:64px!important;height:64px!important;border-radius:20px!important;font-size:32px!important}
+      .wrap{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-height:100vh!important;height:auto!important;margin:0!important;padding:22px 24px 34px!important;gap:22px!important}
+      .head{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;min-height:auto!important;padding-left:70px!important}
+      .kicker{font-size:15px!important;letter-spacing:.12em!important}
+      .head h1{font-size:68px!important;line-height:.86!important;margin:2px 0 0!important}
+      .head p{font-size:20px!important;line-height:1.28!important;max-width:none!important}
+      .grid{display:flex!important;flex-direction:column!important;gap:22px!important;min-height:0!important;height:auto!important}
+      .card{border-radius:24px!important;box-shadow:0 16px 42px rgba(15,23,42,.10)!important}
+      .flow-card{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;overflow:visible!important}
+      .steps{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:16px!important;height:auto!important}
+      .steps button{min-height:66px!important;border-radius:20px!important;font-size:19px!important;line-height:1.1!important}
+      form{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important}
+      .panel{display:flex!important;flex-direction:column!important;gap:18px!important;min-height:0!important;height:auto!important;padding:0 18px 18px!important;overflow:visible!important}
+      .panel[hidden]{display:none!important}
+      .step-title{display:grid!important;grid-template-columns:64px 1fr!important;align-items:center!important;min-height:0!important;padding:22px!important;border-radius:22px!important;gap:18px!important}
+      .step-title b{width:58px!important;height:58px!important;border-radius:18px!important;font-size:26px!important}
+      .step-title strong{margin:0!important;font-size:34px!important;line-height:1!important}
+      .step-title span{grid-column:1/-1!important;margin:0!important;font-size:19px!important;line-height:1.26!important}
+      .fields,.checks{height:auto!important;min-height:0!important;padding:22px!important;border-radius:22px!important;gap:18px!important;overflow:visible!important;background:#fff!important}
+      .fields{display:grid!important;grid-template-columns:1fr!important}
+      .field{gap:10px!important}
+      label{font-size:20px!important;line-height:1.15!important}
+      select,input,textarea,.btn{width:100%!important;min-height:70px!important;height:70px!important;border-radius:20px!important;font-size:21px!important}
+      textarea{min-height:110px!important;height:110px!important}
+      .panel[data-panel="0"] .fields{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:none!important;gap:18px!important}
+      .panel[data-panel="0"] .field{min-height:170px!important;height:auto!important;padding:20px!important;border-radius:20px!important;align-content:center!important}
+      .panel[data-panel="0"] label{font-size:20px!important}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{min-height:72px!important;height:72px!important;font-size:21px!important}
+      .panel[data-panel="1"] .fields{display:grid!important;grid-template-columns:1fr!important;gap:20px!important}
+      .grade-strip{display:grid!important;grid-template-columns:1fr 1fr!important;height:auto!important;gap:16px!important}
+      .grade-card{height:auto!important;min-height:270px!important;grid-template-rows:170px auto auto!important;border-radius:22px!important;padding:14px!important}
+      .grade-card img{height:170px!important;border-radius:18px!important}
+      .grade-card span{font-size:15px!important;padding:6px 11px!important}
+      .grade-card strong{font-size:20px!important;line-height:1.1!important}
+      .panel[data-panel="2"] .fields{display:grid!important;grid-template-columns:1fr!important}
+      .check-grid{display:grid!important;grid-template-columns:1fr!important;gap:16px!important}
+      .check{font-size:19px!important;line-height:1.28!important;padding:20px!important;border-radius:20px!important}
+      .check input{width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important}
+      .field-help{font-size:17px!important;line-height:1.25!important;color:#5f6f82!important}
+      .actions{height:auto!important;min-height:0!important;padding:0 18px 18px!important;justify-content:stretch!important}
+      .actions .btn{width:100%!important;min-height:78px!important;font-size:24px!important;border-radius:22px!important}
+      .panel[data-panel="3"]>.actions{grid-column:auto!important;align-self:stretch!important;padding:0!important}
+      .result{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto!important;height:auto!important;min-height:0!important;padding:20px!important;gap:16px!important}
+      .result>.kicker{font-size:18px!important;min-height:52px!important;border-radius:18px!important}
+      .summary{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+      .row{font-size:17px!important;padding:18px!important;border-radius:18px!important}
+      .row strong{font-size:24px!important}
+      .price{min-height:150px!important;border-radius:24px!important;padding:24px!important}
+      .price span{font-size:15px!important}
+      .price strong{font-size:42px!important}
+      .status{grid-column:auto!important;font-size:17px!important;line-height:1.22!important;border-radius:18px!important;padding:14px 16px!important}
+      .legal-card{width:calc(100% - 36px)!important;border-radius:28px!important;padding:28px!important}
+      .legal-card h2{font-size:36px!important}
+      .legal-card p,.legal-card li{font-size:20px!important}
+      .legal-actions{grid-template-columns:1fr!important}
+    }
+  </style>
+</head>
+<body>
+  <button class="home" onclick="location.href='kiosk.html'" aria-label="Home">⌂</button>
+  <main class="wrap">
+    <header class="head">
+      <div><div class="kicker">RAMSERVICE Kiosk</div><h1>Valuta il tuo usato</h1></div>
+      <p>Prima stima immediata. Il valore finale viene confermato in negozio dopo controllo tecnico, account, IMEI e condizioni reali.</p>
+    </header>
+
+    <section class="grid">
+      <div class="card flow-card">
+        <div class="steps">
+          <button class="active" data-step-btn="0">1. Modello</button>
+          <button data-step-btn="1">2. Stato</button>
+          <button data-step-btn="2">3. Cliente</button>
+          <button data-step-btn="3">4. Stima</button>
+        </div>
+        <form id="form">
+          <div class="panel" data-panel="0">
+            <div class="step-title"><b>1</b><div><strong>Scegli il dispositivo</strong><span>Marca, modello, memoria e batteria preparano il riepilogo.</span></div></div>
+            <div class="fields">
+              <div class="field"><label>Marca</label><select id="brand" data-label="Marca"></select></div>
+              <div class="field"><label>Modello</label><select id="model" required data-label="Modello"></select></div>
+              <div class="field"><label>Memoria</label><select id="storage" required data-label="Memoria"></select></div>
+              <div class="field"><label>Salute batteria</label><input id="battery" type="number" min="0" max="100" placeholder="Es. 88" data-label="Salute batteria"></div>
+            </div>
+          </div>
+          <div class="panel" data-panel="1" hidden>
+            <div class="step-title"><b>2</b><div><strong>Controlla lo stato</strong><span>Condizioni, display, riparazioni e accessori modificano la stima finale.</span></div></div>
+            <div class="fields">
+              <div class="grade-strip full" aria-label="Esempi condizioni estetiche">
+                <button type="button" class="grade-card" data-grade="ottimo"><img src="https://www.ramserviceitalia.it/cdn/shop/files/1524AB14-B38C-4CA3-8C31-0A4C6C4D7CA6.png?v=1778329888&width=352" alt="Grado A Ottimo"><span>Grado A</span><strong>Ottimo</strong></button>
+                <button type="button" class="grade-card" data-grade="buono"><img src="https://www.ramserviceitalia.it/cdn/shop/files/703C2115-92F0-4190-B6DF-FA265094531E.png?v=1778329890&width=352" alt="Grado B Buono"><span>Grado B</span><strong>Buono</strong></button>
+                <button type="button" class="grade-card" data-grade="segni"><img src="https://www.ramserviceitalia.it/cdn/shop/files/92E9FF1D-FC87-49A9-9B37-2F865A696F24.png?v=1778329891&width=352" alt="Grado C Segni evidenti"><span>Grado C</span><strong>Segni evidenti</strong></button>
+                <button type="button" class="grade-card" data-grade="danneggiato"><img src="https://www.ramserviceitalia.it/cdn/shop/files/48E84DB3-D5C5-43F9-AC22-08DB115FB8ED.png?v=1778329893&width=352" alt="Grado D Danneggiato"><span>Grado D</span><strong>Danneggiato</strong></button>
+              </div>
+              <div class="field"><label>Condizione estetica</label><select id="condition" data-label="Condizione estetica"><option value="ottimo">Ottimo</option><option value="buono" selected>Buono</option><option value="segni">Segni evidenti</option><option value="danneggiato">Danneggiato</option></select></div>
+              <div class="field"><label>Display</label><select id="display" data-label="Display"><option value="ok" selected>Perfetto</option><option value="graffi">Graffi</option><option value="non_originale">Non originale</option><option value="rotto">Rotto o difettoso</option></select></div>
+              <div class="field"><label>Riparazioni effettuate</label><select id="repairs" data-label="Riparazioni effettuate"><option value="nessuna" selected>Nessuna riparazione</option><option value="non_note">Non so / non sono note</option><option value="apple_documentate">Riparazioni Apple o centro autorizzato documentate</option><option value="batteria_documentata">Batteria sostituita con intervento documentato</option><option value="batteria_non_originale">Batteria sostituita non originale / non documentata</option><option value="display_documentato">Display sostituito documentato</option><option value="display_non_originale">Display sostituito non originale / non documentato</option><option value="vetro_posteriore">Vetro posteriore o scocca sostituiti</option><option value="fotocamera_faceid">Fotocamera, Face ID o sensori riparati/difettosi</option><option value="connettore_audio">Connettore, speaker, microfono o tasti riparati</option><option value="liquidi">Contatto con liquidi / ossidazione nota</option><option value="scheda">Scheda madre riparata</option></select></div>
+              <div class="field"><label>Accessori e scatola</label><select id="accessories" data-label="Accessori e scatola"><option value="completi">Scatola e accessori</option><option value="scatola">Solo scatola</option><option value="cavo">Solo cavo</option><option value="nessuno" selected>Nessuno</option></select></div>
+              <div class="field"><label>Prova acquisto</label><select id="proof" data-label="Prova acquisto"><option value="presente">Fattura o scontrino presente</option><option value="dichiarazione">Dichiarazione di vendita</option><option value="assente" selected>Assente</option></select></div>
+              <div class="field"><label>Preferenza</label><select id="preference" data-label="Preferenza"><option>Vorrei far verificare il dispositivo in negozio</option><option>Vorrei usare il valore come credito per un nuovo acquisto</option><option>Vorrei ricevere pagamento con bonifico dopo conferma tecnica</option></select></div>
+              <div class="check-grid full">
+                <label class="check"><input id="okAccount" type="checkbox" required data-label="Account iCloud/Google rimosso"><span>Account iCloud/Google gia rimosso o rimovibile *</span></label>
+                <label class="check"><input id="okPower" type="checkbox" required data-label="Dispositivo funzionante"><span>Il dispositivo si accende e funziona *</span></label>
+                <label class="check"><input id="okImei" type="checkbox" required data-label="IMEI verificabile"><span>IMEI verificabile e dispositivo non bloccato *</span></label>
+                <label class="check"><input id="originLegal" type="checkbox" required data-label="Provenienza certa, libera da vincoli e lecita"><span>Confermo provenienza certa e lecita, prodotto libero da contratti, rate, leasing, finanziamenti, blocchi o vincoli di proprieta *</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="panel" data-panel="2" hidden>
+            <div class="step-title"><b>3</b><div><strong>Dati cliente</strong><span>Servono per salvare la richiesta nella dashboard e ricontattare il cliente.</span></div></div>
+            <div class="fields">
+              <div class="field"><label>Nome e cognome</label><input id="name" required data-label="Nome e cognome"></div>
+              <div class="field"><label>Telefono</label><input id="phone" required data-label="Telefono"></div>
+              <div class="field"><label>Email</label><input id="email" type="email" data-label="Email"></div>
+              <div class="field"><label>IMEI o seriale</label><input id="imei" data-label="IMEI o seriale" placeholder="Facoltativo"></div>
+              <div class="field full"><label>Note</label><textarea id="notes" data-label="Note" placeholder="Difetti, accessori, colore, blocchi, dettagli utili"></textarea></div>
+              <div class="field full"><label>Foto del dispositivo</label><input id="photos" type="file" accept="image/*" multiple data-label="Foto caricate"><small class="field-help">Consigliate 4 foto: fronte, retro, lati e schermata stato batteria.</small></div>
+              <label class="check full"><input id="origin" type="checkbox" required data-label="Conferma account/IMEI"><span>Confermo che il dispositivo è mio, senza blocchi account e verificabile in negozio.</span></label>
+            </div>
+          </div>
+          <div class="panel" data-panel="3" hidden>
+            <div class="step-title"><b>4</b><div><strong>Stima e conferma</strong><span>Il valore indicativo viene mostrato solo dopo tutti i passaggi.</span></div></div>
+            <div class="checks">
+              <label class="check"><input id="accept" type="checkbox" required><span>Ho capito che questa è una stima indicativa. Il valore definitivo viene confermato solo dopo controllo tecnico RAMSERVICE.</span></label>
+            </div>
+            <div class="actions">
+              <button class="btn primary" type="submit">Invia richiesta in dashboard</button>
+              <button class="btn dark" type="button" id="wa">Invia su WhatsApp</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" type="button" id="prev" hidden>Indietro</button>
+            <button class="btn primary" type="button" id="next">Avanti</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="card result">
+        <div class="kicker">Stima online</div>
+        <div class="summary">
+          <div class="row"><span>Dispositivo</span><strong id="sumModel">-</strong></div>
+          <div class="row"><span>Condizione</span><strong id="sumCond">-</strong></div>
+          <div class="row"><span>Validità</span><strong id="sumExp">7 giorni</strong></div>
+        </div>
+        <div class="price locked" id="priceBox"><span>Valore indicativo</span><strong id="estimate">Completa tutti i passaggi</strong></div>
+        <div class="status" id="status">Carico quotazioni sincronizzate dalla pagina Shopify...</div>
+      </aside>
+    </section>
+  </main>
+  <div class="legal-modal" id="legalModal" hidden role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+    <div class="legal-card">
+      <h2 id="legalModalTitle">Conferma provenienza e liberta del prodotto</h2>
+      <p>Prima di procedere devi confermare che il dispositivo e cedibile a RAMSERVICE senza vincoli o limitazioni.</p>
+      <ul>
+        <li>Non deve essere rubato, smarrito, bloccato o di provenienza non dimostrabile.</li>
+        <li>Non deve essere vincolato a contratti, abbonamenti, leasing, comodati, rate, finanziamenti o riserva di proprieta.</li>
+        <li>Non deve avere blocchi operatore, MDM aziendale, iCloud attivo o vincoli che ne impediscano la rivendita.</li>
+      </ul>
+      <div class="legal-actions">
+        <button type="button" class="btn ghost" id="legalCancel">Annulla</button>
+        <button type="button" class="btn primary" id="legalAccept">Confermo</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const SHOPIFY_PAGE = "https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato";
+  const API = "https://ramservice-sync-721276708443.europe-west1.run.app";
+  const WHATSAPP = "393475941558";
+  const fallbackQuotes = [
+    ["iPhone 16 Pro Max",[["256GB",979],["512GB",1119],["1TB",1269]]],["iPhone 16 Pro",[["128GB",879],["256GB",949],["512GB",1089],["1TB",1229]]],["iPhone 16 Plus",[["128GB",759],["256GB",829],["512GB",949]]],["iPhone 16",[["128GB",689],["256GB",759],["512GB",879]]],["iPhone 15 Pro Max",[["256GB",849],["512GB",969],["1TB",1089]]],["iPhone 15 Pro",[["128GB",749],["256GB",829],["512GB",949],["1TB",1069]]],["iPhone 15",[["128GB",549],["256GB",629],["512GB",749]]],["iPhone 14 Pro Max",[["128GB",649],["256GB",719],["512GB",839],["1TB",949]]],["iPhone 14 Pro",[["128GB",595],["256GB",665],["512GB",779],["1TB",879]]],["iPhone 14",[["128GB",389],["256GB",459],["512GB",549]]],["iPhone 13 Pro Max",[["128GB",589],["256GB",649],["512GB",759],["1TB",879]]],["iPhone 13 Pro",[["128GB",449],["256GB",519],["512GB",629],["1TB",749]]],["iPhone 13",[["128GB",299],["256GB",359],["512GB",469]]],["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]],["Galaxy S25 Ultra",[["256GB",780],["512GB",890],["1TB",1020]],"Samsung"],["Galaxy S24 Ultra",[["256GB",650],["512GB",740],["1TB",860]],"Samsung"],["Galaxy S23 Ultra",[["256GB",480],["512GB",560],["1TB",680]],"Samsung"]
+  ];
+  let quotes = fallbackQuotes;
+  let step = 0;
+  let estimateRevealed = false;
+  const $ = (id) => document.getElementById(id);
+  const panels = [...document.querySelectorAll("[data-panel]")];
+  const stepBtns = [...document.querySelectorAll("[data-step-btn]")];
+  const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(v||0))));
+  const quoteBrand = (row) => row[2] || "Apple";
+
+  async function loadShopifyQuotes(){
+    try{
+      const html = await fetch(SHOPIFY_PAGE + "?kiosk_sync=" + Date.now(), {cache:"no-store"}).then((r)=>r.text());
+      const match = html.match(/const\s+quotes\s*=\s*(\[[\s\S]*?\n\s*\]);/);
+      if (!match) throw new Error("quotazioni non trovate");
+      const parsed = Function(`"use strict";return (${match[1]});`)();
+      if (!Array.isArray(parsed) || !parsed.length) throw new Error("quotazioni vuote");
+      quotes = parsed;
+      $("status").textContent = "Quotazioni sincronizzate con Shopify.";
+      $("status").className = "status ok";
+    }catch(error){
+      $("status").textContent = "Uso quotazioni locali di sicurezza. Controllare sincronizzazione Shopify.";
+      $("status").className = "status err";
+    }
+    populateBrands();
+  }
+
+  function populateBrands(){
+    const brands = [...new Set(quotes.map(quoteBrand))].sort();
+    $("brand").innerHTML = brands.map((b)=>`<option>${b}</option>`).join("");
+    populateModels();
+  }
+  function populateModels(){
+    const brand = $("brand").value || "Apple";
+    $("model").innerHTML = '<option value="" selected disabled>Seleziona modello</option>' + quotes.filter((r)=>quoteBrand(r)===brand).map((r)=>`<option>${r[0]}</option>`).join("");
+    populateStorage();
+  }
+  function populateStorage(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    $("storage").innerHTML = row ? '<option value="" selected disabled>Seleziona memoria</option>' + row[1].map(([s])=>`<option>${s}</option>`).join("") : '<option value="">Prima scegli il modello</option>';
+    calculate();
+  }
+  function selectedQuote(){
+    const row = quotes.find((r)=>r[0]===$("model").value && quoteBrand(r)===$("brand").value);
+    const storage = row?.[1]?.find(([s])=>s===$("storage").value);
+    return storage ? {brand:$("brand").value,model:row[0],storage:storage[0],market:storage[1]} : null;
+  }
+  function calculate(){
+    const q = selectedQuote();
+    if(!q){$("estimate").textContent="Completa tutti i passaggi";$("priceBox").classList.add("locked");$("sumModel").textContent="-";return null;}
+    let factor=.56;
+    const condition=$("condition").value, display=$("display").value, repairs=$("repairs").value, accessories=$("accessories").value, proof=$("proof").value;
+    const battery=Number($("battery").value||0);
+    if(condition==="ottimo")factor+=.04;if(condition==="segni")factor-=.09;if(condition==="danneggiato")factor-=.22;
+    if(display==="graffi")factor-=.06;if(display==="non_originale")factor-=.14;if(display==="rotto")factor-=.30;
+    if(repairs==="non_note")factor-=.06;if(repairs==="apple_documentate")factor-=.02;if(repairs==="batteria_documentata")factor-=.03;if(repairs==="batteria_non_originale")factor-=.10;if(repairs==="display_documentato")factor-=.07;if(repairs==="display_non_originale")factor-=.16;if(repairs==="vetro_posteriore")factor-=.08;if(repairs==="fotocamera_faceid")factor-=.18;if(repairs==="connettore_audio")factor-=.08;if(repairs==="liquidi"||repairs==="scheda")factor-=.25;
+    if(accessories==="completi")factor+=.02;if(accessories==="nessuno")factor-=.03;if(proof==="presente")factor+=.02;if(proof==="assente")factor-=.04;
+    if(battery && battery<80)factor-=.08;if(battery && battery<75)factor-=.14;
+    const max=Math.max(0,Math.round(q.market*Math.max(.18,factor)));
+    const min=Math.max(0,Math.round(max*.82));
+    const expiry=new Date(); expiry.setDate(expiry.getDate()+7);
+    $("sumModel").textContent=`${q.model} ${q.storage}`;
+    $("sumCond").textContent=$("condition").selectedOptions[0]?.textContent || "-";
+    $("sumExp").textContent=expiry.toLocaleDateString("it-IT");
+    if (estimateRevealed) {
+      $("estimate").textContent=`${money(min)} - ${money(max)}`;
+      $("priceBox").classList.remove("locked");
+    } else {
+      $("estimate").textContent="Completa tutti i passaggi";
+      $("priceBox").classList.add("locked");
+    }
+    return {...q,min,max,expiresAt:expiry.toLocaleDateString("it-IT")};
+  }
+  function showStep(next){
+    step=Math.max(0,Math.min(3,next));
+    if (step < 3) estimateRevealed = false;
+    panels.forEach((p,i)=>p.hidden=i!==step);
+    stepBtns.forEach((b,i)=>b.classList.toggle("active",i===step));
+    $("prev").hidden=step===0;$("next").hidden=step===3;
+    calculate();
+  }
+  function validateCurrent(){
+    const invalid=[...panels[step].querySelectorAll("input,select,textarea")].find((el)=>!el.checkValidity());
+    if(invalid){invalid.reportValidity();return false;}
+    return true;
+  }
+  function buildSummary(){
+    const est=calculate();
+    const rows=["Richiesta valutazione usato RAMSERVICE Kiosk","",`Stima online: ${est ? `${money(est.min)} - ${money(est.max)}` : "-"}`,`Scadenza stima: ${est?.expiresAt || "-"}`,"","Dati inseriti dal cliente:"];
+    document.querySelectorAll("[data-label]").forEach((field)=>{
+      const value = field.type==="checkbox"
+        ? (field.checked?"Confermato":"Non confermato")
+        : field.type==="file"
+        ? (field.files?.length ? [...field.files].map((file)=>file.name).join(", ") : "Nessuna foto caricata")
+        : (field.value||"-");
+      rows.push(`${field.dataset.label}: ${value}`);
+    });
+    rows.push("Nota: stima indicativa da confermare in negozio dopo verifica tecnica.");
+    return rows.join("\n");
+  }
+  async function submitRequest(){
+    const summary=buildSummary();
+    const payload={type:"valutazione_usato",source:"kiosk-valutazione-usato",pageUrl:location.href,subject:"Richiesta valutazione usato da kiosk",name:$("name").value,phone:$("phone").value,email:$("email").value,summary,fields:{Marca:$("brand").value,Modello:$("model").value,Memoria:$("storage").value,"Salute batteria":$("battery").value,Telefono:$("phone").value,Email:$("email").value,"Nome e cognome":$("name").value},userAgent:navigator.userAgent};
+    const res=await fetch(`${API}/site-requests`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.ok) throw new Error(data.error||"Errore invio richiesta");
+    $("status").textContent=`Richiesta inviata in dashboard. ID ${data.id}`;
+    $("status").className="status ok";
+  }
+  $("brand").addEventListener("change",populateModels);$("model").addEventListener("change",populateStorage);
+  document.querySelectorAll("[data-grade]").forEach((button)=>button.addEventListener("click",()=>{$("condition").value=button.dataset.grade;document.querySelectorAll("[data-grade]").forEach((item)=>item.classList.toggle("is-active",item===button));calculate();}));
+  document.querySelector('[data-grade="buono"]')?.classList.add("is-active");
+  document.querySelectorAll("input,select,textarea").forEach((el)=>el.addEventListener("input",calculate));
+  $("originLegal")?.addEventListener("click",(event)=>{ if(!$("originLegal").dataset.accepted){ event.preventDefault(); $("legalModal").hidden=false; }});
+  $("legalAccept")?.addEventListener("click",()=>{ $("originLegal").dataset.accepted="true"; $("originLegal").checked=true; $("legalModal").hidden=true; calculate(); });
+  $("legalCancel")?.addEventListener("click",()=>{ $("originLegal").checked=false; $("legalModal").hidden=true; });
+  $("legalModal")?.addEventListener("click",(event)=>{ if(event.target===$("legalModal")){ $("originLegal").checked=false; $("legalModal").hidden=true; }});
+  $("next").addEventListener("click",()=>{if(validateCurrent()){if(step===2) estimateRevealed=true;showStep(step+1);}});
+  $("prev").addEventListener("click",()=>showStep(step-1));
+  $("form").addEventListener("submit",async(e)=>{e.preventDefault();estimateRevealed=true;calculate();if(!validateCurrent())return;try{$("status").textContent="Invio richiesta in dashboard...";await submitRequest();}catch(err){$("status").textContent=err.message;$("status").className="status err";}});
+  $("wa").addEventListener("click",()=>{estimateRevealed=true;calculate();if(!validateCurrent())return;window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildSummary())}`,"_blank","noopener");});
+  loadShopifyQuotes();
+})();
+</script>
+</body>
+</html>
