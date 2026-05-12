@@ -187,6 +187,64 @@
       .legal-card p,.legal-card li{font-size:20px!important}
       .legal-actions{grid-template-columns:1fr!important}
     }
+
+    /* =========================================================
+       KIOSK ONE SCREEN PRO13 - layout fisso senza scroll
+       ========================================================= */
+    @media (orientation: portrait) and (min-height: 1200px) {
+      html,body{width:100%!important;height:100vh!important;min-height:100vh!important;overflow:hidden!important;background:#eef3f8!important;font-size:18px!important}
+      .home{left:24px!important;top:24px!important;width:70px!important;height:70px!important;border-radius:22px!important;font-size:34px!important}
+      .wrap{width:100%!important;max-width:none!important;height:100vh!important;min-height:0!important;margin:0!important;padding:22px 34px 26px!important;display:grid!important;grid-template-rows:112px minmax(0,1fr)!important;gap:18px!important;overflow:hidden!important}
+      .head{display:grid!important;grid-template-columns:minmax(0,1fr) 430px!important;gap:26px!important;align-items:center!important;min-height:0!important;padding-left:82px!important}
+      .kicker{font-size:14px!important;letter-spacing:.16em!important}
+      .head h1{font-size:68px!important;line-height:.82!important;margin:2px 0 0!important}
+      .head p{font-size:19px!important;line-height:1.18!important;margin:0!important}
+      .grid{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) 286px!important;gap:18px!important;overflow:hidden!important}
+      .card{border-radius:24px!important;box-shadow:0 16px 38px rgba(15,23,42,.10)!important}
+      .flow-card{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:72px minmax(0,1fr)!important;overflow:hidden!important;background:#fff!important}
+      .steps{height:72px!important;display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important;padding:10px!important}
+      .steps button{min-height:0!important;height:52px!important;border-radius:16px!important;font-size:16px!important}
+      form{height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:minmax(0,1fr) 78px!important;overflow:hidden!important}
+      .panel{height:100%!important;min-height:0!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:122px auto!important;align-content:start!important;gap:16px!important;padding:0 16px 0!important;overflow:hidden!important}
+      .panel[hidden]{display:none!important}
+      .step-title{height:122px!important;min-height:0!important;padding:22px 26px!important;border-radius:22px!important;display:grid!important;grid-template-columns:64px minmax(0,1fr)!important;grid-template-rows:auto auto!important;align-content:center!important;gap:4px 18px!important}
+      .step-title b{width:58px!important;height:58px!important;border-radius:18px!important;font-size:26px!important}
+      .step-title strong{font-size:36px!important;line-height:.98!important;margin:0!important}
+      .step-title span{grid-column:2!important;font-size:18px!important;line-height:1.22!important;margin:0!important}
+      .fields,.checks{height:auto!important;min-height:0!important;padding:20px!important;border-radius:22px!important;gap:16px!important;overflow:hidden!important;background:#f8fafc!important}
+      .fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:start!important}
+      .field{min-width:0!important;gap:8px!important}
+      label{font-size:18px!important;line-height:1.12!important}
+      select,input,textarea,.btn{height:62px!important;min-height:62px!important;border-radius:18px!important;font-size:20px!important}
+      textarea{height:90px!important;min-height:90px!important}
+      .panel[data-panel="0"] .fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(2,220px)!important;gap:16px!important}
+      .panel[data-panel="0"] .field{min-height:0!important;height:auto!important;padding:22px!important;border-radius:20px!important;align-content:center!important;background:#fff!important}
+      .panel[data-panel="0"] label{font-size:19px!important}
+      .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:66px!important;min-height:66px!important;font-size:20px!important}
+      .panel[data-panel="1"] .fields{grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr)!important;align-content:stretch!important}
+      .grade-strip{height:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+      .grade-card{height:100%!important;min-height:0!important;grid-template-rows:minmax(0,1fr) 26px 40px!important;border-radius:18px!important;padding:10px!important}
+      .grade-card img{height:100%!important;min-height:0!important;border-radius:14px!important}
+      .grade-card span{font-size:12px!important;padding:5px 8px!important}
+      .grade-card strong{font-size:15px!important;line-height:1.05!important}
+      .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr!important;align-content:start!important}
+      .check-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+      .check{font-size:16px!important;line-height:1.22!important;padding:15px!important;border-radius:18px!important}
+      .check input{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important}
+      .field-help{font-size:14px!important;line-height:1.18!important;color:#5f6f82!important}
+      .actions{height:78px!important;padding:0 16px 16px!important;display:flex!important;justify-content:flex-end!important;align-items:end!important}
+      .actions .btn{height:62px!important;min-height:62px!important;min-width:220px!important;font-size:20px!important;border-radius:18px!important}
+      .panel[data-panel="3"]>.actions{grid-column:1!important;align-self:end!important;padding:0!important}
+      .result{height:100%!important;min-height:0!important;display:grid!important;grid-template-columns:150px minmax(0,1fr) 340px!important;grid-template-rows:minmax(0,1fr) 44px!important;padding:16px!important;gap:14px!important;overflow:hidden!important}
+      .result>.kicker{font-size:16px!important;border-radius:18px!important}
+      .summary{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:12px!important;min-height:0!important}
+      .row{height:100%!important;font-size:14px!important;padding:16px!important;border-radius:18px!important}
+      .row strong{font-size:22px!important}
+      .price{height:100%!important;border-radius:20px!important;padding:22px!important}
+      .price span{font-size:13px!important}
+      .price strong{font-size:36px!important}
+      .status{grid-column:2/4!important;font-size:14px!important;line-height:1.16!important;border-radius:14px!important;padding:10px 14px!important}
+    }
   </style>
 </head>
 <body>
