@@ -222,11 +222,11 @@
       .panel[data-panel="0"] label{font-size:19px!important}
       .panel[data-panel="0"] select,.panel[data-panel="0"] input{height:66px!important;min-height:66px!important;font-size:20px!important}
       .panel[data-panel="1"] .fields{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:auto!important;align-content:start!important;overflow-y:auto!important;padding-right:16px!important}
-      .grade-strip{grid-column:1/-1!important;height:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
-      .grade-card{height:190px!important;min-height:190px!important;grid-template-rows:118px 24px 28px!important;border-radius:18px!important;padding:10px!important;overflow:hidden!important}
-      .grade-card img{height:118px!important;min-height:0!important;border-radius:14px!important;object-fit:cover!important}
-      .grade-card span{font-size:13px!important;padding:5px 9px!important}
-      .grade-card strong{font-size:17px!important;line-height:1.05!important}
+      .grade-strip{grid-column:1/-1!important;height:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important}
+      .grade-card{height:245px!important;min-height:245px!important;grid-template-rows:168px 28px 32px!important;border-radius:20px!important;padding:12px!important;overflow:hidden!important}
+      .grade-card img{width:100%!important;height:168px!important;min-height:0!important;border-radius:16px!important;object-fit:contain!important;background:#eef3f8!important}
+      .grade-card span{font-size:14px!important;padding:5px 10px!important}
+      .grade-card strong{font-size:19px!important;line-height:1.08!important}
       .panel[data-panel="2"] .fields{grid-template-columns:1fr 1fr!important;align-content:start!important}
       .check-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
       .check{font-size:16px!important;line-height:1.22!important;padding:15px!important;border-radius:18px!important}
@@ -385,7 +385,22 @@
     ["iPhone 12",[["64GB",219],["128GB",249],["256GB",319]]],
     ["iPhone 11 Pro Max",[["64GB",369],["256GB",429],["512GB",519]]],
     ["iPhone 11 Pro",[["64GB",229],["256GB",299],["512GB",389]]],
-    ["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]]
+    ["iPhone 11",[["64GB",215],["128GB",249],["256GB",319]]],
+    ["Galaxy S25 Edge",[["256GB",760],["512GB",860]],"Samsung"],
+    ["Galaxy S25 Ultra",[["256GB",780],["512GB",890],["1TB",1020]],"Samsung"],
+    ["Galaxy S25+",[["256GB",720],["512GB",800]],"Samsung"],
+    ["Galaxy S25",[["128GB",560],["256GB",620]],"Samsung"],
+    ["Galaxy S24 FE",[["128GB",340],["256GB",390]],"Samsung"],
+    ["Galaxy S24 Ultra",[["256GB",650],["512GB",740],["1TB",860]],"Samsung"],
+    ["Galaxy S24+",[["256GB",590],["512GB",660]],"Samsung"],
+    ["Galaxy S24",[["128GB",420],["256GB",470]],"Samsung"],
+    ["Galaxy S23 FE",[["128GB",260],["256GB",300]],"Samsung"],
+    ["Galaxy S23 Ultra",[["256GB",480],["512GB",560],["1TB",680]],"Samsung"],
+    ["Galaxy S23+",[["256GB",430],["512GB",500]],"Samsung"],
+    ["Galaxy S23",[["128GB",330],["256GB",370]],"Samsung"],
+    ["Galaxy S22 Ultra",[["128GB",360],["256GB",390],["512GB",460],["1TB",560]],"Samsung"],
+    ["Galaxy S22+",[["128GB",300],["256GB",340]],"Samsung"],
+    ["Galaxy S22",[["128GB",250],["256GB",290]],"Samsung"]
   ];
   let quotes = fallbackQuotes;
   let step = 0;
@@ -396,7 +411,11 @@
   const money = (v) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.max(0,Math.round(Number(v||0))));
   const quoteBrand = (row) => row[2] || "Apple";
   const allowedModels = new Set(fallbackQuotes.map((row)=>row[0]));
-  const cleanQuotes = (rows) => rows.filter((row)=>quoteBrand(row)==="Apple" && allowedModels.has(row[0]));
+  const cleanQuotes = (rows) => rows.filter((row)=>{
+    const brand = quoteBrand(row);
+    const model = String(row[0] || "");
+    return (brand === "Apple" && allowedModels.has(model)) || (brand === "Samsung" && /^Galaxy S/i.test(model));
+  });
 
   async function loadShopifyQuotes(){
     try{
