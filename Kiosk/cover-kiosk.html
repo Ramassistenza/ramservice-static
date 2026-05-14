@@ -500,6 +500,16 @@
   }
   function exportDataUrl(maxWidth, quality, mode){
     const cover=coverRect();
+    if(mode==="preview"){
+      draw();
+      const crop={x:0,y:0,w:760,h:1180};
+      const out=document.createElement("canvas");
+      const scale=maxWidth/crop.w;
+      out.width=Math.round(crop.w*scale);
+      out.height=Math.round(crop.h*scale);
+      out.getContext("2d").drawImage(canvas,crop.x,crop.y,crop.w,crop.h,0,0,out.width,out.height);
+      return out.toDataURL("image/jpeg",quality);
+    }
     const out=document.createElement("canvas");
     const scale=maxWidth/cover.w;
     out.width=Math.round(cover.w*scale);
@@ -531,7 +541,7 @@
     if(!selected) throw new Error("Seleziona un modello.");
     if(!image && !texts.length) throw new Error("Carica una foto o aggiungi testo.");
     if(!$("name").value.trim() || !$("phone").value.trim()) throw new Error("Inserisci nome e telefono cliente.");
-    const previewDataUrl=exportDataUrl(620,.82,"print");
+    const previewDataUrl=exportDataUrl(620,.82,"preview");
     const printDataUrl=exportDataUrl(1800,.92,"print");
     const res=await fetch(`${API}/cover-studio/projects`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:selected.id,modelLabel:selected.name,price:selected.price,customerName:$("name").value,customerPhone:$("phone").value,customerEmail:$("email").value,notes:`PAGA IN CASSA - Kiosk. ${$("notes").value||""}`,source:"kiosk-cover-studio-pay-in-store",status:"cart_ready",previewDataUrl,printDataUrl,editorState:{model:selected,image:image?imageObj:null,backgroundColor:$("bg").value,texts},userAgent:navigator.userAgent,pageUrl:location.href})});
     const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok) throw new Error(data.message||"Errore salvataggio progetto");
