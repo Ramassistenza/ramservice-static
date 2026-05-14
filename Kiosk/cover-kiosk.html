@@ -459,13 +459,52 @@
     img.onload = () => { image=img; active="image"; imageObj={x:380,y:610,scale:Number($("scale").value),rotate:Number($("rotate").value)}; $("status").textContent=`Foto caricata: ${name}`; $("status").className="status ok"; draw(); };
     img.src = dataUrl;
   }
-  function exportDataUrl(maxWidth, quality, mode){
-    draw();
+  function drawCleanPrint(targetCtx, width, height){
     const cover=coverRect();
-    const crop = mode==="print" ? cover : {x:0,y:0,w:760,h:1180};
+    const scale=width/cover.w;
+    targetCtx.clearRect(0,0,width,height);
+    targetCtx.save();
+    targetCtx.beginPath();
+    targetCtx.rect(0,0,width,height);
+    targetCtx.clip();
+    targetCtx.fillStyle=$("bg").value||"#fff";
+    targetCtx.fillRect(0,0,width,height);
+    if(image){
+      const base=Math.max(cover.w/image.width,cover.h/image.height);
+      const imageScale=base*imageObj.scale*scale;
+      targetCtx.save();
+      targetCtx.translate((imageObj.x-cover.x)*scale,(imageObj.y-cover.y)*scale);
+      targetCtx.rotate(imageObj.rotate*Math.PI/180);
+      targetCtx.drawImage(image,-image.width*imageScale/2,-image.height*imageScale/2,image.width*imageScale,image.height*imageScale);
+      targetCtx.restore();
+    }
+    texts.forEach((t)=>{
+      targetCtx.save();
+      targetCtx.translate((t.x-cover.x)*scale,(t.y-cover.y)*scale);
+      targetCtx.rotate(t.rotate*Math.PI/180);
+      targetCtx.font=`${t.italic?"italic ":""}${t.bold===false?"700":"900"} ${Math.round(t.size*scale)}px ${t.font||"Poppins,Arial"}`;
+      targetCtx.textAlign=t.align||"center";
+      targetCtx.textBaseline="middle";
+      targetCtx.lineWidth=Math.max(4*scale,t.size*scale*.08);
+      targetCtx.strokeStyle="#fff";
+      targetCtx.fillStyle=t.color;
+      const lines=String(t.value).split(/\n/).slice(0,3);
+      lines.forEach((line,i)=>{
+        const y=(i-(lines.length-1)/2)*t.size*1.15*scale;
+        targetCtx.strokeText(line,0,y);
+        targetCtx.fillText(line,0,y);
+      });
+      targetCtx.restore();
+    });
+    targetCtx.restore();
+  }
+  function exportDataUrl(maxWidth, quality, mode){
+    const cover=coverRect();
     const out=document.createElement("canvas");
-    const scale=maxWidth/crop.w; out.width=Math.round(crop.w*scale); out.height=Math.round(crop.h*scale);
-    out.getContext("2d").drawImage(canvas,crop.x,crop.y,crop.w,crop.h,0,0,out.width,out.height);
+    const scale=maxWidth/cover.w;
+    out.width=Math.round(cover.w*scale);
+    out.height=Math.round(cover.h*scale);
+    drawCleanPrint(out.getContext("2d"),out.width,out.height);
     return out.toDataURL("image/jpeg",quality);
   }
   async function createQrSession(){
@@ -492,7 +531,7 @@
     if(!selected) throw new Error("Seleziona un modello.");
     if(!image && !texts.length) throw new Error("Carica una foto o aggiungi testo.");
     if(!$("name").value.trim() || !$("phone").value.trim()) throw new Error("Inserisci nome e telefono cliente.");
-    const previewDataUrl=exportDataUrl(620,.82,"preview");
+    const previewDataUrl=exportDataUrl(620,.82,"print");
     const printDataUrl=exportDataUrl(1800,.92,"print");
     const res=await fetch(`${API}/cover-studio/projects`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:selected.id,modelLabel:selected.name,price:selected.price,customerName:$("name").value,customerPhone:$("phone").value,customerEmail:$("email").value,notes:`PAGA IN CASSA - Kiosk. ${$("notes").value||""}`,source:"kiosk-cover-studio-pay-in-store",status:"cart_ready",previewDataUrl,printDataUrl,editorState:{model:selected,image:image?imageObj:null,backgroundColor:$("bg").value,texts},userAgent:navigator.userAgent,pageUrl:location.href})});
     const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok) throw new Error(data.message||"Errore salvataggio progetto");
