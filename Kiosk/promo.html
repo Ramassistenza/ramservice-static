@@ -34,6 +34,7 @@
     const CONFIG_URL = "https://ramassistenza.github.io/ramservice-static/Kiosk/promo/config.json";
     const HOME_URL = "kiosk.html";
     let homeTimer = null;
+    let currentConfigStamp = "";
 
     function esc(value = "") {
       return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -52,6 +53,13 @@
     }
 
     function renderConfig(config = {}) {
+      const stamp = String(config.updatedAt || "") + "|" + JSON.stringify({
+        hero: config.hero || null,
+        banners: config.banners || []
+      });
+      if (stamp && stamp === currentConfigStamp) return;
+      currentConfigStamp = stamp;
+
       const hero = document.getElementById("promoHero");
       const banners = document.getElementById("promoBanners");
       const date = document.getElementById("promoDate");
@@ -97,7 +105,7 @@
     });
     touchReset();
     loadPromo();
-    setInterval(loadPromo, 5 * 60 * 1000);
+    setInterval(loadPromo, 60000);
   </script>
 </body>
 </html>
