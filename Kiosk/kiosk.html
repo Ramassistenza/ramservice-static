@@ -154,23 +154,40 @@
     }
   }
 
+  let currentConfigStamp="";
+  let slideTimer=null;
+
   function renderHomeConfig(config){
+    if(!config) return {hasCenter:false,hasSlides:false};
+    const stamp=String(config.updatedAt || "")+"|"+JSON.stringify(config.home || {});
+    if(stamp && stamp===currentConfigStamp){
+      return {
+        hasCenter: Boolean(config?.home?.center?.imageUrl),
+        hasSlides: Array.isArray(config?.home?.slides) && config.home.slides.length>0
+      };
+    }
+    currentConfigStamp=stamp;
+
     const centerData=config?.home?.center;
     const slides=Array.isArray(config?.home?.slides) ? config.home.slides : [];
     const centerBox=document.getElementById("center");
     const slideBox=document.getElementById("slideshow");
     let hasCenter=false;
     let hasSlides=false;
+    if(slideTimer) clearInterval(slideTimer);
+    slideTimer=null;
 
     if(centerData?.imageUrl){
       centerBox.innerHTML=`<img src="${centerData.imageUrl}" alt="${centerData.title || "Promo RAMSERVICE"}">`;
       hasCenter=true;
+    }else{
+      centerBox.innerHTML="";
     }
 
     if(slides.length){
       slideBox.innerHTML=slides.map((item,index)=>`<img class="${index===0 ? "active" : ""}" src="${item.imageUrl}" alt="${item.title || "Promo RAMSERVICE"}">`).join("");
       let x=0;
-      setInterval(()=>{
+      slideTimer=setInterval(()=>{
         const s=slideBox.querySelectorAll("img");
         if(!s.length) return;
         s[x]?.classList.remove("active");
@@ -178,6 +195,8 @@
         s[x]?.classList.add("active");
       },4000);
       hasSlides=true;
+    }else{
+      slideBox.innerHTML="";
     }
 
     return {hasCenter,hasSlides};
@@ -217,12 +236,20 @@
     }
   }
 
-  (async()=>{
+  let fallbackLoaded=false;
+
+  async function refreshKiosk(){
     const config=await loadKioskConfig();
     const loaded=renderHomeConfig(config);
-    if(!loaded.hasCenter) loadImages("center","center");
-    if(!loaded.hasSlides) loadImages("operatori","slideshow",true);
-  })();
+    if(!fallbackLoaded){
+      fallbackLoaded=true;
+      if(!loaded.hasCenter) loadImages("center","center");
+      if(!loaded.hasSlides) loadImages("operatori","slideshow",true);
+    }
+  }
+
+  refreshKiosk();
+  setInterval(refreshKiosk,60000);
 
   const INTERVAL=10*60*1000;
   const DURATION=5*60*1000;
