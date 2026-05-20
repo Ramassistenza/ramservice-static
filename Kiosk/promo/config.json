@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-20T11:28:48.122Z",
+  "updatedAt": "2026-05-20T11:36:37.166Z",
   "format": {
     "hero": "1080x1350 JPG/WebP",
     "banner": "1080x360 JPG/WebP",
@@ -10,7 +10,17 @@
     "valutazione": "https://www.ramserviceitalia.it/pages/valuta-il-tuo-usato",
     "cover": "https://www.ramserviceitalia.it/pages/cover-personalizzate-iphone"
   },
-  "hero": null,
+  "hero": {
+    "id": "kp_1779276995184_0f33c1f9",
+    "slot": "hero",
+    "title": "promo 15 pro",
+    "imageUrl": "https://ramassistenza.github.io/ramservice-static/Kiosk/promo/hero-kp_1779276995184_0f33c1f9.jpg",
+    "linkUrl": "",
+    "active": true,
+    "sortOrder": 10,
+    "createdAt": "2026-05-20T11:36:37.165Z",
+    "updatedAt": "2026-05-20T11:36:37.165Z"
+  },
   "banners": [],
   "home": {
     "center": {
