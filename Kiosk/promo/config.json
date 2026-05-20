@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-20T11:27:39.221Z",
+  "updatedAt": "2026-05-20T11:27:54.503Z",
   "format": {
     "hero": "1080x1350 JPG/WebP",
     "banner": "1080x360 JPG/WebP",
@@ -13,7 +13,17 @@
   "hero": null,
   "banners": [],
   "home": {
-    "center": null,
+    "center": {
+      "id": "kp_1779276472814_509f9aa7",
+      "slot": "center",
+      "title": "",
+      "imageUrl": "https://ramassistenza.github.io/ramservice-static/Kiosk/promo/center-kp_1779276472814_509f9aa7.jpg",
+      "linkUrl": "",
+      "active": true,
+      "sortOrder": 10,
+      "createdAt": "2026-05-20T11:27:54.502Z",
+      "updatedAt": "2026-05-20T11:27:54.502Z"
+    },
     "slides": []
   }
 }
