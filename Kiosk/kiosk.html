@@ -5,6 +5,7 @@
   <title>Kiosk RAMSERVICE</title>
 
   <link rel="stylesheet" href="https://ramassistenza.github.io/ramservice-static/Kiosk/stile.css">
+  <link rel="stylesheet" href="game-badge.css?v=20261026">
 
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -28,10 +29,11 @@
       <div class="title">Promozioni</div>
       <div class="desc">Volantino e offerte del mese</div>
     </button>
-    <button>
-      <div class="icon">💰</div>
-      <div class="title">Risparmio</div>
-      <div class="desc">Calcola quanto risparmi</div>
+    <button id="prizeGameKioskButton" class="prize-game-badge" onclick="location.href='http://192.168.1.72:3000/prize-game/?channel=kiosk&amp;entry=welcome'">
+      <span class="prize-game-badge-label">RAM LUCKY CLUB</span>
+      <div class="icon">🎃</div>
+      <div class="title">Gioco a premi</div>
+      <div class="desc">Chiedi il PIN al banco e gira la ruota</div>
     </button>
     <button onclick="location.href='valutazione-kiosk-pro13.html?v=one-screen'">
       <div class="icon">📱</div>
