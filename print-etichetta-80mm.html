@@ -88,6 +88,9 @@ function escposText(label) {
 
   // ===== ESC/POS =====
   const INIT       = "\x1B\x40";
+  // Area verificata su Aclas: a 48 dot il bordo sinistro torna completo.
+  // 48 + 504 dot mantengono tutte le 42 colonne anche sul bordo destro.
+  const PRINT_AREA = "\x1B\x53\x1D\x50\xCB\xCB\x1D\x4C\x30\x00\x1D\x57\xF8\x01";
   const LEFT       = "\x1B\x61\x00";
   const CENTER     = "\x1B\x61\x01";
   const BOLD_ON    = "\x1B\x45\x01";
@@ -95,7 +98,7 @@ function escposText(label) {
   const FONT_A     = "\x1B\x4D\x00"; // font A
 
   const SIZE_1X1   = "\x1D\x21\x00";
-  const SIZE_2X1   = "\x1D\x21\x10"; // medio (altezza doppia)
+  const SIZE_2X1   = "\x1D\x21\x10"; // medio (larghezza doppia)
   const SIZE_2X2   = "\x1D\x21\x11"; // grande (altezza+larghezza)
 
   const HR  = "==========================================\n";
@@ -104,8 +107,8 @@ function escposText(label) {
 
   const clean = (s) =>
     String(s ?? "")
-      .replace(/\r/g, "")
-      .replace(/[ \t]+/g, " ")
+      .replace(/[\x00-\x1F\x7F]/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
 
   const wrap = (text, width = W) => {
@@ -115,9 +118,13 @@ function escposText(label) {
     const out = [];
     let line = "";
     for (const w of words) {
-      if (!line) line = w;
-      else if ((line + " " + w).length <= width) line += " " + w;
-      else { out.push(line); line = w; }
+      if (line && (line + " " + w).length > width) { out.push(line); line = ""; }
+      let rest = w;
+      while (rest.length > width) {
+        out.push(rest.slice(0, width));
+        rest = rest.slice(width);
+      }
+      if (rest) line = line ? line + " " + rest : rest;
     }
     if (line) out.push(line);
     return out;
@@ -176,7 +183,7 @@ function escposText(label) {
   const lines = [];
 
   // init + tutto a sinistra
-  lines.push(INIT, FONT_A, LEFT, SIZE_1X1);
+  lines.push(INIT, PRINT_AREA, FONT_A, LEFT, SIZE_1X1);
 
   // ===== TESTATA =====
   lines.push(CENTER);
@@ -191,7 +198,7 @@ function escposText(label) {
 
   // ===== SCHEDA =====
   lines.push(CENTER, BOLD_ON, SIZE_2X2);
-  lines.push(`SCHEDA ${numeroScheda}\n`);
+  wrap(`SCHEDA ${numeroScheda}`, 21).forEach(l => lines.push(l + nl));
   lines.push(SIZE_1X1, BOLD_OFF);
   lines.push(barcodeCode128(numeroScheda));
   lines.push(LEFT);
@@ -218,7 +225,7 @@ function escposText(label) {
     lines.push(title("CODICI CLIENTE"));
     if (pinSim) {
       lines.push(BOLD_ON, SIZE_2X1);
-      lines.push(`PIN SIM: ${pinSim}\n`);
+      wrap(`PIN SIM: ${pinSim}`, 21).forEach(l => lines.push(l + nl));
       lines.push(SIZE_1X1, BOLD_OFF);
     }
     if (codiceProtezione) {
@@ -239,7 +246,7 @@ function escposText(label) {
   // ===== COSTO =====
   lines.push(HR);
   lines.push(BOLD_ON, SIZE_2X1);
-  lines.push(`COSTO: ${costo}\n`);
+  wrap(`COSTO: ${costo}`, 21).forEach(l => lines.push(l + nl));
   lines.push(SIZE_1X1, BOLD_OFF);
   lines.push(HR);
 
