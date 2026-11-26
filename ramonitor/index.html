@@ -29,9 +29,7 @@
     .layer {
       position: absolute;
       inset: 0;
-      background-position: center center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      overflow: hidden;
       opacity: 0;
       transition: opacity .5s linear;
       will-change: opacity;
@@ -39,6 +37,13 @@
 
     .layer.show {
       opacity: 1;
+    }
+
+    .layer img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   </style>
 </head>
@@ -48,13 +53,12 @@
     <div class="layer" id="B" aria-hidden="true"></div>
   </div>
 
+  <script src="player-cache.js"></script>
   <script>
     // =============================
     // CONFIG
     // =============================
     const MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-vertical.json";
-    const IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/vertical/";
-    const SLIDE_SECONDS = 7;
     const REFRESH_MINUTES = 5;
     const FULLSCREEN_PING_SEC = 60;
     const KEEPALIVE_VIDEO_SEC = 25;
@@ -62,158 +66,26 @@
     const NET_PING_SEC = 45;
     const RAF_JIGGLE_MS = 2000;
 
-    // Preload in memoria per evitare richieste duplicate durante il loop
-    const imageCache = new Map();
-
-    let IMAGES = [];
-    let index = 0;
     let showingA = true;
 
     const A = document.getElementById("A");
     const B = document.getElementById("B");
     const stage = document.getElementById("stage");
 
-    let slideTimer = null;
-    let refreshTimer = null;
     let wakeLock = null;
     let audioCtx = null;
 
-    // =============================
-    // UTILS
-    // =============================
-    function arraysEqual(a, b) {
-      if (a.length !== b.length) return false;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-      }
-      return true;
-    }
-
-    function preloadImage(url) {
-      return new Promise((resolve) => {
-        if (imageCache.has(url)) {
-          const cached = imageCache.get(url);
-          if (cached.complete) {
-            resolve(cached);
-            return;
-          }
-        }
-
-        const img = new Image();
-        img.decoding = "async";
-        img.loading = "eager";
-
-        img.onload = () => {
-          imageCache.set(url, img);
-          resolve(img);
-        };
-
-        img.onerror = () => {
-          console.warn("Errore preload immagine:", url);
-          resolve(null);
-        };
-
-        img.src = url;
-        imageCache.set(url, img);
-      });
-    }
-
-    function preloadNextImage() {
-      if (!IMAGES.length) return;
-      const nextIndex = index % IMAGES.length;
-      const nextUrl = IMAGES[nextIndex];
-      preloadImage(nextUrl).catch(() => {});
-    }
-
-    // =============================
-    // SLIDESHOW
-    // =============================
-    async function showNext() {
-      if (!IMAGES.length) return;
-
-      const next = IMAGES[index % IMAGES.length];
+    function renderSlide(image) {
       const front = showingA ? A : B;
       const back  = showingA ? B : A;
 
-      const preloaded = await preloadImage(next);
-      if (!preloaded) return;
-
-      back.style.backgroundImage = `url("${next}")`;
+      if (back.firstChild !== image) {
+        back.textContent = "";
+        back.appendChild(image);
+      }
       back.classList.add("show");
       front.classList.remove("show");
-
       showingA = !showingA;
-      index++;
-
-      // preload anticipato della successiva
-      preloadNextImage();
-    }
-
-    async function refreshImageList() {
-      try {
-        // Solo il manifest ha bust cache, NON le immagini
-        const res = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
-          cache: "no-store"
-        });
-
-        if (!res.ok) {
-          throw new Error(`Manifest HTTP ${res.status}`);
-        }
-
-        const list = await res.json();
-
-        if (!Array.isArray(list) || !list.length) {
-          console.warn("Manifest vuoto o non valido");
-          return;
-        }
-
-        // URL STABILI = cache browser funzionante
-        const newImages = list.map(filename => IMG_BASE + encodeURIComponent(filename));
-
-        // Deduplica eventuali doppioni
-        const uniqueImages = [...new Set(newImages)];
-
-        const changed = !arraysEqual(uniqueImages, IMAGES);
-
-        if (changed) {
-          IMAGES = uniqueImages;
-          index = index % IMAGES.length;
-
-          console.log("Manifest aggiornato. Immagini:", IMAGES.length);
-
-          // Pulisci dalla cache solo le immagini non più presenti
-          for (const key of imageCache.keys()) {
-            if (!IMAGES.includes(key)) {
-              imageCache.delete(key);
-            }
-          }
-
-          // preload prima immagine utile
-          preloadNextImage();
-        } else {
-          console.log("Manifest invariato, nessun download inutile.");
-        }
-      } catch (e) {
-        console.warn("Errore caricamento manifest:", e);
-      }
-    }
-
-    async function startSlideshow() {
-      await refreshImageList();
-
-      if (IMAGES.length) {
-        await showNext();
-      }
-
-      clearInterval(slideTimer);
-      slideTimer = setInterval(() => {
-        showNext().catch(err => console.warn("Errore slideshow:", err));
-      }, SLIDE_SECONDS * 1000);
-
-      clearInterval(refreshTimer);
-      refreshTimer = setInterval(() => {
-        refreshImageList().catch(err => console.warn("Errore refresh:", err));
-      }, REFRESH_MINUTES * 60 * 1000);
     }
 
     // =============================
@@ -341,24 +213,19 @@
       nudgeAudio();
       netPing();
 
-      if (!slideTimer) {
-        slideTimer = setInterval(() => {
-          showNext().catch(err => console.warn("Errore slideshow:", err));
-        }, SLIDE_SECONDS * 1000);
-      }
-
-      if (!refreshTimer) {
-        refreshTimer = setInterval(() => {
-          refreshImageList().catch(err => console.warn("Errore refresh:", err));
-        }, REFRESH_MINUTES * 60 * 1000);
-      }
     });
 
     // =============================
     // BOOT
     // =============================
     (async function boot() {
-      await startSlideshow();
+      startRAMonitor({
+        orientation: "vertical",
+        manifest: MANIFEST_URL,
+        refreshMs: REFRESH_MINUTES * 60 * 1000,
+        keepOnEmpty: true,
+        render: renderSlide
+      });
       await requestWakeLock();
       goFullscreen();
       nudgeAudio();

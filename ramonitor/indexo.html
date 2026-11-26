@@ -14,7 +14,7 @@
       background: #000;
     }
 
-    #wrap {
+    #slide {
       position: fixed;
       top: 0;
       left: 0;
@@ -24,7 +24,7 @@
       text-align: center;
     }
 
-    #slide {
+    #slide img {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -32,171 +32,23 @@
       display: block;
     }
 
-    #status {
-      position: fixed;
-      left: 10px;
-      bottom: 10px;
-      z-index: 9999;
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      color: #fff;
-      background: rgba(0,0,0,0.6);
-      padding: 4px 8px;
-      border-radius: 6px;
-      display: none;
-    }
   </style>
 </head>
 <body>
-  <div id="wrap">
-    <img id="slide" src="" alt="">
-  </div>
-  <div id="status"></div>
-
+  <div id="slide"></div>
+  <script src="player-cache.js"></script>
   <script>
-    var MANIFEST_URL = "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json";
-    var IMG_BASE = "https://storage.googleapis.com/ramonitor-images/img/horizontal/";
-    var SLIDE_SECONDS = 7;
-    var REFRESH_SECONDS = 20;
-    var DEBUG = false;
-
-    var slideEl = document.getElementById("slide");
-    var statusEl = document.getElementById("status");
-
-    var images = [];
-    var index = 0;
-    var lastManifestSignature = "";
-    var manifestVersion = new Date().getTime();
-
-    function setStatus(msg) {
-      if (!DEBUG) return;
-      statusEl.style.display = "block";
-      statusEl.innerHTML = msg;
-    }
-
-    function parseManifest(text) {
-      var data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        setStatus("Manifest non valido");
-        return null;
+    var slide = document.getElementById("slide");
+    startRAMonitor({
+      orientation: "horizontal",
+      manifest: "https://ramonitor-api-721276708443.europe-west1.run.app/manifest-horizontal.json",
+      refreshMs: 20000,
+      clear: function () { slide.textContent = ""; },
+      render: function (image) {
+        slide.textContent = "";
+        slide.appendChild(image);
       }
-
-      if (!data || typeof data.length === "undefined") {
-        setStatus("Manifest non valido");
-        return null;
-      }
-
-      return data;
-    }
-
-    function manifestSignature(list) {
-      return list.join("|");
-    }
-
-    function buildImageUrl(filename) {
-      return IMG_BASE + encodeURIComponent(filename) + "?v=" + manifestVersion;
-    }
-
-    function showNext() {
-      var filename;
-      var url;
-
-      if (!images || !images.length) {
-        slideEl.removeAttribute("src");
-        setStatus("Nessuna immagine");
-        return;
-      }
-
-      if (index >= images.length) {
-        index = 0;
-      }
-
-      filename = images[index];
-      url = buildImageUrl(filename);
-
-      slideEl.src = url;
-      setStatus("Slide " + (index + 1) + "/" + images.length);
-
-      index++;
-      if (index >= images.length) {
-        index = 0;
-      }
-    }
-
-    slideEl.onerror = function () {
-      setStatus("Errore immagine");
-    };
-
-    slideEl.onload = function () {
-      setStatus("Immagine caricata");
-    };
-
-    function loadManifest() {
-      var xhr = new XMLHttpRequest();
-      var url = MANIFEST_URL + "?t=" + new Date().getTime();
-
-      xhr.open("GET", url, true);
-
-      xhr.onreadystatechange = function () {
-        var newImages;
-        var newSignature;
-        var changed;
-
-        if (xhr.readyState !== 4) return;
-
-        if (xhr.status !== 200) {
-          setStatus("Errore manifest HTTP " + xhr.status);
-          return;
-        }
-
-        newImages = parseManifest(xhr.responseText);
-        if (newImages === null) return;
-
-        newSignature = manifestSignature(newImages);
-        changed = (newSignature !== lastManifestSignature);
-
-        if (changed) {
-          lastManifestSignature = newSignature;
-          images = newImages;
-          index = 0;
-          manifestVersion = new Date().getTime();
-
-          if (!images.length) {
-            slideEl.removeAttribute("src");
-            setStatus("Manifest vuoto");
-            return;
-          }
-
-          showNext();
-          setStatus("Manifest aggiornato");
-          return;
-        }
-
-        images = newImages;
-
-        if (index >= images.length) {
-          index = 0;
-        }
-
-        setStatus("Manifest OK");
-      };
-
-      xhr.onerror = function () {
-        setStatus("Errore rete manifest");
-      };
-
-      xhr.send(null);
-    }
-
-    function boot() {
-      loadManifest();
-      setInterval(showNext, SLIDE_SECONDS * 1000);
-      setInterval(loadManifest, REFRESH_SECONDS * 1000);
-    }
-
-    boot();
+    });
   </script>
 </body>
 </html>
